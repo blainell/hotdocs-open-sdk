@@ -52,11 +52,11 @@ Other Platforms
 Parts of the Open SDK have been ported to other languages and platforms to facilitate HotDocs integration
 from those platforms:
 
-*	Java (link coming soon)
-*	PHP (link coming soon)
+*	[Java] (https://github.com/HotDocsCorp/hotdocs-cloud-java)
+*	[PHP] (https://github.com/HotDocsCorp/hotdocs-cloud-php)
 *	[Ruby](https://github.com/pifleo/hotdocs-cloud)
 
-*NOTE: At the present time, these ports are limited and include only minimal parts of the
+*NOTE: At the present time, these ports are limited and include only minimal portions of the
 Cloud Services Client Library -- specifically the interfaces necessary to work with HotDocs Embedded.
 
 Contributing
