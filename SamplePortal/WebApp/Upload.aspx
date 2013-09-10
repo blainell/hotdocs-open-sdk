@@ -6,10 +6,6 @@
 	<title>
 		<%= _siteName %></title>
 	<link href="css/SamplePortal.css" type="text/css" rel="stylesheet" />
-	<!-- TODO: Can we move this style definition into the external SamplePortal.css stylesheet? -->
-	<style type="text/css">
-		html { overflow: auto; }
-	</style>
 </head>
 <body>
 	<table id="pageHeader" border="0">

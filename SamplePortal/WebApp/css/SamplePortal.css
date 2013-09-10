@@ -2,26 +2,29 @@
 BODY { font-family: Tahoma, Arial, Sans-Serif; color: black; font-size: 10pt; margin: 0px; background-color: White; }
 TD { font-family: Tahoma, Arial, Sans-Serif; color: black; font-size: 10pt; }
 
-#theBody { overflow: hidden; margin-top:0px; margin-bottom:0px; }
+#theBody { overflow: hidden; margin-top: 0px; margin-bottom: 0px; }
 
-#KeepAlive { display: none; border:none; }
+#KeepAlive { display: none; border: none; }
 
 #pageHeader { width: 100%; height: 60px; background-color: #007d93; border-collapse: collapse; border-spacing: 0; }
 #pageHeaderLeft { padding: 0px; }
 #pageHeaderMiddle { vertical-align: bottom; padding: 0px 0px 3px 0px; width: 100px; }
 #pageHeaderRight { width: 140px; text-align: right; vertical-align: bottom; padding: 0px; }
 
-#pageContent { width: 100%; border-collapse:collapse; border-spacing:0; }
-#pageContent > TBODY > TR > TD { padding:10px; }
+#pageContent { width: 100%; border-collapse: collapse; border-spacing: 0; }
+#pageContent > TBODY > TR > TD { padding: 10px; }
 
-#DataGridSearchTable { width: 100%; margin-bottom: 2px; border-collapse:collapse; border-spacing:0; }
-#DataGridSearchTable > TBODY > TR > TD { padding:0px; }
+#DataGridSearchTable { width: 100%; margin-bottom: 2px; border-collapse: collapse; border-spacing: 0; }
+#DataGridSearchTable > TBODY > TR > TD { padding: 0px; }
 
-#UploadedTemplatesGrid { width: 100%; border-collapse: collapse; border: 1px solid #99B2CC; border-collapse:collapse; border-spacing:0; }
-#UploadedTemplatesGrid > TBODY > TR > TD { padding:0px; }
+/* Upload Page */
+#UploadedTemplatesGrid { width: 100%; border-collapse: collapse; border-spacing: 0; }
+#UploadedTemplatesGrid > TBODY > TR > TD { padding: 2px; border: 1px solid #99B2CC;  }
+#UploadedTemplatesGrid TR { vertical-align: top; }
+#UploadedTemplatesGrid TEXTAREA { padding:0px; font-family: Arial; width: 100%; height:100%; margin:0px; overflow: auto; border:0px none; background-color: transparent; resize: none; }
 
-#SP-Interview-Container { border-collapse:collapse; border-spacing:0; width:100%; }
-#SP-Interview-Container > TBODY > TR > TD { padding:0px; }
+#SP-Interview-Container { border-collapse: collapse; border-spacing: 0; width: 100%; }
+#SP-Interview-Container > TBODY > TR > TD { padding: 0px; }
 
 body a:link, a:visited, a:active { text-decoration: none; color: #CC0033; }
 body a:hover { text-decoration: underline; }
@@ -44,9 +47,9 @@ a.HeaderLink:link, a.HeaderLink:visited { text-decoration: underline; color: Whi
 a.DataGridHeader:link, a.DataGridHeader:visited, a.DataGridHeader:active { text-decoration: none; color: White; }
 a.DataGridHeader:hover { font-weight: bold; text-decoration: none; }
 
-TR.EditItemStyle * input[type=text] { width:100%; height:100%; box-sizing:border-box; padding:2px; border:0px; }
-TR.EditItemStyle TD { padding-top:1px; padding-bottom:1px;}
-TR.EditItemStyle TD.hd-sp-gridItem { padding:0px; border-width:2px; }
+TR.EditItemStyle * input[type=text] { width: 100%; height: 100%; box-sizing: border-box; padding: 2px; border: 0px; }
+TR.EditItemStyle TD { padding-top: 1px; padding-bottom: 1px; }
+TR.EditItemStyle TD.hd-sp-gridItem { padding: 0px; border-width: 2px; }
 
 /* Data Grid Item */
 .DataGridItem { vertical-align: top; }
@@ -83,3 +86,4 @@ a.DataGridPager:hover { }
 /* Top Banner Images */
 .hd-sp-img-header { background-position: 0px -20px; height: 60px; width: 540px; }
 .hd-sp-img-hds { background-position: -540px -20px; height: 60px; width: 120px; float: right; }
+

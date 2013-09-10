@@ -82,11 +82,14 @@ namespace HotDocs.Sdk.Server.Cloud
 					logRef
 				);
 
+				// Throw an exception if we do not have exactly one interview file.
 				// Although interviewFiles could potentially contain more than one item, the only one we care about is the
 				// first one, which is the HTML fragment. All other items, such as interview definitions (.JS and .DLL files)
 				// or dialog element images are not needed, because we can get them out of the package file instead. 
 				// We enforce this by setting the OmitImages and OmitDefinitions values above, so we will always have exactly one item here.
-				Debug.Assert(interviewFiles.Length == 1); // TODO: Is Assert the right thing to be doing here?
+				if (interviewFiles.Length != 1)
+					throw new Exception();
+				
 				StringBuilder htmlFragment = new StringBuilder(Util.ExtractString(interviewFiles[0]));
 
 				Util.AppendSdkScriptBlock(htmlFragment, template, settings);
@@ -210,25 +213,28 @@ namespace HotDocs.Sdk.Server.Cloud
 			return Util.ExtractString(combinedAnswers);
 		}
 
-		// TODO: Explain why it is not supported (not applicable) and also see if there's something better than an exception so people don't have problems switching from one service type to the other.
 		/// <summary>
-		/// Not supported in HotDocs Cloud Services.
+		/// This method does nothing in the case of HotDocs Cloud Services because the template package already contains all 
+		/// of the interview runtime ("support") files required to display an interview for the template. These files are built
+		/// by HotDocs Developer at the time the package is created, and Cloud Services does not have the ability to re-create them.
 		/// </summary>
 		/// <param name="template"></param>
 		/// <param name="flags"></param>
 		public void BuildSupportFiles(Template template, HDSupportFilesBuildFlags flags)
 		{
-			throw new NotSupportedException("BuildSupportFiles is not applicable to HotDocs Cloud Services.");
+			// no op
 		}
 
-		// TODO: Explain why it is not supported (not applicable) and also see if there's something better than an exception so people don't have problems switching from one service type to the other.
 		/// <summary>
-		/// Not supported in HotDocs Cloud Services.
+		/// This method does nothing in the case of HotDocs Cloud Services because the template package already contains all 
+		/// of the interview runtime ("support") files required to display an interview for the template. These files are built
+		/// by HotDocs Developer at the time the package is created, and Cloud Services simply uses the files from the package
+		/// rather than building and caching them separately.
 		/// </summary>
 		/// <param name="template"></param>
 		public void RemoveSupportFiles(Template template)
 		{
-			throw new NotSupportedException("RemoveSupportFiles is not applicable to HotDocs Cloud Services.");
+			// no op
 		}
 
 		/// <summary>
