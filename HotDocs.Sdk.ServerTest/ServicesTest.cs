@@ -169,13 +169,27 @@ namespace HotDocs.Sdk.ServerTest
 			AssembleDocument(services, template, logRef);
 		}
 
-		private void AssembleDocument(IServices svc, Template tmp, string logRef)
-		{
+		private void AssembleDocument(IServices svc, Template tmp, string logRef) {
 			TextReader answers = new StringReader("");
-			AssembleDocumentResult result = svc.AssembleDocument(tmp, answers, new AssembleDocumentSettings(), logRef);
-			Assert.AreEqual(result.PendingAssemblies.Length, 0);
-		}
+			AssembleDocumentSettings settings = new AssembleDocumentSettings();
+			AssembleDocumentResult result;
 
+			result = svc.AssembleDocument(tmp, answers, settings, logRef);
+			Assert.AreEqual(result.PendingAssemblies.Length, 0);
+			Assert.AreEqual(0, result.Document.SupportingFiles.Length);
+
+			settings.Format = DocumentType.MHTML;
+			result = svc.AssembleDocument(tmp, answers, settings, logRef);
+			Assert.AreEqual(0, result.Document.SupportingFiles.Length); // The MHTML is a single file (no external images).
+
+			settings.Format = DocumentType.HTMLwDataURIs;
+			result = svc.AssembleDocument(tmp, answers, settings, logRef);
+			Assert.AreEqual(0, result.Document.SupportingFiles.Length); // The HTML with Data URIs is a single file (no external images).
+
+			settings.Format = DocumentType.HTML;
+			result = svc.AssembleDocument(tmp, answers, settings, logRef);
+			Assert.AreEqual(1, result.Document.SupportingFiles.Length); // The HTML contains one external image file.
+		}
 
 		#endregion
 

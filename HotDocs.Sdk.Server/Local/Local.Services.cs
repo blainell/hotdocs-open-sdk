@@ -170,7 +170,7 @@ namespace HotDocs.Sdk.Server.Local
 				itvOpts |= hdsi.HDInterviewOptions.intOptNoSave; // Disables (omits) the Save Answers button on the interview toolbar. TODO: Fix TFS #5598 so this actually has an effect.
 			if (settings.RoundTripUnusedAnswers == Tristate.True)
 				itvOpts |= hdsi.HDInterviewOptions.intOptStateless; // Prevents original answer file from being encrypted and sent to the interview and then posted back at the end.
-			
+
 			// Get the interview.
 			InterviewResult result = new InterviewResult();
 			//TODO: Remove the temp folder.
@@ -316,7 +316,7 @@ namespace HotDocs.Sdk.Server.Local
 
 			_app.AssembleDocument(
 				template.GetFullPath(),//Template path
-				hdsi.HDAssemblyOptions.asmOptMarkupView, 
+				hdsi.HDAssemblyOptions.asmOptMarkupView,
 				ansColl,
 				docPath,
 				outputOptions);
@@ -339,17 +339,20 @@ namespace HotDocs.Sdk.Server.Local
 			if (docType == DocumentType.Native)
 			{
 				docType = Document.GetDocumentType(docPath);
-				
-			} else if (docType == DocumentType.HTMLwDataURIs)
+
+			}
+			else if (docType == DocumentType.HTMLwDataURIs)
 			{
 				File.WriteAllText(docPath, Util.EmbedImagesInURIs(docPath));  // Overwrite .html file.  If the consumer requested both HTML and HTMLwDataURIs, they'll only get the latter.
 			}
 			else if (docType == DocumentType.MHTML)
 			{
-				
+
 				string mhtmlFilePath = Path.Combine(Path.GetDirectoryName(docPath), Path.GetFileNameWithoutExtension(docPath) + ".mhtml");
-				File.Create(mhtmlFilePath);
-				File.WriteAllText(mhtmlFilePath, Util.HtmlToMultiPartMime(docPath));
+				using (StreamWriter htmFile = File.CreateText(mhtmlFilePath))
+				{
+					htmFile.Write(Util.HtmlToMultiPartMime(docPath));
+				}
 			}
 			else if (docType == DocumentType.HTML)
 			{
@@ -371,7 +374,7 @@ namespace HotDocs.Sdk.Server.Local
 
 			//Build the list of pending assemblies.
 			List<Template> pendingAssemblies = new List<Template>();
-			for (int i=savePendingAssembliesCount; i < _app.PendingAssemblyCmdLineStrings.Count; i++)
+			for (int i = savePendingAssembliesCount; i < _app.PendingAssemblyCmdLineStrings.Count; i++)
 			{
 				string cmdLine = _app.PendingAssemblyCmdLineStrings[i];
 				string path, switches;

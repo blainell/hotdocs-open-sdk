@@ -126,7 +126,7 @@ namespace HotDocs.Sdk.Server.Cloud
 				MemoryStream document = null;
 				StreamReader ansRdr = null;
 				DocumentType docType = settings.Format;
-				NamedStream[] supportingFiles = null;
+				List<NamedStream> supportingFiles = new List<NamedStream>();
 
 				// Build the list of pending assemblies.
 				List<Template> pendingAssemblies = new List<Template>();
@@ -145,6 +145,12 @@ namespace HotDocs.Sdk.Server.Cloud
 						case OutputFormat.Answers:
 							ansRdr = new StreamReader(new MemoryStream(asmResult.Documents[i].Data));
 							break;
+						case OutputFormat.JPEG:
+						case OutputFormat.PNG:
+							// If the output document is plain HTML, we might also get additional image files in the 
+							// AssemblyResult that we need to pass on to the caller.
+							supportingFiles.Add(new NamedStream(asmResult.Documents[i].FileName, new MemoryStream(asmResult.Documents[i].Data)));
+							break;
 						default:
 							document = new MemoryStream(asmResult.Documents[i].Data);
 							if (docType == DocumentType.Native)
@@ -153,15 +159,12 @@ namespace HotDocs.Sdk.Server.Cloud
 							}
 							break;
 					}
-
-					// TODO: If we are requesting an HTML page, there might be additional images that need to be in the supporting files.
-
-
 				}
+
 				if (document != null)
 				{
 					result = new AssembleDocumentResult(
-						new Document(template, document, docType, supportingFiles, asmResult.UnansweredVariables),
+						new Document(template, document, docType, supportingFiles.ToArray(), asmResult.UnansweredVariables),
 						ansRdr.ReadToEnd(),
 						pendingAssemblies.ToArray(),
 						asmResult.UnansweredVariables
