@@ -38,6 +38,8 @@ public partial class Interview : System.Web.UI.Page
 			// Check the switches in case this assembly resulted from an ASSEMBLE instruction in another template.
 			// In this case, it is possible that the template author indicated that no interview should be asked using a
 			// "/nw" or "/naw" or "/ni" switch. If this is the case, we skip this page and redirect to the disposition page
+			// [LRS:] Also, the WorkSession should have already checked the switches. If one of "/ni", etc. is found, the
+			// session should not even be creating an interview work item at all. So checking them here is redundant.
 			if (ShouldSkipInterviewUI(workItem.Template.Switches))
 				Response.Redirect("Disposition.aspx");
 
