@@ -2,6 +2,12 @@
    Use, modification and redistribution of this source is subject
    to the New BSD License as set out in LICENSE.TXT. */
 
+//TODO: Add XML documentation.
+
+//TODO: This code is referenced from CustomDataService.svc.
+//	That data service is used by the employee recognition letter template.
+// Make sure that this is properly documented.
+
 using System;
 using System.Collections.Generic;
 using System.Data.Services;

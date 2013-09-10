@@ -2,11 +2,9 @@
    Use, modification and redistribution of this source is subject
    to the New BSD License as set out in LICENSE.TXT. */
 
+//TODO: Add XML comments.
+
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Web;
 using System.IO;
 
 namespace SamplePortal
@@ -32,6 +30,7 @@ namespace SamplePortal
 			return workSession;
 		}
 
+		//TODO: This needs to be called but is not called.
 		public static void RetireWorkSession(System.Web.SessionState.HttpSessionState session)
 		{
 			HotDocs.Sdk.Server.WorkSession workSession = (HotDocs.Sdk.Server.WorkSession)session["HdSession"];
