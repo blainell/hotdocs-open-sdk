@@ -346,7 +346,22 @@ namespace HotDocs.Sdk.Server
 			}
 
 			#endregion
-		};
+		}
+
+		/// <summary>
+		/// Reads the bytes from a text reader and returns them in a BinaryObject.
+		/// </summary>
+		/// <param name="textReader">A text reader.</param>
+		/// <returns>A BinaryObject containing the contents of the text reader.</returns>
+		public static BinaryObject GetBinaryObjectFromTextReader(TextReader textReader)
+		{
+			string allText = textReader.ReadToEnd();
+			return new BinaryObject
+			{
+				Data = Encoding.UTF8.GetBytes(allText),
+				DataEncoding = "UTF-8"
+			};
+		}
 
 		/// <summary>
 		/// This method returns the requested runtime file from the ServerFiles cache. If the file can be found in either the cache or the

@@ -198,25 +198,15 @@ namespace HotDocs.Sdk.Server.Cloud
 		/// <returns>The consolidated XML answer collection.</returns>
 		public string GetAnswers(IEnumerable<System.IO.TextReader> answers, string logRef)
 		{
-			string result = "";
-			using (var client = new SoapClient(_subscriberID, _signingKey))
+			BinaryObject combinedAnswers;
+			using (SoapClient client = new SoapClient(_subscriberID, _signingKey))
 			{
-				//TODO: use new GetBinaryObjectFromTextReader here
-				BinaryObject[] answersObj = new BinaryObject[answers.Count()];
-				int i = 0;
-				foreach (TextReader tr in answers)
-				{
-					answersObj[i++] = new BinaryObject
-					{
-						Data = Encoding.UTF8.GetBytes(tr.ReadToEnd()),
-						DataEncoding = "UTF-8"
-					};
-				}
-
-				result = Util.ExtractString(client.GetAnswers(answersObj, logRef));
+				var answerObjects = (from answer in answers select Util.GetBinaryObjectFromTextReader(answer)).ToArray();
+				combinedAnswers = client.GetAnswers(answerObjects, logRef);
 			}
-			return result;
+			return Util.ExtractString(combinedAnswers);
 		}
+
 		// TODO: Explain why it is not supported (not applicable) and also see if there's something better than an exception so people don't have problems switching from one service type to the other.
 		/// <summary>
 		/// Not supported in HotDocs Cloud Services.

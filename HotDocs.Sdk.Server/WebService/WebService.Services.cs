@@ -67,7 +67,7 @@ namespace HotDocs.Sdk.Server.WebService
 				string fileName = GetRelativePath(template.GetFullPath());
 				interviewFiles = client.GetInterview(
 					fileName,
-					answers == null ? null : new BinaryObject[] { GetBinaryObjectFromTextReader(answers) }, // answers
+					answers == null ? null : new BinaryObject[] { Util.GetBinaryObjectFromTextReader(answers) }, // answers
 					settings.Format,
 					itvOpts,
 					markedVariables != null ? markedVariables.ToArray<string>() : null, // variables to highlight as unanswered
@@ -101,7 +101,7 @@ namespace HotDocs.Sdk.Server.WebService
 				string fileName = GetRelativePath(template.GetFullPath());
 				asmResult = client.AssembleDocument(
 					fileName,
-					answers == null ? null : new BinaryObject[] { GetBinaryObjectFromTextReader(answers) }, // answers
+					answers == null ? null : new BinaryObject[] { Util.GetBinaryObjectFromTextReader(answers) }, // answers
 					outputFormat,
 					assemblyOptions,
 					null);
@@ -131,7 +131,7 @@ namespace HotDocs.Sdk.Server.WebService
 			BinaryObject combinedAnswers;
 			using (Proxy client = new Proxy(_endPointName))
 			{
-				var answerObjects = (from answer in answers select GetBinaryObjectFromTextReader(answer)).ToArray();
+				var answerObjects = (from answer in answers select Util.GetBinaryObjectFromTextReader(answer)).ToArray();
 				combinedAnswers = client.GetAnswers(answerObjects);
 				SafeCloseClient(client);
 			}
@@ -207,16 +207,6 @@ namespace HotDocs.Sdk.Server.WebService
 				client.Abort();
 				throw;
 			}
-		}
-
-		BinaryObject GetBinaryObjectFromTextReader(TextReader textReader)
-		{
-			string allText = textReader.ReadToEnd();
-			return new BinaryObject
-					{
-						Data = Encoding.UTF8.GetBytes(allText),
-						DataEncoding = "UTF-8"
-					};
 		}
 
 		OutputFormat ConvertFormat(DocumentType docType)
