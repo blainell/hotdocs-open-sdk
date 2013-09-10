@@ -47,8 +47,7 @@ namespace HotDocs.Sdk.Server.WebService
 				settings = new InterviewSettings();
 
 			// Add the query string to the interview image url so dialog element images can be located.
-			//TODO: decide whether to use the CreateLocator method on template.Location and remove the &tfn and &src query string parameters
-			settings.InterviewImageUrlQueryString = "?loc=" + template.CreateLocator() + "&src=I&img=";
+			settings.InterviewImageUrlQueryString = "?loc=" + template.CreateLocator() + "&img=";
 
 			// Configure interview options
 			InterviewOptions itvOpts = InterviewOptions.OmitImages; // Instructs HDS not to return images used by the interview; we'll get them ourselves from the template folder.

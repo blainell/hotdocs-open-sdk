@@ -122,22 +122,23 @@ public partial class Templates : System.Web.UI.Page
 
 	protected void LinkButton1_Click(object sender, EventArgs e)
 	{
-		// This will create an ".uploadconfig" file consisting of a site name and url, which HotDocs Developer will use to
-		// automatically set up a command in the "Upload" menu for this site.
-		using (MemoryStream mStream = new MemoryStream())
-		{
-			// The "uploadconfig" file is a simple text file with the site name on the first line and the upload URL on the second line.
-			TextWriter tw = new StreamWriter(mStream);
-			tw.WriteLine(_siteName);
-			tw.WriteLine(lblUploadURL.Text);
-			tw.Flush();
+		// This will create an ".uploadconfig" file, which HotDocs Developer will use to automatically
+		// set up a command in the "Upload" menu for this site. The "uploadconfig" file is a simple text file
+		// with the site name on the first line and the upload URL on the second line.
 
-			Response.Clear();
-			Response.AddHeader("Content-Disposition", "attachment; filename=config.hduploadconfig");
-			Response.AddHeader("Content-Length", mStream.Length.ToString()); // fInfo.Length.ToString());
-			Response.ContentType = Util.GetMimeType("config.hduploadconfig");
-			Response.BinaryWrite(mStream.ToArray()); // TODO: Use mStream.CopyTo(Response.OutputStream) instead?
-			Response.End();
+		string configFileName = "config.hduploadconfig";
+
+		Response.Clear();
+		Response.AddHeader("Content-Disposition", "attachment; filename=" + configFileName);
+		Response.ContentType = HotDocs.Sdk.Util.GetMimeType(configFileName);
+
+		using (TextWriter tw = new StreamWriter(Response.OutputStream))
+		{
+			tw.WriteLine(_siteName); // Name of the site (as found in web.config)
+			tw.WriteLine(lblUploadURL.Text); // Url of the upload page, as determined in the Page_Load method above.
+			tw.Flush();
 		}
+
+		Response.End();
 	}
 }
