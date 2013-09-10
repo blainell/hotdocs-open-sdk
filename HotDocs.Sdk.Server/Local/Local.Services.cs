@@ -425,7 +425,7 @@ namespace HotDocs.Sdk.Server.Local
 		}
 
 		#endregion
-
+		//TODO: Move this to HotDocs.Sdk.Template?
 		private string GetDocExtension(Template template, DocumentType docType)
 		{
 			string ext = "";
