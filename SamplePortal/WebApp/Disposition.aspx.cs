@@ -2,6 +2,7 @@
    Use, modification and redistribution of this source is subject
    to the New BSD License as set out in LICENSE.TXT. */
 
+using SamplePortal;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -9,12 +10,11 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Web.UI.WebControls;
-using SamplePortal;
 
 public partial class Disposition : System.Web.UI.Page
 {
 	protected HotDocs.Sdk.Server.WorkSession _session;
-	public string _siteName = Settings.SiteName;
+	protected string _siteName = Settings.SiteName;
 
 	protected void Page_Load(object sender, EventArgs e)
 	{

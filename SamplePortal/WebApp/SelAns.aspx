@@ -34,6 +34,7 @@
 						<p>
 							Either select one of these, and click Continue...<br />
 						</p>
+						<!-- TODO: Use CSS classes in this table instead of hard-coding styles. -->
 						<table>
 							<tr>
 								<td style="width:16px;">&nbsp;</td>

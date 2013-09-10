@@ -2,6 +2,8 @@
    Use, modification and redistribution of this source is subject
    to the New BSD License as set out in LICENSE.TXT. */
 
+//TODO: Add XML documentation.
+
 using System;
 using System.IO;
 
@@ -174,6 +176,7 @@ namespace SamplePortal
 
 		public static void SweepTempDirectories()
 		{
+			//TODO: Are we sweeping the right folders?
 			SweepDirectory(Settings.DocPath, 60);
 			SweepDirectory(Path.Combine(Settings.AnswerPath, Settings.TempRelPath), 60);
 		}

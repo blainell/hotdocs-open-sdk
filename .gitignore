@@ -21,7 +21,6 @@ HotDocs.SdkTest/obj
 SamplePortal/Docs
 SamplePortal/Installs
 SamplePortal/WebApp/Bin
-SamplePortal/Files/Templates/*
 SamplePortal/Files/Documents/*
 SamplePortal/Files/Cache/*
 SamplePortal/Files/Answers/*

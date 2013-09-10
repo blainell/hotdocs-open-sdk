@@ -70,7 +70,7 @@ namespace HotDocs.Sdk.Server
 			DefaultInterviewOptions = new InterviewSettings();
 			// add the work items
 			_workItems = new List<WorkItem>();
-			if (template.SwitchesAllowInterview)
+			if (template.HasInterview)
 				_workItems.Add(new InterviewWorkItem(template.FileName, template));
 			if (template.GeneratesDocument)
 				_workItems.Add(new DocumentWorkItem(template.FileName, template));
@@ -295,7 +295,7 @@ namespace HotDocs.Sdk.Server
 			int insertPosition = parentPosition + 1;
 			foreach (var template in templates)
 			{
-				if (template.SwitchesAllowInterview)
+				if (template.HasInterview)
 					_workItems.Insert(insertPosition++, new InterviewWorkItem(template.FileName, template));
 				if (template.GeneratesDocument)
 					_workItems.Insert(insertPosition++, new DocumentWorkItem(template.FileName, template));

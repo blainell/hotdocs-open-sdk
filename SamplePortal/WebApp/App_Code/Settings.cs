@@ -2,10 +2,10 @@
    Use, modification and redistribution of this source is subject
    to the New BSD License as set out in LICENSE.TXT. */
 
+//TODO: Add XML comments.
+
 using System;
 using System.Configuration;
-using System.Data.SqlClient;
-using System.Data;
 using System.IO;
 
 namespace SamplePortal
@@ -36,6 +36,7 @@ namespace SamplePortal
 		/// This is the type of HotDocs engine that will service requests. It can be either a local instance of 
 		/// HotDocs Server (LOCAL), the HotDocs Server Web Service (WS), or HotDocs Cloud Services (CLOUD).
 		/// </summary>
+		//TODO: This is redundant with the same property in SamplePortal.Factory. Should one call the other?
 		public static HotDocs.Sdk.Server.HdProtocol HdsRoute
 		{
 			get
@@ -176,6 +177,7 @@ namespace SamplePortal
 			get { return GetRootedPath(GetSettingOrDefault("CachePath", "Cache")); }
 		}
 
+		//TODO: Not used?
 		public static bool AssembleHPTToPDF
 		{
 			get { return GetSettingOrDefault("AssembleHPTToPDF", true); }

@@ -3,6 +3,7 @@
    to the New BSD License as set out in LICENSE.TXT. */
 
 //TODO: Add XML documentation.
+//TODO: Make sure all files and folders created here are properly removed. Is Disposed always called?
 using System;
 using System.Collections.Generic;
 using System.IO;

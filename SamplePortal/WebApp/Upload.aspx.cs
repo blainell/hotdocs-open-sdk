@@ -2,20 +2,21 @@
    Use, modification and redistribution of this source is subject
    to the New BSD License as set out in LICENSE.TXT. */
 
+using SamplePortal;
+using SamplePortal.Data;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Web;
-using System.Web.UI;
-using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
-using SamplePortal;
-using SamplePortal.Data;
-
 
 public partial class Upload : System.Web.UI.Page
 {
-	public string _siteName = Settings.SiteName;
+	private int TotalNumTemplates = -1;
+	private int RemainingTemplates = -1;
+	private int _gridSize = -1;
+
+	protected string _siteName = Settings.SiteName;
 
 	private List<UploadItem> ConflictUploadItems
 	{
@@ -58,11 +59,7 @@ public partial class Upload : System.Web.UI.Page
 			Session["CanceledUploadItems"] = value;
 		}
 	}
-
-	private int TotalNumTemplates = -1;
-	private int RemainingTemplates = -1;
-
-	private int _gridSize = -1;
+	
 	private int GridSize
 	{
 		get
@@ -108,7 +105,7 @@ public partial class Upload : System.Web.UI.Page
 			for (int i = 0; i < GridSize; i++)
 			{
 				System.Web.UI.HtmlControls.HtmlTableRow tr = new System.Web.UI.HtmlControls.HtmlTableRow();
-
+				// TODO: Use CSS classes for styling rather than hard-coded values here.
 
 				tr.VAlign = "Top";
 				System.Web.UI.HtmlControls.HtmlTableCell tc;
@@ -216,11 +213,11 @@ public partial class Upload : System.Web.UI.Page
 					FileInfo finfo = new FileInfo(postedFile.FileName);
 					if (finfo.Extension.ToLower() != ".xml")
 					{
-						string packageid = System.IO.Path.GetFileNameWithoutExtension(postedFile.FileName);
+						string packageid = Path.GetFileNameWithoutExtension(postedFile.FileName);
 						string filename = Path.Combine(Settings.TemplatePath, packageid + ".pkg");
 						if (!string.IsNullOrEmpty(packageid))
 						{
-							System.IO.FileStream fs = System.IO.File.OpenWrite(filename);
+							FileStream fs = File.OpenWrite(filename);
 							postedFile.InputStream.CopyTo(fs);
 							fs.Close();
 
@@ -232,39 +229,44 @@ public partial class Upload : System.Web.UI.Page
 
 								/// LibraryPath is an optional field that is intended to give this portal an indication
 								/// of where the current template was stored in the user's HotDocs library on the desktop. 
-								/// This sample cloud portal application does not save this value, and it is included
+								/// This Sample Portal application does not save this value, and it is included
 								/// here as sample code.
 								LibraryPath = Request.Form["HD_Library_Path" + templateIndex],
 
 								/// CommandLineSwitches is an optional field that contains any command line parameters
 								/// that were used for the current template with the desktop HotDocs software. This 
-								/// sample cloud portal application does not save this value, and it is included here 
+								/// Sample Portal application does not save this value, and it is included here 
 								/// as sample code because these command line parameters may be of use.
+								// TODO: Make use of this value in Sample Portal
 								CommandLineSwitches = Request.Form["HD_Template_CommandLineSwitches" + templateIndex],
 
 								/// ItemType can be an HD11+ template, a file, or a URL. HotDocs 11 (and later) 
 								/// sets this field, and HotDocs 10 does not set this field.  The current 
 								/// Asp.Net web app could distinguish between HotDocs 11 templates and HotDocs 10 
 								/// templates by examining this field to be non-empty for HotDocs 11 and empty 
-								/// for HotDocs 10. This sample cloud portal application does not save this value, 
+								/// for HotDocs 10. This Sample Portal application does not save this value, 
 								/// and it is included here as sample code.
+								// TODO: Make use of this value in Sample Portal
 								ItemType = Request.Form["HD_Template_UploadItemType" + templateIndex],
 
 								/// ExpirationDate is an optional field that gives publishers the option of specifying
-								/// a date when the current template will expire. This sample cloud portal application 
+								/// a date when the current template will expire. This Sample Portal application 
 								/// does not save this value, and it is included here as sample code. 
+								// TODO: Make use of this value in Sample Portal
 								ExpirationDate = Request.Form["HD_Template_Expiration_Date" + templateIndex],
 
 								/// ExpirationWarningDays is an optional field used in conjunction with ExpirationDate 
 								/// that allows the user to be warned that the current template will expire the given 
-								/// number of days before the expireation date. This sample cloud portal application 
+								/// number of days before the expireation date. This Sample Portal application 
 								/// does not save this value, and it is included here as sample code.
+								// TODO: Make use of this value in Sample Portal
 								ExpirationWarningDays = Request.Form["HD_Template_Warning_Days" + templateIndex],
 
 								/// ExpirationExtensionDays is an optional field used in conjunction with ExpirationDate 
 								/// that allows the user to continue using the current template after the given 
-								/// expiration date has passed. This sample cloud portal application does not save this 
+								/// expiration date has passed. This Sample Portal application does not save this 
 								/// value, and it is included here as sample code.
+								// TODO: Make use of this value in Sample Portal
 								ExpirationExtensionDays = Request.Form["HD_Template_Extension_Days" + templateIndex],
 								PackageID = packageid,
 								FullFilePath = filename
@@ -286,7 +288,7 @@ public partial class Upload : System.Web.UI.Page
 					else
 					{
 						string filename = Path.Combine(Settings.TemplatePath, finfo.Name);
-						System.IO.FileStream fs = System.IO.File.OpenWrite(filename);
+						FileStream fs = File.OpenWrite(filename);
 						postedFile.InputStream.CopyTo(fs);
 						fs.Close();
 					}

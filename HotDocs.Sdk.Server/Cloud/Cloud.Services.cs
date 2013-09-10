@@ -59,10 +59,11 @@ namespace HotDocs.Sdk.Server.Cloud
 			// Validate input parameters, creating defaults as appropriate.
 			if (settings == null)
 				settings = new InterviewSettings();
-				// TODO: Store the template locator in a local variable and use it in the two places below. Or use the Template.Location.CreateLocator() for the image
-				// url query string and omit the template.FileName as well. The stateString in the html fragment would remain as template.CreateLocator.
+
+			string templateLocator = template.CreateLocator();
+
 			// Add the query string to the interview image url so dialog element images can be located.
-			settings.InterviewImageUrlQueryString = "?loc=" + template.CreateLocator() + "&src=I&img=";
+			settings.InterviewImageUrlQueryString = "?loc=" + templateLocator + "&img=";
 
 			// Configure interview settings
 			settings.Settings["OmitImages"] = "true"; // Instructs HDS not to return images used by the interview; we'll get them ourselves from the template folder.
@@ -92,7 +93,7 @@ namespace HotDocs.Sdk.Server.Cloud
 				result.HtmlFragment = htmlFragment.ToString();
 
 				// Replace the state string in the html fragment with a template locator.
-				result.HtmlFragment = Regex.Replace(result.HtmlFragment, "stateString=[^&]+", "stateString=" + template.CreateLocator());
+				result.HtmlFragment = Regex.Replace(result.HtmlFragment, "stateString=[^&]+", "stateString=" + templateLocator);
 			}
 
 			return result;

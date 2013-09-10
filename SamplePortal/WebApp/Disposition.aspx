@@ -32,7 +32,8 @@
 					<td>
 						<asp:Panel ID="pnlError" runat="server" Visible="False">
 							<p>
-								<strong><span style="color:#cc0033">Error:</span></strong>
+								<!-- TODO: Use a CSS class here instead of hard-coding the color value. -->
+								<strong><span style="color: #cc0033">Error:</span></strong>
 								<br />
 								<asp:Label ID="lblError" runat="server">Label</asp:Label>
 							</p>
@@ -46,7 +47,8 @@
 							</asp:Panel>
 						</p>
 						<p>You may save your answers on the server for later reuse:</p>
-						<table border="0" style="border-collapse:separate; border-spacing:4px;">
+						<!-- TODO: Use CSS classes in this table instead of hard-coding styles. -->
+						<table border="0" style="border-collapse: separate; border-spacing: 4px;">
 							<tr>
 								<td style="WIDTH: 160px">
 									<asp:Label ID="lblTitle" runat="server" Width="152px">Answer Set Title:</asp:Label></td>
@@ -54,7 +56,7 @@
 									<asp:TextBox ID="txtTitle" runat="server" CssClass="InputField" Width="368px"></asp:TextBox></td>
 							</tr>
 							<tr>
-								<td style="WIDTH: 160px; vertical-align:top;">
+								<td style="WIDTH: 160px; vertical-align: top;">
 									<asp:Label ID="lblDesc" runat="server">Answer Set Description:</asp:Label></td>
 								<td>
 									<asp:TextBox ID="txtDescription" runat="server" CssClass="InputField" Height="64px" Width="368px"
@@ -100,7 +102,7 @@
 											<HeaderStyle Width="30px"></HeaderStyle>
 											<ItemStyle VerticalAlign="Middle"></ItemStyle>
 											<ItemTemplate>
-												<div style="text-align:center;">
+												<div style="text-align: center;">
 													<asp:LinkButton ID="btnImgTemplate" runat="server" Width="16" Height="16" CommandName="Download"></asp:LinkButton>
 												</div>
 											</ItemTemplate>

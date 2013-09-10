@@ -2,6 +2,8 @@
    Use, modification and redistribution of this source is subject
    to the New BSD License as set out in LICENSE.TXT. */
 
+//TODO: Put IHttpHandler overrides in a #region block?
+
 using HotDocs.Sdk.Server;
 using System;
 using System.IO;
@@ -57,11 +59,8 @@ namespace SamplePortal
 		/// </summary>
 		public bool IsReusable
 		{
-			get
-			{
-				// This file handler has no state, so the handler can be reused as needed.
-				return true;
-			}
+			// This file handler has no state, so the handler can be reused as needed.
+			get { return true; }
 		}
 	}
 }

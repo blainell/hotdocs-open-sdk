@@ -2,25 +2,17 @@
    Use, modification and redistribution of this source is subject
    to the New BSD License as set out in LICENSE.TXT. */
 
+using SamplePortal;
 using System;
 using System.Data;
-using System.Configuration;
-using System.Web;
-using System.Web.Security;
-using System.Web.UI;
 using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
-using System.Web.UI.HtmlControls;
-using SamplePortal;
-using System.IO;
 
 public partial class _Default : System.Web.UI.Page
 {
 	protected DataView _tplData;
-	HotDocs.Sdk.Server.WorkSession _session;
-
-	public string _siteName = Settings.SiteName;
-	public static string _javascriptUrl = Settings.JavaScriptUrl;
+	protected HotDocs.Sdk.Server.WorkSession _session;
+	protected string _siteName = Settings.SiteName;
+	protected static string _javascriptUrl = Settings.JavaScriptUrl;
 
 	protected void Page_Load(object sender, EventArgs e)
 	{
@@ -106,8 +98,7 @@ public partial class _Default : System.Web.UI.Page
 
 	protected void tplGrid_ItemDataBound(object sender, DataGridItemEventArgs e)
 	{
-		if ((e.Item.ItemType == ListItemType.Item) ||
-				(e.Item.ItemType == ListItemType.AlternatingItem))
+		if (e.Item.ItemType == ListItemType.Item || e.Item.ItemType == ListItemType.AlternatingItem)
 		{
 			LinkButton lnkSelect = (LinkButton)e.Item.Cells[0].Controls[0];
 			lnkSelect.Text = e.Item.Cells[2].Text;
@@ -131,5 +122,5 @@ public partial class _Default : System.Web.UI.Page
 		BindData(null);
 	}
 
-	#endregion	
+	#endregion
 }

@@ -2,7 +2,6 @@
    Use, modification and redistribution of this source is subject
    to the New BSD License as set out in LICENSE.TXT. */
 
-//TODO: Add XML comments where missing.
 //TODO: Add method parameter validation.
 //TODO: Add appropriate unit tests.
 
@@ -65,6 +64,8 @@ namespace HotDocs.Sdk
 	/// </summary>
 	public class Template
 	{
+		private string _title = null;//A cached title when non-null.
+
 		//Constructors
 		/// <summary>
 		/// Construct a Template object.
@@ -221,7 +222,7 @@ namespace HotDocs.Sdk
 		/// Parses command-line switches to inform the host app whether or not
 		/// an interview should be displayed for this template.
 		/// </summary>
-		public bool SwitchesAllowInterview
+		public bool HasInterview
 		{
 			get
 			{
@@ -265,12 +266,5 @@ namespace HotDocs.Sdk
 				return DocumentType.Unknown;
 			}
 		}
-
-		#region Private implementation
-
-		//Private fields
-		private string _title = null;//A cached title when non-null.
-
-		#endregion
 	}
 }

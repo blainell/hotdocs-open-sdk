@@ -2,25 +2,18 @@
    Use, modification and redistribution of this source is subject
    to the New BSD License as set out in LICENSE.TXT. */
 
+using SamplePortal;
 using System;
 using System.Data;
-using System.Configuration;
-using System.Collections;
-using System.Web;
-using System.Web.Security;
-using System.Web.UI;
-using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
-using System.Web.UI.HtmlControls;
-using SamplePortal;
-using SamplePortal.Data;
 using System.IO;
+using System.Web;
+using System.Web.UI.WebControls;
 
 public partial class SelAns : System.Web.UI.Page
 {
 	protected DataView ansData;
 	protected HotDocs.Sdk.Server.WorkSession _session;
-	public string _siteName = Settings.SiteName;
+	protected string _siteName = Settings.SiteName;
 
 	protected void Page_Load(object sender, EventArgs e)
 	{
@@ -30,6 +23,7 @@ public partial class SelAns : System.Web.UI.Page
 			Response.Redirect("Default.aspx");
 
 		//add client-side javascript for managing upload controls
+		// TODO: Should we just put this in an external JavaScript file that is loaded by the page? 
 		if (!ClientScript.IsClientScriptBlockRegistered("OnSelChange"))
 		{
 			System.Text.StringBuilder stb = new System.Text.StringBuilder();

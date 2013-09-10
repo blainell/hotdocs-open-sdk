@@ -129,8 +129,7 @@ namespace HotDocs.Sdk.Server.Local
 				settings = new InterviewSettings();
 
 			// Add the query string to the interview image url so dialog element images can be located.
-			//TODO: Remove the tfn (and src???) variable(s) from the query string.
-			settings.InterviewImageUrlQueryString = "?loc=" + template.CreateLocator() + "&src=I&img=";
+			settings.InterviewImageUrlQueryString = "?loc=" + template.CreateLocator() + "&img=";
 
 			// HotDocs Server reads the following settings out of the registry all the time; therefore these items are ignored when running against Server:
 			//		settings.AddHdMainDiv
