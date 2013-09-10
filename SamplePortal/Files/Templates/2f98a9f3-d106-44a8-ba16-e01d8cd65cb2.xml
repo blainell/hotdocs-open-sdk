@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<packageManifest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" signature="Dt0wG4pTuJeXrEjLxp/OZ/RkYHM=" hotdocsVersion="11.0.1.4417" publishDateTime="2013-07-31T18:55:43Z" xmlns="http://www.hotdocs.com/schemas/package_manifest/2012">
+  <mainTemplate templateId="406ed731-f94f-43c1-a030-5e6d32472d0e" fileName="Demo Life Insurance Application.hpt" effectiveCmpFile="Demo Life Insurance Application.cmp">
+    <title>
+			Life Insurance Application
+		</title>
+    <description>
+			This is the example PDF-based Life Insurance Application template from the HotDocs tutorial.
+		</description>
+    <dependencies>
+      <dependency fileName="Demo Life Insurance Application.cmp" type="baseCmpFile" />
+    </dependencies>
+    <generatedFiles>
+      <file fileName="Demo Life Insurance Application.hpt.js" />
+      <file fileName="Demo Life Insurance Application.hvc" />
+      <file fileName="Demo Life Insurance Application.hpt.dll" />
+      <file fileName="Demo Life Insurance Application.hpt.manifest.xml" />
+    </generatedFiles>
+  </mainTemplate>
+</packageManifest>
