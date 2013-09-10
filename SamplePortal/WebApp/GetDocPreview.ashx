@@ -67,7 +67,7 @@ public class GetDocPreview : IHttpHandler, IRequiresSessionState
 				// The answers were previously POSTed, and the preview was created in the temporary folder. This GET request
 				// will return the actual file. We do not return it as a response to the POST because that causes problems in
 				// certain browsers, especially when returning PDF files. See TFS #5526.
-				
+
 				// Get the document preview type and title from the URL. The URL should look like this: 
 				// http://...GetDocPreview.ashx/type/title
 				// We include the parameters (type and title) in the url rather than in the query string to make IE happy so that it
@@ -129,8 +129,12 @@ public class GetDocPreview : IHttpHandler, IRequiresSessionState
 		}
 	}
 
+	/// <summary>
+	/// Indicates whether another request can reuse this IHttpHandler instance.
+	/// </summary>
 	public bool IsReusable
 	{
+		// This file handler has no state, so the handler can be reused as needed.
 		get { return true; }
 	}
 

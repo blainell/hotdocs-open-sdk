@@ -338,7 +338,7 @@ namespace HotDocs.Sdk
 		/// <summary>
 		/// The query string that will be appended to the base interview image url when images are requested at runtime.
 		/// The interview will append the name of the image being requested to the end of this query string, so it will typically
-		/// end with an equal sign (e.g., ?template=abc.docx&img=).
+		/// end with an equal sign (e.g., ?template=abc.docx&amp;img=).
 		/// </summary>
 		public string InterviewImageUrlQueryString
 		{

@@ -57,11 +57,8 @@ namespace SamplePortal
 		/// </summary>
 		public bool IsReusable
 		{
-			get
-			{
-				// This file handler has no state, so the handler can be reused as needed.
-				return true;
-			}
+			// This file handler has no state, so the handler can be reused as needed.
+			get { return true; }
 		}
 	}
 }
