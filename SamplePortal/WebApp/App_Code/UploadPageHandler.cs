@@ -2,6 +2,8 @@
    Use, modification and redistribution of this source is subject
    to the New BSD License as set out in LICENSE.TXT. */
 
+//TODO: Consider removing this. It is no longer used in this sample.
+
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -2,10 +2,7 @@
    Use, modification and redistribution of this source is subject
    to the New BSD License as set out in LICENSE.TXT. */
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+//TODO: Add XML documentation.
 
 /// <summary>
 /// Summary description for UploadItem
@@ -110,6 +107,5 @@ namespace SamplePortal.Data
 			get;
 			set;
 		}
-
 	}
 }

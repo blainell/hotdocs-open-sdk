@@ -2,6 +2,9 @@
    Use, modification and redistribution of this source is subject
    to the New BSD License as set out in LICENSE.TXT. */
 
+//TODO: Add XML comments where missing.
+//TODO: Consider removing OrigFilename from the schema (AnswerData.xsd).
+
 using System;
 using System.Data;
 using System.IO;
@@ -32,11 +35,6 @@ namespace SamplePortal.Data
 		public void FlushUpdates()
 		{
 			ansData.WriteXml(Path.Combine(Util.SafeDir(Settings.AnswerPath), "index.xml"));
-			//System.IO.FileStream stream = new System.IO.FileStream(Settings.AnswerPath + "index.xml", System.IO.FileMode.Create);
-			//System.Xml.XmlTextWriter xmlWriter = new System.Xml.XmlTextWriter(stream, System.Text.Encoding.UTF8);
-			//xmlWriter.Formatting = System.Xml.Formatting.Indented;
-			//ansData.WriteXml(xmlWriter);
-			//xmlWriter.Close();
 		}
 
 		#region IDisposable Members
@@ -55,6 +53,7 @@ namespace SamplePortal.Data
 			return dv;
 		}
 
+		//TODO: Not used. Remove?
 		public DataView SelectAll(string sortExpression)
 		{
 			return SelectAll(sortExpression, null);
@@ -70,12 +69,14 @@ namespace SamplePortal.Data
 			return dv;
 		}
 
+		//TODO: Not used. Remove?
 		public bool AnswerFileExists(string filename)
 		{
 			DataView dv = SelectFile(filename);
 			return (dv.Count > 0);
 		}
 
+		//TODO: The original file name may not be used (other than being stored here). Consider removing it.
 		public void InsertNewAnswerFile(string filename, string title, string desc, string origFilename)
 		{
 			DataRow newRow = ansData.Answers.NewRow();

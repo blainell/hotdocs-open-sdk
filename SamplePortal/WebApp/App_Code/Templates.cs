@@ -2,10 +2,13 @@
    Use, modification and redistribution of this source is subject
    to the New BSD License as set out in LICENSE.TXT. */
 
+//TODO: Add XML comments.
+//TODO: Remove the Metadata table from TemplateData.xsd.
+
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.IO;
-using System.Collections.Generic;
 
 namespace SamplePortal.Data
 {
@@ -64,6 +67,7 @@ namespace SamplePortal.Data
 			return dv;
 		}
 
+		//TODO: Not used. Remove?
 		public DataView SelectFileLike(string tplname)
 		{
 			DataView dv = new DataView(tplData.Templates);
@@ -71,6 +75,7 @@ namespace SamplePortal.Data
 			return dv;
 		}
 
+		//TODO: Not used. Remove?
 		public DataView SelectAll(string sortExpression)
 		{
 			return SelectAll(sortExpression, null);
@@ -86,6 +91,7 @@ namespace SamplePortal.Data
 			return dv;
 		}
 
+		//TODO: Remove. Metadata table is not used.
 		private DataRowView LoadMetaDataRow(string name)
 		{
 			DataView dv = new DataView(tplData.Metadata);
@@ -104,12 +110,14 @@ namespace SamplePortal.Data
 			return dv.Count > 0 ? dv[0] : null;
 		}
 
+		//TODO: Remove. Metadata table is not used.
 		public bool HasMetadataValue(string name)
 		{
 			DataRowView drv = LoadMetaDataRow(name);
 			return drv != null;
 		}
 
+		//TODO: Remove. Metadata table is not used.
 		public string GetMetadataValue(string name)
 		{
 			DataRowView drv = LoadMetaDataRow(name);
@@ -128,6 +136,7 @@ namespace SamplePortal.Data
 			return val;
 		}
 
+		//TODO: Remove. Metadata table is not used.
 		public void SetMetadataValue(string name, string value)
 		{
 			DataRowView drv = LoadMetaDataRow(name);
@@ -145,16 +154,19 @@ namespace SamplePortal.Data
 			FlushUpdates();
 		}
 
+		//TODO: Remove. Metadata table is not used.
 		public string GetVersion()
 		{
 			return GetMetadataValue("Version");
 		}
 
+		//TODO: Remove. Metadata table is not used.
 		public void SetVersion(string version)
 		{
 			SetMetadataValue("Version", version);
 		}
 
+		//TODO: Not used. Remove?
 		public System.Collections.Generic.IEnumerable<string> GetTemplateFiles()
 		{
 			List<string> items = new List<string>();
@@ -199,12 +211,7 @@ namespace SamplePortal.Data
 		{
 			DataView dv = SelectFile(filename);
 
-
 			string curPkgID = dv[0]["PackageID"].ToString();
-
-
-
-
 
 			if (packageID != null)
 			{
