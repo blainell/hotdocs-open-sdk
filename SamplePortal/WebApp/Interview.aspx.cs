@@ -2,23 +2,17 @@
    Use, modification and redistribution of this source is subject
    to the New BSD License as set out in LICENSE.TXT. */
 
-using System;
-using System.Data;
-using System.Configuration;
-using System.Collections;
-using System.Web;
-using System.Web.Security;
-using System.Web.UI;
-using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
-using System.Web.UI.HtmlControls;
 using SamplePortal;
+using System;
+using System.Configuration;
+using System.Web;
 
 public partial class Interview : System.Web.UI.Page
 {
-	protected HotDocs.Sdk.Server.WorkSession _session;
 	private String _interviewContent;
-	public string _siteName = Settings.SiteName;
+
+	protected HotDocs.Sdk.Server.WorkSession _session;
+	protected string _siteName = Settings.SiteName;
 
 	protected void Page_Load(object sender, EventArgs e)
 	{
@@ -28,14 +22,14 @@ public partial class Interview : System.Web.UI.Page
 		_session = SamplePortal.Factory.GetWorkSession(this.Session);
 		if (_session == null)
 			Response.Redirect("Default.aspx");
-		
+
 		HotDocs.Sdk.Server.WorkItem workItem = _session.CurrentWorkItem;
 		if (!(workItem is HotDocs.Sdk.Server.InterviewWorkItem))
 		{
 			MessageBox.Show("Only interview work items are allowed at the interview page.");
 			return;
 		}
-		
+
 		_interviewContent = "";
 		// Call GetInterview and return the result
 		try
@@ -44,7 +38,7 @@ public partial class Interview : System.Web.UI.Page
 			// Check the switches in case this assembly resulted from an ASSEMBLE instruction in another template.
 			// In this case, it is possible that the template author indicated that no interview should be asked using a
 			// "/nw" or "/naw" or "/ni" switch. If this is the case, we skip this page and redirect to the disposition page
-			if (ShouldSkipInterviewUI(workItem.Template.Switches)) 
+			if (ShouldSkipInterviewUI(workItem.Template.Switches))
 				Response.Redirect("Disposition.aspx");
 
 			// Determine which interview format to use, depending on the values for InterviewFormat and InterviewFallback in web.config.
@@ -54,7 +48,7 @@ public partial class Interview : System.Web.UI.Page
 			{
 				// The interview fallback option only comes into play if the specified format in web.config is Silverlight.
 				// (We never "fallback" to Silverlight since it is the more restrictive interview format; JavaScript will work in any browser.)
-				
+
 				// See if fallback is allowed and then fallback to JavaScript if Silverlight is unavailable.
 				if (Settings.AllowInterviewFallback)
 				{
@@ -63,7 +57,7 @@ public partial class Interview : System.Web.UI.Page
 					if (slCookie != null ? !bool.Parse(Request.Cookies["SilverlightAvailable"].Value) : true)
 						format = HotDocs.Sdk.Server.Contracts.InterviewFormat.JavaScript;
 				}
-				
+
 			}
 
 			// Note for HotDocs host application developers: an informational log entry could be added to a 
