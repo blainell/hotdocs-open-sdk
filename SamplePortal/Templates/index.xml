@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TemplateData xmlns="http://tempuri.org/TemplateData.xsd">
+	<Templates id="demoDOCX">
+		<DateAdded>2/7/2013</DateAdded>
+		<Description>This is the example Employment Agreement from the HotDocs tutorial.</Description>
+		<Filename>Demo Employment Agreement.docx</Filename>
+		<Title>Employment Agreement (Word DOCX version)</Title>
+	</Templates>
+	<Templates id="demo">
+		<DateAdded>2/7/2013</DateAdded>
+		<Description>This is the example Employment Agreement from the HotDocs tutorial.</Description>
+		<Filename>Demo Employment Agreement.rtf</Filename>
+		<Title>Employment Agreement (Word RTF version)</Title>
+	</Templates>
+	<Templates id="demoWPT">
+		<DateAdded>2/7/2013</DateAdded>
+		<Description>This is the example Employment Agreement from the HotDocs tutorial.</Description>
+		<Filename>Demo Employment Agreement.wpt</Filename>
+		<Title>Employment Agreement (WordPerfect version)</Title>
+	</Templates>
+	<Templates id="demoHPT">
+		<DateAdded>2/7/2013</DateAdded>
+		<Description>This is the example PDF-based Life Insurance Application template from the HotDocs tutorial.</Description>
+		<Filename>Demo Life Insurance Application.hpt</Filename>
+		<Title>Life Insurance Application</Title>
+	</Templates>
+</TemplateData>

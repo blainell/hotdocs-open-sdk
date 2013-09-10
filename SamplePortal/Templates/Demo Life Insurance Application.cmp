@@ -1,0 +1,439 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<hd:componentLibrary xmlns:hd="http://www.hotdocs.com/schemas/component_library/2009" version="11">
+	<hd:preferences>
+		<hd:preference name="COMMON_COMPONENT_FILE"></hd:preference>
+		<hd:preference name="CUSTOM_INTERVIEW"></hd:preference>
+		<hd:preference name="DEFAULT DLG TITLE"></hd:preference>
+		<hd:preference name="DISABLE_IRRELEVANT_ANSWERS">False</hd:preference>
+		<hd:preference name="ENABLE_EDIT_ANSWER">True</hd:preference>
+		<hd:preference name="GENERATE_DEFAULT_INTERVIEW">True</hd:preference>
+		<hd:preference name="HELP BUTTON TEXT"></hd:preference>
+		<hd:preference name="HIDE_END_OF_INTERVIEW">False</hd:preference>
+		<hd:preference name="HIDE_INTERVIEW_OUTLINE">False</hd:preference>
+		<hd:preference name="IRREL_VAR_DEFAULT">GRAY</hd:preference>
+		<hd:preference name="MACRO_TEMPLATE_FILE"></hd:preference>
+		<hd:preference name="MARK_ANSWER_FIELDS">True</hd:preference>
+		<hd:preference name="MAX_REPEAT_COUNT">100</hd:preference>
+		<hd:preference name="MAX_STACK_DEPTH">100</hd:preference>
+		<hd:preference name="MOVE TO TYPE HERE">False</hd:preference>
+		<hd:preference name="NO ANSWER FILE">False</hd:preference>
+		<hd:preference name="ONLINE COMPATIBILITY MODE">True</hd:preference>
+		<hd:preference name="POINTED TO CMP"></hd:preference>
+		<hd:preference name="PROCESS_DLGS_WHILE_ASM_DOCS">False</hd:preference>
+		<hd:preference name="REGISTER"></hd:preference>
+		<hd:preference name="REMOVE_ANNOTATIONS">False</hd:preference>
+		<hd:preference name="REMOVE_AUTHOR">False</hd:preference>
+		<hd:preference name="REMOVE_CATEGORY">False</hd:preference>
+		<hd:preference name="REMOVE_CHANGE_TRACKING">False</hd:preference>
+		<hd:preference name="REMOVE_COMMENTS">False</hd:preference>
+		<hd:preference name="REMOVE_COMPANY">False</hd:preference>
+		<hd:preference name="REMOVE_CUSTOM_PROPERTIES">False</hd:preference>
+		<hd:preference name="REMOVE_EDITABLE_TEXT_BOOKMARKS">True</hd:preference>
+		<hd:preference name="REMOVE_HD_ANSWER_MARKS">True</hd:preference>
+		<hd:preference name="REMOVE_HYPERLINK_BASE">False</hd:preference>
+		<hd:preference name="REMOVE_KEYWORDS">False</hd:preference>
+		<hd:preference name="REMOVE_MANAGER">False</hd:preference>
+		<hd:preference name="REMOVE_METAFILES">True</hd:preference>
+		<hd:preference name="REMOVE_PROPERTY_CODES">True</hd:preference>
+		<hd:preference name="REMOVE_REVISION_IDS">True</hd:preference>
+		<hd:preference name="REMOVE_STATISTICS">False</hd:preference>
+		<hd:preference name="REMOVE_SUBJECT">False</hd:preference>
+		<hd:preference name="REMOVE_TITLE">False</hd:preference>
+		<hd:preference name="REMOVE_TRACKED_CHANGES">False</hd:preference>
+		<hd:preference name="SERVER_CAN_CHANGE_INSTANT_UPDATE">True</hd:preference>
+		<hd:preference name="SERVER_CAN_CHANGE_INTERVIEW_OUTLINE">True</hd:preference>
+		<hd:preference name="SERVER_CAN_CHANGE_RESOURCE_PANE">True</hd:preference>
+		<hd:preference name="SERVER_CAN_CHANGE_SINGLE_PAGE_INTERVIEW">False</hd:preference>
+		<hd:preference name="SERVER_INITIAL_INSTANT_UPDATE">True</hd:preference>
+		<hd:preference name="SERVER_INITIAL_INTERVIEW_OUTLINE">True</hd:preference>
+		<hd:preference name="SERVER_INITIAL_RESOURCE_PANE">False</hd:preference>
+		<hd:preference name="SERVER_SINGLE_PAGE_INTERVIEW">False</hd:preference>
+		<hd:preference name="TEMPLATE DESCRIPTION">This is the example PDF-based Life Insurance Application template from the HotDocs tutorial.</hd:preference>
+		<hd:preference name="TEMPLATE TITLE">Life Insurance Application</hd:preference>
+		<hd:preference name="TEMPLATE_ID">406ed731-f94f-43c1-a030-5e6d32472d0e</hd:preference>
+		<hd:preference name="UNANSWERED VAR PLACEHOLDER"></hd:preference>
+		<hd:preference name="UPDATE_TOC">False</hd:preference>
+		<hd:preference name="UPLOAD ALWAYS">False</hd:preference>
+		<hd:preference name="UPLOAD URL DESCRIPTION"></hd:preference>
+		<hd:preference name="UPLOAD URL"></hd:preference>
+		<hd:preference name="USE DEFAULT DLG TITLE ALWAYS">False</hd:preference>
+		<hd:preference name="USE NAMES">False</hd:preference>
+		<hd:preference name="USE_INTERVIEW_COMPUTATION">False</hd:preference>
+		<hd:preference name="USE_SHARED_ANSWERUPLOAD_PROPS">True</hd:preference>
+		<hd:preference name="USE_SHARED_ASSEMBLY_PROPS">True</hd:preference>
+		<hd:preference name="USE_SHARED_HIDDENDATA_PROPS">True</hd:preference>
+		<hd:preference name="USE_SHARED_INTERVIEW_PROPS">True</hd:preference>
+		<hd:preference name="USE_SHARED_SERVER_PROPS">True</hd:preference>
+	</hd:preferences>
+	<hd:components>
+		<hd:text name="Beneficiary Name"/>
+		<hd:text name="Beneficiary Relationship"/>
+		<hd:text name="Beneficiary Telephone Number">
+			<hd:singleLine pattern="(999) 999-9999"/>
+		</hd:text>
+		<hd:text name="Employee City"/>
+		<hd:text name="Employee Email Address"/>
+		<hd:text name="Employee First Name"/>
+		<hd:text name="Employee Last Name"/>
+		<hd:text name="Employee Middle Initial"/>
+		<hd:text name="Employee Primary Telephone Number">
+			<hd:singleLine pattern="(999) 999-9999"/>
+		</hd:text>
+		<hd:text name="Employee Social Security Number">
+			<hd:singleLine pattern="999-99-9999"/>
+		</hd:text>
+		<hd:text name="Employee Street Address"/>
+		<hd:text name="Employee Zip Code"/>
+		<hd:text name="Explain Diabetes">
+			<hd:prompt>NONE</hd:prompt>
+			<hd:multiLine height="3"/>
+		</hd:text>
+		<hd:text name="Explain Heart Trouble">
+			<hd:prompt>NONE</hd:prompt>
+			<hd:multiLine height="3"/>
+		</hd:text>
+		<hd:text name="Explain High Blood Pressure">
+			<hd:prompt>NONE</hd:prompt>
+			<hd:multiLine height="3"/>
+		</hd:text>
+		<hd:text name="Explain Immune Disorder">
+			<hd:prompt>NONE</hd:prompt>
+			<hd:multiLine height="3"/>
+		</hd:text>
+		<hd:text name="Explain Smoking">
+			<hd:prompt>NONE</hd:prompt>
+			<hd:multiLine height="3"/>
+		</hd:text>
+		<hd:text name="Other Remarks">
+			<hd:title>Other Remarks</hd:title>
+			<hd:prompt>Please use the space below to provide additional details, explanations, or other information necessary to establish your insurance eligibility claim:</hd:prompt>
+			<hd:multiLine height="6"/>
+		</hd:text>
+		<hd:number name="Amount of Coverage" decimalPlaces="2" currencySymbol="$">
+			<hd:defFormat>9,999.00</hd:defFormat>
+		</hd:number>
+		<hd:number name="Monthly Contribution to Cash Account" decimalPlaces="2" currencySymbol="$" minimum="10" maximum="50">
+			<hd:defFormat>9,999.00</hd:defFormat>
+		</hd:number>
+		<hd:date name="Employee Birth Date"/>
+		<hd:trueFalse name="Authorization">
+			<hd:title>Authorization and Signature</hd:title>
+			<hd:prompt>I hereby authorize Hobble Creek Publishing, the employer, to deduct from my wages amounts equal to the contributions required of me for Group Insurance under the policy issued to the employer by Hobble Creek Life Insurance Company.</hd:prompt>
+		</hd:trueFalse>
+		<hd:trueFalse name="Diabetes">
+			<hd:prompt>In the past 10 years, I have had or been told that I have diabetes, pneumonia, or disorder of the lymph system.</hd:prompt>
+		</hd:trueFalse>
+		<hd:trueFalse name="Heart Trouble">
+			<hd:prompt>In the past 10 years, I have had or been told that I have chest pains, heart trouble, heart attack, or heart murmur.</hd:prompt>
+		</hd:trueFalse>
+		<hd:trueFalse name="High Blood Pressure">
+			<hd:prompt>In the past 10 years, I have had or been told that I have high blood pressure, cancer, or tumors.</hd:prompt>
+		</hd:trueFalse>
+		<hd:trueFalse name="Immune Disorder">
+			<hd:prompt>In the past 10 years, I have had or been told that I have AIDS, AIDS-related complex, or immune system disorder.</hd:prompt>
+		</hd:trueFalse>
+		<hd:trueFalse name="Smoker">
+			<hd:prompt>I have smoked within the past 12 months.</hd:prompt>
+		</hd:trueFalse>
+		<hd:multipleChoice name="Employee Gender">
+			<hd:options>
+				<hd:option name="Male"/>
+				<hd:option name="Female"/>
+			</hd:options>
+			<hd:singleSelection style="dropDownList"/>
+		</hd:multipleChoice>
+		<hd:multipleChoice name="Employee Marital Status">
+			<hd:options>
+				<hd:option name="Single"/>
+				<hd:option name="Married"/>
+				<hd:option name="Separated"/>
+				<hd:option name="Divorced"/>
+				<hd:option name="Widowed"/>
+			</hd:options>
+		</hd:multipleChoice>
+		<hd:multipleChoice name="Employee State">
+			<hd:options defMergeText="AL/AK/AZ/AR/CA/CO/CT/DE/DC/FL/GA/HI/ID/IL/IN/IA/KS">
+				<hd:option name="Alabama"/>
+				<hd:option name="Alaska"/>
+				<hd:option name="Arizona"/>
+				<hd:option name="Arkansas"/>
+				<hd:option name="California"/>
+				<hd:option name="Colorado"/>
+				<hd:option name="Connecticut"/>
+				<hd:option name="Delaware"/>
+				<hd:option name="District of Columbia"/>
+				<hd:option name="Florida"/>
+				<hd:option name="Georgia"/>
+				<hd:option name="Hawaii"/>
+				<hd:option name="Idaho"/>
+				<hd:option name="Illinois"/>
+				<hd:option name="Indiana"/>
+				<hd:option name="Iowa"/>
+				<hd:option name="Kansas"/>
+				<hd:option name="Kentucky"/>
+				<hd:option name="Louisiana"/>
+				<hd:option name="Maine"/>
+				<hd:option name="Maryland"/>
+				<hd:option name="Massachusetts"/>
+				<hd:option name="Michigan"/>
+				<hd:option name="Minnesota"/>
+				<hd:option name="Mississippi"/>
+				<hd:option name="Missouri"/>
+				<hd:option name="Montana"/>
+				<hd:option name="Nebraska"/>
+				<hd:option name="Nevada"/>
+				<hd:option name="New Hampshire"/>
+				<hd:option name="New Jersey"/>
+				<hd:option name="New Mexico"/>
+				<hd:option name="New York"/>
+				<hd:option name="North Carolina"/>
+				<hd:option name="North Dakota"/>
+				<hd:option name="Ohio"/>
+				<hd:option name="Oklahoma"/>
+				<hd:option name="Oregon"/>
+				<hd:option name="Pennsylvania"/>
+				<hd:option name="Rhode Island"/>
+				<hd:option name="South Carolina"/>
+				<hd:option name="South Dakota"/>
+				<hd:option name="Tennessee"/>
+				<hd:option name="Texas"/>
+				<hd:option name="Utah"/>
+				<hd:option name="Vermont"/>
+				<hd:option name="Virginia"/>
+				<hd:option name="Washington"/>
+				<hd:option name="West Virginia"/>
+				<hd:option name="Wisconsin"/>
+				<hd:option name="Wyoming"/>
+			</hd:options>
+			<hd:singleSelection style="dropDownList"/>
+		</hd:multipleChoice>
+		<hd:computation name="Beneficiary Filter 1" resultType="trueFalse">
+			<hd:script>COUNTER &lt;= 3</hd:script>
+		</hd:computation>
+		<hd:computation name="Beneficiary Filter 2" resultType="trueFalse">
+			<hd:script>COUNTER &gt; 3</hd:script>
+		</hd:computation>
+		<hd:computation name="Employee Age" resultType="number">
+			<hd:script>AGE( Employee Birth Date )</hd:script>
+		</hd:computation>
+		<hd:computation name="Employee LFM Name" resultType="text">
+			<hd:script>Employee Last Name
+RESULT + &quot;, &quot; + Employee First Name
+IF ANSWERED( Employee Middle Initial )
+	RESULT + &quot; &quot; + Employee Middle Initial
+END IF</hd:script>
+		</hd:computation>
+		<hd:dialogElement name="Medical History Explanation">
+			<hd:caption>Check each statement below that applies to you. For each checked statement, explain your answer in the space provided.</hd:caption>
+		</hd:dialogElement>
+		<hd:dialog name="Beneficiary Designation">
+			<hd:style>
+				<hd:spreadsheet/>
+			</hd:style>
+			<hd:contents>
+				<hd:item name="Beneficiary Name"/>
+				<hd:item name="Beneficiary Telephone Number"/>
+				<hd:item name="Beneficiary Relationship"/>
+			</hd:contents>
+		</hd:dialog>
+		<hd:dialog name="Coverage Information">
+			<hd:contents>
+				<hd:item name="Amount of Coverage"/>
+				<hd:item name="Monthly Contribution to Cash Account"/>
+			</hd:contents>
+		</hd:dialog>
+		<hd:dialog name="Employee Information">
+			<hd:contents>
+				<hd:item name="Employee First Name"/>
+				<hd:item name="Employee Middle Initial" onPreviousLine="true"/>
+				<hd:item name="Employee Last Name" onPreviousLine="true"/>
+				<hd:item name="Employee Social Security Number"/>
+				<hd:item name="Employee Birth Date" onPreviousLine="true"/>
+				<hd:item name="Employee Gender" onPreviousLine="true"/>
+				<hd:item name="Employee Marital Status"/>
+				<hd:item name="Employee Street Address"/>
+				<hd:item name="Employee City"/>
+				<hd:item name="Employee State" onPreviousLine="true"/>
+				<hd:item name="Employee Zip Code" onPreviousLine="true"/>
+				<hd:item name="Employee Primary Telephone Number"/>
+				<hd:item name="Employee Email Address"/>
+			</hd:contents>
+		</hd:dialog>
+		<hd:dialog name="Medical History">
+			<hd:contents>
+				<hd:item name="Medical History Explanation"/>
+				<hd:item name="Smoker"/>
+				<hd:item name="Explain Smoking"/>
+				<hd:item name="Heart Trouble"/>
+				<hd:item name="Explain Heart Trouble"/>
+				<hd:item name="High Blood Pressure"/>
+				<hd:item name="Explain High Blood Pressure"/>
+				<hd:item name="Diabetes"/>
+				<hd:item name="Explain Diabetes"/>
+				<hd:item name="Immune Disorder"/>
+				<hd:item name="Explain Immune Disorder"/>
+			</hd:contents>
+			<hd:selectionGrouping type="all"/>
+			<hd:script>GRAY Explain Smoking
+GRAY Explain Heart Trouble
+GRAY Explain High Blood Pressure
+GRAY Explain Diabetes
+GRAY Explain Immune Disorder
+
+IF Smoker
+	UNGRAY Explain Smoking
+END IF
+IF Heart Trouble
+	UNGRAY Explain Heart Trouble
+END IF
+IF High Blood Pressure
+	UNGRAY Explain High Blood Pressure
+END IF
+IF Diabetes
+	UNGRAY Explain Diabetes
+END IF
+IF Immune Disorder
+	UNGRAY Explain Immune Disorder
+END IF
+</hd:script>
+		</hd:dialog>
+		<hd:textFormat name="LIKE THIS" value="LIKE THIS"/>
+		<hd:textFormat name="Like This" value="Like This"/>
+		<hd:textFormat name="Like a This" value="Like a This"/>
+		<hd:textFormat name="Like this" value="Like this"/>
+		<hd:textFormat name="XXX_XX_XXXX" value="XXX_XX_XXXX"/>
+		<hd:textFormat name="like this" value="like this"/>
+		<hd:numberFormat name="09" value="09"/>
+		<hd:numberFormat name="9 1/8" value="9 1/8"/>
+		<hd:numberFormat name="9,999.00" value="9,999.00"/>
+		<hd:numberFormat name="9.9" value="9.9"/>
+		<hd:numberFormat name="9.9.a" value="9.9.a"/>
+		<hd:numberFormat name="9999" value="9999"/>
+		<hd:numberFormat name="9th" value="9th"/>
+		<hd:numberFormat name="IX" value="IX"/>
+		<hd:numberFormat name="NINE" value="NINE"/>
+		<hd:numberFormat name="NONE" value="NONE"/>
+		<hd:numberFormat name="Nine Dollars and Twelve Cents" value="Nine Dollars and Twelve Cents"/>
+		<hd:numberFormat name="ZERO" value="ZERO"/>
+		<hd:numberFormat name="abc" value="abc"/>
+		<hd:numberFormat name="ninth" value="ninth"/>
+		<hd:dateFormat name="03 JUN 90" value="03 JUN 90"/>
+		<hd:dateFormat name="06/03/90" value="06/03/90"/>
+		<hd:dateFormat name="3 June 1990" value="3 June 1990"/>
+		<hd:dateFormat name="3rd day of June, 1990" value="3rd day of June, 1990"/>
+		<hd:dateFormat name="6/3/90" value="6/3/90"/>
+		<hd:dateFormat name="June 3, 1990" value="June 3, 1990"/>
+		<hd:dateFormat name="June 3rd" value="June 3rd"/>
+		<hd:dateFormat name="June Third, One Thousand Nine Hundred Ninety" value="June Third, One Thousand Nine Hundred Ninety"/>
+		<hd:dateFormat name="Sunday" value="Sunday"/>
+		<hd:dateFormat name="Sunday, June 3, 1990" value="Sunday, June 3, 1990"/>
+		<hd:dateFormat name="Third day of June, 1990" value="Third day of June, 1990"/>
+		<hd:trueFalseFormat name="/x" value="/x"/>
+		<hd:trueFalseFormat name="true/false" value="true/false"/>
+		<hd:trueFalseFormat name="x/" value="x/"/>
+		<hd:trueFalseFormat name="yes/no" value="yes/no"/>
+		<hd:multipleChoiceFormat name="AL/AK/AZ/AR/CA/CO/CT/DE/DC/FL/GA/HI/ID/IL/IN/IA/KS">
+			<hd:choice>AL</hd:choice>
+			<hd:choice>AK</hd:choice>
+			<hd:choice>AZ</hd:choice>
+			<hd:choice>AR</hd:choice>
+			<hd:choice>CA</hd:choice>
+			<hd:choice>CO</hd:choice>
+			<hd:choice>CT</hd:choice>
+			<hd:choice>DE</hd:choice>
+			<hd:choice>DC</hd:choice>
+			<hd:choice>FL</hd:choice>
+			<hd:choice>GA</hd:choice>
+			<hd:choice>HI</hd:choice>
+			<hd:choice>ID</hd:choice>
+			<hd:choice>IL</hd:choice>
+			<hd:choice>IN</hd:choice>
+			<hd:choice>IA</hd:choice>
+			<hd:choice>KS</hd:choice>
+			<hd:choice>KY</hd:choice>
+			<hd:choice>LA</hd:choice>
+			<hd:choice>ME</hd:choice>
+			<hd:choice>MD</hd:choice>
+			<hd:choice>MA</hd:choice>
+			<hd:choice>MI</hd:choice>
+			<hd:choice>MN</hd:choice>
+			<hd:choice>MS</hd:choice>
+			<hd:choice>MO</hd:choice>
+			<hd:choice>MT</hd:choice>
+			<hd:choice>NE</hd:choice>
+			<hd:choice>NV</hd:choice>
+			<hd:choice>NH</hd:choice>
+			<hd:choice>NJ</hd:choice>
+			<hd:choice>NM</hd:choice>
+			<hd:choice>NY</hd:choice>
+			<hd:choice>NC</hd:choice>
+			<hd:choice>ND</hd:choice>
+			<hd:choice>OH</hd:choice>
+			<hd:choice>OK</hd:choice>
+			<hd:choice>OR</hd:choice>
+			<hd:choice>PA</hd:choice>
+			<hd:choice>RI</hd:choice>
+			<hd:choice>SC</hd:choice>
+			<hd:choice>SD</hd:choice>
+			<hd:choice>TN</hd:choice>
+			<hd:choice>TX</hd:choice>
+			<hd:choice>UT</hd:choice>
+			<hd:choice>VT</hd:choice>
+			<hd:choice>VA</hd:choice>
+			<hd:choice>WA</hd:choice>
+			<hd:choice>WV</hd:choice>
+			<hd:choice>WI</hd:choice>
+			<hd:choice>WY</hd:choice>
+		</hd:multipleChoiceFormat>
+		<hd:multipleChoiceFormat name="he/she">
+			<hd:choice>he</hd:choice>
+			<hd:choice>she</hd:choice>
+		</hd:multipleChoiceFormat>
+		<hd:multipleChoiceFormat name="he/she/they">
+			<hd:choice>he</hd:choice>
+			<hd:choice>she</hd:choice>
+			<hd:choice>they</hd:choice>
+		</hd:multipleChoiceFormat>
+		<hd:multipleChoiceFormat name="him/her">
+			<hd:choice>him</hd:choice>
+			<hd:choice>her</hd:choice>
+		</hd:multipleChoiceFormat>
+		<hd:multipleChoiceFormat name="him/her/them">
+			<hd:choice>him</hd:choice>
+			<hd:choice>her</hd:choice>
+			<hd:choice>them</hd:choice>
+		</hd:multipleChoiceFormat>
+		<hd:multipleChoiceFormat name="his/her">
+			<hd:choice>his</hd:choice>
+			<hd:choice>her</hd:choice>
+		</hd:multipleChoiceFormat>
+		<hd:multipleChoiceFormat name="his/her/their">
+			<hd:choice>his</hd:choice>
+			<hd:choice>her</hd:choice>
+			<hd:choice>their</hd:choice>
+		</hd:multipleChoiceFormat>
+		<hd:multipleChoiceFormat name="his/hers">
+			<hd:choice>his</hd:choice>
+			<hd:choice>hers</hd:choice>
+		</hd:multipleChoiceFormat>
+		<hd:multipleChoiceFormat name="his/hers/theirs">
+			<hd:choice>his</hd:choice>
+			<hd:choice>hers</hd:choice>
+			<hd:choice>theirs</hd:choice>
+		</hd:multipleChoiceFormat>
+		<hd:listFormat name="A, B AND C" value="A, B AND C"/>
+		<hd:listFormat name="A, B and C" value="A, B and C"/>
+		<hd:listFormat name="A, b and c" value="A, b and c"/>
+		<hd:listFormat name="a, and b" value="a, and b"/>
+		<hd:listFormat name="a, b" value="a, b"/>
+		<hd:listFormat name="a, b and c" value="a, b and c"/>
+		<hd:listFormat name="a, b or c" value="a, b or c"/>
+		<hd:listFormat name="a, b, and c" value="a, b, and c"/>
+		<hd:listFormat name="a; b; and c" value="a; b; and c"/>
+		<hd:textPattern name="(999) 999-9999"/>
+		<hd:textPattern name="999-99-9999"/>
+		<hd:textPattern name="99:99"/>
+		<hd:textPattern name="99:99 a.m."/>
+		<hd:textPattern name="99:99 am"/>
+	</hd:components>
+</hd:componentLibrary>

@@ -1,0 +1,107 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{27B46F42-8009-4084-BE76-781FA4242FD2}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>HotDocs.Sdk.Server</RootNamespace>
+    <AssemblyName>HotDocs.Sdk.Server</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>
+    </DocumentationFile>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Release\HotDocs.Sdk.Server.XML</DocumentationFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="HotDocs.Server, Version=11.0.0.0, Culture=neutral, PublicKeyToken=5c9e421a71201d26, processorArchitecture=MSIL">
+      <HintPath>Local\Bin\HotDocs.Server.dll</HintPath>
+    </Reference>
+    <Reference Include="HotDocs.Server.Interop, Version=11.0.0.0, Culture=neutral, PublicKeyToken=ca70e7f08f398355, processorArchitecture=MSIL">
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+      <HintPath>Local\Bin\HotDocs.Server.Interop.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Cloud\Cloud.Services.cs" />
+    <Compile Include="WebService\WebService.Services.cs" />
+    <Compile Include="WorkSession.cs" />
+    <Compile Include="AssembleDocumentResult.cs" />
+    <Compile Include="Document.cs" />
+    <Compile Include="Factory.cs" />
+    <Compile Include="InterviewResult.cs" />
+    <Compile Include="IServices.cs" />
+    <Compile Include="Local\Local.Services.cs" />
+    <Compile Include="Local\Local.TempFolder.cs" />
+    <Compile Include="NamedStream.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Util.cs" />
+    <Compile Include="WebService\Proxy.cs" />
+    <Compile Include="WorkItem.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\HotDocs.Sdk.Cloud\HotDocs.Sdk.Cloud.csproj">
+      <Project>{6fed07cd-d7af-4243-b442-865a413940dc}</Project>
+      <Name>HotDocs.Sdk.Cloud</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\HotDocs.Sdk.Server.Contracts\HotDocs.Sdk.Server.Contracts.csproj">
+      <Project>{674CC9E2-6C1A-4506-89C6-A541B1920AE5}</Project>
+      <Name>HotDocs.Sdk.Server.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\HotDocs.Sdk\HotDocs.Sdk.csproj">
+      <Project>{ACCCCF7A-E7C7-4730-90E8-1122AB01C4BD}</Project>
+      <Name>HotDocs.Sdk</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

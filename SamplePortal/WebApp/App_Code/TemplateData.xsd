@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="TemplateData" targetNamespace="http://tempuri.org/TemplateData.xsd" xmlns:mstns="http://tempuri.org/TemplateData.xsd" xmlns="http://tempuri.org/TemplateData.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:msprop="urn:schemas-microsoft-com:xml-msprop" attributeFormDefault="qualified" elementFormDefault="qualified">
+  <xs:annotation>
+    <xs:appinfo source="urn:schemas-microsoft-com:xml-msdatasource">
+      <DataSource DefaultConnectionIndex="0" FunctionsComponentName="QueriesTableAdapter" Modifier="AutoLayout, AnsiClass, Class, Public" SchemaSerializationMode="IncludeSchema" xmlns="urn:schemas-microsoft-com:xml-msdatasource">
+        <Connections />
+        <Tables />
+        <Sources />
+      </DataSource>
+    </xs:appinfo>
+  </xs:annotation>
+  <xs:element name="TemplateData" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:Generator_DataSetName="TemplateData" msprop:Generator_UserDSName="TemplateData">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="Templates" 
+		msprop:Generator_TableClassName="TemplatesDataTable" 
+		msprop:Generator_TableVarName="tableTemplates" 
+		msprop:Generator_TablePropName="Templates" 
+		msprop:Generator_RowDeletingName="TemplatesRowDeleting" 
+		msprop:Generator_UserTableName="Templates" 
+		msprop:Generator_RowChangingName="TemplatesRowChanging" msprop:Generator_RowEvHandlerName="TemplatesRowChangeEventHandler" 
+		msprop:Generator_RowDeletedName="TemplatesRowDeleted" 
+		msprop:Generator_RowEvArgName="TemplatesRowChangeEvent" 
+		msprop:Generator_RowChangedName="TemplatesRowChanged" 
+		msprop:Generator_RowClassName="TemplatesRow">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Filename" msprop:Generator_ColumnVarNameInTable="columnFilename" msprop:Generator_ColumnPropNameInRow="Filename" msprop:Generator_ColumnPropNameInTable="FilenameColumn" msprop:Generator_UserColumnName="Filename" type="xs:string" />
+              <xs:element name="Title" msprop:Generator_ColumnVarNameInTable="columnTitle" msprop:Generator_ColumnPropNameInRow="Title" msprop:Generator_ColumnPropNameInTable="TitleColumn" msprop:Generator_UserColumnName="Title" type="xs:string" minOccurs="0" />
+              <xs:element name="Description" msprop:Generator_ColumnVarNameInTable="columnDescription" msprop:Generator_ColumnPropNameInRow="Description" msprop:Generator_ColumnPropNameInTable="DescriptionColumn" msprop:Generator_UserColumnName="Description" type="xs:string" minOccurs="0" />
+              <xs:element name="DateAdded" msprop:Generator_ColumnVarNameInTable="columnDateAdded" msprop:Generator_ColumnPropNameInRow="DateAdded" msprop:Generator_ColumnPropNameInTable="DateAddedColumn" msprop:Generator_UserColumnName="DateAdded" type="xs:string" minOccurs="0" />
+              <xs:element name="PackageID" msprop:Generator_ColumnVarNameInTable="columnPackageID" msprop:Generator_ColumnPropNameInRow="PackageID" msprop:Generator_ColumnPropNameInTable="PackageIDColumn" msprop:Generator_UserColumnName="PackageID" type="xs:string" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="Metadata" msprop:Generator_TableClassName="MetadataDataTable" msprop:Generator_TableVarName="tableMetadata" msprop:Generator_RowChangedName="MetadataRowChanged" msprop:Generator_TablePropName="Metadata" msprop:Generator_RowDeletingName="MetadataRowDeleting" msprop:Generator_RowChangingName="MetadataRowChanging" msprop:Generator_RowEvHandlerName="MetadataRowChangeEventHandler" msprop:Generator_RowDeletedName="MetadataRowDeleted" msprop:Generator_RowClassName="MetadataRow" msprop:Generator_UserTableName="Metadata" msprop:Generator_RowEvArgName="MetadataRowChangeEvent">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Name" msprop:Generator_ColumnVarNameInTable="columnName" msprop:Generator_ColumnPropNameInRow="Name" msprop:Generator_ColumnPropNameInTable="NameColumn" msprop:Generator_UserColumnName="Name" type="xs:string" />
+              <xs:element name="Value" msprop:Generator_ColumnVarNameInTable="columnValue" msprop:Generator_ColumnPropNameInRow="Value" msprop:Generator_ColumnPropNameInTable="ValueColumn" msprop:Generator_UserColumnName="Value" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+    <xs:unique name="Constraint1" msdata:PrimaryKey="true">
+      <xs:selector xpath=".//mstns:Templates" />
+      <xs:field xpath="mstns:PackageID" />
+    </xs:unique>
+  </xs:element>
+</xs:schema>

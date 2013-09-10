@@ -1,0 +1,181 @@
+﻿/* Copyright (c) 2013, HotDocs Limited
+   Use, modification and redistribution of this source is subject
+   to the New BSD License as set out in LICENSE.TXT. */
+
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+
+namespace HotDocs.Sdk.Server
+{
+	/// <summary>
+	/// Return result of WorkSession.AssembleDocuments and IServices.ConvertDocument.  Encapsulates an assembled
+	/// or converted document, together with any supporting files that document may require.
+	/// </summary>
+	public class Document : IDisposable
+	{
+		// internal constructor
+		internal Document(Template source, Stream document, DocumentType docType, NamedStream[] supportingFiles, string[] unansweredVariables)
+		{
+			if (docType == DocumentType.Native)
+				throw new InvalidOperationException("DocumentResults and AssemblyResults must specify a DocumentType (if known).");
+
+			_source = source;
+			Content = document;
+			Type = docType;
+			SupportingFiles = supportingFiles;
+			UnansweredVariables = unansweredVariables;
+		}
+
+		/// <summary>
+		/// Retrieve the converted document as a stream. If the requested format consists only of a list of like entities,
+		/// they will be in SupportingFiles and this will be null.
+		/// </summary>
+		public Stream Content { get; protected set; }
+
+		/// <summary>
+		/// The file type of the converted document
+		/// </summary>
+		public DocumentType Type { get; private set; }
+
+		/// <summary>
+		/// If Content is in a format that has external dependencies, this contains references to those supporting files.
+		/// For example, the images or external style sheets referred to by an HTML document.
+		/// </summary>
+		public NamedStream[] SupportingFiles { get; protected set; }
+
+		public string FileExtension
+		{
+			get
+			{
+				switch (Type)
+				{
+					case DocumentType.WordDOCX : return ".docx";
+					case DocumentType.WordRTF : return ".rtf";
+					case DocumentType.WordDOC : return ".doc";
+					case DocumentType.WordPerfect : return ".wpd";
+					case DocumentType.PDF : return ".pdf";
+					case DocumentType.HPD : return ".hpd";
+					case DocumentType.HFD : return ".hfd";
+					case DocumentType.PlainText : return ".txt";
+					case DocumentType.HTML : return ".htm";
+					case DocumentType.HTMLwDataURIs : return ".htm";
+					case DocumentType.MHTML : return ".mht";
+					case DocumentType.XML : return ".xml";
+					default: return String.Empty;
+				}
+			}
+		}
+
+		public string ContentType
+		{
+			get
+			{
+				switch (Type)
+				{
+					case DocumentType.WordDOCX: return "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+					case DocumentType.WordRTF: return "application/msword";
+					case DocumentType.WordDOC: return "application/msword";
+					case DocumentType.WordPerfect: return "application/wordperfect";
+					case DocumentType.PDF: return "application/pdf";
+					case DocumentType.HPD: return "application/x-hotdocs-hpd";
+					case DocumentType.HFD: return "application/x-hotdocs-hfd";
+					case DocumentType.PlainText: return "text/plain";
+					case DocumentType.HTML: return "text/html";
+					case DocumentType.HTMLwDataURIs: return "text/html";
+					case DocumentType.MHTML: return "message/rfc822"; // rfc822 required for IE to display the MHTML; "multipart/related" doesn't work
+					case DocumentType.XML: return "text/xml";
+					default: return "application/octet-stream";
+				}
+			}
+		}
+
+		/// <summary>
+		/// Retrieve the Template object representing the template the document was assembled from.
+		/// </summary>
+		public Template Source
+		{
+			get
+			{
+				return _source;
+			}
+		}
+
+		public string[] UnansweredVariables { get; protected set; }
+
+		/// <summary>
+		/// Returns the DocumentType for the given file path.
+		/// </summary>
+		/// <param name="docPath">The file path of the document.</param>
+		/// <returns>The type of document referred to in the file path.</returns>
+		internal static DocumentType GetDocumentType(string docPath)
+		{
+			string docExtension = Path.GetExtension(docPath).Trim('.').ToLower();
+
+			switch (docExtension)
+			{
+				case "hfd":
+					return DocumentType.HFD;
+				case "hpd":
+					return DocumentType.HPD;
+				case "html":
+					return DocumentType.HTML;
+				case "htmld": // TODO: How to distinguish between html and html w/data uris?
+					return DocumentType.HTMLwDataURIs;
+				case "mhtml":
+					return DocumentType.MHTML;
+				case "pdf":
+					return DocumentType.PDF;
+				case "txt":
+					return DocumentType.PlainText;
+				case "doc":
+					return DocumentType.WordDOC;
+				case "docx":
+					return DocumentType.WordDOCX;
+				case "wpt":
+					return DocumentType.WordPerfect;
+				case "rtf":
+					return DocumentType.WordRTF;
+				case "xml":
+					return DocumentType.XML;
+			}
+
+			return DocumentType.Unknown;
+		}
+
+		private bool disposed = false; // to detect redundant calls
+		private Template _source = null;
+
+		protected virtual void Dispose(bool disposing)
+		{
+			if (!disposed)
+			{
+				if (disposing)
+				{
+					if (Content != null)
+					{
+						Content.Dispose();
+						Content = null;
+					}
+					if (SupportingFiles != null)
+					{
+						for (var i = 0; i < SupportingFiles.Length; i++)
+						{
+							SupportingFiles[i].Dispose();
+							SupportingFiles[i] = null;
+						}
+						SupportingFiles = null;
+					}
+				}
+				disposed = true;
+			}
+		}
+
+		public void Dispose()
+		{
+			Dispose(true);
+		}
+	}
+}

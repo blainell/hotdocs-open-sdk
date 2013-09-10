@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<templateManifest xmlns="http://www.hotdocs.com/schemas/template_manifest/2012" templateId="406ed731-f94f-43c1-a030-5e6d32472d0e" hotdocsVersion="11.0.0.3096" fileName="Demo Life Insurance Application.hpt" effectiveCmpFile="Demo Life Insurance Application.cmp">
+	<title>
+		Life Insurance Application
+	</title>
+	<description>
+		This is the example PDF-based Life Insurance Application template from the HotDocs tutorial.
+	</description>
+	<variables>
+		<variable name="Employee First Name" type="text"/>
+		<variable name="Employee Middle Initial" type="text"/>
+		<variable name="Employee Last Name" type="text"/>
+		<variable name="Employee Social Security Number" type="text"/>
+		<variable name="Employee Birth Date" type="date"/>
+		<variable name="Employee Gender" type="multipleChoice"/>
+		<variable name="Employee Marital Status" type="multipleChoice"/>
+		<variable name="Employee Street Address" type="text"/>
+		<variable name="Employee City" type="text"/>
+		<variable name="Employee State" type="multipleChoice"/>
+		<variable name="Employee Zip Code" type="text"/>
+		<variable name="Employee Primary Telephone Number" type="text"/>
+		<variable name="Employee Email Address" type="text"/>
+		<variable name="Employee Information" type="trueFalse"/>
+		<variable name="Amount of Coverage" type="number"/>
+		<variable name="Monthly Contribution to Cash Account" type="number"/>
+		<variable name="Coverage Information" type="trueFalse"/>
+		<variable name="Medical History Explanation" type="none"/>
+		<variable name="Smoker" type="trueFalse"/>
+		<variable name="Explain Smoking" type="text"/>
+		<variable name="Heart Trouble" type="trueFalse"/>
+		<variable name="Explain Heart Trouble" type="text"/>
+		<variable name="High Blood Pressure" type="trueFalse"/>
+		<variable name="Explain High Blood Pressure" type="text"/>
+		<variable name="Diabetes" type="trueFalse"/>
+		<variable name="Explain Diabetes" type="text"/>
+		<variable name="Immune Disorder" type="trueFalse"/>
+		<variable name="Explain Immune Disorder" type="text"/>
+		<variable name="Medical History" type="trueFalse"/>
+		<variable name="Beneficiary Name" type="text"/>
+		<variable name="Beneficiary Telephone Number" type="text"/>
+		<variable name="Beneficiary Relationship" type="text"/>
+		<variable name="Beneficiary Designation" type="trueFalse"/>
+		<variable name="Other Remarks" type="text"/>
+		<variable name="Authorization" type="trueFalse"/>
+	</variables>
+	<dependencies>
+		<dependency fileName="Demo Life Insurance Application.cmp" type="baseCmpFile"/>
+	</dependencies>
+</templateManifest>
