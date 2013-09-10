@@ -86,7 +86,7 @@ namespace SamplePortal
 			if (folder != null && folder != "" && folder[0] != '\\')
 				System.IO.Directory.Delete(folder, true);
 		}
-
+		//TODO: Move this to HotDocs.Sdk.Template?
 		public static string GetDocExtension(string tplfname)
 		{
 			tplfname = Path.GetExtension(tplfname).ToLower();
@@ -119,6 +119,8 @@ namespace SamplePortal
 		/// This method deletes a template package and its corresponding manifest file from the Templates folder.
 		/// </summary>
 		/// <param name="pkgFileName">The name of the template package to delete. The manifest will have the same name, but a different file name extension.</param>
+		//TODO: Perhaps this should be moved to the PackageCache class.
+		//TODO: The extracted files and folder should be removed as well.
 		public static void DeleteTemplatePackage(string pkgFileName)
 		{
 			// Delete the package file.
@@ -169,6 +171,7 @@ namespace SamplePortal
 			}
 		}
 
+		//TODO: Remove.
 		public static string GetTemporaryAnsFilename(string ansFilename)
 		{
 			return ansFilename.Substring(Settings.TempLen);
@@ -199,11 +202,14 @@ namespace SamplePortal
 			}
 		}
 
+		//TODO: The implementation of this method could be cleaned up. It has the following problems:
+		// The parameter variable is modified.
+		// The text " DESC" is added and then removed for later comparison.
 		public static string ToggleSortOrder(System.Web.UI.WebControls.DataGrid grid, string newSort, string currentSort)
 		{
 			if (newSort != null)
 			{
-				if (newSort == currentSort && currentSort.EndsWith(" DESC") == false)
+				if (newSort == currentSort && !currentSort.EndsWith(" DESC"))
 					currentSort += " DESC";
 				else
 					currentSort = newSort;
@@ -266,26 +272,6 @@ namespace SamplePortal
 				dataGrid.CurrentPageIndex = recordCount / pageSize;
 		}
 
-		//public static HotDocs.Server.Session GetSessionObject(System.Web.SessionState.HttpSessionState session)
-		//{
-		//    HotDocs.Server.Session hdsSession = null;
-		//    try
-		// {
-		//    hdsSession = (HotDocs.Server.Session)session["HDS"];
-		//        if (hdsSession == null || hdsSession.ID == null)
-		//            throw new Exception();
-		// }
-		// catch(Exception)
-		// {				
-		//    hdsSession = new HotDocs.Server.Session();
-		//    hdsSession.DefaultHotDocsCSSUrl = Settings.StylesheetUrl;
-		//    hdsSession.DefaultHotDocsJavascriptUrl = Settings.JavaScriptUrl;
-		//    session["HDS"] = hdsSession;
-		// }
-
-		//    return hdsSession;            
-		//}
-
 		public static bool CheckIfGenerateTemplateManifests(string tplPath)
 		{
 			string tplManifestPath = tplPath + ".manifest.xml";
@@ -308,6 +294,7 @@ namespace SamplePortal
 			return false;//Do not generate the template manifest.
 		}
 
+		//TODO: Not used. Remove?
 		public static string GetBrowserName(System.Web.HttpRequest request)
 		{
 			//Determine what browser is being used
@@ -348,6 +335,7 @@ namespace SamplePortal
 		/// </summary>
 		/// <param name="filePath"></param>
 		/// <returns></returns>
+		//TODO: Not used. Remove?
 		public static string SafeFile(string filePath)
 		{
 			Directory.CreateDirectory(Path.GetDirectoryName(filePath));
@@ -383,6 +371,7 @@ namespace SamplePortal
 		}
 
 		#region Debugging aids
+		//TODO: Not used. Remove?
 		public static void debugger()
 		{
 			if (System.Diagnostics.Debugger.IsAttached)
