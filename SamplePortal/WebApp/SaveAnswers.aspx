@@ -14,6 +14,7 @@
             <table id="pageContent" border="0">
 				<tr>
 					<td>
+						<!-- TODO: Use CSS classes in this table instead of hard-coding styles. -->
 						<table border="0" style="border-collapse:separate; border-spacing:4px;">
 							<tr>
 								<td style="WIDTH: 160px">Title:</td>

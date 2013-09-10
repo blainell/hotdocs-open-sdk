@@ -2,20 +2,12 @@
    Use, modification and redistribution of this source is subject
    to the New BSD License as set out in LICENSE.TXT. */
 
-using System;
-using System.Data;
-using System.Configuration;
-using System.Collections;
-using System.Web;
-using System.Web.Security;
-using System.Web.UI;
-using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
-using System.Web.UI.HtmlControls;
 using SamplePortal;
 using SamplePortal.Data;
-using System.IO;
+using System;
+using System.Data;
 using System.Drawing;
+using System.IO;
 
 /// <summary>
 /// This page demonstrates how to save answers mid-interview using the SavePageUrl property of the Assembly object
@@ -27,10 +19,12 @@ using System.Drawing;
 /// </summary>
 public partial class SaveAnswers : System.Web.UI.Page
 {
-	protected HotDocs.Sdk.Server.WorkSession _session;
 	private string _ansFilename;
 	private string _ansPath;
-	public string _siteName = Settings.SiteName;
+
+	protected HotDocs.Sdk.Server.WorkSession _session;
+	protected string _siteName = Settings.SiteName;
+
 	protected void Page_Load(object sender, EventArgs e)
 	{
 		_session = SamplePortal.Factory.GetWorkSession(this.Session);
@@ -42,8 +36,8 @@ public partial class SaveAnswers : System.Web.UI.Page
 		{
 			Util.SweepTempDirectories(); // first some housekeeping
 
-			// TFS #5532: Set the max length on the title and description fields.
-			// These were previously set in the ASPX page, but ASP.NET drops them for multi-line fields when rendering the page.
+			// Set the max length on the title and description fields. These were previously set in the ASPX page,
+			// but ASP.NET drops them for multi-line fields when rendering the page.
 			// So we set them manually here using values configurable in the web.config.
 			txtTitle.Attributes.Add("maxlength", Settings.MaxTitleLength.ToString());
 			txtDescription.Attributes.Add("maxlength", Settings.MaxDescriptionLength.ToString());
@@ -67,8 +61,7 @@ public partial class SaveAnswers : System.Web.UI.Page
 		if (txtTitle.Text.Length == 0) // a title is required
 		{
 			lblStatus.Text = "Error: Please enter an answer set title.";
-			lblStatus.ForeColor = Color.Red;
-			lblStatus.Visible = true;
+			lblStatus.ForeColor = Color.Red; // TODO: Use a CSS class instead of hard-coded color value here.
 		}
 		else
 		{
@@ -82,9 +75,9 @@ public partial class SaveAnswers : System.Web.UI.Page
 
 			//Update the page content.
 			lblStatus.Text = "Answer set saved.";
-			lblStatus.ForeColor = Color.Black;
-			lblStatus.Visible = true;
+			lblStatus.ForeColor = Color.Black; // TODO: Use a CSS class instead of hard-coded color value here.
 		}
+		lblStatus.Visible = true;
 	}
 }
 

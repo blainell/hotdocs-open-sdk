@@ -30,6 +30,7 @@
 			<table id="pageContent" border="0">
 				<tr>
 					<td>
+						<!-- TODO: Use CSS classes in this table instead of hard-coding styles. -->
 						<table id="DataGridSearchTable" border="0">
 							<tr>
 								<td style="vertical-align:bottom;">Manage Templates:</td>

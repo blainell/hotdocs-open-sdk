@@ -14,6 +14,7 @@
 <body>
 	<form id="form1" runat="server">
 		<div>
+			<!-- TODO: Can we move any of this page header into a separate, shared file (user control) for use by all of the ASPX pages? -->
 			<iframe id="KeepAlive" src="./keep-alive.aspx" width="0" height="0" runat="server"></iframe>
 			<table id="pageHeader" border="0">
 				<tr>
@@ -41,7 +42,7 @@
 					<td>
 						<table id="DataGridSearchTable" border="0">
 							<tr>
-								<td style="vertical-align:bottom;">Select a Template:</td>
+								<td style="vertical-align: bottom;">Select a Template:</td>
 								<td>
 									<div class="hd-sp-searchbox">
 										<div>Search:&nbsp;</div>

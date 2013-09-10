@@ -1,0 +1,42 @@
+<?xml version="1.0" standalone="yes"?>
+<TemplateData xmlns="http://tempuri.org/TemplateData.xsd">
+  <Templates>
+    <Filename>Demo Employment Agreement.wpt</Filename>
+    <Title>Employment Agreement (WordPerfect version)</Title>
+    <Description>This is the example Employment Agreement from the HotDocs tutorial.</Description>
+    <DateAdded>7/31/2013 12:53:39 PM</DateAdded>
+    <PackageID>424e3ed5-9a05-409c-bbea-ee8ccf4a49eb</PackageID>
+  </Templates>
+  <Templates>
+    <Filename>Demo Employment Agreement.rtf</Filename>
+    <Title>Employment Agreement (Word RTF version)</Title>
+    <Description>This is the example Employment Agreement from the HotDocs tutorial.</Description>
+    <DateAdded>7/31/2013 12:53:39 PM</DateAdded>
+    <PackageID>e3ab0956-1d52-4a75-a0d0-8067c1db5c23</PackageID>
+  </Templates>
+  <Templates>
+    <Filename>Demo Employment Agreement.docx</Filename>
+    <Title>Employment Agreement (Word DOCX version)</Title>
+    <Description>This is the example Employment Agreement from the HotDocs tutorial.</Description>
+    <DateAdded>7/31/2013 12:53:39 PM</DateAdded>
+    <PackageID>d1f7cade-cb74-4457-a9a0-27d94f5c2d5b</PackageID>
+  </Templates>
+  <Templates>
+    <Filename>Employee Recognition Letter.docx</Filename>
+    <Title>Employee Recognition Letter</Title>
+    <Description />
+    <DateAdded>7/31/2013 12:55:07 PM</DateAdded>
+    <PackageID>8b9aaa4b-3360-42e6-9da7-43fb523bfa4e</PackageID>
+  </Templates>
+  <Templates>
+    <Filename>Demo Life Insurance Application.hpt</Filename>
+    <Title>Life Insurance Application</Title>
+    <Description>This is the example PDF-based Life Insurance Application template from the HotDocs tutorial.</Description>
+    <DateAdded>7/31/2013 12:55:48 PM</DateAdded>
+    <PackageID>2f98a9f3-d106-44a8-ba16-e01d8cd65cb2</PackageID>
+  </Templates>
+  <Metadata>
+    <Name>Version</Name>
+    <Value>11.0.1.0</Value>
+  </Metadata>
+</TemplateData>
