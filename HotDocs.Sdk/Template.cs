@@ -222,7 +222,7 @@ namespace HotDocs.Sdk
 		/// Parses command-line switches to inform the host app whether or not
 		/// an interview should be displayed for this template.
 		/// </summary>
-		public bool SwitchesAllowInterview
+		public bool HasInterview
 		{
 			get
 			{
