@@ -6,6 +6,7 @@ using SamplePortal;
 using System;
 using System.Data;
 using System.IO;
+using System.Text;
 using System.Web.UI.WebControls;
 
 public partial class Templates : System.Web.UI.Page
@@ -20,19 +21,15 @@ public partial class Templates : System.Web.UI.Page
 			ViewState["sortExpression"] = Settings.DefaultTemplateTableSortExpression;
 			BindData(null);
 		}
-		// TODO: Would a StringBuilder be more readable here?
-		string uploadUrl = Request.ServerVariables["HTTPS"].ToUpper() == "ON" ? "https://" : "http://";
-		uploadUrl += Request.ServerVariables["SERVER_NAME"];
-		if (Request.ServerVariables["SERVER_PORT"] != "80")
-			uploadUrl += ":" + Request.ServerVariables["SERVER_PORT"];
-		string pathInfo = Request.ServerVariables["PATH_INFO"];
-		uploadUrl += pathInfo.Substring(0, pathInfo.LastIndexOf("/") + 1) + "upload.aspx";
-		lblUploadURL.Text = uploadUrl;
-	}
 
-	protected void btnHome_Click(object sender, EventArgs e)
-	{
-		Response.Redirect("default.aspx");
+		StringBuilder uploadUrl = new StringBuilder();
+		uploadUrl.Append(Request.ServerVariables["HTTPS"].ToUpper() == "ON" ? "https://" : "http://");
+		uploadUrl.Append(Request.ServerVariables["SERVER_NAME"]);
+		if (Request.ServerVariables["SERVER_PORT"] != "80")
+			uploadUrl.Append(":" + Request.ServerVariables["SERVER_PORT"]);
+		string pathInfo = Request.ServerVariables["PATH_INFO"];
+		uploadUrl.Append(pathInfo.Substring(0, pathInfo.LastIndexOf("/") + 1) + "upload.aspx");
+		lblUploadURL.Text = uploadUrl.ToString();
 	}
 
 	public void BindData(string newSortExpression)
@@ -63,22 +60,22 @@ public partial class Templates : System.Web.UI.Page
 	#region Data Grid
 	protected void dataGrid_ItemCreated(object sender, DataGridItemEventArgs e)
 	{
-		// TODO: Would a switch statement make this code more readable?
-		if (e.Item.ItemType == ListItemType.Item || e.Item.ItemType == ListItemType.AlternatingItem)
+		switch (e.Item.ItemType)
 		{
-			LinkButton lnkDelete = (LinkButton)e.Item.Cells[1].Controls[0];
-			lnkDelete.Attributes.Add("onclick", "return confirm('Are you sure you want to delete this record?');");
+			case ListItemType.Item:
+			case ListItemType.AlternatingItem:
+				LinkButton lnkDelete = (LinkButton)e.Item.Cells[1].Controls[0];
+				lnkDelete.Attributes.Add("onclick", "return confirm('Are you sure you want to delete this record?');");
+				break;
+			case ListItemType.EditItem:
+				// Enforce limits on the length of text in the title and description fields.
+				((TextBox)e.Item.Cells[3].Controls[0]).Attributes.Add("maxlength", Settings.MaxTitleLength.ToString());
+				((TextBox)e.Item.Cells[4].Controls[0]).Attributes.Add("maxlength", Settings.MaxDescriptionLength.ToString());
+				break;
+			case ListItemType.Pager:
+				Util.CustomizePager(e);
+				break;
 		}
-
-		if (e.Item.ItemType == ListItemType.EditItem)
-		{
-			// Enforce limits on the length of text in the title and description fields.
-			((TextBox)e.Item.Cells[3].Controls[0]).Attributes.Add("maxlength", Settings.MaxTitleLength.ToString());
-			((TextBox)e.Item.Cells[4].Controls[0]).Attributes.Add("maxlength", Settings.MaxDescriptionLength.ToString());
-		}
-
-		if (e.Item.ItemType == ListItemType.Pager)
-			Util.CustomizePager(e);
 	}
 	protected void dataGrid_CancelCommand(object source, DataGridCommandEventArgs e)
 	{
@@ -95,10 +92,11 @@ public partial class Templates : System.Web.UI.Page
 	{
 		using (SamplePortal.Data.Templates templates = new SamplePortal.Data.Templates())
 		{
-			// TODO: Use local variables as parameters to UpdateTemplate.
-			templates.UpdateTemplate(ViewState["editf"].ToString(),
-				((TextBox)e.Item.Cells[3].Controls[0]).Text,
-				((TextBox)e.Item.Cells[4].Controls[0]).Text, null);
+			string fileName = ViewState["editf"].ToString();
+			string title = ((TextBox)e.Item.Cells[3].Controls[0]).Text;
+			string description = ((TextBox)e.Item.Cells[4].Controls[0]).Text;
+
+			templates.UpdateTemplate(fileName, title, description, null);
 		}
 		dataGrid.EditItemIndex = -1;
 		BindData(null);

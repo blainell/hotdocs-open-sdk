@@ -19,6 +19,8 @@ public partial class Interview : System.Web.UI.Page
 		//don't cache interviews
 		Response.Cache.SetCacheability(HttpCacheability.NoCache);
 
+		
+
 		_session = SamplePortal.Factory.GetWorkSession(this.Session);
 		if (_session == null)
 			Response.Redirect("Default.aspx");

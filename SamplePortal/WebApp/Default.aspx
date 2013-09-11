@@ -1,5 +1,7 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="Default.aspx.cs" Inherits="_Default" %>
 
+<%@ Register Src="Banner.ascx" TagName="Header" TagPrefix="uc1" %>
+
 <!DOCTYPE HTML>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -14,29 +16,7 @@
 <body>
 	<form id="form1" runat="server">
 		<div>
-			<!-- TODO: Can we move any of this page header into a separate, shared file (user control) for use by all of the ASPX pages? -->
-			<iframe id="KeepAlive" src="./keep-alive.aspx" width="0" height="0" runat="server"></iframe>
-			<table id="pageHeader" border="0">
-				<tr>
-					<td id="pageHeaderLeft">
-						<div class="hd-sp-img hd-sp-img-header">
-							<div class="hd-sp-title"><%= _siteName %></div>
-						</div>
-					</td>
-					<td id="pageHeaderMiddle">
-						<asp:LinkButton ID="btnManageAnswers" runat="server"
-							ToolTip="Edit/Delete answer sets" OnClick="btnManageAnswers_Click"
-							CssClass="HeaderLink">Manage&nbsp;Answers</asp:LinkButton><br />
-						<asp:LinkButton ID="btnManageTemplates" runat="server"
-							ToolTip="Edit/Delete templates" OnClick="btnManageTemplates_Click"
-							CssClass="HeaderLink">Manage&nbsp;Templates</asp:LinkButton></td>
-					<td id="pageHeaderRight">
-						<a href="http://www.hotdocs.com/products/server/" target="_blank" title="Powered by HotDocs Server">
-							<div class="hd-sp-img hd-sp-img-hds"></div>
-						</a>
-					</td>
-				</tr>
-			</table>
+			<uc1:Header ID="Header1" runat="server" Mode="Manage" />
 			<table id="pageContent" border="0">
 				<tr>
 					<td>

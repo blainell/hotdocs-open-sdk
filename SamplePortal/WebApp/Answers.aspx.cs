@@ -34,11 +34,6 @@ public partial class answers : System.Web.UI.Page
 		ViewState["sortExpression"] = sortExpression;
 	}
 
-	protected void btnHome_Click(object sender, EventArgs e)
-	{
-		Response.Redirect("Default.aspx");
-	}
-
 	#region Search buttons
 	protected void btnSearch_Click(object sender, EventArgs e)
 	{

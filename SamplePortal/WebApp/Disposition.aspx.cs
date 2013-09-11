@@ -135,11 +135,6 @@ public partial class Disposition : System.Web.UI.Page
 		}
 	}
 
-	protected void btnHome_Click(object sender, EventArgs e)
-	{
-		Response.Redirect("Default.aspx");
-	}
-
 	protected void btnNextInterview_Click(object sender, EventArgs e)
 	{
 		Response.Redirect("Interview.aspx");

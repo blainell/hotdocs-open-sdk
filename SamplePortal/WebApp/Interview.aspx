@@ -1,5 +1,7 @@
 <%@ Page Language="C#" AutoEventWireup="true" CodeFile="Interview.aspx.cs" Inherits="Interview" %>
 
+<%@ Register Src="Banner.ascx" TagName="Header" TagPrefix="uc1" %>
+
 <!DOCTYPE HTML>
 <html>
 <head runat="server">
@@ -7,22 +9,7 @@
 	<link href="css/SamplePortal.css" type="text/css" rel="stylesheet">
 </head>
 <body id="theBody" runat="server">
-	<iframe id="KeepAlive" src="./keep-alive.aspx" width="0" height="0" runat="server"></iframe>
-	<table id="pageHeader" border="0">
-		<tr>
-			<td id="pageHeaderLeft">
-				<div class="hd-sp-img hd-sp-img-header">
-					<div class="hd-sp-title"><%= _siteName %></div>
-				</div>
-			</td>
-			<td id="pageHeaderMiddle"><a id="btnHome" href="Default.aspx" class="HeaderLink" title="Cancel assembly and return to the home page">&gt;&nbsp;Home</a></td>
-			<td id="pageHeaderRight">
-				<a href="http://www.hotdocs.com/products/server/" target="_blank" title="Powered by HotDocs Server">
-					<div class="hd-sp-img hd-sp-img-hds"></div>
-				</a>
-			</td>
-		</tr>
-	</table>
+	<uc1:Header ID="Header1" runat="server" Mode="Home" HomeLinkText="Cancel assembly and return to the home page" />
 	<table id="SP-Interview-Container" border="0">
 		<tr>
 			<td>

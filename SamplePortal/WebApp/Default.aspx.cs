@@ -37,14 +37,7 @@ public partial class _Default : System.Web.UI.Page
 		ViewState["sortExpression"] = sortExpression;
 	}
 
-	protected void btnManageAnswers_Click(object sender, EventArgs e)
-	{
-		Response.Redirect("Answers.aspx");
-	}
-	protected void btnManageTemplates_Click(object sender, EventArgs e)
-	{
-		Response.Redirect("Templates.aspx");
-	}
+	
 
 	#region Search
 

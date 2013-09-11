@@ -90,10 +90,6 @@ public partial class SelAns : System.Web.UI.Page
 		//else use new answer file:
 		Advance();
 	}
-	protected void btnHome_Click(object sender, EventArgs e)
-	{
-		Response.Redirect("Default.aspx");
-	}
 
 	protected void ansGrid_PageIndexChanged(object source, DataGridPageChangedEventArgs e)
 	{

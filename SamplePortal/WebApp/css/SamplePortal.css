@@ -4,18 +4,18 @@ TD { font-family: Tahoma, Arial, Sans-Serif; color: black; font-size: 10pt; }
 
 #theBody { overflow: hidden; margin-top: 0px; margin-bottom: 0px; }
 
-#KeepAlive { display: none; border: none; }
+.KeepAlive { display: none; border: none; }
 
-#pageHeader { width: 100%; height: 60px; background-color: #007d93; border-collapse: collapse; border-spacing: 0; }
+#pageHeader { width: 100%; height: 60px; background-color: #007d93; border-collapse: collapse; border-spacing: 0; border-width:0px; }
 #pageHeaderLeft { padding: 0px; }
 #pageHeaderMiddle { vertical-align: bottom; padding: 0px 0px 3px 0px; width: 100px; }
 #pageHeaderRight { width: 140px; text-align: right; vertical-align: bottom; padding: 0px; }
 
-#pageContent { width: 100%; border-collapse: collapse; border-spacing: 0; }
+#pageContent { width: 100%; border-collapse: collapse; border-spacing: 0; border-width:0px; }
 #pageContent > TBODY > TR > TD { padding: 10px; }
 
-#DataGridSearchTable { width: 100%; margin-bottom: 2px; border-collapse: collapse; border-spacing: 0; }
-#DataGridSearchTable > TBODY > TR > TD { padding: 0px; }
+#DataGridSearchTable { width: 100%; margin-bottom: 2px; border-collapse: collapse; border-spacing: 0; border:0px none; }
+#DataGridSearchTable > TBODY > TR > TD { padding: 0px; vertical-align:bottom; }
 
 /* Upload Page */
 #UploadedTemplatesGrid { width: 100%; border-collapse: collapse; border-spacing: 0; }
@@ -29,7 +29,7 @@ TD { font-family: Tahoma, Arial, Sans-Serif; color: black; font-size: 10pt; }
 body a:link, a:visited, a:active { text-decoration: none; color: #CC0033; }
 body a:hover { text-decoration: underline; }
 a.HeaderLink:link, a.HeaderLink:visited { text-decoration: underline; color: White; }
-.DataGrid { width: 100%; border-color: #99B2CC; }
+.DataGrid { width: 100%; border-color: #99B2CC;  }
 
 .InputField { font-family: Tahoma, Arial, Sans-Serif; }
 

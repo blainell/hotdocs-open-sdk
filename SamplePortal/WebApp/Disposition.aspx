@@ -1,5 +1,7 @@
 <%@ Page Language="C#" AutoEventWireup="true" CodeFile="Disposition.aspx.cs" Inherits="Disposition" %>
 
+<%@ Register Src="Banner.ascx" TagName="Header" TagPrefix="uc1" %>
+
 <!DOCTYPE HTML>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -10,23 +12,7 @@
 <body>
 	<form id="form1" runat="server">
 		<div>
-			<iframe id="KeepAlive" src="./keep-alive.aspx" width="0" height="0" runat="server"></iframe>
-			<table id="pageHeader" border="0">
-				<tr>
-					<td id="pageHeaderLeft">
-						<div class="hd-sp-img hd-sp-img-header">
-							<div class="hd-sp-title"><%= _siteName %></div>
-						</div>
-					</td>
-					<td id="pageHeaderMiddle">
-						<asp:LinkButton ID="btnHome" runat="server" ToolTip="Return to the home page" OnClick="btnHome_Click" CssClass="HeaderLink">&gt;&nbsp;Home</asp:LinkButton></td>
-					<td id="pageHeaderRight">
-						<a href="http://www.hotdocs.com/products/server/" target="_blank" title="Powered by HotDocs Server">
-							<div class="hd-sp-img hd-sp-img-hds"></div>
-						</a>
-					</td>
-				</tr>
-			</table>
+			<uc1:Header ID="Header1" runat="server" HomeLink="true" />
 			<table id="pageContent" border="0">
 				<tr>
 					<td>

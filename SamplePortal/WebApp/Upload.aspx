@@ -1,5 +1,7 @@
 <%@ Page Language="C#" AutoEventWireup="true" CodeFile="Upload.aspx.cs" Inherits="Upload" %>
 
+<%@ Register Src="Banner.ascx" TagName="Header" TagPrefix="uc1" %>
+
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head id="Head1" runat="server">
@@ -8,21 +10,8 @@
 	<link href="css/SamplePortal.css" type="text/css" rel="stylesheet" />
 </head>
 <body>
-	<table id="pageHeader" border="0">
-		<tr>
-			<td id="pageHeaderLeft">
-				<div class="hd-sp-img hd-sp-img-header">
-					<div class="hd-sp-title"><%= _siteName %></div>
-				</div>
-			</td>
-			<td id="pageHeaderMiddle"></td>
-			<td id="pageHeaderRight">
-				<a href="http://www.hotdocs.com/products/server/" target="_blank" title="Powered by HotDocs Server">
-					<div class="hd-sp-img hd-sp-img-hds"></div>
-				</a>
-			</td>
-		</tr>
-	</table>
+	<uc1:Header ID="Header1" runat="server" Mode="NoLinks" />
+
 	<div style="padding: 10px;">
 
 		<h3>Template Package Upload</h3>
