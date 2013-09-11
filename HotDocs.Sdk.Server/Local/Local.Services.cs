@@ -339,7 +339,6 @@ namespace HotDocs.Sdk.Server.Local
 			if (docType == DocumentType.Native)
 			{
 				docType = Document.GetDocumentType(docPath);
-
 			}
 			else if (docType == DocumentType.HTMLwDataURIs)
 			{
