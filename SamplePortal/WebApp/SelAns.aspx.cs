@@ -22,23 +22,6 @@ public partial class SelAns : System.Web.UI.Page
 		if (_session == null)
 			Response.Redirect("Default.aspx");
 
-		//add client-side javascript for managing upload controls
-		// TODO: Should we just put this in an external JavaScript file that is loaded by the page? 
-		if (!ClientScript.IsClientScriptBlockRegistered("OnSelChange"))
-		{
-			System.Text.StringBuilder stb = new System.Text.StringBuilder();
-			stb.Append("function OnSelChange(){");
-			stb.Append("var fileCtrl = document.getElementById(\"fileUpload\");");
-			stb.Append("if (fileCtrl) {");
-			stb.Append("var uploadBtn = document.getElementById(\"rbUpload\");");
-			stb.Append("if (uploadBtn)");
-			stb.Append("fileCtrl.disabled = !uploadBtn.checked;");
-			stb.Append("}");
-			stb.Append("}");
-			Type t = typeof(SelAns);
-			ClientScript.RegisterClientScriptBlock(t, "OnSelChange", stb.ToString(), true);
-		}
-
 		if (!IsPostBack)
 		{
 			ViewState["sortExpression"] = Settings.DefaultAnswerTableSortExpression;

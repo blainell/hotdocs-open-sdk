@@ -101,20 +101,6 @@ namespace SamplePortal
 			return ".rtf"; // default
 		}
 
-		public static string GetMimeType(string docFilename)
-		{
-			string ext = Path.GetExtension(docFilename).ToLower();
-			switch (ext)
-			{
-				case ".rtf": return "application/msword";
-				case ".pdf": return "application/pdf";
-				case ".wpd": return "application/wordperfect";
-				case ".hfd": return "application/x-hotdocs-hfd";
-				case ".zip": return "application/zip";
-			}
-			return "application/msword"; // default
-		}
-
 		/// <summary>
 		/// This method deletes a template package and its corresponding manifest file from the Templates folder.
 		/// </summary>

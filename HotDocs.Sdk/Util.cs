@@ -180,7 +180,7 @@ namespace HotDocs.Sdk
 					case "pdf":
 					case "hpt":
 					case "hpd":
-						return System.Net.Mime.MediaTypeNames.Application.Pdf;
+						return System.Net.Mime.MediaTypeNames.Application.Pdf; // "application/pdf"
 					case "hft":
 						return "application/x-hotdocs-hft";
 					case "hfd":

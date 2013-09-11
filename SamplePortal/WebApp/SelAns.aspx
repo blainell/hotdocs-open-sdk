@@ -7,9 +7,10 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
 	<title><%= _siteName %></title>
+	<script type="text/javascript" src="scripts/sampleportal.js"></script>
 	<link href="css/SamplePortal.css" type="text/css" rel="stylesheet" />
 </head>
-<body onload="OnSelChange()">
+<body onload="HDSamplePortal.OnSelChange()">
 	<form id="form1" runat="server">
 		<div>
 			<uc1:Header ID="Header1" runat="server" Mode="Home" />
@@ -25,14 +26,14 @@
 							<tr>
 								<td style="width: 16px;">&nbsp;</td>
 								<td style="vertical-align: top;">
-									<input type="radio" id="rbNew" checked="checked" value="new" name="AnsFileType" onclick="OnSelChange()" /></td>
+									<input type="radio" id="rbNew" checked="checked" value="new" name="AnsFileType" onclick="HDSamplePortal.OnSelChange()" /></td>
 								<td style="vertical-align: top;">
 									<label for="rbNew">Begin using a new, empty answer set</label></td>
 							</tr>
 							<tr>
 								<td style="width: 16px;">&nbsp;</td>
 								<td style="vertical-align: top;">
-									<input type="radio" id="rbUpload" value="upload" name="AnsFileType" onclick="OnSelChange()" /></td>
+									<input type="radio" id="rbUpload" value="upload" name="AnsFileType" onclick="HDSamplePortal.OnSelChange()" /></td>
 								<td style="vertical-align: top;">
 									<label for="rbUpload">Use a HotDocs answer file from my PC:</label>
 									&nbsp;&nbsp;&nbsp;

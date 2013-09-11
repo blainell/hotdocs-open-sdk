@@ -168,8 +168,7 @@ public partial class Disposition : System.Web.UI.Page
 			string downloadFilename = Path.GetRandomFileName() + Path.GetExtension(docFile);
 			Response.AddHeader("Content-Disposition", "attachment; filename=" + EncodeDownloadFileName(downloadFilename));
 			Response.AddHeader("Content-Length", fInfo.Length.ToString());
-			//TODO: Use a common implementation of GetMimeType.
-			Response.ContentType = Util.GetMimeType(downloadFilename);
+			Response.ContentType = HotDocs.Sdk.Util.GetMimeType(downloadFilename);
 			Response.WriteFile(fInfo.FullName);
 			Response.End();
 		}
@@ -207,32 +206,5 @@ public partial class Disposition : System.Web.UI.Page
 					break;
 			}
 		}
-	}
-	//TODO: Remove.
-	private string GetDocumentName(string templateTitle, System.Collections.Hashtable templateCounts)
-	{
-		string retVal;
-		string key = templateTitle.ToLower();
-		if (templateCounts.ContainsKey(key))
-		{
-			templateCounts[key] = ((int)templateCounts[key]) + 1;
-			retVal = string.Format("{0} {1}", templateTitle, templateCounts[key].ToString());
-		}
-		else
-		{
-			templateCounts.Add(templateTitle.ToLower(), 1);
-			retVal = templateTitle;
-		}
-		return retVal;
-	}
-
-	//TODO: Remove.
-	private string MakeDocFilename(string baseName, string docName)
-	{
-		string result = Util.EnsureValidFilename(baseName);
-		if (txtTitle.Text.Length > 0)
-			result += " - " + Util.EnsureValidFilename(txtTitle.Text);
-		result += Path.GetExtension(docName);
-		return result;
 	}
 }

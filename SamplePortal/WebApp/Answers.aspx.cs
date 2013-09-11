@@ -47,26 +47,27 @@ public partial class answers : System.Web.UI.Page
 		BindData(null);
 	}
 	#endregion
+
 	protected void ansGrid_ItemCreated(object sender, DataGridItemEventArgs e)
 	{
-		// TODO: Would a switch statement in this method be more readable?
-
-		if (e.Item.ItemType == ListItemType.Item || e.Item.ItemType == ListItemType.AlternatingItem)
+		switch (e.Item.ItemType)
 		{
-			LinkButton lnkDelete = (LinkButton)e.Item.Cells[1].Controls[0];
-			lnkDelete.Attributes.Add("onclick", "return confirm('Are you sure you want to delete this record?');");
+			case ListItemType.Item:
+			case ListItemType.AlternatingItem:
+				LinkButton lnkDelete = (LinkButton)e.Item.Cells[1].Controls[0];
+				lnkDelete.Attributes.Add("onclick", "return confirm('Are you sure you want to delete this record?');");
+				break;
+			case ListItemType.EditItem:
+				// Enforce limits on the length of text in the title and description fields.
+				((TextBox)e.Item.Cells[3].Controls[0]).Attributes.Add("maxlength", Settings.MaxTitleLength.ToString());
+				((TextBox)e.Item.Cells[4].Controls[0]).Attributes.Add("maxlength", Settings.MaxDescriptionLength.ToString());
+				break;
+			case ListItemType.Pager:
+				Util.CustomizePager(e);
+				break;
 		}
-
-		if (e.Item.ItemType == ListItemType.EditItem)
-		{
-			// Enforce limits on the length of text in the title and description fields.
-			((TextBox)e.Item.Cells[3].Controls[0]).Attributes.Add("maxlength", Settings.MaxTitleLength.ToString());
-			((TextBox)e.Item.Cells[4].Controls[0]).Attributes.Add("maxlength", Settings.MaxDescriptionLength.ToString());
-		}
-
-		if (e.Item.ItemType == ListItemType.Pager)
-			Util.CustomizePager(e);
 	}
+
 	protected void ansGrid_SortCommand(object source, DataGridSortCommandEventArgs e)
 	{
 		BindData(e.SortExpression);
@@ -96,10 +97,11 @@ public partial class answers : System.Web.UI.Page
 	{
 		using (Answers answers = new Answers())
 		{
-			// TODO: Use local variables for the three parameters to improve code readability.
-			answers.UpdateAnswerFile(ViewState["editf"].ToString(),
-				((TextBox)e.Item.Cells[3].Controls[0]).Text,
-				((TextBox)e.Item.Cells[4].Controls[0]).Text);
+			string fileName = ViewState["editf"].ToString();
+			string title = ((TextBox)e.Item.Cells[3].Controls[0]).Text;
+			string description = ((TextBox)e.Item.Cells[4].Controls[0]).Text;
+
+			answers.UpdateAnswerFile(fileName, title, description);
 		}
 		ansGrid.EditItemIndex = -1;
 		BindData(null);
