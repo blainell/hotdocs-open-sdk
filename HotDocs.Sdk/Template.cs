@@ -2,7 +2,6 @@
    Use, modification and redistribution of this source is subject
    to the New BSD License as set out in LICENSE.TXT. */
 
-//TODO: Add method parameter validation.
 //TODO: Add appropriate unit tests.
 
 using System;
@@ -76,6 +75,9 @@ namespace HotDocs.Sdk
 		/// <param name="key"><include file="../Shared/Help.xml" path="Help/string/param[@name='templateKey']"></include></param>
 		public Template(string fileName, TemplateLocation location, string switches = "", string key = "")
 		{
+			if (fileName == null || location == null || switches == null || key == null)
+				throw new Exception("Invalid parameter.");
+
 			FileName = fileName;
 			Location = location;
 			Switches = switches;
@@ -88,6 +90,9 @@ namespace HotDocs.Sdk
 		/// <param name="switches"><include file="../Shared/Help.xml" path="Help/string/param[@name='switches']"></include></param>
 		public Template(PackageTemplateLocation location, string switches = "", string key = "")
 		{
+			if (location == null || switches == null || key == null)
+				throw new Exception("Invalid parameter.");
+
 			HotDocs.Sdk.TemplateInfo ti = location.GetPackageManifest().MainTemplate;
 			FileName = ti.FileName;
 			Location = location;
@@ -111,8 +116,11 @@ namespace HotDocs.Sdk
 		/// <returns></returns>
 		public static Template Locate(string locator)
 		{
-			locator = Util.DecryptString(locator);
-			string[] tokens = locator.Split('|');
+			if (locator == null)
+				throw new Exception("Invalid parameter.");
+
+			string decryptedLocator = Util.DecryptString(locator);
+			string[] tokens = decryptedLocator.Split('|');
 			if (tokens.Length != 4)
 				throw new Exception("Invalid template locator.");
 
@@ -166,7 +174,11 @@ namespace HotDocs.Sdk
 		{
 			string updatedFileName;
 			if (Location.GetUpdatedFileName(this, out updatedFileName))
+			{
+				if (updatedFileName == null || updatedFileName == "")
+					throw new Exception("Invalid file name.");
 				FileName = updatedFileName;
+			}
 		}
 		/// <summary>
 		/// Returns the full path (based on the directory specified by Location.GetTemplateDirectory) of the template.

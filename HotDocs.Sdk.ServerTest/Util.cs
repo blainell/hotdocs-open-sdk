@@ -38,15 +38,18 @@ namespace HotDocs.Sdk.ServerTest
 			return content;
 		}
 
-		public static HotDocs.Sdk.Template OpenTemplate(string packageId)
+		public static PackagePathTemplateLocation CreatePackagePathLocation(string packageID)
 		{
 			//Note that in this sample portal, the package ID is used to construct the package file name, but this does not need to be the case.
-			string packagePath = PackageCache.GetLocalPackagePath(packageId);
+			string packagePath = PackageCache.GetLocalPackagePath(packageID);
 			if (!File.Exists(packagePath))
 				throw new Exception("The template does not exist.");
-			HotDocs.Sdk.PackagePathTemplateLocation location = new HotDocs.Sdk.PackagePathTemplateLocation(packageId, packagePath);
+			return new HotDocs.Sdk.PackagePathTemplateLocation(packageID, packagePath);
+		}
 
-			return new HotDocs.Sdk.Template(location);
+		public static HotDocs.Sdk.Template OpenTemplate(string packageID)
+		{
+			return new HotDocs.Sdk.Template(CreatePackagePathLocation(packageID));
 		}
 
 		public static HotDocs.Sdk.Server.IServices GetLocalServicesInterface()
