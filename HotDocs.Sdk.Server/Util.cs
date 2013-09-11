@@ -153,11 +153,9 @@ namespace HotDocs.Sdk.Server
 			interview.AppendLine("<script type=\"text/javascript\">");
 
 			// Append the template locator variable.
-			// This is used by the answer file data service, which does not know how to handle packages at the moment.
-			// So we use GetTemplateLocator2, which gives us a locator for the extracted package files rather than the package itself.
-			// TODO: Eventually we will want this to work with just the packages instead, at which point we can use the original GetTemplateLocator.
 			interview.AppendFormat("HDTemplateLocator=\"{0}\";", template.CreateLocator());
 			interview.AppendLine();
+
 			// Append the interview locale (if the host app has overridden the server default)
 			if (!String.IsNullOrEmpty(settings.Locale))
 			{
@@ -346,7 +344,22 @@ namespace HotDocs.Sdk.Server
 			}
 
 			#endregion
-		};
+		}
+
+		/// <summary>
+		/// Reads the bytes from a text reader and returns them in a BinaryObject.
+		/// </summary>
+		/// <param name="textReader">A text reader.</param>
+		/// <returns>A BinaryObject containing the contents of the text reader.</returns>
+		public static BinaryObject GetBinaryObjectFromTextReader(TextReader textReader)
+		{
+			string allText = textReader.ReadToEnd();
+			return new BinaryObject
+			{
+				Data = Encoding.UTF8.GetBytes(allText),
+				DataEncoding = "UTF-8"
+			};
+		}
 
 		/// <summary>
 		/// This method returns the requested runtime file from the ServerFiles cache. If the file can be found in either the cache or the

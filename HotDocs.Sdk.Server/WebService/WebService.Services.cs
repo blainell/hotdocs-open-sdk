@@ -30,7 +30,7 @@ namespace HotDocs.Sdk.Server.WebService
 				throw new ArgumentNullException("The web service end point is missing. " +
 					"Please check the value for WebServiceEndPoint in the config file and try again.");
 			if (string.IsNullOrWhiteSpace(templatePath))
-				throw new ArgumentNullException("The base template location is missing. " + 
+				throw new ArgumentNullException("The base template location is missing. " +
 					"Please check the value for TemplatePath in the config file and try again.");
 			if (Directory.Exists(templatePath) == false)
 				throw new ArgumentNullException(@"The base template location is does not exist at: "" + _baseTemplateLocation + "".  Please check the value defined as TemplatePath in the config file and try again.  ");
@@ -67,7 +67,7 @@ namespace HotDocs.Sdk.Server.WebService
 				string fileName = GetRelativePath(template.GetFullPath());
 				interviewFiles = client.GetInterview(
 					fileName,
-					answers == null ? null : new BinaryObject[] { GetBinaryObjectFromTextReader(answers) }, // answers
+					answers == null ? null : new BinaryObject[] { Util.GetBinaryObjectFromTextReader(answers) }, // answers
 					settings.Format,
 					itvOpts,
 					markedVariables != null ? markedVariables.ToArray<string>() : null, // variables to highlight as unanswered
@@ -101,7 +101,7 @@ namespace HotDocs.Sdk.Server.WebService
 				string fileName = GetRelativePath(template.GetFullPath());
 				asmResult = client.AssembleDocument(
 					fileName,
-					answers == null ? null : new BinaryObject[] { GetBinaryObjectFromTextReader(answers) }, // answers
+					answers == null ? null : new BinaryObject[] { Util.GetBinaryObjectFromTextReader(answers) }, // answers
 					outputFormat,
 					assemblyOptions,
 					null);
@@ -131,7 +131,7 @@ namespace HotDocs.Sdk.Server.WebService
 			BinaryObject combinedAnswers;
 			using (Proxy client = new Proxy(_endPointName))
 			{
-				var answerObjects = (from answer in answers select GetBinaryObjectFromTextReader(answer)).ToArray();
+				var answerObjects = (from answer in answers select Util.GetBinaryObjectFromTextReader(answer)).ToArray();
 				combinedAnswers = client.GetAnswers(answerObjects);
 				SafeCloseClient(client);
 			}
@@ -209,16 +209,6 @@ namespace HotDocs.Sdk.Server.WebService
 			}
 		}
 
-		BinaryObject GetBinaryObjectFromTextReader(TextReader textReader)
-		{
-			string allText = textReader.ReadToEnd();
-			return new BinaryObject
-					{
-						Data = Encoding.UTF8.GetBytes(allText),
-						DataEncoding = "UTF-8"
-					};
-		}
-
 		OutputFormat ConvertFormat(DocumentType docType)
 		{
 			OutputFormat format = OutputFormat.None;
@@ -288,17 +278,19 @@ namespace HotDocs.Sdk.Server.WebService
 			AssembleDocumentResult result = null;
 			MemoryStream document = null;
 			StreamReader ansRdr = null;
+			List<NamedStream> supportingFiles = new List<NamedStream>();
 			Template[] pendingAssemblies = new Template[asmResult.PendingAssemblies == null ? 0 : asmResult.PendingAssemblies.Length];
+
 			if (asmResult.PendingAssemblies != null)
 			{
-				
-			for (int i = 0; i < asmResult.PendingAssemblies.Length; i++)
-			{
-				string templateName = Path.GetFileName(asmResult.PendingAssemblies[i].TemplateName);
-				string switches = asmResult.PendingAssemblies[i].Switches;
-				Template pendingTemplate = new Template(templateName, template.Location.Duplicate(), switches);
-				pendingAssemblies[i] = pendingTemplate;
-			}
+
+				for (int i = 0; i < asmResult.PendingAssemblies.Length; i++)
+				{
+					string templateName = Path.GetFileName(asmResult.PendingAssemblies[i].TemplateName);
+					string switches = asmResult.PendingAssemblies[i].Switches;
+					Template pendingTemplate = new Template(templateName, template.Location.Duplicate(), switches);
+					pendingAssemblies[i] = pendingTemplate;
+				}
 			}
 			for (int i = 0; i < asmResult.Documents.Length; i++)
 			{
@@ -306,6 +298,12 @@ namespace HotDocs.Sdk.Server.WebService
 				{
 					case OutputFormat.Answers:
 						ansRdr = new StreamReader(new MemoryStream(asmResult.Documents[i].Data));
+						break;
+					case OutputFormat.JPEG:
+					case OutputFormat.PNG:
+						// If the output document is plain HTML, we might also get additional image files in the 
+						// AssemblyResult that we need to pass on to the caller.
+						supportingFiles.Add(new NamedStream(asmResult.Documents[i].FileName, new MemoryStream(asmResult.Documents[i].Data)));
 						break;
 					default:
 						document = new MemoryStream(asmResult.Documents[i].Data);
@@ -315,14 +313,11 @@ namespace HotDocs.Sdk.Server.WebService
 						}
 						break;
 				}
-
-				// TODO: If we are requesting an HTML page, there might be additional images that need to be in the supporting files.
 			}
 			if (document != null)
 			{
-				NamedStream[] supportingFiles = null;
 				result = new AssembleDocumentResult(
-					new Document(template, document, docType, supportingFiles, asmResult.UnansweredVariables),
+					new Document(template, document, docType, supportingFiles.ToArray(), asmResult.UnansweredVariables),
 					ansRdr == null ? null : ansRdr.ReadToEnd(),
 					pendingAssemblies,
 					asmResult.UnansweredVariables
@@ -340,7 +335,7 @@ namespace HotDocs.Sdk.Server.WebService
 				sRet = full.Substring(_baseTemplateLocation.Length + 1);
 			else
 			{
-				throw new Exception(string.Format(@"Error: The configured TemplatePath location ""{0}"" does not match the location of the current template ""{1}""", 
+				throw new Exception(string.Format(@"Error: The configured TemplatePath location ""{0}"" does not match the location of the current template ""{1}""",
 					_baseTemplateLocation, fullPath));
 			}
 			return sRet;

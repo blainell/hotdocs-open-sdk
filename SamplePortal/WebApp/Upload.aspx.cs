@@ -105,42 +105,25 @@ public partial class Upload : System.Web.UI.Page
 			for (int i = 0; i < GridSize; i++)
 			{
 				System.Web.UI.HtmlControls.HtmlTableRow tr = new System.Web.UI.HtmlControls.HtmlTableRow();
-				// TODO: Use CSS classes for styling rather than hard-coded values here.
-
-				tr.VAlign = "Top";
 				System.Web.UI.HtmlControls.HtmlTableCell tc;
 
 				// Template Title
 				tc = new System.Web.UI.HtmlControls.HtmlTableCell();
 				tc.Width = "30%";
-				tc.Style.Add("border", "1px solid #99B2CC");
 				TextBox templateTitle = new TextBox();
 				templateTitle.ID = string.Format("HD_Template_Title{0}", i.ToString());
 				templateTitle.Rows = 3;
 				templateTitle.TextMode = TextBoxMode.MultiLine;
-				templateTitle.Font.Name = "Arial";
-				templateTitle.Style.Add("width", "100%");
-				templateTitle.Style.Add("overflow", "auto");
-				templateTitle.BorderStyle = BorderStyle.None;
-				templateTitle.BorderWidth = 0;
-				templateTitle.BackColor = System.Drawing.Color.Transparent;
 				tc.Controls.Add(templateTitle);
 				tr.Controls.Add(tc);
 
 				// Template Description
 				tc = new System.Web.UI.HtmlControls.HtmlTableCell();
 				tc.Width = "70%";
-				tc.Style.Add("border", "1px solid #99B2CC");
 				TextBox templateDescription = new TextBox();
 				templateDescription.ID = string.Format("HD_Template_Description{0}", i.ToString());
 				templateDescription.Rows = 3;
 				templateDescription.TextMode = TextBoxMode.MultiLine;
-				templateDescription.Font.Name = "Arial";
-				templateDescription.Style.Add("width", "100%");
-				templateDescription.Style.Add("overflow", "auto");
-				templateDescription.BorderStyle = BorderStyle.None;
-				templateDescription.BorderWidth = 0;
-				templateDescription.BackColor = System.Drawing.Color.Transparent;
 				tc.Controls.Add(templateDescription);
 				tr.Controls.Add(tc);
 

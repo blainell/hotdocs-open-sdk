@@ -10,6 +10,7 @@ using System.Net;
 using HotDocs.Sdk.Server;
 using HotDocs.Sdk.Server.Contracts;
 using System.IO;
+using System.Configuration;
 
 namespace HotDocs.Sdk.Cloud
 {
@@ -37,7 +38,9 @@ namespace HotDocs.Sdk.Cloud
 		{
 			if (hostAddress == null)
 			{
-				hostAddress = "https://cloud.hotdocs.ws";
+				hostAddress = ConfigurationManager.AppSettings["CloudServicesAddress"];
+				if (string.IsNullOrEmpty(hostAddress))
+					hostAddress = "https://cloud.hotdocs.ws";
 			}
 			SubscriberId = subscriberID;
 			SigningKey = signingKey;
