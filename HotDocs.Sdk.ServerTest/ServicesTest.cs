@@ -169,7 +169,8 @@ namespace HotDocs.Sdk.ServerTest
 			AssembleDocument(services, template, logRef);
 		}
 
-		private void AssembleDocument(IServices svc, Template tmp, string logRef) {
+		private void AssembleDocument(IServices svc, Template tmp, string logRef)
+		{
 			TextReader answers = new StringReader("");
 			AssembleDocumentSettings settings = new AssembleDocumentSettings();
 			AssembleDocumentResult result;
@@ -303,12 +304,6 @@ namespace HotDocs.Sdk.ServerTest
 			//TODO: Update the package so that the template title and template type agree.
 			Assert.AreEqual(template.GetTitle(), "Employment Agreement (Word RTF version)");
 
-			Assert.AreEqual(template.TemplateType, TemplateType.WordDOCX);
-			Assert.IsFalse(template.HasInterview);
-			Assert.IsTrue(template.GeneratesDocument);
-			Assert.AreEqual(template.NativeDocumentType, DocumentType.WordDOCX);
-			Assert.AreEqual(template.TemplateType, TemplateType.WordDOCX);
-
 			string filePath = template.GetFullPath();
 			Assert.IsTrue(File.Exists(filePath));
 			Directory.Delete(Path.GetDirectoryName(filePath));
@@ -317,6 +312,35 @@ namespace HotDocs.Sdk.ServerTest
 			filePath = template.GetFullPath();//The folder should come into existence here.
 			Assert.IsTrue(File.Exists(filePath));
 			Directory.Delete(Path.GetDirectoryName(filePath));//Clean up.
+
+			TestTemplate(template);
+		}
+
+		[TestMethod]
+		public void TestPathTemplateLocation()
+		{
+			string templateDir = Path.Combine(Util.TestFilesPath, "DocxDemoEmployment");
+			Assert.IsTrue(Directory.Exists(templateDir));
+			PathTemplateLocation location = new PathTemplateLocation(templateDir);
+
+			string switches = "/ni";
+			string key = "Test file key";
+			Template template = new Template("Demo Employment Agreement.docx", location, switches, key);
+			Assert.AreEqual(template.GetTitle(), "Employment Agreement");
+
+			string filePath = template.GetFullPath();
+			Assert.IsTrue(File.Exists(filePath));
+
+			TestTemplate(template);
+		}
+
+		private void TestTemplate(Template template)
+		{
+			Assert.AreEqual(template.TemplateType, TemplateType.WordDOCX);
+			Assert.IsFalse(template.HasInterview);
+			Assert.IsTrue(template.GeneratesDocument);
+			Assert.AreEqual(template.NativeDocumentType, DocumentType.WordDOCX);
+			Assert.AreEqual(template.TemplateType, TemplateType.WordDOCX);
 
 			string locator = template.CreateLocator();
 			Template template2 = Template.Locate(locator);
@@ -332,17 +356,6 @@ namespace HotDocs.Sdk.ServerTest
 
 			template.UpdateFileName();
 			Assert.AreEqual(template.FileName, template2.FileName);
-		}
-
-		[TestMethod]
-		public void TestPathTemplateLocation()
-		{
-		}
-
-		private void TestTemplate(Template template)
-		{
-			string filePath = template.GetFullPath();
-			Assert.IsTrue(File.Exists(filePath));
 		}
 
 		#endregion
