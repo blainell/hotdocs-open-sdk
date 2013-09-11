@@ -8,6 +8,15 @@
 <head runat="server">
 	<title><%= _siteName %></title>
 	<link href="css/SamplePortal.css" type="text/css" rel="stylesheet" />
+
+	<!-- Load jQuery 1.x for IE8, and jQuery 2.x for all other browsers. -->
+	<!--[if lt IE 9]>
+    <script type="text/javascript" src="<%= _javascriptUrl %>/jquery.js" id="jquery"></script>
+	<![endif]-->
+	<!--[if gte IE 9]><!-->
+	<script type="text/javascript" src="<%= _javascriptUrl %>/jquery2.js" id="jquery"></script>
+	<!--<![endif]-->
+	<script type="text/javascript" src="scripts/sampleportal.js"></script>
 	<script type="text/javascript" src="<%= _javascriptUrl %>/Silverlight.js"></script>
 	<script type="text/javascript">
 		document.cookie = 'SilverlightAvailable=' + Silverlight.isInstalled('5.0');
