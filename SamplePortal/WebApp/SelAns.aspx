@@ -21,28 +21,29 @@
 						<p>
 							Either select one of these, and click Continue...<br />
 						</p>
-						<!-- TODO: Use CSS classes in this table instead of hard-coding styles. -->
-						<table>
+						<table id="SelectAnswersTable">
 							<tr>
-								<td style="width: 16px;">&nbsp;</td>
-								<td style="vertical-align: top;">
-									<input type="radio" id="rbNew" checked="checked" value="new" name="AnsFileType" onclick="HDSamplePortal.OnSelChange()" /></td>
-								<td style="vertical-align: top;">
-									<label for="rbNew">Begin using a new, empty answer set</label></td>
+								<td class="hd-sp-selectanswers-indent">&nbsp;</td>
+								<td>
+									<input type="radio" id="rbNew" checked="checked" value="new" name="AnsFileType" onclick="HDSamplePortal.OnSelChange()" />
+								</td>
+								<td>
+									<label for="rbNew">Begin using a new, empty answer set</label>
+								</td>
 							</tr>
 							<tr>
-								<td style="width: 16px;">&nbsp;</td>
-								<td style="vertical-align: top;">
+								<td class="hd-sp-selectanswers-indent">&nbsp;</td>
+								<td>
 									<input type="radio" id="rbUpload" value="upload" name="AnsFileType" onclick="HDSamplePortal.OnSelChange()" /></td>
-								<td style="vertical-align: top;">
+								<td>
 									<label for="rbUpload">Use a HotDocs answer file from my PC:</label>
 									&nbsp;&nbsp;&nbsp;
 									<input class="InputField" id="fileUpload" disabled="disabled" type="file" name="fileUpload" accept=".anx" runat="server" />
 								</td>
 							</tr>
 							<tr>
-								<td style="width: 16px;">&nbsp;</td>
-								<td style="vertical-align: top;" colspan="2">
+								<td class="hd-sp-selectanswers-indent">&nbsp;</td>
+								<td colspan="2">
 									<asp:Button ID="btnContinue" runat="server" Text="Continue" ToolTip="Proceed to interview" CssClass="InputField" OnClick="btnContinue_Click"></asp:Button></td>
 							</tr>
 						</table>
@@ -72,13 +73,13 @@
 								</td>
 							</tr>
 						</table>
-						<asp:DataGrid ID="ansGrid" runat="server" BorderColor="#99B2CC" CellPadding="3" AutoGenerateColumns="False" DataSource="<%# ansData %>" AllowPaging="True" AllowSorting="True" CssClass="DataGrid" OnItemCreated="ansGrid_ItemCreated" OnItemDataBound="ansGrid_ItemDataBound" OnPageIndexChanged="ansGrid_PageIndexChanged" OnSelectedIndexChanged="ansGrid_SelectedIndexChanged" OnSortCommand="ansGrid_SortCommand">
+						<asp:DataGrid ID="ansGrid" runat="server" CellPadding="3" AutoGenerateColumns="False" DataSource="<%# ansData %>" AllowPaging="True" AllowSorting="True" CssClass="DataGrid" OnItemCreated="ansGrid_ItemCreated" OnItemDataBound="ansGrid_ItemDataBound" OnPageIndexChanged="ansGrid_PageIndexChanged" OnSelectedIndexChanged="ansGrid_SelectedIndexChanged" OnSortCommand="ansGrid_SortCommand">
 							<AlternatingItemStyle CssClass="DataGridAlternateItem"></AlternatingItemStyle>
 							<ItemStyle CssClass="DataGridItem"></ItemStyle>
 							<HeaderStyle CssClass="DataGridHeader"></HeaderStyle>
 							<Columns>
 								<asp:ButtonColumn Text="Select" SortExpression="Title" HeaderText="Title" CommandName="Select">
-									<HeaderStyle HorizontalAlign="Left" Width="200px" CssClass="DataGridHeader"></HeaderStyle>
+									<HeaderStyle Width="200px"></HeaderStyle>
 									<ItemStyle HorizontalAlign="Left"></ItemStyle>
 								</asp:ButtonColumn>
 								<asp:BoundColumn Visible="False" DataField="Filename" SortExpression="Filename" HeaderText="File Name"></asp:BoundColumn>

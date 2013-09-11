@@ -32,7 +32,7 @@ public partial class Disposition : System.Web.UI.Page
 				//TODO: Make sure we're cleaning up the right stuff in the right places.
 				Util.SweepTempDirectories(); // first some housekeeping
 
-				// TFS #5532: Set the max length on the title and description fields.
+				// Set the max length on the title and description fields.
 				// These were previously set in the ASPX page, but ASP.NET drops them for multi-line fields when rendering the page.
 				// So we set them manually here using values configurable in the web.config.
 				txtTitle.Attributes.Add("maxlength", Settings.MaxTitleLength.ToString());
@@ -67,57 +67,39 @@ public partial class Disposition : System.Web.UI.Page
 				foreach (HotDocs.Sdk.Server.Document doc in docs)
 					cache.AddDoc(doc);
 
-				try
+				//TODO: Update this comment to reflect reality.
+				// numberOfAssemblies needs to take into account any assemblies that are going to be added because of 
+				// ASSEMBLE instructions in the template just finished. These assemblies are stored in Assembly.PendingAssemblies 
+				// until Assemby.Completed = true, at which time they are moved to Session.Assemblies.
+				IEnumerable<HotDocs.Sdk.Server.WorkItem> interviewItems = from n in _session.WorkItems where n is HotDocs.Sdk.Server.InterviewWorkItem select n;
+				int numberOfInterviews = interviewItems.Count();
+				if (numberOfInterviews > 1)
 				{
-					//TODO: Update this comment to reflect reality.
-					// numberOfAssemblies needs to take into account any assemblies that are going to be added because of 
-					// ASSEMBLE instructions in the template just finished. These assemblies are stored in Assembly.PendingAssemblies 
-					// until Assemby.Completed = true, at which time they are moved to Session.Assemblies.
-					IEnumerable<HotDocs.Sdk.Server.WorkItem> interviewItems = from n in _session.WorkItems where n is HotDocs.Sdk.Server.InterviewWorkItem select n;
-					int numberOfInterviews = interviewItems.Count();
-					if (numberOfInterviews > 1)
+					IEnumerable<HotDocs.Sdk.Server.WorkItem> completeItems = from n in interviewItems where n.IsCompleted select n;
+					int completedInterviews = completeItems.Count();
+					pnlNextAsm.Visible = true;
+					if (completedInterviews < numberOfInterviews)
 					{
-						IEnumerable<HotDocs.Sdk.Server.WorkItem> completeItems = from n in interviewItems where n.IsCompleted select n;
-						int completedInterviews = completeItems.Count();
-						pnlNextAsm.Visible = true;
-						if (completedInterviews < numberOfInterviews)
-						{
-							lblContinue.Text = String.Format(
-								"You have completed {0} of {1} interviews required for this document set. There {2} {3} follow-up interview{4} still to be done. Click here to proceed to the next interview.",
-								completedInterviews,
-								numberOfInterviews,
-								(numberOfInterviews - completedInterviews) == 1 ? "is" : "are",
-								(numberOfInterviews - completedInterviews).ToString(),
-								(numberOfInterviews - completedInterviews) == 1 ? "" : "s");
-						}
-						else
-						{
-							lblContinue.Text = String.Format(
-								"You have completed {0} of {1} interviews required for this document set. ",
-								completedInterviews,
-								numberOfInterviews);
-							btnNextInterview.Visible = false;
+						lblContinue.Text = String.Format(
+							"You have completed {0} of {1} interviews required for this document set. There {2} {3} follow-up interview{4} still to be done. Click here to proceed to the next interview.",
+							completedInterviews,
+							numberOfInterviews,
+							(numberOfInterviews - completedInterviews) == 1 ? "is" : "are",
+							(numberOfInterviews - completedInterviews).ToString(),
+							(numberOfInterviews - completedInterviews) == 1 ? "" : "s");
+					}
+					else
+					{
+						lblContinue.Text = String.Format(
+							"You have completed {0} of {1} interviews required for this document set. ",
+							completedInterviews,
+							numberOfInterviews);
+						btnNextInterview.Visible = false;
 
-						}
-					}
-					else
-						pnlNextAsm.Visible = false;
-				}
-				catch (System.Runtime.InteropServices.COMException ex)
-				{
-					pnlError.Visible = true;
-					//in case they somehow got here without PDF Advantage
-					//TODO: Update the error handling here to reflect that PDF Advantage is no longer a separate product.
-					if (ex.ErrorCode == -2147467259 && ex.Message.IndexOf("PDF Advantage") >= 0)
-					{
-						lblError.Text = "The requested document could not be assembled because HotDocs PDF Advantage " +
-							"is not installed on this server.";
-					}
-					else
-					{
-						lblError.Text = "An error prevented the document from being assembled:<br>" + ex.Message;
 					}
 				}
+				else
+					pnlNextAsm.Visible = false;
 
 				//Initialize Doc Grid
 				docGrid.DataSource = cache.ToArray();
@@ -130,8 +112,19 @@ public partial class Disposition : System.Web.UI.Page
 			// Note for HotDocs host application developers: An error entry should be added to a log file here
 			// with information about the current exception, including a stack trace:
 			System.Diagnostics.Debug.WriteLine("Page_Load: Exception occurred: " + ex.Message);
+
 			if (Settings.DebugApplication) throw;
-			else Response.Redirect("Default.aspx");
+			else
+			{
+				pnlError.Visible = true;
+				panelDocDownload.Visible = false;
+
+				lblError.Text = "An error prevented the document from being assembled:<br>";
+				if (ex.Message.IndexOf("PDF Advantage") > 0)
+					lblError.Text += "HotDocs could not load the required PDF support library.";
+				else
+					lblError.Text += ex.Message;
+			}
 		}
 	}
 
@@ -140,21 +133,24 @@ public partial class Disposition : System.Web.UI.Page
 		Response.Redirect("Interview.aspx");
 	}
 
+	/// <summary>
+	/// Saves the answer file.
+	/// </summary>
+	/// <param name="sender"></param>
+	/// <param name="e"></param>
 	protected void btnSave_Click(object sender, EventArgs e)
 	{
-		//TODO: Use CSS classes rather than explicit colors here.
-		//save the answer file
 		if (txtTitle.Text.Length > 0)
 		{
 			Util.SaveAnswers(_session.AnswerCollection, txtTitle.Text, txtDescription.Text);
 
 			lblStatus.Text = "Answer set saved.";
-			lblStatus.ForeColor = Color.Black;
+			lblStatus.CssClass = "SuccessMessage";
 		}
 		else
 		{
 			lblStatus.Text = "Error: Please enter an answer set title.";
-			lblStatus.ForeColor = Color.Red;
+			lblStatus.CssClass = "ErrorMessage";
 		}
 		lblStatus.Visible = true;
 	}

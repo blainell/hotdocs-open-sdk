@@ -16,11 +16,9 @@
 			<table id="pageContent" border="0">
 				<tr>
 					<td>
-						<asp:Panel ID="pnlError" runat="server" Visible="False">
+						<asp:Panel ID="pnlError" CssClass="ErrorMessage" runat="server" Visible="False">
 							<p>
-								<!-- TODO: Use a CSS class here instead of hard-coding the color value. -->
-								<strong><span style="color: #cc0033">Error:</span></strong>
-								<br />
+								<strong>Error:</strong>
 								<asp:Label ID="lblError" runat="server">Label</asp:Label>
 							</p>
 						</asp:Panel>
@@ -33,7 +31,6 @@
 							</asp:Panel>
 						</p>
 						<p>You may save your answers on the server for later reuse:</p>
-						<!-- TODO: Use CSS classes in this table instead of hard-coding styles. -->
 						<table border="0" style="border-collapse: separate; border-spacing: 4px;">
 							<tr>
 								<td style="WIDTH: 160px">
@@ -54,7 +51,7 @@
 								</td>
 								<td>
 									<asp:Button ID="btnSave" runat="server" ToolTip="Save the answers from the interview." CssClass="InputField"
-										Text="Save Answers" OnClick="btnSave_Click"></asp:Button>&nbsp;<asp:Label ID="lblStatus" runat="server" Visible="False" Font-Italic="True">Status</asp:Label></td>
+										Text="Save Answers" OnClick="btnSave_Click"></asp:Button>&nbsp;<asp:Label ID="lblStatus" runat="server" Visible="False">Status</asp:Label></td>
 							</tr>
 							<tr>
 								<td style="WIDTH: 160px">

@@ -17,6 +17,13 @@ TD { font-family: Tahoma, Arial, Sans-Serif; color: black; font-size: 10pt; }
 #DataGridSearchTable { width: 100%; margin-bottom: 2px; border-collapse: collapse; border-spacing: 0; border:0px none; }
 #DataGridSearchTable > TBODY > TR > TD { padding: 0px; vertical-align:bottom; }
 
+/* Select Answers Page */
+#SelectAnswersTable TD { vertical-align:top; }
+.hd-sp-selectanswers-indent { width:16px; }
+
+/* Disposition Page */
+#pnlError { background-color: #c4d7ef; padding:5px; }
+
 /* Upload Page */
 #UploadedTemplatesGrid { width: 100%; border-collapse: collapse; border-spacing: 0; }
 #UploadedTemplatesGrid > TBODY > TR > TD { padding: 2px; border: 1px solid #99B2CC;  }
@@ -35,7 +42,8 @@ a.HeaderLink:link, a.HeaderLink:visited { text-decoration: underline; color: Whi
 
 .UnansweredWarnPanel { padding: 10px; background-color: #c4d7ef; /*#B3C5D9;*/ }
 
-.ErrorMessage { color: Red; }
+.SuccessMessage { color: black; font-style:italic; }
+.ErrorMessage { color: Red; font-style:italic; }
 
 /* Page Header */
 .hd-sp-title { font-family: Verdana, Tahoma, Sans-Serif; font-size: 24pt; font-weight: bold; white-space: nowrap; color: White; padding: 10px; }
@@ -43,7 +51,7 @@ a.HeaderLink:link, a.HeaderLink:visited { text-decoration: underline; color: Whi
 .hd-sp-searchbox div { float: left; }
 
 /* Data Grid Header */
-.DataGridHeader { background-color: #c4d7ef; }
+.DataGridHeader { background-color: #c4d7ef; text-align:left; }
 a.DataGridHeader:link, a.DataGridHeader:visited, a.DataGridHeader:active { text-decoration: none; color: White; }
 a.DataGridHeader:hover { font-weight: bold; text-decoration: none; }
 

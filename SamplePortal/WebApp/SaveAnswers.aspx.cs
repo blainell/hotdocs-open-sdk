@@ -6,13 +6,12 @@ using SamplePortal;
 using SamplePortal.Data;
 using System;
 using System.Data;
-using System.Drawing;
 using System.IO;
 
 /// <summary>
-/// This page demonstrates how to save answers mid-interview using the SavePageUrl property of the Assembly object
-/// When this page is processed, A HotDocs Server interview will be displayed in the browser and the user will
-/// have click the "Save Answers" button. The JavaScript posts the answers to this page. The HTML returned from
+/// This page demonstrates how to save answers mid-interview using the SavePageUrl property of the Assembly object.
+/// When this page is processed, a HotDocs Server interview will be displayed in the browser and the user will
+/// have clicked the "Save Answers" button. The JavaScript posts the answers to this page. The HTML returned from
 /// this page will be displayed in the interview.
 /// 
 /// This page needs to gather the answers, figure out where to save the answers, and save them.
@@ -61,7 +60,7 @@ public partial class SaveAnswers : System.Web.UI.Page
 		if (txtTitle.Text.Length == 0) // a title is required
 		{
 			lblStatus.Text = "Error: Please enter an answer set title.";
-			lblStatus.ForeColor = Color.Red; // TODO: Use a CSS class instead of hard-coded color value here.
+			lblStatus.CssClass = "ErrorMessage";
 		}
 		else
 		{
@@ -75,7 +74,7 @@ public partial class SaveAnswers : System.Web.UI.Page
 
 			//Update the page content.
 			lblStatus.Text = "Answer set saved.";
-			lblStatus.ForeColor = Color.Black; // TODO: Use a CSS class instead of hard-coded color value here.
+			lblStatus.CssClass = "SuccessMessage";
 		}
 		lblStatus.Visible = true;
 	}

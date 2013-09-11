@@ -36,7 +36,7 @@
 								<td>
 									<asp:Button ID="btnSave" runat="server" ToolTip="Save the answers from the interview." Text="Save Answers"
 										CssClass="InputField" OnClick="btnSave_Click"></asp:Button>&nbsp;
-									<asp:Label ID="lblStatus" runat="server" Font-Italic="True" Visible="False">Status</asp:Label></td>
+									<asp:Label ID="lblStatus" runat="server" Visible="False">Status</asp:Label></td>
 							</tr>
 						</table>
 					</td>
