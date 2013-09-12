@@ -6,6 +6,7 @@
 //TODO: Add method parameter validation.
 //TODO: Add appropriate unit tests.
 
+using System;
 using System.IO;
 
 namespace HotDocs.Sdk
@@ -14,6 +15,12 @@ namespace HotDocs.Sdk
 	{
 		public PackageTemplateLocation(string packageID)
 		{
+			if (packageID == null)
+				throw new ArgumentNullException();
+
+			if (packageID == String.Empty)
+				throw new ArgumentException();
+
 			PackageID = packageID;
 		}
 

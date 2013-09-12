@@ -23,7 +23,7 @@ namespace HotDocs.Sdk
 	/// is done at application startup time. To register a <c>TemplateLocation</c> class, call
 	/// <c>TemplateLocation.RegisterLocation</c>.</para>
 	/// </summary>
-	public abstract class TemplateLocation
+	public abstract class TemplateLocation : IEquatable<TemplateLocation>
 	{
 		//We use the ConcurrentQueue type here because multiple threads may be accessing the queue at
 		// once. However, since this is a read-only queue (we only write to it at application startup),
@@ -36,6 +36,19 @@ namespace HotDocs.Sdk
 		/// </summary>
 		/// <returns></returns>
 		public abstract TemplateLocation Duplicate();
+
+		#region IEquatable<TemplateLocation> Members
+
+		public bool Equals(TemplateLocation other)
+		{
+			if (other == null)
+				return false;
+			// cast this & other to (object) to ensure the virtual Equals() method gets called.
+			// this should ensure it is called on a concrete instance of a derived class.
+			return ((object)this).Equals((object)other);
+		}
+
+		#endregion
 		/// <summary>
 		/// Returns a Stream for a file living at the same location as the template.
 		/// </summary>

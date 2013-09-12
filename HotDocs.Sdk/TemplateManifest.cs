@@ -253,35 +253,52 @@ namespace HotDocs.Sdk
 	{
 		private static readonly XNamespace s_namespace = "http://www.hotdocs.com/schemas/template_manifest/2012";
 
-		private struct TemplateFilePath : IEquatable<TemplateFilePath>
+		private struct TemplateFileLocation : IEquatable<TemplateFileLocation>
 		{
-			private string _filePath;
+			private string _fileName;
+			private TemplateLocation _fileLocation;
 
-			internal TemplateFilePath(string filePath)
+			internal TemplateFileLocation(string fileName, TemplateLocation location)
 			{
-				_filePath = filePath;
+				_fileName = fileName;
+				_fileLocation = location;
 			}
 
-			internal string FilePath
+			internal TemplateFileLocation(string filePath)
 			{
-				get { return _filePath; }
+				_fileName = Path.GetFileName(filePath);
+				_fileLocation = new PathTemplateLocation(Path.GetDirectoryName(filePath));
+			}
+
+			internal string FileName
+			{
+				get { return _fileName; }
+			}
+
+			internal TemplateLocation FileLocation
+			{
+				get { return _fileLocation; }
 			}
 
 			public override bool Equals(object obj)
 			{
-				return (obj != null) && (obj is TemplateFilePath) && Equals((TemplateFilePath)obj);
+				return (obj != null) && (obj is TemplateFileLocation) && Equals((TemplateFileLocation)obj);
 			}
 
 			public override int GetHashCode()
 			{
-				return _filePath.ToLower().GetHashCode();
+				const int prime = 397;
+				int result = FileLocation.GetHashCode(); // hash for the location, combined with
+				result = (result * prime) ^ FileName.ToLower().GetHashCode(); // case-insensitive hash for the file name
+				return result;
 			}
 
-			#region IEquatable<TemplatePath> Members
+			#region IEquatable<TemplateFileLocation> Members
 
-			public bool Equals(TemplateFilePath other)
+			public bool Equals(TemplateFileLocation other)
 			{
-				return string.Equals(other.FilePath, FilePath, StringComparison.OrdinalIgnoreCase);
+				return string.Equals(other.FileName, FileName, StringComparison.OrdinalIgnoreCase)
+					&& FileLocation.Equals(other.FileLocation);
 			}
 
 			#endregion
@@ -315,35 +332,43 @@ namespace HotDocs.Sdk
 
 		public DataSource[] DataSources { get; private set; }
 
-		// TODO: Condider re-writing this using an XmlReader so that the entire document does not need to be allocated in a DOM. Doing so
-		// should make processing template manifest files faster. For now using an XDocument to just get things done fast.
 		public static TemplateManifest ParseManifest(string templatePath, ManifestParseFlags parseFlags)
 		{
+			string fileName = Path.GetFileName(templatePath);
+			TemplateLocation fileLoc = new PathTemplateLocation(Path.GetDirectoryName(templatePath));
+
+			return ParseManifest(fileName, fileLoc, parseFlags);
+		}
+
+		// TODO: Condider re-writing this using an XmlReader so that the entire document does not need to be allocated in a DOM. Doing so
+		// should make processing template manifest files faster. For now using an XDocument to just get things done fast.
+		public static TemplateManifest ParseManifest(string fileName, TemplateLocation location, ManifestParseFlags parseFlags)
+		{
 			TemplateManifest templateManifest = new TemplateManifest();
-			TemplateFilePath baseTemplatePath = new TemplateFilePath(templatePath);
+			TemplateFileLocation baseTemplateLoc = new TemplateFileLocation(fileName, location);
 
 			HashSet<VariableInfo> variables = GetHashSet<VariableInfo>(parseFlags, ManifestParseFlags.ParseVariables);
 			HashSet<Dependency> dependencies = GetHashSet<Dependency>(parseFlags, ManifestParseFlags.ParseDependencies);
 			HashSet<AdditionalFile> additionalFiles = GetHashSet<AdditionalFile>(parseFlags, ManifestParseFlags.ParseAdditionalFiles);
 			HashSet<DataSource> dataSources = GetHashSet<DataSource>(parseFlags, ManifestParseFlags.ParseDataSources);
 
-			Queue<TemplateFilePath> templateQueue = new Queue<TemplateFilePath>();
-			HashSet<TemplateFilePath> processedTemplates = new HashSet<TemplateFilePath>();
+			Queue<TemplateFileLocation> templateQueue = new Queue<TemplateFileLocation>();
+			HashSet<TemplateFileLocation> processedTemplates = new HashSet<TemplateFileLocation>();
 
 			// Add the base template to the queue
-			templateQueue.Enqueue(baseTemplatePath);
+			templateQueue.Enqueue(baseTemplateLoc);
 
 			while (templateQueue.Count > 0)
 			{
-				TemplateFilePath templateFilePath = templateQueue.Dequeue();
-				if (!processedTemplates.Contains(templateFilePath))
+				TemplateFileLocation templateFileLoc = templateQueue.Dequeue();
+				if (!processedTemplates.Contains(templateFileLoc))
 				{
 					try
 					{
 						// Read the template manifest so that it can be parsed.
-						XDocument manifest = XDocument.Load(GetManifestPath(templateFilePath.FilePath), LoadOptions.None);
+						XDocument manifest = XDocument.Load(templateFileLoc.FileLocation.GetFile(GetManifestName(templateFileLoc.FileName)), LoadOptions.None);
 
-						if (templateFilePath.Equals(baseTemplatePath))
+						if (templateFileLoc.Equals(baseTemplateLoc))
 						{
 							// Process the root templateManifest element.
 							templateManifest.HotDocsVersion = manifest.Root.Attribute("hotdocsVersion").Value;
@@ -367,10 +392,10 @@ namespace HotDocs.Sdk
 							}
 
 							var titleElem = manifest.Root.Element(s_namespace + "title");
-							templateManifest.Title = (titleElem != null) ? titleElem.Value : string.Empty;
+							templateManifest.Title = (titleElem != null) ? titleElem.Value.Trim() : string.Empty;
 
 							var descriptionElem = manifest.Root.Element(s_namespace + "description");
-							templateManifest.Description = (descriptionElem != null) ? descriptionElem.Value : string.Empty;
+							templateManifest.Description = (descriptionElem != null) ? descriptionElem.Value.Trim() : string.Empty;
 						}
 
 						if (variables != null)
@@ -570,20 +595,20 @@ namespace HotDocs.Sdk
 
 								foreach (var templateDependency in templateDependencies)
 								{
-									templateQueue.Enqueue(new TemplateFilePath(GetDependencyFilePath(templatePath, 
+									templateQueue.Enqueue(GetDependencyFileLocation(baseTemplateLoc, 
 										(templateDependency.Attribute("hintPath") != null) ? templateDependency.Attribute("hintPath").Value : null, 
-										templateDependency.Attribute("fileName").Value)));
+										templateDependency.Attribute("fileName").Value));
 								}
 							}
 
 							// Mark the template as processed so that its manifest will not get processed again.
-							processedTemplates.Add(templateFilePath);
+							processedTemplates.Add(templateFileLoc);
 						}
 					}
 					catch (Exception e)
 					{
 						string errorText = String.Format("Failed to read the manifest file for the template:\r\n\r\n     {0}     \r\n\r\n" +
-							"The following error occurred:\r\n\r\n     {1}     ", templateFilePath.FilePath, e.Message);
+							"The following error occurred:\r\n\r\n     {1}     ", templateFileLoc.FileName, e.Message);
 						throw new Exception(errorText, e);
 					}
 				}
@@ -609,30 +634,28 @@ namespace HotDocs.Sdk
 			return ((parseFlags & flag) == flag) ? new HashSet<T>() : null;
 		}
 
-		private static string GetManifestPath(string itemPath)
+		private static string GetManifestName(string itemName)
 		{
-			// If the passed file appears to already be a manifest file path then just use it.
-			if (itemPath.EndsWith(".manifest.xml", StringComparison.OrdinalIgnoreCase))
-				return itemPath;
+			// If the passed file name appears to already be a manifest file name then just use it.
+			if (itemName.EndsWith(".manifest.xml", StringComparison.OrdinalIgnoreCase))
+				return itemName;
 
-			return Path.Combine(Path.GetDirectoryName(itemPath), Path.GetFileName(itemPath) + ".manifest.xml");
+			return itemName + ".manifest.xml";
 		}
 
-		private static string GetDependencyFilePath(string itemPath, string hintPath, string fileName)
+		private static TemplateFileLocation GetDependencyFileLocation(TemplateFileLocation itemLoc, string hintPath, string fileName)
 		{
-			string filePath;
 			if (!string.IsNullOrEmpty(hintPath))
 			{
 				// A hint path was specified. Use it to locate the dependent file.
-				filePath = Path.Combine(hintPath, fileName);
+				return new TemplateFileLocation(Path.Combine(hintPath, fileName));
 			}
 			else
 			{
 				// No hint path was specified. Assume the dependent template is in the same folder as the main (item) template.
-				filePath = Path.Combine(Path.GetDirectoryName(itemPath), fileName);
+				return new TemplateFileLocation(fileName, itemLoc.FileLocation);
 			}
-
-			return filePath;
 		}
+
 	}
 }

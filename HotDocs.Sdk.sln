@@ -40,6 +40,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HotDocs.Sdk.ServerTest", "H
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{18479F0C-BB4B-4FDF-80A5-1BBD7BE64C13}"
 	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
 		Shared\Help.xml = Shared\Help.xml
 		HotDocs.Sdk.vsmdi = HotDocs.Sdk.vsmdi
 		Local.testsettings = Local.testsettings
