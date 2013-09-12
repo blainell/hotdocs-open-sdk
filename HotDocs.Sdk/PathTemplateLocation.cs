@@ -6,6 +6,7 @@
 //TODO: Add method parameter validation.
 //TODO: Add appropriate unit tests.
 
+using System;
 using System.IO;
 
 namespace HotDocs.Sdk
@@ -13,7 +14,8 @@ namespace HotDocs.Sdk
 	/// <summary>
 	/// 
 	/// </summary>
-	public class PathTemplateLocation : TemplateLocation
+		public class PathTemplateLocation : TemplateLocation, IEquatable<PathTemplateLocation>
+
 	{
 		/// <summary>
 		/// 
@@ -21,6 +23,9 @@ namespace HotDocs.Sdk
 		/// <param name="templateDir"></param>
 		public PathTemplateLocation(string templateDir)
 		{
+			if (templateDir == null)
+				throw new ArgumentNullException();
+
 			_templateDir = templateDir;
 		}
 
@@ -32,6 +37,25 @@ namespace HotDocs.Sdk
 		{
 			return new PathTemplateLocation(_templateDir);
 		}
+
+		public override bool Equals(object obj)
+		{
+			return (obj != null) && (obj is PathTemplateLocation) && Equals((PathTemplateLocation)obj);
+		}
+
+		public override int GetHashCode()
+		{
+			return _templateDir.ToLower().GetHashCode();
+		}
+
+		#region IEquatable<PathTemplateLocation> Members
+
+		public bool Equals(PathTemplateLocation other)
+		{
+			return string.Equals(_templateDir, other._templateDir, StringComparison.OrdinalIgnoreCase);
+		}
+
+		#endregion
 
 		//TODO: Allow for readonly files.
 		/// <summary>

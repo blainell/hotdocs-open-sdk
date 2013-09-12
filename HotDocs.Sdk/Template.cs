@@ -186,7 +186,7 @@ namespace HotDocs.Sdk
 		/// <returns></returns>
 		public TemplateManifest GetManifest(ManifestParseFlags parseFlags)
 		{
-			return TemplateManifest.ParseManifest(GetFullPath(), parseFlags);
+			return TemplateManifest.ParseManifest(FileName, Location, parseFlags);
 		}
 		/// <summary>
 		/// Request that the Template.Location update the file name as needed.
