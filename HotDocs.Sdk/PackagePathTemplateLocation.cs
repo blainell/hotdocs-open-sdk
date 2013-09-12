@@ -11,7 +11,7 @@ using System.IO;
 
 namespace HotDocs.Sdk
 {
-	public class PackagePathTemplateLocation : PackageTemplateLocation
+	public class PackagePathTemplateLocation : PackageTemplateLocation, IEquatable<PackagePathTemplateLocation>
 	{
 		public PackagePathTemplateLocation(string packageID, string packagePath) : base(packageID)
 		{
@@ -27,6 +27,31 @@ namespace HotDocs.Sdk
 			location._templateDir = _templateDir;
 			return location;
 		}
+
+		public override bool Equals(object obj)
+		{
+			return (obj != null) && (obj is PackagePathTemplateLocation) && Equals((PackagePathTemplateLocation)obj);
+		}
+
+		public override int GetHashCode()
+		{
+			const int prime = 397;
+			int result = PackagePath.ToLower().GetHashCode(); // package path must be case-insensitive
+			result = (result * prime) ^ PackageID.GetHashCode(); // combine the hashes
+			return result;
+		}
+
+		#region IEquatable<PackagePathTemplateLocation> Members
+
+		public bool Equals(PackagePathTemplateLocation other)
+		{
+			if (other == null)
+				return false;
+			return string.Equals(PackageID, other.PackageID, StringComparison.Ordinal)
+				&& string.Equals(_templateDir, other._templateDir, StringComparison.OrdinalIgnoreCase);
+		}
+
+		#endregion
 
 		//TODO: Handle readonly files.
 		//TODO: Don't extract the files to disk if they aren't already.
