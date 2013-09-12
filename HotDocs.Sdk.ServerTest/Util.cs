@@ -28,7 +28,15 @@ namespace HotDocs.Sdk.ServerTest
 			return new StreamReader(_assembly.GetManifestResourceStream("HotDocs.Sdk.ServerTest.TestFiles." + fileName));
 		}
 
-		public static string GetFileContentAsString(string filePath)
+		public static string TestFilesPath
+		{
+			get
+			{
+				return GetRootedPath("TestFiles");
+			}
+		}
+
+				public static string GetFileContentAsString(string filePath)
 		{
 			string content = "";
 			using (FileStream fs = File.OpenRead(filePath))
@@ -78,6 +86,28 @@ namespace HotDocs.Sdk.ServerTest
 			string cloudSigningKey = ConfigurationManager.AppSettings["SigningKey"];
 			string cloudSubscriberID = ConfigurationManager.AppSettings["SubscriberID"];
 			return new HotDocs.Sdk.Server.Cloud.Services(cloudSubscriberID, cloudSigningKey);
+		}
+
+		public static string GetTestProjectPath()
+		{
+			string assemblyPath = System.Reflection.Assembly.GetExecutingAssembly().Location;
+			string root = "";
+			if (Path.IsPathRooted(assemblyPath))
+				root = Path.GetPathRoot(assemblyPath);
+			string[] tokens = assemblyPath.Substring(root.Length).Split(new char[] { Path.DirectorySeparatorChar, Path.DirectorySeparatorChar });
+			if (tokens.Length <= 3)
+				throw new Exception("Invalid path.");
+			string[] subTokens = new string[tokens.Length - 3];//Get the path minus two folders and the file name, hence three.
+			Array.Copy(tokens, subTokens, tokens.Length - 3);
+			string testProjectPath = Path.Combine(subTokens);
+			if (root.Length > 0)
+				testProjectPath = Path.Combine(root, testProjectPath);
+			return testProjectPath;
+		}
+
+		public static string GetRootedPath(string relativePath)
+		{
+			return Path.Combine(GetTestProjectPath(), relativePath);
 		}
 	}
 }

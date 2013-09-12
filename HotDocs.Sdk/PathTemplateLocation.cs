@@ -2,8 +2,6 @@
    Use, modification and redistribution of this source is subject
    to the New BSD License as set out in LICENSE.TXT. */
 
-//TODO: Add XML comments where missing.
-//TODO: Add method parameter validation.
 //TODO: Add appropriate unit tests.
 
 using System;
@@ -12,25 +10,31 @@ using System.IO;
 namespace HotDocs.Sdk
 {
 	/// <summary>
-	/// 
+	/// <c>PathTemplateLocation</c> is a <c>TemplateLocation</c> class that represents the directory path
+	/// for a template that simply resides as a file in the file system. The template does not reside in
+	/// a package or database, for example.
 	/// </summary>
 		public class PathTemplateLocation : TemplateLocation, IEquatable<PathTemplateLocation>
 
 	{
+		private string _templateDir;//The directory where the template resides.
+
 		/// <summary>
-		/// 
+		/// Construct a <c>PathTemplateLocation</c> representing the path of the directory containing the
+		/// template file.
 		/// </summary>
-		/// <param name="templateDir"></param>
+		/// <param name="templateDir">The path of the directory containing the template file.</param>
 		public PathTemplateLocation(string templateDir)
 		{
 			if (templateDir == null)
 				throw new ArgumentNullException();
 
+			if (!Directory.Exists(templateDir))
+				throw new Exception("The folder \"" + templateDir + "\" does not exist.");
 			_templateDir = templateDir;
 		}
-
 		/// <summary>
-		/// 
+		/// Returns a new duplicate instance of this object. Overrides <see cref="TemplateLocation.Duplicate"/>.
 		/// </summary>
 		/// <returns></returns>
 		public override TemplateLocation Duplicate()
@@ -56,46 +60,48 @@ namespace HotDocs.Sdk
 		}
 
 		#endregion
-
-		//TODO: Allow for readonly files.
 		/// <summary>
-		/// 
+		/// Returns a stream for a file in the template's directory. Overrides <see cref="TemplateLocation.GetFile"/>.
 		/// </summary>
+		/// <param name="fileName">The name of the file.</param>
+		/// <returns></returns>
 		/// <param name="fileName"></param>
 		/// <returns></returns>
 		public override Stream GetFile(string fileName)
 		{
 			string filePath = Path.Combine(GetTemplateDirectory(), fileName);
-			return new FileStream(filePath, FileMode.Open);
+			//Note that if the file path does not exist, the FileStream constructor will throw an exception.
+			return new FileStream(filePath, FileMode.Open, FileAccess.Read);
 		}
-
 		/// <summary>
-		/// 
+		/// Returns the template's directory. Overrides <see cref="TemplateLocation.GetTemplateDirectory"/>.
 		/// </summary>
 		/// <returns></returns>
 		public override string GetTemplateDirectory()
 		{
 			return _templateDir;
 		}
-
 		/// <summary>
-		/// 
+		/// Serialize the content of this object. Overrides <see cref="TemplateLocation.SerializeContent"/>.
 		/// </summary>
 		/// <returns></returns>
 		protected override string SerializeContent()
 		{
 			return _templateDir;
 		}
-
 		/// <summary>
-		/// 
+		/// Set the fields and properties of this object by deserializing a string returned from SerializeContent.
+		/// Overrides <see cref="TemplateLocation.DeserializeContent"/>.
 		/// </summary>
-		/// <param name="content"></param>
+		/// <param name="content">A content string returned from SerializeContent.</param>
 		protected override void DeserializeContent(string content)
 		{
+			if (content == null || content == "")
+				throw new Exception("Invalid content parameter.");
+			if (!Directory.Exists(content))
+				throw new Exception("The folder \"" + content + "\" does not exist.");
+
 			_templateDir = content;
 		}
-
-		private string _templateDir;
 	}
 }

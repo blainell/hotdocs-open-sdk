@@ -196,13 +196,16 @@ public partial class Upload : System.Web.UI.Page
 					FileInfo finfo = new FileInfo(postedFile.FileName);
 					if (finfo.Extension.ToLower() != ".xml")
 					{
-						string packageid = Path.GetFileNameWithoutExtension(postedFile.FileName);
-						string filename = Path.Combine(Settings.TemplatePath, packageid + ".pkg");
-						if (!string.IsNullOrEmpty(packageid))
+						string packageID = Path.GetFileNameWithoutExtension(postedFile.FileName);
+						string packagePath = PackageCache.GetLocalPackagePath(packageID);
+						if (!string.IsNullOrEmpty(packageID))
 						{
-							FileStream fs = File.OpenWrite(filename);
+							FileStream fs = File.OpenWrite(packagePath);
 							postedFile.InputStream.CopyTo(fs);
 							fs.Close();
+
+							HotDocs.Sdk.PackagePathTemplateLocation location = new HotDocs.Sdk.PackagePathTemplateLocation(packageID, packagePath);
+							location.ExtractPackageFiles();
 
 							UploadItem infoItem = new UploadItem
 							{
@@ -251,8 +254,8 @@ public partial class Upload : System.Web.UI.Page
 								/// value, and it is included here as sample code.
 								// TODO: Make use of this value in Sample Portal
 								ExpirationExtensionDays = Request.Form["HD_Template_Extension_Days" + templateIndex],
-								PackageID = packageid,
-								FullFilePath = filename
+								PackageID = packageID,
+								FullFilePath = packagePath
 							};
 
 							using (SamplePortal.Data.Templates templates = new SamplePortal.Data.Templates())
