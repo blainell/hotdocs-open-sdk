@@ -120,10 +120,14 @@ namespace HotDocs.Sdk.Server
 					return DocumentType.HFD;
 				case "hpd":
 					return DocumentType.HPD;
+				case "htm":
 				case "html":
+					// We have no way of distinguishing between regular HTML and HTML "with data URIs" based
+					// on the file name extension. So we just say the document type is regular HTML.
+					// This is OK since this method is only ever called when the document type is native and
+					// we want to find out what native resolved to based on the output file; HTML is never a native
+					// output format.
 					return DocumentType.HTML;
-				case "htmld": // TODO: How to distinguish between html and html w/data uris?
-					return DocumentType.HTMLwDataURIs;
 				case "mhtml":
 					return DocumentType.MHTML;
 				case "pdf":

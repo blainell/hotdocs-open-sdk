@@ -49,7 +49,7 @@ namespace HotDocs.Sdk
 		/// <para>In a system where all template file names are unique, one directory
 		/// may be used for all templates. Generally, however, each main template (e.g. a package's main template) should
 		/// reside in a directory separate from other main templates. Each dependent template (e.g. a package template that is not the
-		/// main template) should reside in the same directory as its main template.
+		/// main template) should reside in the same directory as its main template.</para>
 		/// 
 		/// <para>A <c>TemplateLocation</c> class may be implemented by the host application, and may represent templates
 		/// stored on the file system, in a DMS, in some other database, etc. However, when an actual template file path

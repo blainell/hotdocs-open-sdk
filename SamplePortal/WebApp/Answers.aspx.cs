@@ -12,6 +12,7 @@ public partial class answers : System.Web.UI.Page
 {
 	protected DataView _ansData;
 	protected string _siteName = Settings.SiteName;
+	protected static string _javascriptUrl = Settings.JavaScriptUrl;
 
 	protected void Page_Load(object sender, EventArgs e)
 	{

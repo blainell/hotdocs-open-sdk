@@ -24,6 +24,9 @@ TD { font-family: Tahoma, Arial, Sans-Serif; color: black; font-size: 10pt; }
 /* Disposition Page */
 #pnlError { background-color: #c4d7ef; padding:5px; }
 
+/* Save Answers Page */
+#txtDescription, #txtTitle { padding:2px; border:1px solid #007d93; resize:none; }
+
 /* Upload Page */
 #UploadedTemplatesGrid { width: 100%; border-collapse: collapse; border-spacing: 0; }
 #UploadedTemplatesGrid > TBODY > TR > TD { padding: 2px; border: 1px solid #99B2CC;  }
