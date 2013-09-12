@@ -2,8 +2,6 @@
    Use, modification and redistribution of this source is subject
    to the New BSD License as set out in LICENSE.TXT. */
 
-//TODO: Add XML comments where missing.
-//TODO: Add method parameter validation.
 //TODO: Add appropriate unit tests.
 
 using System;
@@ -11,45 +9,72 @@ using System.Collections.Concurrent;
 
 namespace HotDocs.Sdk
 {
+	/// <summary>
+	/// <para><c>TemplateLocation</c> is an abstract class serves as the base class for all template location objects.
+	/// Template location objects are the means for designating the location of a file for
+	/// a Template object. For example, a template may reside in a file system folder, a document
+	/// management system (DMS), another type of database, a template package, etc. The host
+	/// application must either choose one of the concrete <c>TemplateLocation</c> classes implemented
+	/// in the SDK (e.g. <c>PathTemplateLocation</c> or <c>PackagePathTemplateLocation</c>) or implement a 
+	/// custom template location.</para>
+	/// 
+	/// <para>The <c>TemplateLocation</c> class also serves as a dependency injection container for any
+	/// <c>TemplateLocation</c> classes used by the host application. <c>TemplateLocation</c> class registration
+	/// is done at application startup time. To register a <c>TemplateLocation</c> class, call
+	/// <c>TemplateLocation.RegisterLocation</c>.</para>
+	/// </summary>
 	public abstract class TemplateLocation
 	{
+		//We use the ConcurrentQueue type here because multiple threads may be accessing the queue at
+		// once. However, since this is a read-only queue (we only write to it at application startup),
+		// no further thread synchronization is necessary. A queue is used because the type is available.
+		// If a ConcurrentList<> type existed, that would suffice since we don't need FIFO functionality.
+		private static ConcurrentQueue<Type> _registeredTypes = new ConcurrentQueue<Type>();
+
 		/// <summary>
-		/// Return a copy of this object.
+		/// Returns a copy of this object.
 		/// </summary>
 		/// <returns></returns>
-		//TODO: Consider using ICloneable.
 		public abstract TemplateLocation Duplicate();
+		/// <summary>
+		/// Returns a Stream for a file living at the same location as the template.
+		/// </summary>
+		/// <param name="fileName">The name of the file (without any path information).</param>
+		/// <returns></returns>
 		public abstract System.IO.Stream GetFile(string fileName);
 		/// <summary>
-		/// Return the directory for a template. In a system where all template file names are unique, one directory
-		/// may be used for all templates. Generally, however, each main template (e.g. a package main template) should
-		/// reside in a separate directory. Each dependent template (e.g. a package template that is not the
-		/// main template) should reside in the same directory as its main template. Hence, typically, one ITemplateLocation
-		/// object would exist per main template.
-		/// 
-		/// An ITemplateLocation object may be implemented by the host application, and may represent templates
-		/// stored on the file system, in a DMS, in some other database, etc. However, when an actual template file path
-		/// is needed, the ITemplateLocation implementation is expected to provide a full path to the template, and
-		/// ensure that the template and all of its dependencies exist. The directory where the template exists should
-		/// survive the serialization and deserialization of this object.
+		/// Returns the directory for the template.
 		/// </summary>
-		/// <returns>The directory for the template.</returns>
+		/// <remarks>
+		/// <para>In a system where all template file names are unique, one directory
+		/// may be used for all templates. Generally, however, each main template (e.g. a package's main template) should
+		/// reside in a directory separate from other main templates. Each dependent template (e.g. a package template that is not the
+		/// main template) should reside in the same directory as its main template.
+		/// 
+		/// <para>A <c>TemplateLocation</c> class may be implemented by the host application, and may represent templates
+		/// stored on the file system, in a DMS, in some other database, etc. However, when an actual template file path
+		/// is needed, the <c>TemplateLocation</c> implementation is expected to provide a full path to the template directory, and
+		/// ensure that the template itself and all of its dependencies exist in that directory. </para>
+		/// 
+		/// <para>The directory where the template exists should survive the serialization and deserialization of this object.
+		/// If the file name needs to be updated at deserialization, the class should override the <see cref="GetUpdatedFileName"/>
+		/// method.</para>
+		/// </remarks>
+		/// <returns></returns>
 		public abstract string GetTemplateDirectory();
-		//TODO: Fix obsolete XML comment.
 		/// <summary>
-		/// Return a string that can be used to initialize a new, uninitialized TemplateLocation
+		/// Return a string that can be used to initialize a new, uninitialized <c>TemplateLocation</c>
 		/// object of the same type as this one. Deserialize the content with DeserializeContent.
 		/// </summary>
 		/// <returns></returns>
 		protected abstract string SerializeContent();
 		/// <summary>
-		/// Initialize a TemplateLocation object from a string created by SerializeContent.
+		/// Initialize a <c>TemplateLocation</c> object from a string created by SerializeContent.
 		/// </summary>
-		/// <param name="templateLocator"></param>
-		/// <returns></returns>
+		/// <param name="content"></param>
 		protected abstract void DeserializeContent(string content);
 		/// <summary>
-		/// Return an unencrypted locator object.
+		/// Return an encrypted locator string.
 		/// </summary>
 		/// <returns></returns>
 		public string CreateLocator()
@@ -71,15 +96,11 @@ namespace HotDocs.Sdk
 			fileName = "";
 			return false;
 		}
-		//TODO: Remove this.
 		/// <summary>
-		/// A key identifying the template -- such as a DMS file key.
+		/// Create a <c>TemplateLocation</c> object from an encrypted locator string returned by <c>TemplateLocation.CreateLocator</c>.
 		/// </summary>
-		public string Key
-		{
-			get {return _key;}
-			protected set {_key = value;}
-		}
+		/// <param name="encodedLocator"></param>
+		/// <returns></returns>
 		public static TemplateLocation Locate(string encodedLocator)
 		{
 			string locator = Util.DecryptString(encodedLocator);
@@ -106,7 +127,7 @@ namespace HotDocs.Sdk
 		}
 
 		/// <summary>
-		/// Call this method to register a type derived from TemplateLocation. All TemplateLocation derivatives must
+		/// Call this method to register a type derived from TemplateLocation. All concrete TemplateLocation derivatives must
 		/// be registered before use in order for Template.Locate and TemplateLocation.Locate reconstitute
 		/// template location information. This method should only be called at application start-up.
 		/// </summary>
@@ -122,8 +143,5 @@ namespace HotDocs.Sdk
 
 			_registeredTypes.Enqueue(type);
 		}
-
-		private static ConcurrentQueue<Type> _registeredTypes = new ConcurrentQueue<Type>();
-		private string _key = "";//TODO: Remove this.
 	}
 }
