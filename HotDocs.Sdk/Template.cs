@@ -2,8 +2,6 @@
    Use, modification and redistribution of this source is subject
    to the New BSD License as set out in LICENSE.TXT. */
 
-//TODO: Add appropriate unit tests.
-
 using System;
 using System.IO;
 
@@ -207,6 +205,7 @@ namespace HotDocs.Sdk
 		/// <summary>
 		/// A key identifying the template. When using a template management scheme where the template file itself is temporary
 		/// (such as with a DMS) set this key to help HotDocs Server to keep track of which server files are for which template.
+		/// If not empty, this key is also used internally by HotDocs Server for caching purposes.
 		/// </summary>
 		public string Key { get; private set; }
 		/// <summary>
