@@ -143,7 +143,7 @@ namespace HotDocs.Sdk.Server.WebService
 			using (Proxy client = new Proxy(_endPointName))
 			{
 				string templateId = template.FileName;
-				string templateKey = template.Location.Key;
+				string templateKey = template.Key;
 				string templateState = null;
 				client.BuildSupportFiles(templateId, templateKey, flags, templateState);
 				SafeCloseClient(client);
@@ -155,7 +155,7 @@ namespace HotDocs.Sdk.Server.WebService
 			using (Proxy client = new Proxy(_endPointName))
 			{
 				string templateId = template.FileName;
-				string templateKey = template.Location.Key;
+				string templateKey = template.Key;
 				string templateState = null;
 				client.RemoveSupportFiles(templateId, templateKey, templateState);
 				SafeCloseClient(client);
