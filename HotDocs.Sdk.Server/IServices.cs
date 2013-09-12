@@ -27,7 +27,7 @@ namespace HotDocs.Sdk.Server
 		/// </summary>
 		/// <param name="template"></param>
 		/// <param name="answers"></param>
-		/// <param name="options"></param>
+		/// <param name="settings"></param>
 		/// <param name="markedVariables"></param>
 		/// <include file="../Shared/Help.xml" path="Help/string/param[@name='logRef']"/>
 		/// <returns></returns>
@@ -39,17 +39,17 @@ namespace HotDocs.Sdk.Server
 		/// <param name="template">An instance of the Template class.</param>
 		/// <param name="answers">Either an XML answer string, or a string containing encoded
 		/// interview answers as posted from a HotDocs browser interview.</param>
-		/// <param name="options">An instance of the AssemblyOptions class.</param>
+		/// <param name="settings">An instance of the AssemblyOptions class.</param>
 		/// <include file="../Shared/Help.xml" path="Help/string/param[@name='logRef']"/>
 		/// <returns>An AssemblyResult object containing all the files and data resulting from the request.</returns>
 		AssembleDocumentResult AssembleDocument(Template template, TextReader answers, AssembleDocumentSettings settings, string logRef);
 
 		/// <summary>
-		/// GetComponentInfo returns metadata about the variables/types (and optionally dialogs & mapping info)
+		/// GetComponentInfo returns metadata about the variables/types (and optionally dialogs &amp; mapping info)
 		/// for the indicated template's interview.
 		/// </summary>
 		/// <param name="template">An instance of the Template class, for which you are requesting component information.</param>
-		/// <param name="includeDialogs">Whether to include dialog & mapping information in the returned results.</param>
+		/// <param name="includeDialogs">Whether to include dialog &amp; mapping information in the returned results.</param>
 		/// <include file="../Shared/Help.xml" path="Help/string/param[@name='logRef']"/>
 		/// <returns>The requested component information.</returns>
 		ComponentInfo GetComponentInfo(Template template, bool includeDialogs, string logRef);
@@ -92,7 +92,7 @@ namespace HotDocs.Sdk.Server
 		/// </summary>
 		/// <param name="state">The template state string, passed as "state" on the query string by the browser interview.</param>
 		/// <param name="templateFile">The template file name, passed as "template" on the query string by the browser interview.</param>
-		/// <param name="type">The requested type of interview definition, according to the "type" query string parameter.
+		/// <param name="format">The requested type of interview definition, according to the "type" query string parameter.
 		/// If type=="js", pass JavaScript; if type=="dll", pass Silverlight; otherwise pass Default.</param>
 		/// <returns>A stream containing the requested interview definition, to be returned to the caller.</returns>
 		Stream GetInterviewDefinition(string state, string templateFile, InterviewFormat format);

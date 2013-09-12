@@ -11,8 +11,16 @@ using System.IO;
 
 namespace HotDocs.Sdk
 {
+	/// <summary>
+	/// 
+	/// </summary>
 	public class PackagePathTemplateLocation : PackageTemplateLocation
 	{
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="packageID"></param>
+		/// <param name="packagePath"></param>
 		public PackagePathTemplateLocation(string packageID, string packagePath) : base(packageID)
 		{
 			if (!File.Exists(packagePath))
@@ -21,6 +29,10 @@ namespace HotDocs.Sdk
 			PackagePath = packagePath;
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
 		public override TemplateLocation Duplicate()
 		{
 			PackagePathTemplateLocation location = new PackagePathTemplateLocation(PackageID, PackagePath);
@@ -30,11 +42,21 @@ namespace HotDocs.Sdk
 
 		//TODO: Handle readonly files.
 		//TODO: Don't extract the files to disk if they aren't already.
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="fileName"></param>
+		/// <returns></returns>
 		public override Stream GetFile(string fileName)
 		{
 			string filePath = Path.Combine(GetTemplateDirectory(), fileName);
 			return new FileStream(filePath, FileMode.Open);
 		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
 		public override string GetTemplateDirectory()
 		{
 			if (_templateDir != null && Directory.Exists(_templateDir))
@@ -56,11 +78,19 @@ namespace HotDocs.Sdk
 			return _templateDir;
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
 		public override Stream GetPackageStream()
 		{
 			return new FileStream(PackagePath, FileMode.Open, FileAccess.Read);
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
 		public override TemplatePackageManifest GetPackageManifest()
 		{
 			HotDocs.Sdk.TemplatePackage pkg = new HotDocs.Sdk.TemplatePackage();
@@ -68,11 +98,19 @@ namespace HotDocs.Sdk
 			return pkg.Manifest;
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
 		protected override string SerializeContent()
 		{
 			return PackageID + "|" + PackagePath + "|" + GetTemplateDirectory();
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="content"></param>
 		protected override void DeserializeContent(string content)
 		{
 			string[] tokens = content.Split(new char[] {'|'});
@@ -84,6 +122,9 @@ namespace HotDocs.Sdk
 			_templateDir = tokens[2];
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
 		public string PackagePath { get; protected set; }
 		private string _templateDir = null;
 	}

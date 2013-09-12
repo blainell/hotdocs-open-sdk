@@ -24,6 +24,11 @@ namespace HotDocs.Sdk.Server.WebService
 		private string _endPointName;
 		private string _baseTemplateLocation;
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="endPointName"></param>
+		/// <param name="templatePath"></param>
 		public Services(string endPointName, string templatePath)
 		{
 			if (string.IsNullOrWhiteSpace(endPointName))
@@ -40,6 +45,15 @@ namespace HotDocs.Sdk.Server.WebService
 
 		#region IServices Members
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="template"></param>
+		/// <param name="answers"></param>
+		/// <param name="settings"></param>
+		/// <param name="markedVariables"></param>
+		/// <param name="logRef"></param>
+		/// <returns></returns>
 		public InterviewResult GetInterview(Template template, TextReader answers, InterviewSettings settings, IEnumerable<string> markedVariables, string logRef)
 		{
 			// Validate input parameters, creating defaults as appropriate.
@@ -93,6 +107,14 @@ namespace HotDocs.Sdk.Server.WebService
 
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="template"></param>
+		/// <param name="answers"></param>
+		/// <param name="settings"></param>
+		/// <param name="logRef"></param>
+		/// <returns></returns>
 		public AssembleDocumentResult AssembleDocument(Template template, TextReader answers, AssembleDocumentSettings settings, string logRef)
 		{
 			// Validate input parameters, creating defaults as appropriate.
@@ -124,6 +146,13 @@ namespace HotDocs.Sdk.Server.WebService
 			return result;
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="template"></param>
+		/// <param name="includeDialogs"></param>
+		/// <param name="logRef"></param>
+		/// <returns></returns>
 		public ComponentInfo GetComponentInfo(Template template, bool includeDialogs, string logRef)
 		{
 			// Validate input parameters, creating defaults as appropriate.
@@ -140,6 +169,12 @@ namespace HotDocs.Sdk.Server.WebService
 			return result;
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="answers"></param>
+		/// <param name="logRef"></param>
+		/// <returns></returns>
 		public string GetAnswers(IEnumerable<TextReader> answers, string logRef)
 		{
 			// Validate input parameters, creating defaults as appropriate.
@@ -156,6 +191,11 @@ namespace HotDocs.Sdk.Server.WebService
 			return Util.ExtractString(combinedAnswers);
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="template"></param>
+		/// <param name="flags"></param>
 		public void BuildSupportFiles(Template template, HDSupportFilesBuildFlags flags)
 		{
 			using (Proxy client = new Proxy(_endPointName))
@@ -168,6 +208,10 @@ namespace HotDocs.Sdk.Server.WebService
 			}
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="template"></param>
 		public void RemoveSupportFiles(Template template)
 		{
 			using (Proxy client = new Proxy(_endPointName))
@@ -180,6 +224,13 @@ namespace HotDocs.Sdk.Server.WebService
 			}
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="state"></param>
+		/// <param name="templateFile"></param>
+		/// <param name="format"></param>
+		/// <returns></returns>
 		public Stream GetInterviewDefinition(string state, string templateFile, InterviewFormat format)
 		{
 			// Validate input parameters, creating defaults as appropriate.
