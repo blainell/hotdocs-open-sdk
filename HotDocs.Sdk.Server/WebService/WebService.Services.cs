@@ -2,8 +2,6 @@
    Use, modification and redistribution of this source is subject
    to the New BSD License as set out in LICENSE.TXT. */
 
-//TODO: Add XML comments where missing.
-//TODO: Add method parameter validation.
 //TODO: Add appropriate unit tests.
 using System;
 using System.Collections.Generic;
@@ -24,6 +22,11 @@ namespace HotDocs.Sdk.Server.WebService
 		private string _endPointName;
 		private string _baseTemplateLocation;
 
+		/// <summary>
+		/// The <c>Services</c> constructor
+		/// </summary>
+		/// <param name="endPointName">The <c>endPointName</c> that is defined in the host application configuration file. It defines host to where web service calls will be made</param>
+		/// <param name="templatePath">The <c>templatePath</c> that is defined in the host application configuration file. It is the base folder location where templates are stored</param>
 		public Services(string endPointName, string templatePath)
 		{
 			if (string.IsNullOrWhiteSpace(endPointName))
@@ -33,19 +36,30 @@ namespace HotDocs.Sdk.Server.WebService
 				throw new ArgumentNullException("The base template location is missing. " +
 					"Please check the value for TemplatePath in the config file and try again.");
 			if (Directory.Exists(templatePath) == false)
-				throw new ArgumentNullException(@"The base template location is does not exist at: "" + _baseTemplateLocation + "".  Please check the value defined as TemplatePath in the config file and try again.  ");
+				throw new DirectoryNotFoundException(string.Format(@"The templatePath folder is does not exist at: ""{0}"".  Please check the value defined as TemplatePath in the config file and try again.  ", templatePath));
 			_endPointName = endPointName;
 			_baseTemplateLocation = templatePath.ToLower();
 		}
 
 		#region IServices Members
 
+		/// <summary>
+		/// <c>GetInterview</c> returns an HTML fragment suitable for inclusion in any standards-mode web page, which embeds a HotDocs interview
+		/// directly in that web page.
+		/// </summary>
+		/// <param name="template">An instance of the Template class, for which the interview will be requested.</param>
+		/// <param name="answers">The initial set of answers to include in the interview.</param>
+		/// <param name="settings">Settings that define various interview behaviors.</param>
+		/// <param name="markedVariables">A collection of variables that should be marked with special formatting in the interview.</param>
+		/// <param name="logRef">A string to display in logs related to this request.</param>
+		/// <returns>An object which contains an HTML fragment to be inserted in a web page to display the interview.</returns>
 		public InterviewResult GetInterview(Template template, TextReader answers, InterviewSettings settings, IEnumerable<string> markedVariables, string logRef)
 		{
-			// Validate input parameters, creating defaults as appropriate.
+			if (string.IsNullOrWhiteSpace(logRef))
+				throw new ArgumentNullException("logRef", @"GetInterview: the ""logRef"" parameter pased in was null or empty");
 			if (template == null)
-				throw new ArgumentNullException("template");
-
+				throw new ArgumentNullException("template", string.Format(@"GetInterview: the ""template"" parameter passed in was null, logRef: {0}", logRef));
+			// Validate input parameters, creating defaults as appropriate.
 			if (settings == null)
 				settings = new InterviewSettings();
 
@@ -87,21 +101,29 @@ namespace HotDocs.Sdk.Server.WebService
 					Util.AppendSdkScriptBlock(interview, template, settings);
 					result.HtmlFragment = interview.ToString();
 				}
-				SafeCloseClient(client);
+				SafeCloseClient(client, logRef);
 			}
 			return result;
 
 		}
 
+		/// <summary>
+		/// <c>AssembleDocument</c> assembles (creates) a document from the given template, answers and settings.
+		/// </summary>
+		/// <param name="template">An instance of the Template class, from which the document will be assembled.</param>
+		/// <param name="answers">The set of answers that will be applied to the template to assemble the document</param>
+		/// <param name="settings">settings that will be used to assemble the document. 
+		/// These settings include the assembled document format (file extension), markup syntax, how to display fields with unanswered variables, etc</param>
+		/// <param name="logRef">A string to display in logs related to this request.</param>
+		/// <returns>returns information about the assembled document, the document type, the unanswered variables, the resulting answers, etc.</returns>
 		public AssembleDocumentResult AssembleDocument(Template template, TextReader answers, AssembleDocumentSettings settings, string logRef)
 		{
-			// Validate input parameters, creating defaults as appropriate.
+			if (string.IsNullOrWhiteSpace(logRef))
+				throw new ArgumentNullException("logRef", @"AssembleDocument: the ""logRef"" parameter pased in was null or empty");
 			if (template == null)
-				throw new ArgumentNullException("template", "The template must not be null.");
-
+				throw new ArgumentNullException("template", string.Format(@"AssembleDocument: the ""template"" parameter passed in was null, logRef: {0}", logRef));
 			if (settings == null)
-				settings = new AssembleDocumentSettings();
-
+				throw new ArgumentNullException("settings", string.Format(@"AssembleDocument: the ""settings"" parameter passed in was null, logRef: {0}", logRef));
 			AssembleDocumentResult result = null;
 			AssemblyResult asmResult = null;
 			OutputFormat outputFormat = ConvertFormat(settings.Format);
@@ -115,7 +137,7 @@ namespace HotDocs.Sdk.Server.WebService
 					outputFormat,
 					assemblyOptions,
 					null);
-				SafeCloseClient(client);
+				SafeCloseClient(client, logRef);
 			}
 			if (asmResult != null)
 			{
@@ -124,81 +146,123 @@ namespace HotDocs.Sdk.Server.WebService
 			return result;
 		}
 
+		/// <summary>
+		/// <c>GetComponentInfo</c> returns metadata about the variables/types (and optionally dialogs & mapping info)
+		/// for the indicated template's interview.
+		/// </summary>
+		/// <param name="template">An instance of the Template class, for which you are requesting component information.</param>
+		/// <param name="includeDialogs">Whether to include dialog & mapping information in the returned results.</param>
+		/// <param name="logRef">A string to display in logs related to this request.</param>
+		/// <returns>returns the list of variables and dialogs (if includeDialogs is true) associated with the <c>template</c> parameter</returns>
 		public ComponentInfo GetComponentInfo(Template template, bool includeDialogs, string logRef)
 		{
-			// Validate input parameters, creating defaults as appropriate.
+			if (string.IsNullOrWhiteSpace(logRef))
+				throw new ArgumentNullException("logRef", @"GetComponentInfo: the ""logRef"" parameter pased in was null or empty");
 			if (template == null)
-				throw new ArgumentNullException("template", "The template must not be null.");
-
+				throw new ArgumentNullException("template", string.Format(@"GetComponentInfo: the ""template"" parameter passed in was null, logRef: {0}", logRef));
 			ComponentInfo result;
 			using (Proxy client = new Proxy(_endPointName))
 			{
 				string fileName = GetRelativePath(template.GetFullPath());
 				result = client.GetComponentInfo(fileName, includeDialogs);
-				SafeCloseClient(client);
+				SafeCloseClient(client, logRef);
 			}
 			return result;
 		}
 
+		/// <summary>
+		/// <c>GetAnswers</c> overlays any answer collections passed into it, into a single XML answer collection.
+		/// It has two primary uses: it can be used to combine multiple answer collections into a single
+		/// answer collection; and/or it can be used to "resolve" or standardize an answer collection
+		/// submitted from a browser interview (which may be specially encoded) into standard XML answers.
+		/// </summary>
+		/// <param name="answers">A sequence of answer collections. Each member of this sequence
+		/// must be either an (encoded) interview answer collection or a regular XML answer collection.
+		/// Each member will be successively overlaid (overlapped) on top of the prior members to
+		/// form one consolidated answer collection.</param>
+		/// <param name="logRef">A string to display in logs related to this request.</param>
+		/// <returns></returns>
 		public string GetAnswers(IEnumerable<TextReader> answers, string logRef)
 		{
-			// Validate input parameters, creating defaults as appropriate.
+			if (string.IsNullOrWhiteSpace(logRef))
+				throw new ArgumentNullException("logRef", @"GetAnswers: the ""logRef"" parameter pased in was null or empty");
 			if (answers == null)
-				throw new ArgumentNullException("answers", "The answers collection must not be null.");
-
+				throw new ArgumentNullException("answers", string.Format(@"GetAnswers: the ""answers"" parameter passed in was null, logRef: {0}", logRef));
 			BinaryObject combinedAnswers;
 			using (Proxy client = new Proxy(_endPointName))
 			{
 				var answerObjects = (from answer in answers select Util.GetBinaryObjectFromTextReader(answer)).ToArray();
 				combinedAnswers = client.GetAnswers(answerObjects);
-				SafeCloseClient(client);
+				SafeCloseClient(client, logRef);
 			}
 			return Util.ExtractString(combinedAnswers);
 		}
 
+		/// <summary>
+		/// <c>BuildSupportFiles</c> generates (or regenerates) the supporting javascript files and Silverlight DLLs 
+		/// for the supplied <c>template</c>
+		/// </summary>
+		/// <param name="template">An instance of the Template class, for which the supporting javascript files and 
+		/// Silverlight DLLs will be generated</param>
+		/// <param name="flags">A set of flags to control whether javascript or SilverLight files will be generated, 
+		/// as well as whether to build files for templates included with an assemble instruction.</param>
 		public void BuildSupportFiles(Template template, HDSupportFilesBuildFlags flags)
 		{
+			if (template == null)
+				throw new ArgumentNullException("template", @"BuildSupportFiles: the ""template"" parameter passed in was null");
 			using (Proxy client = new Proxy(_endPointName))
 			{
 				string templateId = template.FileName;
 				string templateKey = template.Key;
 				string templateState = null;
 				client.BuildSupportFiles(templateId, templateKey, flags, templateState);
-				SafeCloseClient(client);
+				SafeCloseClient(client, null);
 			}
 		}
 
+		/// <summary>
+		/// <c>RemoveSupportFiles</c> removes support files (javascript and SilverLight) for the supplied <c>template</c>
+		/// </summary>
+		/// <param name="template">An instance of the Template class, for which the supporting javascript files and 
+		/// Silverlight DLLs will be removed</param>
 		public void RemoveSupportFiles(Template template)
 		{
+			if (template == null)
+				throw new ArgumentNullException("template", @"RemoveSupportFiles: the ""template"" parameter passed in was null");
 			using (Proxy client = new Proxy(_endPointName))
 			{
 				string templateId = template.FileName;
 				string templateKey = template.Key;
 				string templateState = null;
 				client.RemoveSupportFiles(templateId, templateKey, templateState);
-				SafeCloseClient(client);
+				SafeCloseClient(client, null);
 			}
 		}
 
-		public Stream GetInterviewDefinition(string state, string templateFile, InterviewFormat format)
+		/// <summary>
+		/// <c>GetInterviewDefinition</c> retrieves an interview definition, either javascript or Silverlight.
+		/// </summary>
+		/// <param name="state">The template state string, passed as "state" on the query string by the browser interview.</param>
+		/// <param name="templateFile">The template file name, passed as "template" on the query string by the browser interview.</param>
+		/// <param name="format">The requested format of interview definition, according to the "type" query string parameter.
+		/// If type=="js", pass JavaScript; if type=="dll", pass Silverlight; otherwise pass Default.</param>
+		/// <returns>A stream containing the requested interview definition, to be returned to the caller.</returns>
+		public System.IO.Stream GetInterviewDefinition(string state, string templateFile, InterviewFormat format)
 		{
-			// Validate input parameters, creating defaults as appropriate.
-			if (string.IsNullOrEmpty(state))
-				throw new ArgumentNullException("state");
-
-			if (string.IsNullOrEmpty(templateFile))
-				throw new ArgumentNullException("templateFile");
-
+			if (string.IsNullOrWhiteSpace(state))
+				throw new ArgumentNullException("state", @"GetInterviewDefinition: the ""state"" parameter pased in was null or empty");
+			if (string.IsNullOrWhiteSpace(templateFile))
+				throw new ArgumentNullException("templateFile", string.Format(@"GetComponentInfo: the ""templateFile"" parameter passed in was null or empty"));
 			System.IO.Stream result = null;
 
 			using (Proxy client = new Proxy(_endPointName))
 			{
 				//TODO: Research this to see if the same relative path is needed above. also check parameter duplication
 				string templateId = templateFile;
-				string templateName = templateFile;
+				string templateName = string.Empty;
 				string templateState = state;
 				BinaryObject binaryObject = client.GetInterviewDefinition(templateId, templateName, format, templateState);
-				SafeCloseClient(client);
+				SafeCloseClient(client, null);
 				result = new MemoryStream(binaryObject.Data);
 			}
 			return result;
@@ -208,9 +272,8 @@ namespace HotDocs.Sdk.Server.WebService
 
 		#region Private member methods:
 
-		private static void SafeCloseClient(Proxy client)
+		private static void SafeCloseClient(Proxy client, string logRef)
 		{
-			//TODO: research this and decide what works best
 			// this approach modeled on http://msdn.microsoft.com/en-us/library/aa355056.aspx
 			// Bottom line is that calling Dispose() on a client causes Close() to be called,
 			// and Close() can throw exceptions (see below).  So don't dispose one without first
@@ -219,16 +282,22 @@ namespace HotDocs.Sdk.Server.WebService
 			{
 				client.Close();
 			}
-			catch (System.ServiceModel.CommunicationException)
+			catch (System.ServiceModel.CommunicationException x1)
 			{
+				System.Diagnostics.Trace.WriteLine(string.Format("SafeCloseClient: a CommunicationException occured when closing the web service proxy client: {0}\r\n" +
+					"Stack Trace: {1}", x1.Message, x1.StackTrace));
 				client.Abort();
 			}
-			catch (TimeoutException)
+			catch (TimeoutException x2)
 			{
+				System.Diagnostics.Trace.WriteLine(string.Format("SafeCloseClient: a TimeoutException occured when closing the web service proxy client: {0}\r\n" +
+					"Stack Trace: {1}", x2.Message, x2.StackTrace));
 				client.Abort();
 			}
-			catch (Exception)
+			catch (Exception x3)
 			{
+				System.Diagnostics.Trace.WriteLine(string.Format("SafeCloseClient: a general exception occured when closing the web service proxy client: {0}\r\n" +
+					"Stack Trace: {1}", x3.Message, x3.StackTrace));
 				client.Abort();
 				throw;
 			}
