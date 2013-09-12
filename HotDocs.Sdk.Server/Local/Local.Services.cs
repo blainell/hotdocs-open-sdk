@@ -34,6 +34,10 @@ namespace HotDocs.Sdk.Server.Local
 
 		public ComponentInfo GetComponentInfo(Template template, bool includeDialogs, string logRef)
 		{
+			// Validate input parameters, creating defaults as appropriate.
+			if (template == null)
+				throw new ArgumentNullException("template", "The template must not be null.");
+
 			string templateFilePath = template.GetFullPath();
 
 			//Get the hvc path. GetInterviewInformation will also validate the template file name.
@@ -125,6 +129,10 @@ namespace HotDocs.Sdk.Server.Local
 
 		public InterviewResult GetInterview(Template template, TextReader answers, InterviewSettings settings, IEnumerable<string> markedVariables, string logRef)
 		{
+			// Validate input parameters, creating defaults as appropriate.
+			if (template == null)
+				throw new ArgumentNullException("template");
+
 			if (settings == null)
 				settings = new InterviewSettings();
 
@@ -223,10 +231,17 @@ namespace HotDocs.Sdk.Server.Local
 			return result;
 		}
 
-		public Stream GetInterviewDefinition(string state, string templateFile, InterviewFormat fmt)
+		public Stream GetInterviewDefinition(string state, string templateFile, InterviewFormat format)
 		{
+			// Validate input parameters, creating defaults as appropriate.
+			if (string.IsNullOrEmpty(state))
+				throw new ArgumentNullException("state");
+
+			if (string.IsNullOrEmpty(templateFile))
+				throw new ArgumentNullException("templateFile");
+
 			string interviewDefPath = _app.GetInterviewDefinitionFromState(state, templateFile,
-				  fmt == InterviewFormat.Silverlight
+				  format == InterviewFormat.Silverlight
 					? hdsi.interviewFormat.Silverlight
 					: hdsi.interviewFormat.javascript);
 			return File.OpenRead(interviewDefPath);
@@ -304,8 +319,15 @@ namespace HotDocs.Sdk.Server.Local
 
 		public AssembleDocumentResult AssembleDocument(Template template, TextReader answers, AssembleDocumentSettings settings, string logRef)
 		{
+			// Validate input parameters, creating defaults as appropriate.
+			if (template == null)
+				throw new ArgumentNullException("template", "The template must not be null.");
+
+			if (settings == null)
+				settings = new AssembleDocumentSettings();
+
 			HotDocs.Server.AnswerCollection ansColl = new HotDocs.Server.AnswerCollection();
-			ansColl.OverlayXMLAnswers(answers.ReadToEnd());
+			ansColl.OverlayXMLAnswers(answers == null ? "" : answers.ReadToEnd());
 			HotDocs.Server.OutputOptions outputOptions = ConvertOutputOptions(settings.OutputOptions);
 
 			//TODO: Make sure files get cleaned up.
@@ -390,6 +412,10 @@ namespace HotDocs.Sdk.Server.Local
 
 		public string GetAnswers(IEnumerable<TextReader> answers, string logRef)
 		{
+			// Validate input parameters, creating defaults as appropriate.
+			if (answers == null)
+				throw new ArgumentNullException("answers", "The answers collection must not be null.");
+
 			string result = "";
 			using (HotDocs.Server.AnswerCollection hdsAnsColl = new HotDocs.Server.AnswerCollection())
 			{

@@ -43,6 +43,9 @@ namespace HotDocs.Sdk.Server.WebService
 		public InterviewResult GetInterview(Template template, TextReader answers, InterviewSettings settings, IEnumerable<string> markedVariables, string logRef)
 		{
 			// Validate input parameters, creating defaults as appropriate.
+			if (template == null)
+				throw new ArgumentNullException("template");
+
 			if (settings == null)
 				settings = new InterviewSettings();
 
@@ -92,6 +95,13 @@ namespace HotDocs.Sdk.Server.WebService
 
 		public AssembleDocumentResult AssembleDocument(Template template, TextReader answers, AssembleDocumentSettings settings, string logRef)
 		{
+			// Validate input parameters, creating defaults as appropriate.
+			if (template == null)
+				throw new ArgumentNullException("template", "The template must not be null.");
+
+			if (settings == null)
+				settings = new AssembleDocumentSettings();
+
 			AssembleDocumentResult result = null;
 			AssemblyResult asmResult = null;
 			OutputFormat outputFormat = ConvertFormat(settings.Format);
@@ -116,6 +126,10 @@ namespace HotDocs.Sdk.Server.WebService
 
 		public ComponentInfo GetComponentInfo(Template template, bool includeDialogs, string logRef)
 		{
+			// Validate input parameters, creating defaults as appropriate.
+			if (template == null)
+				throw new ArgumentNullException("template", "The template must not be null.");
+
 			ComponentInfo result;
 			using (Proxy client = new Proxy(_endPointName))
 			{
@@ -128,6 +142,10 @@ namespace HotDocs.Sdk.Server.WebService
 
 		public string GetAnswers(IEnumerable<TextReader> answers, string logRef)
 		{
+			// Validate input parameters, creating defaults as appropriate.
+			if (answers == null)
+				throw new ArgumentNullException("answers", "The answers collection must not be null.");
+
 			BinaryObject combinedAnswers;
 			using (Proxy client = new Proxy(_endPointName))
 			{
@@ -162,8 +180,15 @@ namespace HotDocs.Sdk.Server.WebService
 			}
 		}
 
-		public System.IO.Stream GetInterviewDefinition(string state, string templateFile, InterviewFormat format)
+		public Stream GetInterviewDefinition(string state, string templateFile, InterviewFormat format)
 		{
+			// Validate input parameters, creating defaults as appropriate.
+			if (string.IsNullOrEmpty(state))
+				throw new ArgumentNullException("state");
+
+			if (string.IsNullOrEmpty(templateFile))
+				throw new ArgumentNullException("templateFile");
+
 			System.IO.Stream result = null;
 
 			using (Proxy client = new Proxy(_endPointName))

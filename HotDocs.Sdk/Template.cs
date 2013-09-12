@@ -73,8 +73,11 @@ namespace HotDocs.Sdk
 		/// <param name="key"><include file="../Shared/Help.xml" path="Help/string/param[@name='templateKey']"></include></param>
 		public Template(string fileName, TemplateLocation location, string switches = "", string key = "")
 		{
-			if (fileName == null || location == null || switches == null || key == null)
+			if (fileName == null || location == null)
 				throw new Exception("Invalid parameter.");
+
+			if (switches == null) switches = "";
+			if (key == null) key = "";
 
 			FileName = fileName;
 			Location = location;

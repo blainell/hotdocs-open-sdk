@@ -61,7 +61,8 @@
 		</param>
 
 		<param name="billingRef">This parameter lets you specify information that will be included in usage logs for this call. For example, you can use a string to uniquely identify the end user that initiated the request and/or the context in which the call was made. When you review usage logs, you can then see which end users initiated each request. That information could then be used to pass costs on to those end users if desired. </param>
-		<param name="logRef">This parameter lets you specify information that will be included in usage logs for this call. For example, you can use a string to uniquely identify the end user that initiated the request and/or the context in which the call was made. When you review usage logs, you can then see which end users initiated each request. That information could then be used to pass costs on to those end users if desired. </param>
+		<!--<param name="logRef">This parameter lets you specify information that will be included in usage logs for this call. For example, you can use a string to uniquely identify the end user that initiated the request and/or the context in which the call was made. When you review usage logs, you can then see which end users initiated each request. That information could then be used to pass costs on to those end users if desired. </param>-->
+		<param name="logRef">A string identifying the current user or transcation, to be included in HotDocs log entries. This is necessary if you wish to track log entries back to specific users during analysis or troubleshooting.</param>
 
 		<param name="includeDialogs">This indicates whether or not the returned data should include information about dialogs and their contents.</param>
 
@@ -80,7 +81,7 @@
 			The template package to be used with the request.
 			If the package does not already exist in the HotDocs Core Services cache, it will be uploaded to the service.
 		</param>
-		<param name="logRef">A string identifying the current user or transcation, to be included in HotDocs log entries. This is necessary if you wish to track log entries back to specific users during analysis or troubleshooting.</param>
+		
 		<param name="switches">
 			Contains the command line options to be used. For example, the host application
 			could examine this property to determine if any switches indicate that the interview should not be displayed.

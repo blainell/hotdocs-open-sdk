@@ -2,15 +2,10 @@
    Use, modification and redistribution of this source is subject
    to the New BSD License as set out in LICENSE.TXT. */
 
-//TODO: Add XML comments where missing.
-//TODO: Add method parameter validation.
-//TODO: Add appropriate unit tests.
-
 using HotDocs.Sdk.Cloud;
 using HotDocs.Sdk.Server.Contracts;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -19,11 +14,19 @@ using System.Text.RegularExpressions;
 namespace HotDocs.Sdk.Server.Cloud
 {
 	/// <summary>
-	/// This is the implementation of IServices that utilizes HotDocs Cloud Services
-	/// to perform its work.
+	/// This is the implementation of IServices that utilizes HotDocs Cloud Services to perform its work.
 	/// </summary>
 	public class Services : IServices
 	{
+		#region Private Members
+
+		private string _subscriberID;
+		private string _signingKey;
+
+		#endregion
+
+		#region Public Constructors
+
 		/// <summary>
 		/// Constructor for Services, which requires the subscriber's ID and signing key.
 		/// These are necessary to authenticate requests sent to HotDocs Cloud Services.
@@ -42,7 +45,9 @@ namespace HotDocs.Sdk.Server.Cloud
 			_signingKey = signingKey;
 		}
 
-		#region IServices Members
+		#endregion
+
+		#region Public IServices Members
 
 		/// <summary>
 		/// Returns an HTML fragment suitable for inclusion in any standards-mode web page, which embeds a HotDocs interview
@@ -57,6 +62,9 @@ namespace HotDocs.Sdk.Server.Cloud
 		public InterviewResult GetInterview(Template template, TextReader answers, InterviewSettings settings, IEnumerable<string> markedVariables, string logRef)
 		{
 			// Validate input parameters, creating defaults as appropriate.
+			if (template == null)
+				throw new ArgumentNullException("template");
+
 			if (settings == null)
 				settings = new InterviewSettings();
 
@@ -89,7 +97,7 @@ namespace HotDocs.Sdk.Server.Cloud
 				// We enforce this by setting the OmitImages and OmitDefinitions values above, so we will always have exactly one item here.
 				if (interviewFiles.Length != 1)
 					throw new Exception();
-				
+
 				StringBuilder htmlFragment = new StringBuilder(Util.ExtractString(interviewFiles[0]));
 
 				Util.AppendSdkScriptBlock(htmlFragment, template, settings);
@@ -113,6 +121,9 @@ namespace HotDocs.Sdk.Server.Cloud
 		public AssembleDocumentResult AssembleDocument(Template template, System.IO.TextReader answers, AssembleDocumentSettings settings, string logRef)
 		{
 			// Validate input parameters, creating defaults as appropriate.
+			if (template == null)
+				throw new ArgumentNullException("template", "The template must not be null.");
+
 			if (settings == null)
 				settings = new AssembleDocumentSettings();
 
@@ -179,7 +190,7 @@ namespace HotDocs.Sdk.Server.Cloud
 		}
 
 		/// <summary>
-		/// Returns metadata about the variables/types (and optionally dialogs & mapping info)
+		/// Returns metadata about the variables/types (and optionally dialogs &amp; mapping info)
 		/// for the indicated template's interview.
 		/// </summary>
 		/// <param name="template"></param>
@@ -188,6 +199,10 @@ namespace HotDocs.Sdk.Server.Cloud
 		/// <returns></returns>
 		public ComponentInfo GetComponentInfo(Template template, bool includeDialogs, string logRef)
 		{
+			// Validate input parameters, creating defaults as appropriate.
+			if (template == null)
+				throw new ArgumentNullException("template", "The template must not be null.");
+
 			ComponentInfo result;
 			using (var client = new SoapClient(_subscriberID, _signingKey))
 			{
@@ -204,6 +219,10 @@ namespace HotDocs.Sdk.Server.Cloud
 		/// <returns>The consolidated XML answer collection.</returns>
 		public string GetAnswers(IEnumerable<System.IO.TextReader> answers, string logRef)
 		{
+			// Validate input parameters, creating defaults as appropriate.
+			if (answers == null)
+				throw new ArgumentNullException("answers", "The answers collection must not be null.");
+
 			BinaryObject combinedAnswers;
 			using (SoapClient client = new SoapClient(_subscriberID, _signingKey))
 			{
@@ -242,18 +261,24 @@ namespace HotDocs.Sdk.Server.Cloud
 		/// </summary>
 		/// <param name="state">An encoded string used to find the original package associated with the requested interview.</param>
 		/// <param name="templateFile">The name of the template for which the definition is being requested.</param>
-		/// <param name="format">The format of the interview definition being requested (Silverlight or JavaScript).</param>
+		/// <param name="format">The format of the interview definition being requested (Silverlight or JavaScript). InterviewFormat.Unspecified will return a JavaScript interview.</param>
 		/// <returns>A stream containing the requested interview definition.</returns>
-		public System.IO.Stream GetInterviewDefinition(string state, string templateFile, InterviewFormat format)
+		public Stream GetInterviewDefinition(string state, string templateFile, InterviewFormat format)
 		{
+			// Validate input parameters, creating defaults as appropriate.
+			if (string.IsNullOrEmpty(state))
+				throw new ArgumentNullException("state");
+
+			if (string.IsNullOrEmpty(templateFile))
+				throw new ArgumentNullException("templateFile");
+
+			// Return the interview definition for the requested file. We return a JavaScript definition unless
+			// the format is Silverlight. (InterviewFormat.Unspecified will return a .js file.)
 			Template t = Template.Locate(state);
 			return t.Location.GetFile(templateFile + (format == InterviewFormat.Silverlight ? ".dll" : ".js"));
 		}
 
 		#endregion
-
-		private string _subscriberID;
-		private string _signingKey;
 
 	}
 }
