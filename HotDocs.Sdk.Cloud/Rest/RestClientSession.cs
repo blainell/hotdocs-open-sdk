@@ -16,17 +16,17 @@ namespace HotDocs.Sdk.Cloud
 		#region Public methods
 
 		/// <summary>
-		/// 
+		/// Creates a new session.
 		/// </summary>
-		/// <param name="template"></param>
-		/// <param name="billingRef"></param>
-		/// <param name="answers"></param>
-		/// <param name="markedVariables"></param>
-		/// <param name="interviewFormat"></param>
-		/// <param name="outputFormat"></param>
+		/// <param name="template">The template to use with this session.</param>
+		/// <param name="billingRef">This parameter lets you specify information that will be included in usage logs for this call. For example, you can use a string to uniquely identify the end user that initiated the request and/or the context in which the call was made. When you review usage logs, you can then see which end users initiated each request. That information could then be used to pass costs on to those end users if desired.</param>
+		/// <param name="answers">The answers to use when getting an interview or assembling a document.</param>
+		/// <param name="markedVariables">A list of variable names. When the interview is displayed, the prompts for these variables will be "marked" to make them appear different than other variables. Typically this is done to draw the user's attention to specific variables, such as those that were unanswered in a previous assembly.</param>
+		/// <param name="interviewFormat">The format in which to display an interview (JavaScript or Silverlight).</param>
+		/// <param name="outputFormat">The format of the output file.</param>
 		/// <param name="settings"></param>
 		/// <param name="theme"></param>
-		/// <param name="showDownloadLinks"></param>
+		/// <param name="showDownloadLinks">Controls whether or not links for downloading assembled documents are shown at the end of the interview.</param>
 		/// <param name="docUrl"></param>
 		/// <param name="altDocUrl"></param>
 		/// <param name="postUrl"></param>
@@ -108,7 +108,7 @@ namespace HotDocs.Sdk.Cloud
 		}
 
 		/// <summary>
-		/// 
+		/// Gets an assembled document from the session cache.
 		/// </summary>
 		/// <param name="sessionId"></param>
 		/// <param name="fileName"></param>
@@ -123,7 +123,7 @@ namespace HotDocs.Sdk.Cloud
 		}
 
 		/// <summary>
-		/// 
+		/// Gets a list of assembled documents in the session's cache.
 		/// </summary>
 		/// <param name="sessionId"></param>
 		/// <returns></returns>
@@ -139,7 +139,7 @@ namespace HotDocs.Sdk.Cloud
 		}
 
 		/// <summary>
-		/// 
+		/// Gets the state of the session.
 		/// </summary>
 		/// <param name="sessionId"></param>
 		/// <returns></returns>

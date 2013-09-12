@@ -11,13 +11,15 @@ using System.IO;
 
 namespace HotDocs.Sdk
 {
-	public class PackagePathTemplateLocation : PackageTemplateLocation, IEquatable<PackagePathTemplateLocation>
+
 	/// <summary>
 	/// <c>PackagePathTemplateLocation</c> is a <c>PackageTemplateLocation</c> that expects a package
 	/// to exist on disk. Furthermore, the package content is extracted to a subfolder of the package folder.
 	/// The subfolder's name consists of the package ID followed by a ".dir" extension. To extract package
 	/// content elsewhere, derive a different PackageTemplateLocation class.
 	/// </summary>
+	public class PackagePathTemplateLocation : PackageTemplateLocation, IEquatable<PackagePathTemplateLocation>
+
 	{
 		/// <summary>
 		/// Construct a template location for a specific package in the file system.
@@ -70,6 +72,11 @@ namespace HotDocs.Sdk
 		#endregion
 
 		//TODO: Don't extract the files to disk if they aren't already.
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="fileName"></param>
+		/// <returns></returns>
 		public override Stream GetFile(string fileName)
 		{
 			string filePath = Path.Combine(GetTemplateDirectory(), fileName);
@@ -112,6 +119,7 @@ namespace HotDocs.Sdk
 		/// <summary>
 		/// Overrides <see cref="TemplateLocation.DeserializeContent"/>.
 		/// </summary>
+		/// <param name="content"></param>
 		/// <returns></returns>
 		protected override void DeserializeContent(string content)
 		{
@@ -148,6 +156,9 @@ namespace HotDocs.Sdk
 				Directory.Delete(_templateDir, true);
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
 		public string PackagePath { get; protected set; }
 		private string _templateDir = null;
 	}
