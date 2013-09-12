@@ -2,8 +2,8 @@
    Use, modification and redistribution of this source is subject
    to the New BSD License as set out in LICENSE.TXT. */
 
-	// TODO: Move all of the shared XML comments into a separate file and link to them in this code and all
-	// derived class files.
+// TODO: Move all of the shared XML comments into a separate file and link to them in this code and all
+// derived class files.
 
 using System;
 using System.Collections.Generic;
@@ -34,7 +34,7 @@ namespace HotDocs.Sdk.Server
 		InterviewResult GetInterview(Template template, TextReader answers, InterviewSettings settings, IEnumerable<string> markedVariables, string logRef);
 
 		/// <summary>
-		/// Assemble a document from the given template, answers and options.
+		/// Assemble a document from the given template, answers and settings.
 		/// </summary>
 		/// <param name="template">An instance of the Template class.</param>
 		/// <param name="answers">Either an XML answer string, or a string containing encoded
@@ -92,7 +92,7 @@ namespace HotDocs.Sdk.Server
 		/// </summary>
 		/// <param name="state">The template state string, passed as "state" on the query string by the browser interview.</param>
 		/// <param name="templateFile">The template file name, passed as "template" on the query string by the browser interview.</param>
-		/// <param name="type">The requested type of interview definition, according to the "type" query string parameter.
+		/// <param name="format">The requested format of interview definition, according to the "type" query string parameter.
 		/// If type=="js", pass JavaScript; if type=="dll", pass Silverlight; otherwise pass Default.</param>
 		/// <returns>A stream containing the requested interview definition, to be returned to the caller.</returns>
 		Stream GetInterviewDefinition(string state, string templateFile, InterviewFormat format);

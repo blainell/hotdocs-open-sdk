@@ -14,7 +14,7 @@ namespace HotDocs.Sdk
 	/// for a template that simply resides as a file in the file system. The template does not reside in
 	/// a package or database, for example.
 	/// </summary>
-	public class PathTemplateLocation : TemplateLocation
+	public class PathTemplateLocation : TemplateLocation, IEquatable<PathTemplateLocation>
 	{
 		private string _templateDir;//The directory where the template resides.
 
@@ -25,8 +25,9 @@ namespace HotDocs.Sdk
 		/// <param name="templateDir">The path of the directory containing the template file.</param>
 		public PathTemplateLocation(string templateDir)
 		{
-			if (templateDir == null || templateDir == "")
-				throw new Exception("Invalid templateDir parameter.");
+			if (templateDir == null)
+				throw new ArgumentNullException();
+
 			if (!Directory.Exists(templateDir))
 				throw new Exception("The folder \"" + templateDir + "\" does not exist.");
 			_templateDir = templateDir;
@@ -39,6 +40,25 @@ namespace HotDocs.Sdk
 		{
 			return new PathTemplateLocation(_templateDir);
 		}
+
+		public override bool Equals(object obj)
+		{
+			return (obj != null) && (obj is PathTemplateLocation) && Equals((PathTemplateLocation)obj);
+		}
+
+		public override int GetHashCode()
+		{
+			return _templateDir.ToLower().GetHashCode();
+		}
+
+		#region IEquatable<PathTemplateLocation> Members
+
+		public bool Equals(PathTemplateLocation other)
+		{
+			return string.Equals(_templateDir, other._templateDir, StringComparison.OrdinalIgnoreCase);
+		}
+
+		#endregion
 		/// <summary>
 		/// Returns a stream for a file in the template's directory. Overrides <see cref="TemplateLocation.GetFile"/>.
 		/// </summary>

@@ -22,8 +22,12 @@ namespace HotDocs.Sdk
 		/// <param name="packageID">The ID of the package.</param>
 		public PackageTemplateLocation(string packageID)
 		{
-			if (packageID == "" || packageID == null)
-				throw new Exception("Invalid package ID.");
+			if (packageID == null)
+				throw new ArgumentNullException();
+
+			if (packageID == String.Empty)
+				throw new ArgumentException();
+
 			PackageID = packageID;
 		}
 		/// <summary>

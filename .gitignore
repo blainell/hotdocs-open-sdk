@@ -24,3 +24,4 @@ SamplePortal/WebApp/Bin
 SamplePortal/Files/Documents/*
 SamplePortal/Files/Cache/*
 SamplePortal/Files/Answers/*
+SamplePortal/Files/Templates/*.dir/*
