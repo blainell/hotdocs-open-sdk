@@ -24,7 +24,8 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Debug\HotDocs.Sdk.ServerTest.XML</DocumentationFile>
+    <DocumentationFile>
+    </DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -33,6 +34,8 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>
+    </DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
@@ -49,7 +52,6 @@
     </CodeAnalysisDependentAssemblyPaths>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="PackageCache.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServicesTest.cs" />
     <Compile Include="Util.cs" />
@@ -70,16 +72,27 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\SamplePortal\Files\Templates\d1f7cade-cb74-4457-a9a0-27d94f5c2d5b.pkg">
-      <Link>d1f7cade-cb74-4457-a9a0-27d94f5c2d5b.pkg</Link>
+      <Link>TestFiles\d1f7cade-cb74-4457-a9a0-27d94f5c2d5b.pkg</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
+    <None Include="TestFiles\TemplateWithAssemble.pkg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="TestFiles\HDInfo_DemoEmpl_Freddy.txt" />
-    <Content Include="TestFiles\HDInfo_EmployeeRecognition_Frederick.txt" />
+    <EmbeddedResource Include="TestFiles\Freddy.txt" />
+    <EmbeddedResource Include="TestFiles\Frederick.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="TestFiles\Freddy.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="TestFiles\Frederick.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

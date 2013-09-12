@@ -8,23 +8,24 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using System.Configuration;
+using System.Reflection;
 
 namespace HotDocs.Sdk.ServerTest
 {
 	static class Util
 	{
-		private static string GetLocalPackagePath(string packageId)
-		{
-			string templatePath = ConfigurationManager.AppSettings["TemplatePath"];
-			return Path.Combine(templatePath, packageId + ".pkg");
-		}
+		//private static string GetLocalPackagePath(string packageId)
+		//{
+		//	Assembly _asm = Assembly.GetExecutingAssembly();
 
-		public static string TestFilesPath
+		//	string templatePath = Path.GetDirectoryName(_asm.Location);
+		//	return Path.Combine(templatePath, packageId + ".pkg");
+		//}
+
+		public static StreamReader GetTestFile(string fileName)
 		{
-			get
-			{
-				return ConfigurationManager.AppSettings["TestFilesPath"];
-			}
+			Assembly _assembly = Assembly.GetExecutingAssembly();
+			return new StreamReader(_assembly.GetManifestResourceStream("HotDocs.Sdk.ServerTest.TestFiles." + fileName));
 		}
 
 		public static string GetFileContentAsString(string filePath)
@@ -41,7 +42,11 @@ namespace HotDocs.Sdk.ServerTest
 		public static PackagePathTemplateLocation CreatePackagePathLocation(string packageID)
 		{
 			//Note that in this sample portal, the package ID is used to construct the package file name, but this does not need to be the case.
-			string packagePath = PackageCache.GetLocalPackagePath(packageID);
+
+			Assembly _asm = Assembly.GetExecutingAssembly();
+			string templateDirectory = Path.Combine(Path.GetDirectoryName(_asm.Location), "TestFiles");
+			string packagePath = Path.Combine(templateDirectory, packageID + ".pkg");
+
 			if (!File.Exists(packagePath))
 				throw new Exception("The template does not exist.");
 			return new HotDocs.Sdk.PackagePathTemplateLocation(packageID, packagePath);
@@ -61,7 +66,10 @@ namespace HotDocs.Sdk.ServerTest
 		public static HotDocs.Sdk.Server.IServices GetWebServiceServicesInterface()
 		{
 			string endPointName = ConfigurationManager.AppSettings["WebServiceEndPoint"];
-			string templatePath = ConfigurationManager.AppSettings["TemplatePath"];
+
+			Assembly _asm = Assembly.GetExecutingAssembly();
+			string templatePath = Path.Combine(Path.GetDirectoryName(_asm.Location), "TestFiles");
+
 			return new HotDocs.Sdk.Server.WebService.Services(endPointName, templatePath);
 		}
 

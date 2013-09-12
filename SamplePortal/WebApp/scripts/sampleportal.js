@@ -4,6 +4,31 @@
 
 (function($)
 {
+	jQuery(document).ready(function()
+	{
+		jQuery('#txtSearch')
+			.on('keydown', function(e)
+			{
+				switch (e.which)
+				{
+					case 13: // Key.Enter
+						// Execute the search by clicking the search button.
+						var searchButton = jQuery('#btnSearch');
+						if (searchButton.length > 0)
+							searchButton[0].click();
+						e.preventDefault();
+						break;
+					case 27: // Key.Escape
+						// Clear the search by clicking the clear button.
+						var clearButton = jQuery('#btnSearchClear');
+						if (clearButton.length > 0)
+							clearButton[0].click();
+						e.preventDefault();
+						break;
+				}
+			});
+	});
+
 	// This function is used on the "Select Answers" page to enable/disable 
 	// the file control depending on the user's selection.
 	$.OnSelChange = function()
