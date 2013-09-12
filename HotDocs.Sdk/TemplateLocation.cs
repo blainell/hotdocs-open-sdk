@@ -119,7 +119,14 @@ namespace HotDocs.Sdk
 					if (templateLocation == null)
 						throw new Exception("Invalid template location.");
 
-					templateLocation.DeserializeContent(content);
+					try
+					{
+						templateLocation.DeserializeContent(content);
+					}
+					catch (Exception)
+					{
+						throw new Exception("Invalid template location.");
+					}
 					return templateLocation;
 				}
 			}
