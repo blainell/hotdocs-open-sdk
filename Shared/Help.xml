@@ -89,7 +89,7 @@
 			host application. The Template class provides helper properties for interpreting switches. These
 			properties are also accessed by the WorkSession class.
 		</param>
-		<param name="templateKey">Uniquely identifies the template. A key is necessary for templates without a fixed file name,
+		<param name="key">Uniquely identifies the template. A key is necessary for templates without a fixed file name,
 			such as when stored in a DMS or other database. An empty string may be used for templates with a fixed file name.
 		</param>
 	</string>
