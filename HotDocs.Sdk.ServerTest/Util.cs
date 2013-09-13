@@ -36,7 +36,7 @@ namespace HotDocs.Sdk.ServerTest
 			}
 		}
 
-				public static string GetFileContentAsString(string filePath)
+		public static string GetFileContentAsString(string filePath)
 		{
 			string content = "";
 			using (FileStream fs = File.OpenRead(filePath))
@@ -123,4 +123,5 @@ namespace HotDocs.Sdk.ServerTest
 		}
 
 		#endregion // Private methods
+	}
 }
