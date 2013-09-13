@@ -56,9 +56,9 @@ namespace HotDocs.Sdk.Server.WebService
 		public InterviewResult GetInterview(Template template, TextReader answers, InterviewSettings settings, IEnumerable<string> markedVariables, string logRef)
 		{
 			if (string.IsNullOrWhiteSpace(logRef))
-				throw new ArgumentNullException("logRef", @"GetInterview: the ""logRef"" parameter pased in was null or empty");
+				throw new ArgumentNullException("logRef", @"WebServices.Services.GetInterview: the ""logRef"" parameter passed in was null or empty");
 			if (template == null)
-				throw new ArgumentNullException("template", string.Format(@"GetInterview: the ""template"" parameter passed in was null, logRef: {0}", logRef));
+				throw new ArgumentNullException("template", string.Format(@"WebServices.Services.GetInterview: the ""template"" parameter passed in was null, logRef: {0}", logRef));
 			// Validate input parameters, creating defaults as appropriate.
 			if (settings == null)
 				settings = new InterviewSettings();
@@ -119,11 +119,11 @@ namespace HotDocs.Sdk.Server.WebService
 		public AssembleDocumentResult AssembleDocument(Template template, TextReader answers, AssembleDocumentSettings settings, string logRef)
 		{
 			if (string.IsNullOrWhiteSpace(logRef))
-				throw new ArgumentNullException("logRef", @"AssembleDocument: the ""logRef"" parameter pased in was null or empty");
+				throw new ArgumentNullException("logRef", @"WebService.Services.AssembleDocument: the ""logRef"" parameter pased in was null or empty");
 			if (template == null)
-				throw new ArgumentNullException("template", string.Format(@"AssembleDocument: the ""template"" parameter passed in was null, logRef: {0}", logRef));
+				throw new ArgumentNullException("template", string.Format(@"WebService.Services.AssembleDocument: the ""template"" parameter passed in was null, logRef: {0}", logRef));
 			if (settings == null)
-				throw new ArgumentNullException("settings", string.Format(@"AssembleDocument: the ""settings"" parameter passed in was null, logRef: {0}", logRef));
+				settings = new AssembleDocumentSettings();
 			AssembleDocumentResult result = null;
 			AssemblyResult asmResult = null;
 			OutputFormat outputFormat = ConvertFormat(settings.Format);
@@ -147,7 +147,7 @@ namespace HotDocs.Sdk.Server.WebService
 		}
 
 		/// <summary>
-		/// <c>GetComponentInfo</c> returns metadata about the variables/types (and optionally dialogs & mapping info)
+		/// <c>GetComponentInfo</c> returns metadata about the variables/types (and optionally dialogs and mapping info)
 		/// for the indicated template's interview.
 		/// </summary>
 		/// <param name="template">An instance of the Template class, for which you are requesting component information.</param>
@@ -157,9 +157,9 @@ namespace HotDocs.Sdk.Server.WebService
 		public ComponentInfo GetComponentInfo(Template template, bool includeDialogs, string logRef)
 		{
 			if (string.IsNullOrWhiteSpace(logRef))
-				throw new ArgumentNullException("logRef", @"GetComponentInfo: the ""logRef"" parameter pased in was null or empty");
+				throw new ArgumentNullException("logRef", @"WebService.Services.GetComponentInfo: the ""logRef"" parameter passed in was null or empty");
 			if (template == null)
-				throw new ArgumentNullException("template", string.Format(@"GetComponentInfo: the ""template"" parameter passed in was null, logRef: {0}", logRef));
+				throw new ArgumentNullException("template", string.Format(@"WebService.Services.GetComponentInfo: the ""template"" parameter passed in was null, logRef: {0}", logRef));
 			ComponentInfo result;
 			using (Proxy client = new Proxy(_endPointName))
 			{
@@ -185,9 +185,9 @@ namespace HotDocs.Sdk.Server.WebService
 		public string GetAnswers(IEnumerable<TextReader> answers, string logRef)
 		{
 			if (string.IsNullOrWhiteSpace(logRef))
-				throw new ArgumentNullException("logRef", @"GetAnswers: the ""logRef"" parameter pased in was null or empty");
+				throw new ArgumentNullException("logRef", @"WebService.Services.GetAnswers: the ""logRef"" parameter pased in was null or empty");
 			if (answers == null)
-				throw new ArgumentNullException("answers", string.Format(@"GetAnswers: the ""answers"" parameter passed in was null, logRef: {0}", logRef));
+				throw new ArgumentNullException("answers", string.Format(@"WebService.Services.GetAnswers: the ""answers"" parameter passed in was null, logRef: {0}", logRef));
 			BinaryObject combinedAnswers;
 			using (Proxy client = new Proxy(_endPointName))
 			{
@@ -209,7 +209,7 @@ namespace HotDocs.Sdk.Server.WebService
 		public void BuildSupportFiles(Template template, HDSupportFilesBuildFlags flags)
 		{
 			if (template == null)
-				throw new ArgumentNullException("template", @"BuildSupportFiles: the ""template"" parameter passed in was null");
+				throw new ArgumentNullException("template", @"WebService.Services.BuildSupportFiles: the ""template"" parameter passed in was null");
 			using (Proxy client = new Proxy(_endPointName))
 			{
 				string templateId = template.FileName;
@@ -228,7 +228,7 @@ namespace HotDocs.Sdk.Server.WebService
 		public void RemoveSupportFiles(Template template)
 		{
 			if (template == null)
-				throw new ArgumentNullException("template", @"RemoveSupportFiles: the ""template"" parameter passed in was null");
+				throw new ArgumentNullException("template", @"WebService.Services.RemoveSupportFiles: the ""template"" parameter passed in was null");
 			using (Proxy client = new Proxy(_endPointName))
 			{
 				string templateId = template.FileName;
@@ -373,19 +373,10 @@ namespace HotDocs.Sdk.Server.WebService
 			MemoryStream document = null;
 			StreamReader ansRdr = null;
 			List<NamedStream> supportingFiles = new List<NamedStream>();
-			Template[] pendingAssemblies = new Template[asmResult.PendingAssemblies == null ? 0 : asmResult.PendingAssemblies.Length];
-
+			IEnumerable<Template> pendingAssemblies = null;
 			if (asmResult.PendingAssemblies != null)
-			{
-
-				for (int i = 0; i < asmResult.PendingAssemblies.Length; i++)
-				{
-					string templateName = Path.GetFileName(asmResult.PendingAssemblies[i].TemplateName);
-					string switches = asmResult.PendingAssemblies[i].Switches;
-					Template pendingTemplate = new Template(templateName, template.Location.Duplicate(), switches);
-					pendingAssemblies[i] = pendingTemplate;
-				}
-			}
+				pendingAssemblies = from pa in asmResult.PendingAssemblies
+									select new Template(Path.GetFileName(pa.TemplateName), template.Location.Duplicate(), pa.Switches);
 			for (int i = 0; i < asmResult.Documents.Length; i++)
 			{
 				switch (asmResult.Documents[i].Format)

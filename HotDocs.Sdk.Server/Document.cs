@@ -44,7 +44,7 @@ namespace HotDocs.Sdk.Server
 		/// If Content is in a format that has external dependencies, this contains references to those supporting files.
 		/// For example, the images or external style sheets referred to by an HTML document.
 		/// </summary>
-		public NamedStream[] SupportingFiles { get; protected set; }
+		public IEnumerable<NamedStream> SupportingFiles { get; protected set; }
 
 		public string FileExtension
 		{
@@ -165,11 +165,8 @@ namespace HotDocs.Sdk.Server
 					}
 					if (SupportingFiles != null)
 					{
-						for (var i = 0; i < SupportingFiles.Length; i++)
-						{
-							SupportingFiles[i].Dispose();
-							SupportingFiles[i] = null;
-						}
+						foreach (NamedStream ns in SupportingFiles)
+							ns.Dispose();
 						SupportingFiles = null;
 					}
 				}

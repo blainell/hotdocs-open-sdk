@@ -57,17 +57,17 @@ namespace HotDocs.Sdk.Cloud
 		public string SubscriberId { get; set; }
 
 		/// <summary>
-		/// 
+		/// The Subscriber's unique signing key.
 		/// </summary>
 		public string SigningKey { get; set; }
 
 		/// <summary>
-		/// 
+		/// Specifies an alternate address for the Cloud Services web service (e.g., https://127.0.0.1).
 		/// </summary>
 		public string EndpointAddress { get; set; }
 
 		/// <summary>
-		/// 
+		/// Specifies the proxy server address (e.g., http://myfiddlermachine:8888).
 		/// </summary>
 		public string ProxyServerAddress { get; set; }
 		#endregion
@@ -75,39 +75,39 @@ namespace HotDocs.Sdk.Cloud
 		#region Public methods
 
 		/// <summary>
-		/// 
+		/// Assembles a document from the specified template and answersets.
 		/// </summary>
-		/// <param name="template"></param>
-		/// <param name="answers"></param>
-		/// <param name="options"></param>
-		/// <param name="billingRef"></param>
+		/// <param name="template">The template to use with the request.</param>
+		/// <param name="answers">The answers to use with the request.</param>
+		/// <param name="settings">The options to use when assembling the document.</param>
+		/// <param name="billingRef">This parameter lets you specify information that will be included in usage logs for this call. For example, you can use a string to uniquely identify the end user that initiated the request and/or the context in which the call was made. When you review usage logs, you can then see which end users initiated each request. That information could then be used to pass costs on to those end users if desired.</param>
 		/// <returns></returns>
-		public AssemblyResult AssembleDocument(Template template, string answers, AssembleDocumentSettings options, string billingRef)
+		public AssemblyResult AssembleDocument(Template template, string answers, AssembleDocumentSettings settings, string billingRef)
 		{
 			return (AssemblyResult)TryWithoutAndWithPackage(
-				uploadPackage => AssembleDocumentImpl(template, answers, options, billingRef, uploadPackage));
+				uploadPackage => AssembleDocumentImpl(template, answers, settings, billingRef, uploadPackage));
 		}
 
 		/// <summary>
-		/// 
+		/// Gets an interview for the specified template.
 		/// </summary>
-		/// <param name="template"></param>
-		/// <param name="answers"></param>
-		/// <param name="options"></param>
-		/// <param name="billingRef"></param>
+		/// <param name="template">The template to use with the request.</param>
+		/// <param name="answers">The answers to use with the request.</param>
+		/// <param name="settings">The settings to use when getting an interview.</param>
+		/// <param name="billingRef">This parameter lets you specify information that will be included in usage logs for this call. For example, you can use a string to uniquely identify the end user that initiated the request and/or the context in which the call was made. When you review usage logs, you can then see which end users initiated each request. That information could then be used to pass costs on to those end users if desired.</param>
 		/// <returns></returns>
-		public BinaryObject[] GetInterview(Template template, string answers, InterviewSettings options, string billingRef)
+		public BinaryObject[] GetInterview(Template template, string answers, InterviewSettings settings, string billingRef)
 		{
 			return (BinaryObject[])TryWithoutAndWithPackage(
-				uploadPackage => GetInterviewImpl(template, answers, options, billingRef, uploadPackage));
+				uploadPackage => GetInterviewImpl(template, answers, settings, billingRef, uploadPackage));
 		}
 
 		/// <summary>
-		/// 
+		/// Gets component information for the specified template.
 		/// </summary>
-		/// <param name="template"></param>
-		/// <param name="includeDialogs"></param>
-		/// <param name="billingRef"></param>
+		/// <param name="template">Template to assemble</param>
+		/// <param name="includeDialogs">This indicates whether or not the returned data should include information about dialogs and their contents.</param>
+		/// <param name="billingRef">This parameter lets you specify information that will be included in usage logs for this call. For example, you can use a string to uniquely identify the end user that initiated the request and/or the context in which the call was made. When you review usage logs, you can then see which end users initiated each request. That information could then be used to pass costs on to those end users if desired.</param>
 		/// <returns></returns>
 		public ComponentInfo GetComponentInfo(Template template, bool includeDialogs, string billingRef)
 		{
@@ -116,10 +116,10 @@ namespace HotDocs.Sdk.Cloud
 		}
 
 		/// <summary>
-		/// 
+		/// Combines the provided answersets to form an aggregate answerset.
 		/// </summary>
-		/// <param name="answers"></param>
-		/// <param name="billingRef"></param>
+		/// <param name="answers">The answers to use with the request.</param>
+		/// <param name="billingRef">This parameter lets you specify information that will be included in usage logs for this call. For example, you can use a string to uniquely identify the end user that initiated the request and/or the context in which the call was made. When you review usage logs, you can then see which end users initiated each request. That information could then be used to pass costs on to those end users if desired.</param>
 		/// <returns></returns>
 		public BinaryObject GetAnswers(BinaryObject[] answers, string billingRef)
 		{
@@ -134,14 +134,14 @@ namespace HotDocs.Sdk.Cloud
 		/// </summary>
 		/// <param name="template"></param>
 		/// <param name="answers"></param>
-		/// <param name="options"></param>
+		/// <param name="settings"></param>
 		/// <param name="billingRef"></param>
 		/// <param name="uploadPackage"></param>
 		/// <returns></returns>
 		protected internal abstract AssemblyResult AssembleDocumentImpl(
 			Template template,
 			string answers,
-			AssembleDocumentSettings options,
+			AssembleDocumentSettings settings,
 			string billingRef,
 			bool uploadPackage);
 
@@ -150,14 +150,14 @@ namespace HotDocs.Sdk.Cloud
 		/// </summary>
 		/// <param name="template"></param>
 		/// <param name="answers"></param>
-		/// <param name="options"></param>
+		/// <param name="settings"></param>
 		/// <param name="billingRef"></param>
 		/// <param name="uploadPackage"></param>
 		/// <returns></returns>
 		protected internal abstract BinaryObject[] GetInterviewImpl(
 			Template template,
 			string answers,
-			InterviewSettings options,
+			InterviewSettings settings,
 			string billingRef,
 			bool uploadPackage);
 

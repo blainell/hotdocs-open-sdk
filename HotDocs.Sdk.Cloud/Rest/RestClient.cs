@@ -158,14 +158,14 @@ namespace HotDocs.Sdk.Cloud
 		/// </summary>
 		/// <param name="template"></param>
 		/// <param name="answers"></param>
-		/// <param name="options"></param>
+		/// <param name="settings"></param>
 		/// <param name="billingRef"></param>
 		/// <param name="uploadPackage"></param>
 		/// <returns></returns>
 		protected internal override AssemblyResult AssembleDocumentImpl(
 			Template template,
 			string answers,
-			AssembleDocumentSettings options,
+			AssembleDocumentSettings settings,
 			string billingRef,
 			bool uploadPackage)
 		{
@@ -188,17 +188,17 @@ namespace HotDocs.Sdk.Cloud
 				template.FileName,
 				false,
 				billingRef,
-				options.Format,
-				options.Settings);
+				settings.Format,
+				settings.Settings);
 
 			StringBuilder urlBuilder = new StringBuilder(string.Format(
 				"{0}/RestfulSvc.svc/assemble/{1}/{2}/{3}?format={4}&billingref={5}",
 				EndpointAddress, SubscriberId, packageTemplateLocation.PackageID, template.FileName ?? "",
-				options.Format.ToString(), billingRef));
+				settings.Format.ToString(), billingRef));
 
-			if (options.Settings != null)
+			if (settings.Settings != null)
 			{
-				foreach (KeyValuePair<string, string> kv in options.Settings)
+				foreach (KeyValuePair<string, string> kv in settings.Settings)
 				{
 					urlBuilder.AppendFormat("&{0}={1}", kv.Key, kv.Value ?? "");
 				}
@@ -269,14 +269,14 @@ namespace HotDocs.Sdk.Cloud
 		/// </summary>
 		/// <param name="template"></param>
 		/// <param name="answers"></param>
-		/// <param name="options"></param>
+		/// <param name="settings"></param>
 		/// <param name="billingRef"></param>
 		/// <param name="uploadPackage"></param>
 		/// <returns></returns>
 		protected internal override BinaryObject[] GetInterviewImpl(
 			Template template,
 			string answers,
-			InterviewSettings options,
+			InterviewSettings settings,
 			string billingRef,
 			bool uploadPackage)
 		{
@@ -299,18 +299,18 @@ namespace HotDocs.Sdk.Cloud
 				template.FileName,
 				false,
 				billingRef,
-				options.Format,
-				options.InterviewImageUrl,
-				options.Settings);
+				settings.Format,
+				settings.InterviewImageUrl,
+				settings.Settings);
 
 			StringBuilder urlBuilder = new StringBuilder(string.Format(
 				"{0}/RestfulSvc.svc/interview/{1}/{2}/{3}?format={4}&markedvariables={5}&tempimageurl={6}&billingref={7}",
-				EndpointAddress, SubscriberId, packageTemplateLocation.PackageID, template.FileName, options.Format.ToString(),
-				options.MarkedVariables != null ? string.Join(",", options.MarkedVariables) : null, options.InterviewImageUrl, billingRef));
+				EndpointAddress, SubscriberId, packageTemplateLocation.PackageID, template.FileName, settings.Format.ToString(),
+				settings.MarkedVariables != null ? string.Join(",", settings.MarkedVariables) : null, settings.InterviewImageUrl, billingRef));
 
-			if (options.Settings != null)
+			if (settings.Settings != null)
 			{
-				foreach (KeyValuePair<string, string> kv in options.Settings)
+				foreach (KeyValuePair<string, string> kv in settings.Settings)
 				{
 					urlBuilder.AppendFormat("&{0}={1}", kv.Key, kv.Value ?? "");
 				}

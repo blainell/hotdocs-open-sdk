@@ -10,9 +10,17 @@ using System.Text;
 
 namespace HotDocs.Sdk.Server
 {
-	static class Extensions
+	/// <summary>
+	/// This <c>Extensions</c> static class provides extension methods for classes used in the HotDocs.Server.Sdk project.
+	/// </summary>
+	public static class Extensions
 	{
-		public static string[] SplitPath(this string path)
+		/// <summary>
+		/// <c>SplitPath</c> splits up a full path into collection of strings that consist of folders plus a file name.
+		/// </summary>
+		/// <param name="path"></param>
+		/// <returns></returns>
+		public static IEnumerable<string> SplitPath(this string path)
 		{
 			string[] stringsRet;
 			var separators = new char[] {
@@ -27,6 +35,28 @@ namespace HotDocs.Sdk.Server
 					stringsRet[0] += Path.DirectorySeparatorChar;
 			}
 			return stringsRet;
+		}
+
+
+		/// <summary>
+		/// <c>GetCount<T>"</c> returns the number of items in a collection, or array
+		/// </summary>
+		/// <typeparam name="T">The element type of the collection, or array</typeparam>
+		/// <param name="source">The collection or array</param>
+		/// <returns></returns>
+		public static int GetCount<T>(this IEnumerable<T> source)
+		{
+			ICollection<T> c = source as ICollection<T>;
+			if (c != null)
+				return c.Count;
+
+			int result = 0;
+			using (IEnumerator<T> enumerator = source.GetEnumerator())
+			{
+				while (enumerator.MoveNext())
+					result++;
+			}
+			return result;
 		}
 	}
 }

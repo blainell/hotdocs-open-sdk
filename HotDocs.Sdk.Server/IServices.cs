@@ -2,8 +2,8 @@
    Use, modification and redistribution of this source is subject
    to the New BSD License as set out in LICENSE.TXT. */
 
-// TODO: Move all of the shared XML comments into a separate file and link to them in this code and all
-// derived class files.
+	// TODO: Move all of the shared XML comments into a separate file and link to them in this code and all
+	// derived class files.
 
 using System;
 using System.Collections.Generic;
@@ -27,7 +27,7 @@ namespace HotDocs.Sdk.Server
 		/// </summary>
 		/// <param name="template"></param>
 		/// <param name="answers"></param>
-		/// <param name="options"></param>
+		/// <param name="settings"></param>
 		/// <param name="markedVariables"></param>
 		/// <include file="../Shared/Help.xml" path="Help/string/param[@name='logRef']"/>
 		/// <returns></returns>
@@ -39,17 +39,16 @@ namespace HotDocs.Sdk.Server
 		/// <param name="template">An instance of the Template class.</param>
 		/// <param name="answers">Either an XML answer string, or a string containing encoded
 		/// interview answers as posted from a HotDocs browser interview.</param>
-		/// <param name="options">An instance of the AssemblyOptions class.</param>
+		/// <param name="settings">An instance of the AssembleDocumentResult class.</param>
 		/// <include file="../Shared/Help.xml" path="Help/string/param[@name='logRef']"/>
 		/// <returns>An AssemblyResult object containing all the files and data resulting from the request.</returns>
 		AssembleDocumentResult AssembleDocument(Template template, TextReader answers, AssembleDocumentSettings settings, string logRef);
 
 		/// <summary>
-		/// GetComponentInfo returns metadata about the variables/types (and optionally dialogs & mapping info)
-		/// for the indicated template's interview.
+		/// GetComponentInfo returns metadata about the variables/types (and optionally dialogs and mapping info)		/// for the indicated template's interview.
 		/// </summary>
 		/// <param name="template">An instance of the Template class, for which you are requesting component information.</param>
-		/// <param name="includeDialogs">Whether to include dialog & mapping information in the returned results.</param>
+		/// <param name="includeDialogs">Whether to include dialog &amp; mapping information in the returned results.</param>
 		/// <include file="../Shared/Help.xml" path="Help/string/param[@name='logRef']"/>
 		/// <returns>The requested component information.</returns>
 		ComponentInfo GetComponentInfo(Template template, bool includeDialogs, string logRef);

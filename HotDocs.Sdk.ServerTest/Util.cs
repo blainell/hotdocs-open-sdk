@@ -32,11 +32,13 @@ namespace HotDocs.Sdk.ServerTest
 		{
 			get
 			{
-				return GetRootedPath("TestFiles");
+				Assembly _asm = Assembly.GetExecutingAssembly();
+				string testFilesPath = Path.Combine(Path.GetDirectoryName(_asm.Location), "TestFiles");
+				return testFilesPath;
 			}
 		}
 
-				public static string GetFileContentAsString(string filePath)
+		public static string GetFileContentAsString(string filePath)
 		{
 			string content = "";
 			using (FileStream fs = File.OpenRead(filePath))
@@ -50,9 +52,7 @@ namespace HotDocs.Sdk.ServerTest
 		public static PackagePathTemplateLocation CreatePackagePathLocation(string packageID)
 		{
 			//Note that in this sample portal, the package ID is used to construct the package file name, but this does not need to be the case.
-
-			Assembly _asm = Assembly.GetExecutingAssembly();
-			string templateDirectory = Path.Combine(Path.GetDirectoryName(_asm.Location), "TestFiles");
+			string templateDirectory = Path.Combine(GetSamplePortalTemplateDir(), "TestTemplates");
 			string packagePath = Path.Combine(templateDirectory, packageID + ".pkg");
 
 			if (!File.Exists(packagePath))
@@ -76,7 +76,7 @@ namespace HotDocs.Sdk.ServerTest
 			string endPointName = ConfigurationManager.AppSettings["WebServiceEndPoint"];
 
 			Assembly _asm = Assembly.GetExecutingAssembly();
-			string templatePath = Path.Combine(Path.GetDirectoryName(_asm.Location), "TestFiles");
+			string templatePath = Path.Combine(GetSamplePortalTemplateDir());
 
 			return new HotDocs.Sdk.Server.WebService.Services(endPointName, templatePath);
 		}
@@ -105,9 +105,26 @@ namespace HotDocs.Sdk.ServerTest
 			return testProjectPath;
 		}
 
-		public static string GetRootedPath(string relativePath)
+		public static string GetSamplePortalTemplateDir()
 		{
-			return Path.Combine(GetTestProjectPath(), relativePath);
+			string samplePortalRoot = GetSamplePortalRootedPath();
+			string filesDir = Path.Combine(samplePortalRoot, "Files");
+			return Path.Combine(filesDir, "Templates");
 		}
+
+		#region Private methods
+
+		private static string GetSamplePortalRootedPath()
+		{
+			string sRet;
+			// assemblyBinariesFolder should be bin\Debug or bin\Release, within the current solution folder:
+			string assemblyBinariesFolder = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+			string serverTestRoot = Directory.GetParent(Directory.GetParent(assemblyBinariesFolder).ToString()).ToString();
+			string sdkRoot = Directory.GetParent(serverTestRoot).ToString();
+			sRet = Path.Combine(sdkRoot, "SamplePortal");
+			return sRet;
+		}
+
+		#endregion // Private methods
 	}
 }

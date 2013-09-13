@@ -34,9 +34,11 @@ namespace HotDocs.Sdk.Server.Local
 
 		public ComponentInfo GetComponentInfo(Template template, bool includeDialogs, string logRef)
 		{
+			if (string.IsNullOrWhiteSpace(logRef))
+				throw new ArgumentNullException("logRef", @"Local.Services.GetInterviewDefinition: the ""logRef"" parameter pased in was null or empty");
 			// Validate input parameters, creating defaults as appropriate.
 			if (template == null)
-				throw new ArgumentNullException("template", "The template must not be null.");
+				throw new ArgumentNullException("template", @"Local.Services.GetInterviewDefinition: the ""template"" parameter passed in was null or empty, logRef: " + logRef);
 
 			string templateFilePath = template.GetFullPath();
 
@@ -130,8 +132,10 @@ namespace HotDocs.Sdk.Server.Local
 		public InterviewResult GetInterview(Template template, TextReader answers, InterviewSettings settings, IEnumerable<string> markedVariables, string logRef)
 		{
 			// Validate input parameters, creating defaults as appropriate.
+			if (string.IsNullOrWhiteSpace(logRef))
+				throw new ArgumentNullException("logRef", @"Local.Services.GetInterview: the ""logRef"" parameter passed in was null or empty");
 			if (template == null)
-				throw new ArgumentNullException("template");
+				throw new ArgumentNullException("template", string.Format(@"Local.Services.GetInterview: the ""template"" parameter passed in was null, logRef: {0}", logRef));
 
 			if (settings == null)
 				settings = new InterviewSettings();
@@ -235,10 +239,10 @@ namespace HotDocs.Sdk.Server.Local
 		{
 			// Validate input parameters, creating defaults as appropriate.
 			if (string.IsNullOrEmpty(state))
-				throw new ArgumentNullException("state");
+				throw new ArgumentNullException("state", @"Local.Services.GetInterviewDefinition: the ""state"" parameter passed in was null or empty");
 
 			if (string.IsNullOrEmpty(templateFile))
-				throw new ArgumentNullException("templateFile");
+				throw new ArgumentNullException("templateFile", @"Local.Services.GetInterviewDefinition: the ""templateFile"" parameter passed in was null or empty");
 
 			string interviewDefPath = _app.GetInterviewDefinitionFromState(state, templateFile,
 				  format == InterviewFormat.Silverlight
@@ -320,8 +324,10 @@ namespace HotDocs.Sdk.Server.Local
 		public AssembleDocumentResult AssembleDocument(Template template, TextReader answers, AssembleDocumentSettings settings, string logRef)
 		{
 			// Validate input parameters, creating defaults as appropriate.
+			if (string.IsNullOrWhiteSpace(logRef))
+				throw new ArgumentNullException("logRef", @"Local.Services.AssembleDocument: the ""logRef"" parameter pased in was null or empty");
 			if (template == null)
-				throw new ArgumentNullException("template", "The template must not be null.");
+				throw new ArgumentNullException("template", "Local.Services.AssembleDocument: The template must not be null, logRef: " + logRef);
 
 			if (settings == null)
 				settings = new AssembleDocumentSettings();
@@ -413,8 +419,10 @@ namespace HotDocs.Sdk.Server.Local
 		public string GetAnswers(IEnumerable<TextReader> answers, string logRef)
 		{
 			// Validate input parameters, creating defaults as appropriate.
+			if (string.IsNullOrWhiteSpace(logRef))
+				throw new ArgumentNullException("logRef", @"Local.Services.GetAnswers: the ""logRef"" parameter pased in was null or empty");
 			if (answers == null)
-				throw new ArgumentNullException("answers", "The answers collection must not be null.");
+				throw new ArgumentNullException("answers", @"Local.Services.GetAnswers: The ""answers"" parameter must not be null, logRef: " + logRef);
 
 			string result = "";
 			using (HotDocs.Server.AnswerCollection hdsAnsColl = new HotDocs.Server.AnswerCollection())
@@ -428,6 +436,8 @@ namespace HotDocs.Sdk.Server.Local
 
 		public void BuildSupportFiles(Template template, HDSupportFilesBuildFlags flags)
 		{
+			if (template == null)
+				throw new ArgumentNullException("template", @"Local.Services.BuildSupportFiles: the ""template"" parameter passed in was null");
 			using (HotDocs.Server.Application app = new HotDocs.Server.Application())
 			{
 				hdsi.HDServerBuildFlags hdBuildFlags = 0;
@@ -446,6 +456,8 @@ namespace HotDocs.Sdk.Server.Local
 
 		public void RemoveSupportFiles(Template template)
 		{
+			if (template == null)
+				throw new ArgumentNullException("template", @"Local.Services.RemoveSupportFiles: the ""template"" parameter passed in was null");
 			using (HotDocs.Server.Application app = new HotDocs.Server.Application())
 			{
 				app.RemoveSupportFiles(template.GetFullPath(), template.Key);
