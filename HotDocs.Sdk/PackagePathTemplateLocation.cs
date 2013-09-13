@@ -60,6 +60,7 @@ namespace HotDocs.Sdk
 		/// <returns></returns>
 		public override string GetTemplateDirectory()
 		{
+			ExtractPackageFiles();
 			return _templateDir;
 		}
 		/// <summary>
