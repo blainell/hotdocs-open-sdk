@@ -167,7 +167,7 @@ namespace HotDocs.Sdk.Server
 		/// Necessary because a host application may want or need this information as part of the state associated with
 		/// a WorkSession.
 		/// </remarks>
-		public string[] UnansweredVariables { get; internal set; }
+		public IEnumerable<string> UnansweredVariables { get; internal set; }
 	}
 
 }

@@ -204,9 +204,6 @@ public partial class Upload : System.Web.UI.Page
 							postedFile.InputStream.CopyTo(fs);
 							fs.Close();
 
-							HotDocs.Sdk.PackagePathTemplateLocation location = new HotDocs.Sdk.PackagePathTemplateLocation(packageID, packagePath);
-							location.ExtractPackageFiles();
-
 							UploadItem infoItem = new UploadItem
 							{
 								Title = Request.Form["HD_Template_Title" + templateIndex],

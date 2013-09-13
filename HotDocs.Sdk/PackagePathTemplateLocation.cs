@@ -2,7 +2,6 @@
    Use, modification and redistribution of this source is subject
    to the New BSD License as set out in LICENSE.TXT. */
 
-//TODO: Add XML comments where missing.
 //TODO: Add method parameter validation.
 //TODO: Add appropriate unit tests.
 
@@ -11,7 +10,6 @@ using System.IO;
 
 namespace HotDocs.Sdk
 {
-
 	/// <summary>
 	/// <c>PackagePathTemplateLocation</c> is a <c>PackageTemplateLocation</c> that expects a package
 	/// to exist on disk. Furthermore, the package content is extracted to a subfolder of the package folder.
@@ -19,7 +17,6 @@ namespace HotDocs.Sdk
 	/// content elsewhere, derive a different PackageTemplateLocation class.
 	/// </summary>
 	public class PackagePathTemplateLocation : PackageTemplateLocation, IEquatable<PackagePathTemplateLocation>
-
 	{
 		/// <summary>
 		/// Construct a template location for a specific package in the file system.
@@ -35,6 +32,8 @@ namespace HotDocs.Sdk
 			PackagePath = packagePath;
 		}
 
+		#region PackageTemplateLocation Implementation
+
 		/// <summary>
 		/// Returns a new duplicate instance of this object. Overrides <see cref="TemplateLocation.Duplicate"/>.
 		/// </summary>
@@ -45,37 +44,10 @@ namespace HotDocs.Sdk
 			location._templateDir = _templateDir;
 			return location;
 		}
-
-		public override bool Equals(object obj)
-		{
-			return (obj != null) && (obj is PackagePathTemplateLocation) && Equals((PackagePathTemplateLocation)obj);
-		}
-
-		public override int GetHashCode()
-		{
-			const int prime = 397;
-			int result = PackagePath.ToLower().GetHashCode(); // package path must be case-insensitive
-			result = (result * prime) ^ PackageID.GetHashCode(); // combine the hashes
-			return result;
-		}
-
-		#region IEquatable<PackagePathTemplateLocation> Members
-
-		public bool Equals(PackagePathTemplateLocation other)
-		{
-			if (other == null)
-				return false;
-			return string.Equals(PackageID, other.PackageID, StringComparison.Ordinal)
-				&& string.Equals(_templateDir, other._templateDir, StringComparison.OrdinalIgnoreCase);
-		}
-
-		#endregion
-
-		//TODO: Don't extract the files to disk if they aren't already.
 		/// <summary>
-		/// 
+		/// Returns a stream for a file at this template location. Overrides TemplateLocation.GetFile.
 		/// </summary>
-		/// <param name="fileName"></param>
+		/// <param name="fileName">The file name for the file requested.</param>
 		/// <returns></returns>
 		public override Stream GetFile(string fileName)
 		{
@@ -88,6 +60,7 @@ namespace HotDocs.Sdk
 		/// <returns></returns>
 		public override string GetTemplateDirectory()
 		{
+			ExtractPackageFiles();
 			return _templateDir;
 		}
 		/// <summary>
@@ -119,7 +92,6 @@ namespace HotDocs.Sdk
 		/// <summary>
 		/// Overrides <see cref="TemplateLocation.DeserializeContent"/>.
 		/// </summary>
-		/// <param name="content"></param>
 		/// <returns></returns>
 		protected override void DeserializeContent(string content)
 		{
@@ -131,6 +103,48 @@ namespace HotDocs.Sdk
 			PackagePath = tokens[1];
 			_templateDir = tokens[2];
 		}
+
+		#endregion
+
+		/// <summary>
+		/// Overrides Object.Equals.
+		/// </summary>
+		/// <param name="obj"></param>
+		/// <returns></returns>
+		public override bool Equals(object obj)
+		{
+			return (obj != null) && (obj is PackagePathTemplateLocation) && Equals((PackagePathTemplateLocation)obj);
+		}
+
+		/// <summary>
+		/// Overrides Object.GetHashCode.
+		/// </summary>
+		/// <returns></returns>
+		public override int GetHashCode()
+		{
+			const int prime = 397;
+			int result = PackagePath.ToLower().GetHashCode(); // package path must be case-insensitive
+			result = (result * prime) ^ PackageID.GetHashCode(); // combine the hashes
+			return result;
+		}
+
+		#region IEquatable<PackagePathTemplateLocation> Members
+
+		/// <summary>
+		/// Implements IEquatable&lt;PackagePathTemplateLocation&gt;.Equals.
+		/// </summary>
+		/// <param name="other"></param>
+		/// <returns></returns>
+		public bool Equals(PackagePathTemplateLocation other)
+		{
+			if (other == null)
+				return false;
+			return string.Equals(PackageID, other.PackageID, StringComparison.Ordinal)
+				&& string.Equals(_templateDir, other._templateDir, StringComparison.OrdinalIgnoreCase);
+		}
+
+		#endregion
+
 		/// <summary>
 		/// Extract the create the package content folder and extract the package content to it.
 		/// </summary>
@@ -155,9 +169,8 @@ namespace HotDocs.Sdk
 			if (Directory.Exists(_templateDir))
 				Directory.Delete(_templateDir, true);
 		}
-
 		/// <summary>
-		/// 
+		/// Returns the path to the package.
 		/// </summary>
 		public string PackagePath { get; protected set; }
 		private string _templateDir = null;

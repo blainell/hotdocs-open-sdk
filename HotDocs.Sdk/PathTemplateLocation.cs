@@ -14,8 +14,7 @@ namespace HotDocs.Sdk
 	/// for a template that simply resides as a file in the file system. The template does not reside in
 	/// a package or database, for example.
 	/// </summary>
-		public class PathTemplateLocation : TemplateLocation, IEquatable<PathTemplateLocation>
-
+	public class PathTemplateLocation : TemplateLocation, IEquatable<PathTemplateLocation>
 	{
 		private string _templateDir;//The directory where the template resides.
 
@@ -64,8 +63,6 @@ namespace HotDocs.Sdk
 		/// Returns a stream for a file in the template's directory. Overrides <see cref="TemplateLocation.GetFile"/>.
 		/// </summary>
 		/// <param name="fileName">The name of the file.</param>
-		/// <returns></returns>
-		/// <param name="fileName"></param>
 		/// <returns></returns>
 		public override Stream GetFile(string fileName)
 		{

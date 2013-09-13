@@ -96,7 +96,7 @@ public class GetDocPreview : IHttpHandler, IRequiresSessionState
 				else
 				{
 					StringReader mergedAnswersReader = new StringReader(session.AnswerCollection.XmlAnswers);
-					HotDocs.Sdk.AssembleDocumentSettings settings = session.DefaultAssemblyOptions;
+					HotDocs.Sdk.AssembleDocumentSettings settings = session.DefaultAssemblySettings;
 
 					// Set the appropriate mime types and headers for the requested file.
 					switch (tmpFileExt)

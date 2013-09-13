@@ -46,7 +46,7 @@ namespace HotDocs.Sdk
 		/// </summary>
 		MHTML,
 		/// <summary></summary>
-		XML 
+		XML
 	}
 
 	/// <summary>
@@ -71,7 +71,7 @@ namespace HotDocs.Sdk
 		/// <summary></summary>
 		HotDocsPDF,
 		/// <summary></summary>
-		PlainText 
+		PlainText
 	}
 
 	/// <summary>
@@ -90,7 +90,7 @@ namespace HotDocs.Sdk
 		/// <param name="fileName">The template file name.</param>
 		/// <param name="location">The location of the template.</param>
 		/// <include file="../Shared/Help.xml" path="Help/string/param[@name='switches']"></include>
-		/// <param name="key">Uniquely identifies the template. A key is necessary for templates without a fixed file name, such as when stored in a DMS or other database. An empty string may be used for templates with a fixed file name.</param>
+		/// <include file="../Shared/Help.xml" path="Help/string/param[@name='key']"></include>
 		public Template(string fileName, TemplateLocation location, string switches = "", string key = "")
 		{
 			if (fileName == null || location == null)
@@ -109,7 +109,7 @@ namespace HotDocs.Sdk
 		/// </summary>
 		/// <param name="location">The template location as a package location.</param>
 		/// <include file="../Shared/Help.xml" path="Help/string/param[@name='switches']"></include>
-		/// <param name="key">Uniquely identifies the template. A key is necessary for templates without a fixed file name, such as when stored in a DMS or other database. An empty string may be used for templates with a fixed file name.</param>
+		/// <include file="../Shared/Help.xml" path="Help/string/param[@name='key']"></include>
 		public Template(PackageTemplateLocation location, string switches = "", string key = "")
 		{
 			if (location == null || switches == null || key == null)

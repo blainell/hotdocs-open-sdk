@@ -157,7 +157,7 @@ namespace HotDocs.Sdk.ServerTest
 			}
 			catch (ArgumentNullException ex)
 			{
-				Assert.IsTrue(ex.Message.IndexOf(": template") > 0);
+				Assert.IsTrue(ex.Message.IndexOf(": logRef") > 0);
 			}
 			catch (Exception)
 			{
@@ -257,26 +257,26 @@ namespace HotDocs.Sdk.ServerTest
 
 			// Pass a null for settings and answers to ensure that defaults are used.
 			result = svc.AssembleDocument(tmp, null, null, logRef);
-			Assert.AreEqual(result.PendingAssemblies.Length, 0);
-			Assert.AreEqual(0, result.Document.SupportingFiles.Length);
-			Assert.AreEqual(0, result.PendingAssemblies.Length);
+			Assert.AreEqual(result.PendingAssembliesCount, 0);
+			Assert.AreEqual(0, result.Document.SupportingFiles.Count<NamedStream>());
+			Assert.AreEqual(0, result.PendingAssembliesCount); ;
 
 			settings.Format = DocumentType.MHTML;
 			result = svc.AssembleDocument(tmp, answers, settings, logRef);
-			Assert.AreEqual(0, result.Document.SupportingFiles.Length); // The MHTML is a single file (no external images).
+			Assert.AreEqual(0, result.Document.SupportingFiles.Count<NamedStream>()); // The MHTML is a single file (no external images).
 
 			settings.Format = DocumentType.HTMLwDataURIs;
 			result = svc.AssembleDocument(tmp, answers, settings, logRef);
-			Assert.AreEqual(0, result.Document.SupportingFiles.Length); // The HTML with Data URIs is a single file (no external images).
+			Assert.AreEqual(0, result.Document.SupportingFiles.Count<NamedStream>()); // The HTML with Data URIs is a single file (no external images).
 
 			settings.Format = DocumentType.HTML;
 			result = svc.AssembleDocument(tmp, answers, settings, logRef);
-			Assert.AreEqual(1, result.Document.SupportingFiles.Length); // The HTML contains one external image file.
+			Assert.AreEqual(1, result.Document.SupportingFiles.Count<NamedStream>()); // The HTML contains one external image file.
 
 			// Now try with another template, which contains an ASSEMBLE instruction.
 			tmp = Util.OpenTemplate("TemplateWithAssemble");
 			result = svc.AssembleDocument(tmp, null, null, logRef);
-			Assert.AreEqual(1, result.PendingAssemblies.Length);
+			Assert.AreEqual(1, result.PendingAssembliesCount);
 
 		}
 
@@ -326,7 +326,7 @@ namespace HotDocs.Sdk.ServerTest
 			}
 			catch (ArgumentNullException ex)
 			{
-				Assert.IsTrue(ex.Message.Contains("template"));
+				Assert.IsTrue(ex.Message.Contains("logRef"));
 			}
 			catch (Exception)
 			{
@@ -611,12 +611,12 @@ namespace HotDocs.Sdk.ServerTest
 
 			string filePath = template.GetFullPath();
 			Assert.IsTrue(File.Exists(filePath));
-			Directory.Delete(Path.GetDirectoryName(filePath));
+			//Directory.Delete(Path.GetDirectoryName(filePath));
 
 			//Check the second time since the folder has been deleted.
-			filePath = template.GetFullPath();//The folder should come into existence here.
-			Assert.IsTrue(File.Exists(filePath));
-			Directory.Delete(Path.GetDirectoryName(filePath));//Clean up.
+			//filePath = template.GetFullPath();//The folder should come into existence here.
+			//Assert.IsTrue(File.Exists(filePath));
+			//Directory.Delete(Path.GetDirectoryName(filePath));//Clean up.
 
 			TestTemplate(template);
 		}
@@ -624,7 +624,7 @@ namespace HotDocs.Sdk.ServerTest
 		[TestMethod]
 		public void TestPathTemplateLocation()
 		{
-			string templateDir = Path.Combine(Util.TestFilesPath, "DocxDemoEmployment");
+			string templateDir = Path.Combine(Util.GetSamplePortalTemplateDir(), "TestTemplates");
 			Assert.IsTrue(Directory.Exists(templateDir));
 			PathTemplateLocation location = new PathTemplateLocation(templateDir);
 
