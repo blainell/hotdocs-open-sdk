@@ -380,7 +380,9 @@ namespace HotDocs.Sdk.Server.WebService
 			MemoryStream document = null;
 			StreamReader ansRdr = null;
 			List<NamedStream> supportingFiles = new List<NamedStream>();
-			var pendingAssemblies = from pa in asmResult.PendingAssemblies
+			IEnumerable<Template> pendingAssemblies = null;
+			if (asmResult.PendingAssemblies != null)
+				pendingAssemblies = from pa in asmResult.PendingAssemblies
 									select new Template(Path.GetFileName(pa.TemplateName), template.Location.Duplicate(), pa.Switches);
 			for (int i = 0; i < asmResult.Documents.Length; i++)
 			{
