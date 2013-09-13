@@ -11,13 +11,13 @@ using System.IO;
 
 namespace HotDocs.Sdk
 {
-	public class PackagePathTemplateLocation : PackageTemplateLocation, IEquatable<PackagePathTemplateLocation>
 	/// <summary>
 	/// <c>PackagePathTemplateLocation</c> is a <c>PackageTemplateLocation</c> that expects a package
 	/// to exist on disk. Furthermore, the package content is extracted to a subfolder of the package folder.
 	/// The subfolder's name consists of the package ID followed by a ".dir" extension. To extract package
 	/// content elsewhere, derive a different PackageTemplateLocation class.
 	/// </summary>
+	public class PackagePathTemplateLocation : PackageTemplateLocation, IEquatable<PackagePathTemplateLocation>
 	{
 		/// <summary>
 		/// Construct a template location for a specific package in the file system.
