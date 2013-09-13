@@ -14,7 +14,7 @@ using System.Xml.Serialization;
 namespace HotDocs.Sdk.Cloud
 {
 	/// <summary>
-	/// The RESTful implementation of the Core Services client.
+	/// The RESTful implementation of the HotDocs Cloud Services client.
 	/// </summary>
 	public sealed partial class RestClient : ClientBase, IDisposable
 	{
@@ -24,9 +24,15 @@ namespace HotDocs.Sdk.Cloud
 		#endregion
 
 		#region Constructors
+
 		/// <summary>
 		/// Constructs a Client object.
 		/// </summary>
+		/// <param name="subscriberId">The Subscriber account identifier, found in the Administration Portal. The subscriberID corresponds to the company or website subscribing to the service, not an individual end user.</param>
+		/// <param name="signingKey">The Subscriber's unique signing key.</param>
+		/// <param name="outputDir">The path to a temporary folder where output files will be created.</param>
+		/// <param name="hostAddress">Specifies an alternate address for the Cloud Services web service (e.g., https://127.0.0.1).</param>
+		/// <param name="proxyServerAddress">Specifies the proxy server address (e.g., http://myfiddlermachine:8888).</param>
 		public RestClient(
 			string subscriberId,
 			string signingKey,
@@ -451,7 +457,7 @@ namespace HotDocs.Sdk.Cloud
 		#region Dispose methods
 
 		/// <summary>
-		/// 
+		/// Releases all resources used by the client.
 		/// </summary>
 		public void Dispose() // Since this class is sealed, we don't need to implement the full dispose pattern.
 		{

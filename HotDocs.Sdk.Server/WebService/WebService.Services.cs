@@ -63,6 +63,13 @@ namespace HotDocs.Sdk.Server.WebService
 			if (settings == null)
 				settings = new InterviewSettings();
 
+			// Ensure that if the template is packaged, it is unpacked to a location in the file system so HotDocs Server can deal with it
+			// TODO: handle in-memory PackageTemplateLocations in some similar way
+			if (template.Location is PackagePathTemplateLocation)
+			{
+				(template.Location as PackagePathTemplateLocation).ExtractPackageFiles();
+			}
+
 			// Add the query string to the interview image url so dialog element images can be located.
 			settings.InterviewImageUrlQueryString = "?loc=" + template.CreateLocator() + "&img=";
 

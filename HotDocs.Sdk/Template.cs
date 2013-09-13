@@ -12,20 +12,30 @@ namespace HotDocs.Sdk
 	/// </summary>
 	public enum DocumentType
 	{
+		/// <summary></summary>
 		Unknown = 0,
 		/// <summary>
 		/// Document type native to the template. See Template.NativeDocumentType. For example,
 		/// a WordPerfect WPD file is native to a WordPerfect WPT template.
 		/// </summary>
 		Native,
+		/// <summary></summary>
 		WordDOCX,
+		/// <summary></summary>
 		WordRTF,
+		/// <summary></summary>
 		WordDOC,
+		/// <summary></summary>
 		WordPerfect,
+		/// <summary></summary>
 		PDF,
+		/// <summary></summary>
 		HPD,
+		/// <summary></summary>
 		HFD,
+		/// <summary></summary>
 		PlainText,
+		/// <summary></summary>
 		HTML,
 		/// <summary>
 		/// HTML with images included as embedded URIs.
@@ -35,24 +45,34 @@ namespace HotDocs.Sdk
 		/// MIME HTML
 		/// </summary>
 		MHTML,
-		XML }
+		/// <summary></summary>
+		XML 
+	}
 
 	/// <summary>
 	/// The type of HotDocs template.
 	/// </summary>
 	public enum TemplateType
 	{
+		/// <summary></summary>
 		Unknown,
 		/// <summary>
 		/// Templates that only include an interview. (.cmp files.) No document is assembled from an interview-only template.
 		/// </summary>
 		InterviewOnly,
+		/// <summary></summary>
 		WordDOCX,
+		/// <summary></summary>
 		WordRTF,
+		/// <summary></summary>
 		WordPerfect,
+		/// <summary></summary>
 		HotDocsHFT,
+		/// <summary></summary>
 		HotDocsPDF,
-		PlainText }
+		/// <summary></summary>
+		PlainText 
+	}
 
 	/// <summary>
 	/// This class represents a template that is managed by the host application, and
@@ -69,8 +89,8 @@ namespace HotDocs.Sdk
 		/// </summary>
 		/// <param name="fileName">The template file name.</param>
 		/// <param name="location">The location of the template.</param>
-		/// <param name="switches"><include file="../Shared/Help.xml" path="Help/string/param[@name='switches']"></include></param>
-		/// <param name="key"><include file="../Shared/Help.xml" path="Help/string/param[@name='templateKey']"></include></param>
+		/// <include file="../Shared/Help.xml" path="Help/string/param[@name='switches']"></include>
+		/// <param name="key">Uniquely identifies the template. A key is necessary for templates without a fixed file name, such as when stored in a DMS or other database. An empty string may be used for templates with a fixed file name.</param>
 		public Template(string fileName, TemplateLocation location, string switches = "", string key = "")
 		{
 			if (fileName == null || location == null)
@@ -88,7 +108,8 @@ namespace HotDocs.Sdk
 		/// Construct a Template object for the main template in a package.
 		/// </summary>
 		/// <param name="location">The template location as a package location.</param>
-		/// <param name="switches"><include file="../Shared/Help.xml" path="Help/string/param[@name='switches']"></include></param>
+		/// <include file="../Shared/Help.xml" path="Help/string/param[@name='switches']"></include>
+		/// <param name="key">Uniquely identifies the template. A key is necessary for templates without a fixed file name, such as when stored in a DMS or other database. An empty string may be used for templates with a fixed file name.</param>
 		public Template(PackageTemplateLocation location, string switches = "", string key = "")
 		{
 			if (location == null || switches == null || key == null)
