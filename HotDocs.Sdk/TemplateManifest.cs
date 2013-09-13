@@ -47,54 +47,30 @@ namespace HotDocs.Sdk
 		ParseAll				= ParseVariables|ParseDependencies|ParseAdditionalFiles|ParseDataSources
 	};
 
-	/// <summary>
-	/// 
-	/// </summary>
 	public enum DataSourceFieldType
 	{
-		/// <summary></summary>
 		Text,
-		/// <summary></summary>
 		Number,
-		/// <summary></summary>
 		Date,
-		/// <summary></summary>
 		TrueFalse
 	};
 
-	/// <summary>
-	/// 
-	/// </summary>
 	public enum DataSourceBackfillType
 	{
-		/// <summary></summary>
 		Never,
-		/// <summary></summary>
 		Always,
-		/// <summary></summary>
 		Prompt,
-		/// <summary></summary>
 		DoNotAllow
 	};
 
-	/// <summary>
-	/// 
-	/// </summary>
 	public enum DataSourceType
 	{
-		/// <summary></summary>
 		CurrentAnswerFile,
-		/// <summary></summary>
 		AnswerFile,
-		/// <summary></summary>
 		DatabaseComponent,
-		/// <summary></summary>
 		Custom
 	};
 
-	/// <summary>
-	/// 
-	/// </summary>
 	public class VariableInfo : IEquatable<VariableInfo>, IComparable<VariableInfo>
 	{
 		private string _key;
@@ -110,39 +86,20 @@ namespace HotDocs.Sdk
 			_key = Name + Type.ToString();
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
 		public string Name { get; private set; }
 
-		/// <summary>
-		/// 
-		/// </summary>
 		public ValueType Type { get; private set; }
 		
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="obj"></param>
-		/// <returns></returns>
 		public override bool Equals(object obj)
 		{
 			return (obj != null) && (obj is VariableInfo) && Equals((VariableInfo)obj);
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <returns></returns>
 		public override int GetHashCode()
 		{
 			return _key.GetHashCode();
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <returns></returns>
 		public override string ToString()
 		{
 			return String.Format("Name: {0}  AnswerType: {1}", Name, Type);
@@ -150,11 +107,6 @@ namespace HotDocs.Sdk
 
 		#region IEquatable<Variable> Members
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="other"></param>
-		/// <returns></returns>
 		public bool Equals(VariableInfo other)
 		{
 			return CompareTo(other) == 0;
@@ -164,11 +116,6 @@ namespace HotDocs.Sdk
 
 		#region IComparable<Variable> Members
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="other"></param>
-		/// <returns></returns>
 		public int CompareTo(VariableInfo other)
 		{
 			return string.CompareOrdinal(other._key, _key);
@@ -177,9 +124,6 @@ namespace HotDocs.Sdk
 		#endregion
 	}
 
-	/// <summary>
-	/// 
-	/// </summary>
 	public class AdditionalFile : IEquatable<AdditionalFile>, IComparable<AdditionalFile>
 	{
 		internal AdditionalFile(string fileName)
@@ -190,34 +134,18 @@ namespace HotDocs.Sdk
 			FileName = fileName;
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
 		public string FileName { get; private set; }
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="obj"></param>
-		/// <returns></returns>
 		public override bool Equals(object obj)
 		{
 			return (obj != null) && (obj is AdditionalFile) && Equals((AdditionalFile)obj);
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <returns></returns>
 		public override int GetHashCode()
 		{
 			return FileName.ToLower().GetHashCode();
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <returns></returns>
 		public override string ToString()
 		{
 			return String.Format("FileName: {0}", FileName);
@@ -225,11 +153,6 @@ namespace HotDocs.Sdk
 
 		#region IEquatable<AdditionalFile> Members
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="other"></param>
-		/// <returns></returns>
 		public bool Equals(AdditionalFile other)
 		{
 			return CompareTo(other) == 0;
@@ -239,11 +162,6 @@ namespace HotDocs.Sdk
 
 		#region IComparable<AdditionalFile> Members
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="other"></param>
-		/// <returns></returns>
 		public int CompareTo(AdditionalFile other)
 		{
 			return string.Compare(other.FileName, FileName, true);
@@ -252,9 +170,6 @@ namespace HotDocs.Sdk
 		#endregion
 	}
 
-	/// <summary>
-	/// 
-	/// </summary>
 	public class DataSourceField
 	{
 		internal DataSourceField(string sourceName, DataSourceFieldType fieldType, DataSourceBackfillType backfillType, bool isKey)
@@ -268,30 +183,15 @@ namespace HotDocs.Sdk
 			IsKey = isKey;
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
 		public string SourceName { get; private set; }
 
-		/// <summary>
-		/// 
-		/// </summary>
 		public DataSourceFieldType FieldType { get; private set; }
 
-		/// <summary>
-		/// 
-		/// </summary>
 		public DataSourceBackfillType BackfillType { get; private set; }
 
-		/// <summary>
-		/// 
-		/// </summary>
 		public bool IsKey { get; private set; }
 	}
 
-	/// <summary>
-	/// 
-	/// </summary>
 	public class DataSource : IEquatable<DataSource>, IComparable<DataSource>
 	{
 		internal DataSource(string id, string name, DataSourceType type, DataSourceField[] fields)
@@ -307,49 +207,24 @@ namespace HotDocs.Sdk
 			Fields = fields;
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
 		public string Id { get; private set; }
 
-		/// <summary>
-		/// 
-		/// </summary>
 		public string Name { get; private set; }
 
-		/// <summary>
-		/// 
-		/// </summary>
 		public DataSourceType Type { get; private set; }
 
-		/// <summary>
-		/// 
-		/// </summary>
 		public DataSourceField[] Fields { get; private set; }
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="obj"></param>
-		/// <returns></returns>
 		public override bool Equals(object obj)
 		{
 			return (obj != null) && (obj is DataSource) && Equals((DataSource)obj);
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <returns></returns>
 		public override int GetHashCode()
 		{
 			return Id.GetHashCode();
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <returns></returns>
 		public override string ToString()
 		{
 			return String.Format("Id: {0}  Name: {1}  Type: {2}", Id, Name, Type);
@@ -357,11 +232,6 @@ namespace HotDocs.Sdk
 
 		#region IEquatable<DataSource> Members
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="other"></param>
-		/// <returns></returns>
 		public bool Equals(DataSource other)
 		{
 			return CompareTo(other) == 0;
@@ -371,11 +241,6 @@ namespace HotDocs.Sdk
 
 		#region IComparable<DataSource> Members
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="other"></param>
-		/// <returns></returns>
 		public int CompareTo(DataSource other)
 		{
 			return string.CompareOrdinal(other.Id, Id);
@@ -384,9 +249,6 @@ namespace HotDocs.Sdk
 		#endregion
 	}
 
-	/// <summary>
-	/// 
-	/// </summary>
 	public class TemplateManifest
 	{
 		private static readonly XNamespace s_namespace = "http://www.hotdocs.com/schemas/template_manifest/2012";
@@ -444,69 +306,30 @@ namespace HotDocs.Sdk
 
 		internal TemplateManifest() {}
 
-		/// <summary>
-		/// 
-		/// </summary>
 		public string HotDocsVersion { get; private set; }
 
-		/// <summary>
-		/// 
-		/// </summary>
 		public string TemplateId { get; private set; }
 
-		/// <summary>
-		/// 
-		/// </summary>
 		public string FileName { get; private set; }
 
-		/// <summary>
-		/// 
-		/// </summary>
 		public string EffectiveCmpFileName { get; private set; }
 
-		/// <summary>
-		/// 
-		/// </summary>
 		public DateTime? ExpirationDate { get; private set; }
 
-		/// <summary>
-		/// 
-		/// </summary>
 		public int? WarningDays { get; private set; }
 
-		/// <summary>
-		/// 
-		/// </summary>
 		public int? ExtensionDays { get; private set; }
 
-		/// <summary>
-		/// 
-		/// </summary>
 		public string Title { get; private set; }
 
-		/// <summary>
-		/// 
-		/// </summary>
 		public string Description { get; private set; }
 
-		/// <summary>
-		/// 
-		/// </summary>
 		public VariableInfo[] Variables { get; private set; }
 
-		/// <summary>
-		/// 
-		/// </summary>
 		public Dependency[] Dependencies { get; private set; }
 
-		/// <summary>
-		/// 
-		/// </summary>
 		public AdditionalFile[] AdditionalFiles { get; private set; }
 
-		/// <summary>
-		/// 
-		/// </summary>
 		public DataSource[] DataSources { get; private set; }
 
 		public static TemplateManifest ParseManifest(string templatePath, ManifestParseFlags parseFlags)
@@ -519,13 +342,6 @@ namespace HotDocs.Sdk
 
 		// TODO: Condider re-writing this using an XmlReader so that the entire document does not need to be allocated in a DOM. Doing so
 		// should make processing template manifest files faster. For now using an XDocument to just get things done fast.
-		/// <summary>
-		
-		/// 
-		/// </summary>
-		/// <param name="templatePath"></param>
-		/// <param name="parseFlags"></param>
-		/// <returns></returns>
 		public static TemplateManifest ParseManifest(string fileName, TemplateLocation location, ManifestParseFlags parseFlags)
 		{
 			TemplateManifest templateManifest = new TemplateManifest();
