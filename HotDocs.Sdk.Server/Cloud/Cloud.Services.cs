@@ -62,8 +62,10 @@ namespace HotDocs.Sdk.Server.Cloud
 		public InterviewResult GetInterview(Template template, TextReader answers, InterviewSettings settings, IEnumerable<string> markedVariables, string logRef)
 		{
 			// Validate input parameters, creating defaults as appropriate.
+			if (string.IsNullOrWhiteSpace(logRef))
+				throw new ArgumentNullException("logRef", @"Cloud.Services.GetInterview: the ""logRef"" parameter passed in was null or empty");
 			if (template == null)
-				throw new ArgumentNullException("template");
+				throw new ArgumentNullException("template", string.Format(@"Cloud.Services.GetInterview: the ""template"" parameter passed in was null, logRef: {0}", logRef));
 
 			if (settings == null)
 				settings = new InterviewSettings();
@@ -200,8 +202,10 @@ namespace HotDocs.Sdk.Server.Cloud
 		public ComponentInfo GetComponentInfo(Template template, bool includeDialogs, string logRef)
 		{
 			// Validate input parameters, creating defaults as appropriate.
+			if (string.IsNullOrWhiteSpace(logRef))
+				throw new ArgumentNullException("logRef", @"Cloud.Services.GetComponentInfo: the ""logRef"" parameter pased in was null or empty");
 			if (template == null)
-				throw new ArgumentNullException("template", "The template must not be null.");
+				throw new ArgumentNullException("template", @"Cloud.Services.GetComponentInfo: The ""template"" parameter must not be null, logRef: " + logRef);
 
 			ComponentInfo result;
 			using (var client = new SoapClient(_subscriberID, _signingKey))

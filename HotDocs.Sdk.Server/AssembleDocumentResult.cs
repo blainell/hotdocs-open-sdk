@@ -50,6 +50,20 @@ namespace HotDocs.Sdk.Server
 		public IEnumerable<Template> PendingAssemblies { get; private set; }
 
 		/// <summary>
+		/// Returns the number of pending assemblies (or 0 if it is null)
+		/// </summary>
+		public int PendingAssembliesCount
+		{
+			get
+			{
+				if (PendingAssemblies == null)
+					return 0;
+				else
+					return PendingAssemblies.Count<Template>();
+			}
+		}
+
+		/// <summary>
 		/// An collection of variable names for which answers were called for during assembly,
 		/// but for which no answer was included in the answer collection.
 		/// </summary>
@@ -87,7 +101,7 @@ namespace HotDocs.Sdk.Server
 				{
 					if (Document != null)
 					{
-						//Document.Dispose();
+						Document.Dispose();
 						Document = null;
 					}
 				}
