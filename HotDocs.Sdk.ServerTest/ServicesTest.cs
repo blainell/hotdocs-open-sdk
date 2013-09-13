@@ -257,26 +257,26 @@ namespace HotDocs.Sdk.ServerTest
 
 			// Pass a null for settings and answers to ensure that defaults are used.
 			result = svc.AssembleDocument(tmp, null, null, logRef);
-			Assert.AreEqual(result.PendingAssemblies.Length, 0);
-			Assert.AreEqual(0, result.Document.SupportingFiles.Length);
-			Assert.AreEqual(0, result.PendingAssemblies.Length);
+			Assert.AreEqual(result.PendingAssemblies.Count<HotDocs.Sdk.Template>(), 0);
+			Assert.AreEqual(0, result.Document.SupportingFiles.Count<NamedStream>());
+			Assert.AreEqual(0, result.PendingAssemblies.Count<Template>());
 
 			settings.Format = DocumentType.MHTML;
 			result = svc.AssembleDocument(tmp, answers, settings, logRef);
-			Assert.AreEqual(0, result.Document.SupportingFiles.Length); // The MHTML is a single file (no external images).
+			Assert.AreEqual(0, result.Document.SupportingFiles.Count<NamedStream>()); // The MHTML is a single file (no external images).
 
 			settings.Format = DocumentType.HTMLwDataURIs;
 			result = svc.AssembleDocument(tmp, answers, settings, logRef);
-			Assert.AreEqual(0, result.Document.SupportingFiles.Length); // The HTML with Data URIs is a single file (no external images).
+			Assert.AreEqual(0, result.Document.SupportingFiles.Count<NamedStream>()); // The HTML with Data URIs is a single file (no external images).
 
 			settings.Format = DocumentType.HTML;
 			result = svc.AssembleDocument(tmp, answers, settings, logRef);
-			Assert.AreEqual(1, result.Document.SupportingFiles.Length); // The HTML contains one external image file.
+			Assert.AreEqual(1, result.Document.SupportingFiles.Count<NamedStream>()); // The HTML contains one external image file.
 
 			// Now try with another template, which contains an ASSEMBLE instruction.
 			tmp = Util.OpenTemplate("TemplateWithAssemble");
 			result = svc.AssembleDocument(tmp, null, null, logRef);
-			Assert.AreEqual(1, result.PendingAssemblies.Length);
+			Assert.AreEqual(1, result.PendingAssemblies.Count<Template>());
 
 		}
 

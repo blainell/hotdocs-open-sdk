@@ -29,7 +29,7 @@ namespace HotDocs.Sdk
 		}
 
 		/// <summary>
-		/// This constructor accepts values for the five "required" interview options. HotDocs Server is unable to generate
+		/// This constructor accepts values for the five "required" interview settings. HotDocs Server is unable to generate
 		/// a functional browser-based interview without meaningful values for these five parameters.
 		/// </summary>
 		/// <param name="postInterviewUrl"></param>
@@ -134,11 +134,11 @@ namespace HotDocs.Sdk
 				}
 			}
 
-			// other options having to do with the interview request or structure, rather than its user-observable behavior
+			// other settings having to do with the interview request or structure, rather than its user-observable behavior
 			AddHdMainDiv = Util.ReadConfigurationTristate("AddHdMainDiv", Tristate.True);
 			RoundTripUnusedAnswers = Util.ReadConfigurationTristate("RoundTripUnusedAnswers", Tristate.Default);
 
-			// other interview options
+			// other interview settings
 			Format = Util.ReadConfigurationEnum<InterviewFormat>("InterviewFormat",
 				InterviewFormat.Unspecified);
 			if (String.IsNullOrEmpty(ThemeName))
@@ -446,7 +446,7 @@ namespace HotDocs.Sdk
 
 
 		/* ------------------------------------------------------------------------------------------------------------
-		 * other options having to do with the interview request or structure, rather than its user-observable behavior
+		 * other settings having to do with the interview request or structure, rather than its user-observable behavior
 		 */
 
 		/// <summary>
@@ -486,13 +486,13 @@ namespace HotDocs.Sdk
 		public Tristate RoundTripUnusedAnswers { get; set; }
 
 		/* ------------------------------------------------------------------------------------------------------------
-		 * other interview options
+		 * other interview settings
 		 */
 
 		/// <summary>
 		/// List of marked variables
 		/// </summary>
-		public string[] MarkedVariables { get; set; }
+		public IEnumerable<string> MarkedVariables { get; set; }
 
 		/// <summary>
 		/// Collection of settings that can be specified when requesting a HotDocs interview.

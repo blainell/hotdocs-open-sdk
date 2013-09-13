@@ -123,7 +123,7 @@ namespace HotDocs.Sdk.Server.WebService
 			if (template == null)
 				throw new ArgumentNullException("template", string.Format(@"AssembleDocument: the ""template"" parameter passed in was null, logRef: {0}", logRef));
 			if (settings == null)
-				throw new ArgumentNullException("settings", string.Format(@"AssembleDocument: the ""settings"" parameter passed in was null, logRef: {0}", logRef));
+				settings = new AssembleDocumentSettings();
 			AssembleDocumentResult result = null;
 			AssemblyResult asmResult = null;
 			OutputFormat outputFormat = ConvertFormat(settings.Format);
@@ -147,7 +147,7 @@ namespace HotDocs.Sdk.Server.WebService
 		}
 
 		/// <summary>
-		/// <c>GetComponentInfo</c> returns metadata about the variables/types (and optionally dialogs & mapping info)
+		/// <c>GetComponentInfo</c> returns metadata about the variables/types (and optionally dialogs and mapping info)
 		/// for the indicated template's interview.
 		/// </summary>
 		/// <param name="template">An instance of the Template class, for which you are requesting component information.</param>
@@ -373,19 +373,8 @@ namespace HotDocs.Sdk.Server.WebService
 			MemoryStream document = null;
 			StreamReader ansRdr = null;
 			List<NamedStream> supportingFiles = new List<NamedStream>();
-			Template[] pendingAssemblies = new Template[asmResult.PendingAssemblies == null ? 0 : asmResult.PendingAssemblies.Length];
-
-			if (asmResult.PendingAssemblies != null)
-			{
-
-				for (int i = 0; i < asmResult.PendingAssemblies.Length; i++)
-				{
-					string templateName = Path.GetFileName(asmResult.PendingAssemblies[i].TemplateName);
-					string switches = asmResult.PendingAssemblies[i].Switches;
-					Template pendingTemplate = new Template(templateName, template.Location.Duplicate(), switches);
-					pendingAssemblies[i] = pendingTemplate;
-				}
-			}
+			var pendingAssemblies = from pa in asmResult.PendingAssemblies
+									select new Template(Path.GetFileName(pa.TemplateName), template.Location.Duplicate(), pa.Switches);
 			for (int i = 0; i < asmResult.Documents.Length; i++)
 			{
 				switch (asmResult.Documents[i].Format)

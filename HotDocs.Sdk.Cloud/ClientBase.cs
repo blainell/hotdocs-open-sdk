@@ -79,13 +79,13 @@ namespace HotDocs.Sdk.Cloud
 		/// </summary>
 		/// <param name="template"></param>
 		/// <param name="answers"></param>
-		/// <param name="options"></param>
+		/// <param name="settings"></param>
 		/// <param name="billingRef"></param>
 		/// <returns></returns>
-		public AssemblyResult AssembleDocument(Template template, string answers, AssembleDocumentSettings options, string billingRef)
+		public AssemblyResult AssembleDocument(Template template, string answers, AssembleDocumentSettings settings, string billingRef)
 		{
 			return (AssemblyResult)TryWithoutAndWithPackage(
-				uploadPackage => AssembleDocumentImpl(template, answers, options, billingRef, uploadPackage));
+				uploadPackage => AssembleDocumentImpl(template, answers, settings, billingRef, uploadPackage));
 		}
 
 		/// <summary>
@@ -93,13 +93,13 @@ namespace HotDocs.Sdk.Cloud
 		/// </summary>
 		/// <param name="template"></param>
 		/// <param name="answers"></param>
-		/// <param name="options"></param>
+		/// <param name="settings"></param>
 		/// <param name="billingRef"></param>
 		/// <returns></returns>
-		public BinaryObject[] GetInterview(Template template, string answers, InterviewSettings options, string billingRef)
+		public BinaryObject[] GetInterview(Template template, string answers, InterviewSettings settings, string billingRef)
 		{
 			return (BinaryObject[])TryWithoutAndWithPackage(
-				uploadPackage => GetInterviewImpl(template, answers, options, billingRef, uploadPackage));
+				uploadPackage => GetInterviewImpl(template, answers, settings, billingRef, uploadPackage));
 		}
 
 		/// <summary>
@@ -134,14 +134,14 @@ namespace HotDocs.Sdk.Cloud
 		/// </summary>
 		/// <param name="template"></param>
 		/// <param name="answers"></param>
-		/// <param name="options"></param>
+		/// <param name="settings"></param>
 		/// <param name="billingRef"></param>
 		/// <param name="uploadPackage"></param>
 		/// <returns></returns>
 		protected internal abstract AssemblyResult AssembleDocumentImpl(
 			Template template,
 			string answers,
-			AssembleDocumentSettings options,
+			AssembleDocumentSettings settings,
 			string billingRef,
 			bool uploadPackage);
 
@@ -150,14 +150,14 @@ namespace HotDocs.Sdk.Cloud
 		/// </summary>
 		/// <param name="template"></param>
 		/// <param name="answers"></param>
-		/// <param name="options"></param>
+		/// <param name="settings"></param>
 		/// <param name="billingRef"></param>
 		/// <param name="uploadPackage"></param>
 		/// <returns></returns>
 		protected internal abstract BinaryObject[] GetInterviewImpl(
 			Template template,
 			string answers,
-			InterviewSettings options,
+			InterviewSettings settings,
 			string billingRef,
 			bool uploadPackage);
 

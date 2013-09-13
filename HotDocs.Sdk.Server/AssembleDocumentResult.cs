@@ -15,9 +15,14 @@ namespace HotDocs.Sdk.Server
 	/// </summary>
 	public class AssembleDocumentResult : IDisposable
 	{
-		// internal constructor
-		//TODO: Consider using IEnumerable instead of arrays?
-		public AssembleDocumentResult(Document document, string answers, Template[] pendingAssemblies, string[] unansweredVariables)
+		/// <summary>
+		/// <c>AssembleDocumentResult</c> constructor stores the result of calling IServices.AssembleDocument
+		/// </summary>
+		/// <param name="document"></param>
+		/// <param name="answers"></param>
+		/// <param name="pendingAssemblies"></param>
+		/// <param name="unansweredVariables"></param>
+		internal AssembleDocumentResult(Document document, string answers, IEnumerable<Template> pendingAssemblies, IEnumerable<string> unansweredVariables)
 		{
 			Document = document;
 			if (answers != null)
@@ -29,7 +34,7 @@ namespace HotDocs.Sdk.Server
 		}
 
 		/// <summary>
-		/// 
+		/// Returns the document that is the result of a document assembly operation.
 		/// </summary>
 		public Document Document { get; private set; }
 
@@ -39,16 +44,16 @@ namespace HotDocs.Sdk.Server
 		public string Answers { get; private set; }
 
 		/// <summary>
-		/// An array of assemblies that need to be completed after this assembly is finished
+		/// An collection of assemblies that need to be completed after this assembly is finished
 		/// (results of ASSEMBLE instructions in the assembled template).
 		/// </summary>
-		public Template[] PendingAssemblies { get; private set; }
+		public IEnumerable<Template> PendingAssemblies { get; private set; }
 
 		/// <summary>
-		/// An array of variable names for which answers were called for during assembly,
+		/// An collection of variable names for which answers were called for during assembly,
 		/// but for which no answer was included in the answer collection.
 		/// </summary>
-		public string[] UnansweredVariables { get; private set; }
+		public IEnumerable<string> UnansweredVariables { get; private set; }
 
 		/// <summary>
 		/// "Extracts" a Document object from this AssemblyResult instance.  This essentially
@@ -69,6 +74,11 @@ namespace HotDocs.Sdk.Server
 
 		private bool disposed = false; // to detect redundant calls
 
+		/// <summary>
+		/// <c>Dispose</c> Frees up and deallocates everything associated with the current object. 
+		/// This is called by Dispose (from IDisposable) of this class.
+		/// </summary>
+		/// <param name="disposing"></param>
 		protected virtual void Dispose(bool disposing)
 		{
 			if (!disposed)
@@ -77,7 +87,7 @@ namespace HotDocs.Sdk.Server
 				{
 					if (Document != null)
 					{
-						Document.Dispose();
+						//Document.Dispose();
 						Document = null;
 					}
 				}
@@ -85,11 +95,13 @@ namespace HotDocs.Sdk.Server
 			}
 		}
 
+		/// <summary>
+		/// <c>Dispose</c> implements the IDisposable interface
+		/// </summary>
 		public void Dispose()
 		{
 			Dispose(true);
 		}
-
 	}
 
 }

@@ -68,7 +68,7 @@ namespace HotDocs.Sdk.ServerTest
 			string endPointName = ConfigurationManager.AppSettings["WebServiceEndPoint"];
 
 			Assembly _asm = Assembly.GetExecutingAssembly();
-			string templatePath = Path.Combine(Path.GetDirectoryName(_asm.Location), "TestFiles");
+			string templatePath = Path.Combine(GetSamplePortalTemplateFolder(), "TestFiles");
 
 			return new HotDocs.Sdk.Server.WebService.Services(endPointName, templatePath);
 		}
@@ -79,5 +79,24 @@ namespace HotDocs.Sdk.ServerTest
 			string cloudSubscriberID = ConfigurationManager.AppSettings["SubscriberID"];
 			return new HotDocs.Sdk.Server.Cloud.Services(cloudSubscriberID, cloudSigningKey);
 		}
+
+		#region Private methods
+		private static string GetSamplePortalTemplateFolder()
+		{
+			return GetRootedPath("Templates");
+		}
+
+		private static string GetRootedPath(string path)
+		{
+			if (!Path.IsPathRooted(path))
+			{
+				string siteRoot = System.Web.Hosting.HostingEnvironment.MapPath("~");
+				string siteRootParent = Directory.GetParent(siteRoot).FullName;
+				path = Path.Combine(siteRootParent, "Files", path);
+			}
+			return path;
+		}
+
+		#endregion // Private methods
 	}
 }

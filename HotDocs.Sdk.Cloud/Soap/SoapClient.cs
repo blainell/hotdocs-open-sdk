@@ -86,14 +86,14 @@ namespace HotDocs.Sdk.Cloud
 		/// </summary>
 		/// <param name="template"></param>
 		/// <param name="answers"></param>
-		/// <param name="options"></param>
+		/// <param name="settings"></param>
 		/// <param name="billingRef"></param>
 		/// <param name="uploadPackage"></param>
 		/// <returns></returns>
 		protected internal override AssemblyResult AssembleDocumentImpl(
 			Template template,
 			string answers,
-			AssembleDocumentSettings options,
+			AssembleDocumentSettings settings,
 			string billingRef,
 			bool uploadPackage)
 		{
@@ -102,9 +102,9 @@ namespace HotDocs.Sdk.Cloud
 				throw new Exception("HotDocs Cloud Services requires the use of template packages. Please use a PackageTemplateLocation derivative.");
 			PackageTemplateLocation packageTemplateLocation = (PackageTemplateLocation)template.Location;
 
-			// Determine the output format to use (e.g., translate options.Type to Contracts.InterviewFormat)
+			// Determine the output format to use (e.g., translate settings.Type to Contracts.InterviewFormat)
 			OutputFormat outputFormat;
-			switch (options.Format)
+			switch (settings.Format)
 			{
 				case DocumentType.HFD:
 					outputFormat = OutputFormat.HFD;
@@ -159,7 +159,7 @@ namespace HotDocs.Sdk.Cloud
 				uploadPackage,
 				billingRef,
 				outputFormat,
-				options.Settings);
+				settings.Settings);
 
 			return _proxy.AssembleDocument(
 				SubscriberId,
@@ -167,7 +167,7 @@ namespace HotDocs.Sdk.Cloud
 				template.FileName,
 				GetBinaryObjectArrayFromString(answers),
 				outputFormat,
-				options.Settings,
+				settings.Settings,
 				billingRef,
 				timestamp,
 				GetPackageIfNeeded(packageTemplateLocation, uploadPackage),
@@ -179,14 +179,14 @@ namespace HotDocs.Sdk.Cloud
 		/// </summary>
 		/// <param name="template"></param>
 		/// <param name="answers"></param>
-		/// <param name="options"></param>
+		/// <param name="settings"></param>
 		/// <param name="billingRef"></param>
 		/// <param name="uploadPackage"></param>
 		/// <returns></returns>
 		protected internal override BinaryObject[] GetInterviewImpl(
 			Template template,
 			string answers,
-			InterviewSettings options,
+			InterviewSettings settings,
 			string billingRef,
 			bool uploadPackage)
 		{
@@ -199,10 +199,10 @@ namespace HotDocs.Sdk.Cloud
 			// To do this, we make a copy of the settings that were given to us, modify them, and then use the modified version
 			// in the call to Cloud Services.
 			// TODO: After TFS #5598 is fixed, we can remove this workaround.
-			Dictionary<string, string> settingsDict = new Dictionary<string, string>(options.Settings);
-			if (options.DisableDocumentPreview == Tristate.True)
+			Dictionary<string, string> settingsDict = new Dictionary<string, string>(settings.Settings);
+			if (settings.DisableDocumentPreview == Tristate.True)
 				settingsDict.Remove("DocPreviewUrl");
-			if (options.DisableSaveAnswers == Tristate.True)
+			if (settings.DisableSaveAnswers == Tristate.True)
 				settingsDict.Remove("SaveAnswersPageUrl");
 
 			string hmac = HMAC.CalculateHMAC(
@@ -213,8 +213,8 @@ namespace HotDocs.Sdk.Cloud
 				template.FileName,
 				uploadPackage,
 				billingRef,
-				options.Format,
-				options.InterviewImageUrl,
+				settings.Format,
+				settings.InterviewImageUrl,
 				settingsDict);
 
 			return _proxy.GetInterview(
@@ -222,9 +222,9 @@ namespace HotDocs.Sdk.Cloud
 				packageTemplateLocation.PackageID,
 				template.FileName,
 				GetBinaryObjectArrayFromString(answers),
-				options.Format,
-				options.MarkedVariables,
-				options.InterviewImageUrl,
+				settings.Format,
+				settings.MarkedVariables.ToArray<string>(),
+				settings.InterviewImageUrl,
 				settingsDict,
 				billingRef,
 				timestamp,

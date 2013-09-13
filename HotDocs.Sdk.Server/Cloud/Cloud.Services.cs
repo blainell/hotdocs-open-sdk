@@ -111,7 +111,7 @@ namespace HotDocs.Sdk.Server.Cloud
 		}
 
 		/// <summary>
-		/// Assembles a document from the given template, answers and options.
+		/// Assembles a document from the given template, answers and settings.
 		/// </summary>
 		/// <param name="template"></param>
 		/// <param name="answers"></param>
