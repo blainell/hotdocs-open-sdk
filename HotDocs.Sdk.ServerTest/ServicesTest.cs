@@ -663,6 +663,93 @@ namespace HotDocs.Sdk.ServerTest
 			Assert.AreEqual(template.FileName, template2.FileName);
 		}
 
+		[TestMethod]
+		public void TestTemplateLocationEquatability()
+		{
+			// ensure PathTemplateLocation is case insensitive and not diacritic insensitive
+			var loc1a = new PathTemplateLocation(@"C:\temp");
+			var loc1b = new PathTemplateLocation(@"c:\Temp");
+			var loc2a = new PathTemplateLocation(@"C:\TĔMP");
+			var loc2b = new PathTemplateLocation(@"c:\tĕmp");
+			var loc3  = new PathTemplateLocation(@"c:\tëmp");
+			PathTemplateLocation loc4 = null;
+			PathTemplateLocation loc5 = null;
+
+			// ensure PathTemplateLocation is case insensitive
+			Assert.AreEqual(loc1a, loc1b);
+			Assert.AreEqual(loc1a.GetHashCode(), loc1b.GetHashCode());
+			Assert.AreEqual(loc2a, loc2b);
+			Assert.AreEqual(loc2a.GetHashCode(), loc2b.GetHashCode());
+			// ensure PathTemplateLocation is not unicode/diacritic insensitive
+			Assert.AreNotEqual(loc1a, loc2a);
+			Assert.AreNotEqual(loc1a.GetHashCode(), loc2a.GetHashCode());
+			Assert.AreNotEqual(loc1a, loc3);
+			Assert.AreNotEqual(loc1a.GetHashCode(), loc3.GetHashCode());
+			Assert.AreNotEqual(loc2b, loc3);
+			Assert.AreNotEqual(loc2b.GetHashCode(), loc3.GetHashCode());
+			// ensure we can tell the difference between nulls & non
+			Assert.AreNotEqual(loc1a, loc4);
+			Assert.AreNotEqual(loc4, loc5); // null template locations are not equal to each other (expected, but maybe not required, behavior)
+
+			// ensure hashing is working pretty much like we expect it to
+			var set = new HashSet<TemplateLocation>();
+			set.Add(loc1a);
+			Assert.IsTrue(set.Contains(loc1a));
+			Assert.IsTrue(set.Contains(loc1b));
+			Assert.IsFalse(set.Contains(loc2a));
+			Assert.IsFalse(set.Contains(loc2b));
+			Assert.IsFalse(set.Contains(loc3));
+			Assert.IsFalse(set.Contains(loc4));
+			Assert.IsFalse(set.Contains(loc5));
+			set.Add(loc3);
+			Assert.IsTrue(set.Contains(loc1a));
+			Assert.IsTrue(set.Contains(loc1b));
+			Assert.IsFalse(set.Contains(loc2a));
+			Assert.IsFalse(set.Contains(loc2b));
+			Assert.IsTrue(set.Contains(loc3));
+			Assert.IsFalse(set.Contains(loc4));
+			Assert.IsFalse(set.Contains(loc5));
+			set.Add(loc2b);
+			Assert.IsTrue(set.Contains(loc1a));
+			Assert.IsTrue(set.Contains(loc1b));
+			Assert.IsTrue(set.Contains(loc2a));
+			Assert.IsTrue(set.Contains(loc2b));
+			Assert.IsFalse(set.Contains(loc4));
+			Assert.IsFalse(set.Contains(loc5));
+			set.Add(loc4);
+			Assert.IsTrue(set.Contains(loc4));
+			Assert.IsFalse(set.Contains(loc5));
+
+			// now test PackagePathTemplateLocation too (& in combination)
+			var pkgloc1a = new PackagePathTemplateLocation(@"2f98a9f3-d106-44a8-ba16-e01d8cd65cbd", @"c:\temp\2f98a9f3-d106-44a8-ba16-e01d8cd65cbd.pkg");
+			var pkgloc1b = new PackagePathTemplateLocation(@"2f98a9f3-d106-44a8-ba16-e01d8cd65cbd", @"c:\Temp\2f98a9f3-d106-44a8-ba16-e01d8cd65cbD.pkg");
+			var pkgloc2a = new PackagePathTemplateLocation(@"2f98a9f3-d106-44a8-ba16-e01d8cd65cbD", @"C:\Temp\2f98a9f3-d106-44a8-ba16-e01d8cd65cbD.pkg");
+			var pkgloc3a = new PackagePathTemplateLocation(@"l'identité unique", @"c:\tëmp");
+			var pkgloc3b = new PackagePathTemplateLocation(@"l'identité unique", @"C:\TËMP");
+			var pkgloc4a = new PackagePathTemplateLocation(@"l'identité unique", @"c:\tĕmp");
+			var pkgloc5a = new PackagePathTemplateLocation(@"l'identite unique", @"C:\TËMP");
+			PackagePathTemplateLocation pkgloc6 = null;
+			PackagePathTemplateLocation pkgloc7 = null;
+
+			// ensure package ID is case sensitive & package path is case insensitive
+			Assert.AreEqual(pkgloc1a, pkgloc1b);
+			Assert.AreEqual(pkgloc1a.GetHashCode(), pkgloc1b.GetHashCode());
+			Assert.AreNotEqual(pkgloc1a, pkgloc2a);
+			Assert.AreNotEqual(pkgloc1a.GetHashCode(), pkgloc2a.GetHashCode());
+			Assert.AreNotEqual(pkgloc1b, pkgloc2a);
+			Assert.AreNotEqual(pkgloc1b.GetHashCode(), pkgloc2a.GetHashCode());
+			// ensure package ID & path are diacritic sensitive
+			Assert.AreEqual(pkgloc3a, pkgloc3b);
+			Assert.AreEqual(pkgloc3a.GetHashCode(), pkgloc3b.GetHashCode());
+			Assert.AreNotEqual(pkgloc3a, pkgloc4a);
+			Assert.AreNotEqual(pkgloc3a.GetHashCode(), pkgloc4a.GetHashCode());
+			Assert.AreNotEqual(pkgloc3b, pkgloc5a);
+			Assert.AreNotEqual(pkgloc3b.GetHashCode(), pkgloc5a.GetHashCode());
+
+
+
+		}
+
 		#endregion
 	}
 }
