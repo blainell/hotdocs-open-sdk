@@ -2,8 +2,6 @@
    Use, modification and redistribution of this source is subject
    to the New BSD License as set out in LICENSE.TXT. */
 
-//TODO: Add XML documentation.
-
 using System;
 using System.IO;
 
@@ -164,7 +162,10 @@ namespace SamplePortal
 
 			return currentSort;
 		}
-
+		/// <summary>
+		/// Respond to a <c>DataGrid.ItemCreated</c> event where <c>DataGridItemEventArgs.Item.ItemType == ListItemType.Pager</c>.
+		/// </summary>
+		/// <param name="e">Event DataGridItemEventArgs.</param>
 		public static void CustomizePager(System.Web.UI.WebControls.DataGridItemEventArgs e)
 		{
 			System.Web.UI.WebControls.TableCell pager = (System.Web.UI.WebControls.TableCell)e.Item.Controls[0];
@@ -187,7 +188,12 @@ namespace SamplePortal
 				}
 			}
 		}
-
+		/// <summary>
+		/// Set the page size of the data grid control, updating the current page index as needed.
+		/// </summary>
+		/// <param name="dataGrid">The data grid control.</param>
+		/// <param name="pageSize">The new page size.</param>
+		/// <param name="recordCount">The new number of records.</param>
 		public static void SetNewPageSize(System.Web.UI.WebControls.DataGrid dataGrid, int pageSize, int recordCount)
 		{
 			if (pageSize < 1)
@@ -197,30 +203,11 @@ namespace SamplePortal
 			if (dataGrid.CurrentPageIndex > recordCount / pageSize)
 				dataGrid.CurrentPageIndex = recordCount / pageSize;
 		}
-
-		public static bool CheckIfGenerateTemplateManifests(string tplPath)
-		{
-			string tplManifestPath = tplPath + ".manifest.xml";
-			if (!File.Exists(tplManifestPath))
-			{
-				// If the upload is from a pre-HotDocs 11 version of HotDocs then no template manifests will have been
-				// published and uploaded. In this case force the creation of an JavaScript interview definition file for
-				// the template that will have the side effect of creating a template manifest for it also. Making sure 
-				// there are templates manifest created for all templates assures that a variable colection file can be 
-				// dynamically created by the server when an interview is requested for the template. 
-
-				// We also no longer need to keep around in Sample Portal uploaded variable collection files (HVC) or 
-				// JavaScript (JS) files because the server now generates these files on the server and caches them.
-				File.Delete(Path.ChangeExtension(tplPath, ".hvc"));
-				File.Delete(Path.ChangeExtension(tplPath, ".js"));
-
-				//Generate the template manifest.
-				return true;
-			}
-			return false;//Do not generate the template manifest.
-		}
-
-		//TODO: Not used. Remove?
+		/// <summary>
+		/// Returns a string identifying the browser.
+		/// </summary>
+		/// <param name="request"></param>
+		/// <returns></returns>
 		public static string GetBrowserName(System.Web.HttpRequest request)
 		{
 			//Determine what browser is being used
@@ -240,7 +227,11 @@ namespace SamplePortal
 				browserName = "firefox";
 			return browserName;
 		}
-
+		/// <summary>
+		/// Returns non-zero if the browser supports HTML with inline images.
+		/// </summary>
+		/// <param name="req"></param>
+		/// <returns></returns>
 		public static bool BrowserSupportsInlineImages(System.Web.HttpRequest req)
 		{
 			string inlineImages = req.Form["InlineImages"];
@@ -251,23 +242,44 @@ namespace SamplePortal
 			if (inlineImages != null)
 				supportsInlineImages = (inlineImages.ToLowerInvariant() == "true");
 			else
-				supportsInlineImages = !browser.Contains("IE") || type == "IE9" || type == "IE10"; // IE9 supports up to 4GB in a data uri (http://msdn.microsoft.com/en-us/ie/ff468705.aspx#_DataURI)
+			{
+				int version;
+				supportsInlineImages = IsIE(req, out version) && version >= 9; // IE9 supports up to 4GB in a data uri (http://msdn.microsoft.com/en-us/ie/ff468705.aspx#_DataURI)
+			}
 
 			return supportsInlineImages;
 		}
-
 		/// <summary>
-		/// Wrap a file path in this call in order to make sure that the directory exists.
+		/// Returns non-zero if the browser is IE.
 		/// </summary>
-		/// <param name="filePath"></param>
+		/// <param name="req">The browser request.</param>
+		/// <param name="version">Returns the IE version number if it's IE. Otherwise undefined.</param>
 		/// <returns></returns>
-		//TODO: Not used. Remove?
-		public static string SafeFile(string filePath)
+		public static bool IsIE(System.Web.HttpRequest req, out int version)
 		{
-			Directory.CreateDirectory(Path.GetDirectoryName(filePath));
-			return filePath;
-		}
+			version = -1;
 
+			string browser = req.Browser.Browser.ToUpper();
+			if (!browser.Contains("IE"))
+				return false;
+
+			string type = req.Browser.Type.ToUpper();
+			if (string.Compare(type, 0, "IE", 0, 2) != 0)
+				return false;
+
+			string numStr = type.Substring(2, type.Length - 2);
+			try
+			{
+				version = int.Parse(numStr);
+			}
+			catch
+			{
+				//If the IE string is unexpected, we'll assume it's new. This may need updating with newer browsers.
+				version = 100;//Some number greater than the current version.
+				return true;
+			}
+			return true;
+		}
 		/// <summary>
 		/// Wrap a directory path in this call in order to make sure that the directory exists.
 		/// </summary>
@@ -278,7 +290,11 @@ namespace SamplePortal
 			Directory.CreateDirectory(dirPath);
 			return dirPath;
 		}
-
+		/// <summary>
+		/// Get the users answers sent up from the browser.
+		/// </summary>
+		/// <param name="request"></param>
+		/// <returns></returns>
 		public static string GetInterviewAnswers(System.Web.HttpRequest request)
 		{
 			string ansdata = String.Join(String.Empty, request.Form.GetValues("HDInfo"));
@@ -286,7 +302,9 @@ namespace SamplePortal
 		}
 
 		#region Debugging aids
-		//TODO: Not used. Remove?
+		/// <summary>
+		/// Some debugging functionality that some might find useful.
+		/// </summary>
 		public static void debugger()
 		{
 			if (System.Diagnostics.Debugger.IsAttached)
