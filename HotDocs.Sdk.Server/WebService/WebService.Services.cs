@@ -25,18 +25,16 @@ namespace HotDocs.Sdk.Server.WebService
 		/// <summary>
 		/// The <c>Services</c> constructor
 		/// </summary>
-		/// <param name="endPointName">The <c>endPointName</c> that is defined in the host application configuration file. It defines host to where web service calls will be made</param>
-		/// <param name="templatePath">The <c>templatePath</c> that is defined in the host application configuration file. It is the base folder location where templates are stored</param>
+		/// <param name="endPointName">The <c>endPointName</c> defines host to where web service calls will be made</param>
+		/// <param name="templatePath">The <c>templatePath</c> is the base folder location where templates are stored</param>
 		public Services(string endPointName, string templatePath)
 		{
 			if (string.IsNullOrWhiteSpace(endPointName))
-				throw new ArgumentNullException("The web service end point is missing. " +
-					"Please check the value for WebServiceEndPoint in the config file and try again.");
+				throw new ArgumentNullException("WebServices.Services constructor: The parameter 'endPointName' is empty or null");
 			if (string.IsNullOrWhiteSpace(templatePath))
-				throw new ArgumentNullException("The base template location is missing. " +
-					"Please check the value for TemplatePath in the config file and try again.");
+				throw new ArgumentNullException("WebServices.Services constructor: the parameter 'templatePath' is empty or null"); 
 			if (Directory.Exists(templatePath) == false)
-				throw new DirectoryNotFoundException(string.Format(@"The templatePath folder is does not exist at: ""{0}"".  Please check the value defined as TemplatePath in the config file and try again.  ", templatePath));
+				throw new DirectoryNotFoundException(string.Format(@"WebServices.Services constructor: The parameter 'templatePath' folder does not exist at: ""{0}"".",  templatePath));
 			_endPointName = endPointName;
 			_baseTemplateLocation = templatePath.ToLower();
 		}
@@ -257,7 +255,6 @@ namespace HotDocs.Sdk.Server.WebService
 
 			using (Proxy client = new Proxy(_endPointName))
 			{
-				//TODO: Research this to see if the same relative path is needed above. also check parameter duplication
 				string templateId = string.Empty; // This is an ID for the template that is used in the event that we do not have a template state. But since we do have a template state, so we set this to empty.
 				string templateName = templateFile; // This is the name of the template file for which the interview is being requested (e.g., demoempl.rtf). 
 				string templateState = state; // This is the encrypted state string that was included in the html fragment returned by HotDocs Server when the interiew was first started.
@@ -303,7 +300,7 @@ namespace HotDocs.Sdk.Server.WebService
 			}
 		}
 
-		OutputFormat ConvertFormat(DocumentType docType)
+		private OutputFormat ConvertFormat(DocumentType docType)
 		{
 			OutputFormat format = OutputFormat.None;
 			switch (docType)
@@ -411,7 +408,7 @@ namespace HotDocs.Sdk.Server.WebService
 			return result;
 		}
 
-		string GetRelativePath(string fullPath)
+		private string GetRelativePath(string fullPath)
 		{
 			string sRet = string.Empty;
 			string full = fullPath.ToLower();
