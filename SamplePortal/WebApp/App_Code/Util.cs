@@ -126,20 +126,25 @@ namespace SamplePortal
 			}
 		}
 
-		//TODO: The implementation of this method could be cleaned up. It has the following problems:
-		// The parameter variable is modified.
-		// The text " DESC" is added and then removed for later comparison.
+		/// <summary>
+		/// Update a data grid's column headers to reflect the current sort which may change if newSort is not null.
+		/// </summary>
+		/// <param name="grid">The grid control.</param>
+		/// <param name="newSort">The new sort string: column_name[ DESC]. The sort is only changed if newSort is not null.</param>
+		/// <param name="currentSort">The current sort string: column_name[ DESC]</param>
+		/// <returns></returns>
 		public static string ToggleSortOrder(System.Web.UI.WebControls.DataGrid grid, string newSort, string currentSort)
 		{
 			if (newSort != null)
 			{
+				//Update currentSort. Toggle the sort or sort by a new column as per newSort.
 				if (newSort == currentSort && !currentSort.EndsWith(" DESC"))
 					currentSort += " DESC";
 				else
 					currentSort = newSort;
 			}
 
-			//this code block is to put a little triangle sort hint.
+			//Update the column headers to reflect the new current sort by updating the triangle hint.
 			string sortPrefix = currentSort;
 			if (sortPrefix.EndsWith(" DESC"))
 				sortPrefix = sortPrefix.Substring(0, sortPrefix.Length - 5);
