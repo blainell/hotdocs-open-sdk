@@ -16,7 +16,7 @@ namespace HotDocs.Sdk
 	/// The subfolder's name consists of the package ID followed by a ".dir" extension. To extract package
 	/// content elsewhere, derive a different PackageTemplateLocation class.
 	/// </summary>
-	public class PackagePathTemplateLocation : PackageTemplateLocation, IEquatable<PackagePathTemplateLocation>
+	public class PackagePathTemplateLocation : PackageTemplateLocation
 	{
 		/// <summary>
 		/// Construct a template location for a specific package in the file system.
@@ -107,40 +107,33 @@ namespace HotDocs.Sdk
 		#endregion
 
 		/// <summary>
-		/// Overrides Object.Equals.
-		/// </summary>
-		/// <param name="obj"></param>
-		/// <returns></returns>
-		public override bool Equals(object obj)
-		{
-			return (obj != null) && (obj is PackagePathTemplateLocation) && Equals((PackagePathTemplateLocation)obj);
-		}
-
-		/// <summary>
 		/// Overrides Object.GetHashCode.
 		/// </summary>
-		/// <returns></returns>
+		/// <returns>A suitable hash code for this PackagePathTemplateLocation.</returns>
 		public override int GetHashCode()
 		{
 			const int prime = 397;
 			int result = PackagePath.ToLower().GetHashCode(); // package path must be case-insensitive
 			result = (result * prime) ^ PackageID.GetHashCode(); // combine the hashes
 			return result;
+
+			// NOTE: Object.Equals is overridden in the base class, and therefore
+			// does not need not be overridden here.
 		}
 
-		#region IEquatable<PackagePathTemplateLocation> Members
+		#region IEquatable<TemplateLocation> Members
 
 		/// <summary>
-		/// Implements IEquatable&lt;PackagePathTemplateLocation&gt;.Equals.
+		/// Implements IEquatable&lt;TemplateLocation&gt;.Equals().
 		/// </summary>
 		/// <param name="other"></param>
 		/// <returns></returns>
-		public bool Equals(PackagePathTemplateLocation other)
+		public override bool Equals(TemplateLocation other)
 		{
-			if (other == null)
-				return false;
-			return string.Equals(PackageID, other.PackageID, StringComparison.Ordinal)
-				&& string.Equals(_templateDir, other._templateDir, StringComparison.OrdinalIgnoreCase);
+			var otherPackagePathLoc = other as PackagePathTemplateLocation;
+			return (otherPackagePathLoc != null)
+				&& string.Equals(PackageID, otherPackagePathLoc.PackageID, StringComparison.Ordinal)
+				&& string.Equals(_templateDir, otherPackagePathLoc._templateDir, StringComparison.OrdinalIgnoreCase);
 		}
 
 		#endregion

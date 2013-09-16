@@ -25,3 +25,4 @@ SamplePortal/Files/Documents/*
 SamplePortal/Files/Cache/*
 SamplePortal/Files/Answers/*
 SamplePortal/Files/Templates/*.dir/*
+SamplePortal/Files/Templates/TestTemplates/*.dir/*
