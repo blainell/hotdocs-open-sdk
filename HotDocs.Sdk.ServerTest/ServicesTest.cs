@@ -13,6 +13,7 @@ using HotDocs.Sdk.Server;
 using HotDocs.Sdk.Server.Cloud;
 using HotDocs.Sdk.Server.Contracts;
 using System.Reflection;
+using System.Web;
 
 namespace HotDocs.Sdk.ServerTest
 {
@@ -256,8 +257,8 @@ namespace HotDocs.Sdk.ServerTest
 				Assert.Fail(); // We are not expecting a generic exception.
 			}
 
-			// Pass a null for settings and answers to ensure that defaults are used.
-			result = svc.AssembleDocument(tmp, null, null, logRef);
+			// Pass a null for settings, answers, and logRef to ensure that defaults are used.
+			result = svc.AssembleDocument(tmp, null, null, null);
 			Assert.AreEqual(result.PendingAssembliesCount, 0);
 			Assert.AreEqual(0, result.Document.SupportingFiles.Count<NamedStream>());
 			Assert.AreEqual(0, result.PendingAssembliesCount); ;
@@ -376,7 +377,7 @@ namespace HotDocs.Sdk.ServerTest
 			// Ensure that invalid parameters are throwing an appropriate exception.
 			try
 			{
-				xml = svc.GetAnswers(null, logRef);
+				xml = svc.GetAnswers(null, null);
 				Assert.Fail(); // Should have failed instead of reaching here.
 			}
 			catch (ArgumentNullException ex)
@@ -452,12 +453,15 @@ namespace HotDocs.Sdk.ServerTest
 		#region BuildSupportFiles
 
 		[TestMethod]
-		public void BuildSupportFiles_Local() {
+		public void BuildSupportFiles_Local()
+		{
 			BuildSupportFiles(Util.GetLocalServicesInterface());
 		}
 
 		[TestMethod]
-		public void BuildSupportFiles_WebService() { }
+		public void BuildSupportFiles_WebService() {
+			BuildSupportFiles(Util.GetWebServiceServicesInterface());
+		}
 
 		[TestMethod]
 		public void BuildSupportFiles_Cloud()
@@ -481,6 +485,21 @@ namespace HotDocs.Sdk.ServerTest
 			{
 				Assert.Fail(ex.Message);
 			}
+
+			// Try building support files with a "null" template.
+			try
+			{
+				svc.BuildSupportFiles(null, HDSupportFilesBuildFlags.BuildJavaScriptFiles);
+				Assert.Fail(); // Should have thrown exception.
+			}
+			catch (ArgumentNullException)
+			{
+				Assert.IsTrue(true);
+			}
+			catch (Exception)
+			{
+				Assert.Fail();
+			}
 		}
 
 		#endregion
@@ -488,12 +507,15 @@ namespace HotDocs.Sdk.ServerTest
 		#region RemoveSupportFiles
 
 		[TestMethod]
-		public void RemoveSupportFiles_Local() {
+		public void RemoveSupportFiles_Local()
+		{
 			RemoveSupportFiles(Util.GetLocalServicesInterface());
 		}
 
 		[TestMethod]
-		public void RemoveSupportFiles_WebService() { }
+		public void RemoveSupportFiles_WebService() {
+			RemoveSupportFiles(Util.GetWebServiceServicesInterface());
+		}
 
 		[TestMethod]
 		public void RemoveSupportFiles_Cloud()
@@ -512,6 +534,21 @@ namespace HotDocs.Sdk.ServerTest
 			{
 				Assert.Fail(ex.Message);
 			}
+
+			// Try removing support files with a "null" template.
+			try
+			{
+				svc.RemoveSupportFiles(null);
+				Assert.Fail(); // Should have thrown exception.
+			}
+			catch (ArgumentNullException)
+			{
+				Assert.IsTrue(true);
+			}
+			catch (Exception)
+			{
+				Assert.Fail();
+			}
 		}
 
 		#endregion
@@ -519,10 +556,14 @@ namespace HotDocs.Sdk.ServerTest
 		#region GetInterviewDefinition Tests
 
 		[TestMethod]
-		public void GetInterviewDefinition_Local() { }
+		public void GetInterviewDefinition_Local() {
+			GetInterviewDefinition(Util.GetLocalServicesInterface());
+		}
 
 		[TestMethod]
-		public void GetInterviewDefinition_WebService() { }
+		public void GetInterviewDefinition_WebService() {
+			GetInterviewDefinition(Util.GetWebServiceServicesInterface());
+		}
 
 		[TestMethod]
 		public void GetInterviewDefinition_Cloud()
@@ -533,6 +574,13 @@ namespace HotDocs.Sdk.ServerTest
 		private void GetInterviewDefinition(IServices svc)
 		{
 			Template template = Util.OpenTemplate("d1f7cade-cb74-4457-a9a0-27d94f5c2d5b");
+			
+			// Get an interview for the template and find the state string 
+			InterviewResult IntvResult = svc.GetInterview(template, null, null, null, null);
+			string intvStateString = System.Text.RegularExpressions.Regex.Match(IntvResult.HtmlFragment, "stateString=[^&]+").Value;
+			//intvStateString = intvStateString.Replace("%2B", "+");
+			intvStateString = Uri.UnescapeDataString(intvStateString);
+
 			string templateState = null;
 			string templateFile = null;
 			InterviewFormat fmt = InterviewFormat.Unspecified;
@@ -558,7 +606,7 @@ namespace HotDocs.Sdk.ServerTest
 						templateFile = "";
 						break;
 					default:
-						templateState = template.CreateLocator();
+						templateState = intvStateString.Substring("stateString=".Length);
 						templateFile = "Demo Employment Agreement.docx";
 						break;
 				}

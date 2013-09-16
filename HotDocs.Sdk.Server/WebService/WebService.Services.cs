@@ -249,14 +249,18 @@ namespace HotDocs.Sdk.Server.WebService
 				throw new ArgumentNullException("state", @"GetInterviewDefinition: the ""state"" parameter pased in was null or empty");
 			if (string.IsNullOrWhiteSpace(templateFile))
 				throw new ArgumentNullException("templateFile", string.Format(@"GetComponentInfo: the ""templateFile"" parameter passed in was null or empty"));
+
+			// Make sure that the state string is unencoded (e.g., convert %2B to +, %3D to =, and %25 to %).
+			state = Uri.UnescapeDataString(state);
+
 			System.IO.Stream result = null;
 
 			using (Proxy client = new Proxy(_endPointName))
 			{
 				//TODO: Research this to see if the same relative path is needed above. also check parameter duplication
-				string templateId = templateFile;
-				string templateName = string.Empty;
-				string templateState = state;
+				string templateId = string.Empty; // This is an ID for the template that is used in the event that we do not have a template state. But since we do have a template state, so we set this to empty.
+				string templateName = templateFile; // This is the name of the template file for which the interview is being requested (e.g., demoempl.rtf). 
+				string templateState = state; // This is the encrypted state string that was included in the html fragment returned by HotDocs Server when the interiew was first started.
 				BinaryObject binaryObject = client.GetInterviewDefinition(templateId, templateName, format, templateState);
 				SafeCloseClient(client, null);
 				result = new MemoryStream(binaryObject.Data);

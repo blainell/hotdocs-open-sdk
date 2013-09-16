@@ -245,6 +245,8 @@ namespace HotDocs.Sdk.Server.Cloud
 		/// <param name="flags"></param>
 		public void BuildSupportFiles(Template template, HDSupportFilesBuildFlags flags)
 		{
+			if (template == null)
+				throw new ArgumentNullException("template", @"Cloud.Services.BuildSupportFiles: the ""template"" parameter passed in was null");
 			// no op
 		}
 
@@ -257,6 +259,8 @@ namespace HotDocs.Sdk.Server.Cloud
 		/// <param name="template"></param>
 		public void RemoveSupportFiles(Template template)
 		{
+			if (template == null)
+				throw new ArgumentNullException("template", @"Cloud.Services.RemoveSupportFiles: the ""template"" parameter passed in was null");
 			// no op
 		}
 

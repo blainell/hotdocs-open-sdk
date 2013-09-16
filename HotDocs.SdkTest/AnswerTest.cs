@@ -34,7 +34,22 @@ namespace HotDocs.SdkTest
 			ta.SetValue<TextValue>("val4", 3);                       // user will be able to modify this answer
 
 			// now enumerate the values
-			foreach (var v in ta.IndexedValues)
+			AnswerValueEnumerator(ta);
+
+			// now enumerate some Number values
+			Answer tn = anss.CreateAnswer<NumberValue>("my num answer");
+			tn.SetValue<NumberValue>(new NumberValue(3), 0);
+			AnswerValueEnumerator(tn);
+
+			// now enumerate some Date values
+			Answer td = anss.CreateAnswer<DateValue>("my date answer");
+			td.SetValue<DateValue>(new DateValue(DateTime.Now), 0);
+			AnswerValueEnumerator(td);
+		}
+
+		private void AnswerValueEnumerator(Answer a)
+		{
+			foreach (var v in a.IndexedValues)
 			{
 				if (v.Answer.Type == Sdk.ValueType.Text)
 				{
@@ -59,7 +74,6 @@ namespace HotDocs.SdkTest
 							break;
 					}
 				}
-
 			}
 		}
 
