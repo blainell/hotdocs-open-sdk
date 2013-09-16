@@ -133,23 +133,6 @@ namespace HotDocs.Sdk.DataServices
 			return s_context;
 		}
 
-		private static HdProtocol HdProtocol
-		{
-			get
-			{
-				string s = ConfigurationManager.AppSettings["HdsRoute"];
-				if (s.Equals("WS", StringComparison.OrdinalIgnoreCase))
-					return HdProtocol.WebService;
-				if (s.Equals("CLOUD", StringComparison.OrdinalIgnoreCase))
-					return HdProtocol.Cloud;
-				if (s.Equals("LOCAL", StringComparison.OrdinalIgnoreCase))
-					return HdProtocol.Local;
-
-				//Default
-				return HdProtocol.Local;
-			}
-		}
-
 		private static object HandleServiceOperation(ServiceOperation serviceOperation, object[] parameters)
 		{
 			if (string.CompareOrdinal(serviceOperation.Name, DefineAnswerFileDataSourceOperationName) == 0)
