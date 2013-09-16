@@ -26,3 +26,4 @@ SamplePortal/Files/Cache/*
 SamplePortal/Files/Answers/*
 SamplePortal/Files/Templates/*.dir/*
 Help/Help/*
+SamplePortal/Files/Templates/TestTemplates/*.dir/*

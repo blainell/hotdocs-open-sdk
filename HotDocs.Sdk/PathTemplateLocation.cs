@@ -14,7 +14,7 @@ namespace HotDocs.Sdk
 	/// for a template that simply resides as a file in the file system. The template does not reside in
 	/// a package or database, for example.
 	/// </summary>
-	public class PathTemplateLocation : TemplateLocation, IEquatable<PathTemplateLocation>
+	public class PathTemplateLocation : TemplateLocation
 	{
 		private string _templateDir;//The directory where the template resides.
 
@@ -41,21 +41,30 @@ namespace HotDocs.Sdk
 			return new PathTemplateLocation(_templateDir);
 		}
 
-		public override bool Equals(object obj)
-		{
-			return (obj != null) && (obj is PathTemplateLocation) && Equals((PathTemplateLocation)obj);
-		}
-
+		/// <summary>
+		/// Overrides Object.GetHashCode().
+		/// </summary>
+		/// <returns>A suitable hash code for this PathTemplateLocation.</returns>
 		public override int GetHashCode()
 		{
 			return _templateDir.ToLower().GetHashCode();
+
+			// NOTE: Object.Equals is overridden in the base class, and therefore
+			// does not need not be overridden here.
 		}
 
-		#region IEquatable<PathTemplateLocation> Members
+		#region IEquatable<TemplateLocation> Members
 
-		public bool Equals(PathTemplateLocation other)
+		/// <summary>
+		/// Implements IEquatable&lt;TemplateLocation&gt;.Equals().
+		/// </summary>
+		/// <param name="other"></param>
+		/// <returns></returns>
+		public override bool Equals(TemplateLocation other)
 		{
-			return string.Equals(_templateDir, other._templateDir, StringComparison.OrdinalIgnoreCase);
+			var otherPathLoc = other as PathTemplateLocation;
+			return (otherPathLoc != null)
+				&& string.Equals(_templateDir, otherPathLoc._templateDir, StringComparison.OrdinalIgnoreCase);
 		}
 
 		#endregion
