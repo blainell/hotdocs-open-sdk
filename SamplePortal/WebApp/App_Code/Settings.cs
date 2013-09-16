@@ -2,8 +2,6 @@
    Use, modification and redistribution of this source is subject
    to the New BSD License as set out in LICENSE.TXT. */
 
-//TODO: Add XML comments.
-
 using System;
 using System.Configuration;
 using System.IO;
@@ -36,7 +34,6 @@ namespace SamplePortal
 		/// This is the type of HotDocs engine that will service requests. It can be either a local instance of 
 		/// HotDocs Server (LOCAL), the HotDocs Server Web Service (WS), or HotDocs Cloud Services (CLOUD).
 		/// </summary>
-		//TODO: This is redundant with the same property in SamplePortal.Factory. Should one call the other?
 		public static HotDocs.Sdk.Server.HdProtocol HdsRoute
 		{
 			get
@@ -76,7 +73,9 @@ namespace SamplePortal
 				}
 			}
 		}
-
+		/// <summary>
+		/// The maximum allowed title length for a template or answer file title.
+		/// </summary>
 		public static int MaxTitleLength
 		{
 			get
@@ -84,7 +83,9 @@ namespace SamplePortal
 				return GetSettingOrDefault("MaxTitleLength", 255);
 			}
 		}
-
+		/// <summary>
+		/// The maximum allowed description length for a template or answer file title.
+		/// </summary>
 		public static int MaxDescriptionLength
 		{
 			get
@@ -92,7 +93,9 @@ namespace SamplePortal
 				return GetSettingOrDefault("MaxDescriptionLength", 4000);
 			}
 		}
-
+		/// <summary>
+		/// The Cloud Services signing key.
+		/// </summary>
 		public static string SigningKey
 		{
 			get
@@ -100,7 +103,9 @@ namespace SamplePortal
 				return GetSettingOrDefault("SigningKey", string.Empty);
 			}
 		}
-
+		/// <summary>
+		/// The Cloud Services subscriber ID.
+		/// </summary>
 		public static string SubscriberID
 		{
 			get
@@ -108,7 +113,9 @@ namespace SamplePortal
 				return GetSettingOrDefault("SubscriberID", string.Empty);
 			}
 		}
-
+		/// <summary>
+		/// The end-point name used when HdsRoute == "WS".
+		/// </summary>
 		public static string WebServiceEndPoint
 		{
 			get
@@ -116,7 +123,9 @@ namespace SamplePortal
 				return GetSettingOrDefault("WebServiceEndPoint", string.Empty);
 			}
 		}
-
+		/// <summary>
+		/// The relative URL from which to get boilerplate server files for the interview.
+		/// </summary>
 		public static string JavaScriptUrl
 		{
 			get
@@ -124,7 +133,9 @@ namespace SamplePortal
 				return GetSettingOrDefault("InterviewRuntimeUrl", "HDServerFiles/js").TrimEnd('/');
 			}
 		}
-
+		/// <summary>
+		/// The relative URL from which to get stylesheets.
+		/// </summary>
 		public static string StylesheetUrl
 		{
 			get
@@ -136,7 +147,9 @@ namespace SamplePortal
 		}
 
 		#endregion
-
+		/// <summary>
+		/// The number of templates to upload at a time.
+		/// </summary>
 		public static int UploadPageSize
 		{
 			get
@@ -146,29 +159,37 @@ namespace SamplePortal
 		}
 
 		#region Silverlight / JavaScript interview format settings
-
+		/// <summary>
+		/// If true, we allow fallback to JavaScript if Silverlight is not available.
+		/// </summary>
 		public static bool AllowInterviewFallback
 		{
 			get { return GetSettingOrDefault("InterviewFallback", true); }
 		}
 
 		#endregion
-
+		/// <summary>
+		/// The root folder for packages and templates and the list (index.xml) of main templates.
+		/// </summary>
 		public static string TemplatePath
 		{
 			get { return GetRootedPath(GetSettingOrDefault("TemplatePath", "Templates")); }
 		}
-
+		/// <summary>
+		/// <para>The folder for answer files and the list (index.xml) of answer files.</para>
+		/// <para>WARNING: This scheme for answer storage is not user-specific.</para>
+		/// </summary>
 		public static string AnswerPath
 		{
 			get { return GetRootedPath(GetSettingOrDefault("AnswerPath", "Answers")); }
 		}
-
+		/// <summary>
+		/// The root folder for assembled documents.
+		/// </summary>
 		public static string DocPath
 		{
 			get { return GetRootedPath(GetSettingOrDefault("DocumentPath", "Documents")); }
 		}
-
 		/// <summary>
 		/// This is where Sample Portal caches the files requested through the HDServerFilesHandler.
 		/// </summary>
@@ -176,13 +197,9 @@ namespace SamplePortal
 		{
 			get { return GetRootedPath(GetSettingOrDefault("CachePath", "Cache")); }
 		}
-
-		//TODO: Not used?
-		public static bool AssembleHPTToPDF
-		{
-			get { return GetSettingOrDefault("AssembleHPTToPDF", true); }
-		}
-
+		/// <summary>
+		/// A temporary path to provide to the SDK as needed.
+		/// </summary>
 		public static string TempPath
 		{
 			get
@@ -211,11 +228,16 @@ namespace SamplePortal
 		}
 
 		#region Database Settings
+		/// <summary>
+		/// Default sort expression for displaying a list of answer files. Used in Answers.aspx and SelAns.aspx.
+		/// </summary>
 		public static string DefaultAnswerTableSortExpression
 		{
 			get { return GetSettingOrDefault("DefaultAnswerTableSortExpression", "LastModified DESC"); }
 		}
-
+		/// <summary>
+		/// Number of items to display on a single page of an answer grid.
+		/// </summary>
 		public static int AnswerGridPageSize
 		{
 			get
@@ -224,7 +246,9 @@ namespace SamplePortal
 				return Math.Max(GetSettingOrDefault("AnswerGridPageSize", 5), 1);
 			}
 		}
-
+		/// <summary>
+		/// Default sort expression for displaying a list of templates. Used in Default.aspx and Templates.aspx.
+		/// </summary>
 		public static string DefaultTemplateTableSortExpression
 		{
 			get
@@ -232,7 +256,9 @@ namespace SamplePortal
 				return GetSettingOrDefault("DefaultTemplateTableSortExpression", "Title");
 			}
 		}
-
+		/// <summary>
+		/// Number of items to display on a single page of an template grid.
+		/// </summary>
 		public static int TemplateGridPageSize
 		{
 			get
