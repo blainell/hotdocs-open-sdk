@@ -2,22 +2,30 @@
    Use, modification and redistribution of this source is subject
    to the New BSD License as set out in LICENSE.TXT. */
 
-//TODO: Complete XML comments.
-
 using System.IO;
 
 namespace SamplePortal
 {
 	/// <summary>
-	/// Summary description for PackageCache
+	/// <c>PackageCache</c> manages package files on disk.
 	/// </summary>
 	public class PackageCache
 	{
+		/// <summary>
+		/// Returns a package path based on a package ID.
+		/// </summary>
+		/// <param name="packageId"></param>
+		/// <returns></returns>
 		public static string GetLocalPackagePath(string packageId)
 		{
 			return Path.Combine(Settings.TemplatePath, packageId + ".pkg");
 		}
 
+		/// <summary>
+		/// Returns non-zero if the package file for the given package ID exists.
+		/// </summary>
+		/// <param name="packageId">The package ID of the package to check for.</param>
+		/// <returns></returns>
 		public static bool PackageExists(string packageId)
 		{
 			string packagePath = GetLocalPackagePath(packageId);
