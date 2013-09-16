@@ -1,27 +1,33 @@
-<?xml version="1.0" encoding="utf-8" ?>
-<xs:schema id="AnswerData" targetNamespace="http://tempuri.org/AnswerData.xsd" elementFormDefault="qualified"
-	attributeFormDefault="qualified" xmlns="http://tempuri.org/AnswerData.xsd" xmlns:mstns="http://tempuri.org/AnswerData.xsd"
-	xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-	<xs:element name="AnswerData" msdata:IsDataSet="true">
-		<xs:complexType>
-			<xs:choice maxOccurs="unbounded">
-				<xs:element name="Answers">
-					<xs:complexType>
-						<xs:sequence>
-							<xs:element name="Filename" type="xs:string" minOccurs="0" />
-							<xs:element name="Title" type="xs:string" minOccurs="0" />
-							<xs:element name="Description" type="xs:string" minOccurs="0" />
-							<xs:element name="DateCreated" type="xs:dateTime" minOccurs="0" />
-							<xs:element name="LastModified" type="xs:dateTime" minOccurs="0" />
-							<xs:element name="OrigFilename" type="xs:string" minOccurs="0" />
-						</xs:sequence>
-					</xs:complexType>
-				</xs:element>
-			</xs:choice>
-		</xs:complexType>
-		<xs:unique name="AnswerDataKey1" msdata:PrimaryKey="true">
-			<xs:selector xpath=".//mstns:Answers" />
-			<xs:field xpath="mstns:Filename" />
-		</xs:unique>
-	</xs:element>
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="AnswerData" targetNamespace="http://tempuri.org/AnswerData.xsd" xmlns:mstns="http://tempuri.org/AnswerData.xsd" xmlns="http://tempuri.org/AnswerData.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:msprop="urn:schemas-microsoft-com:xml-msprop" attributeFormDefault="qualified" elementFormDefault="qualified">
+  <xs:annotation>
+    <xs:appinfo source="urn:schemas-microsoft-com:xml-msdatasource">
+      <DataSource DefaultConnectionIndex="0" FunctionsComponentName="QueriesTableAdapter" Modifier="AutoLayout, AnsiClass, Class, Public" SchemaSerializationMode="IncludeSchema" xmlns="urn:schemas-microsoft-com:xml-msdatasource">
+        <Connections />
+        <Tables />
+        <Sources />
+      </DataSource>
+    </xs:appinfo>
+  </xs:annotation>
+  <xs:element name="AnswerData" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:Generator_UserDSName="AnswerData" msprop:Generator_DataSetName="AnswerData">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="Answers" msprop:Generator_TableClassName="AnswersDataTable" msprop:Generator_TableVarName="tableAnswers" msprop:Generator_TablePropName="Answers" msprop:Generator_RowDeletingName="AnswersRowDeleting" msprop:Generator_RowChangingName="AnswersRowChanging" msprop:Generator_RowEvHandlerName="AnswersRowChangeEventHandler" msprop:Generator_RowDeletedName="AnswersRowDeleted" msprop:Generator_UserTableName="Answers" msprop:Generator_RowChangedName="AnswersRowChanged" msprop:Generator_RowEvArgName="AnswersRowChangeEvent" msprop:Generator_RowClassName="AnswersRow">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Filename" msprop:Generator_ColumnVarNameInTable="columnFilename" msprop:Generator_ColumnPropNameInRow="Filename" msprop:Generator_ColumnPropNameInTable="FilenameColumn" msprop:Generator_UserColumnName="Filename" type="xs:string" />
+              <xs:element name="Title" msprop:Generator_ColumnVarNameInTable="columnTitle" msprop:Generator_ColumnPropNameInRow="Title" msprop:Generator_ColumnPropNameInTable="TitleColumn" msprop:Generator_UserColumnName="Title" type="xs:string" minOccurs="0" />
+              <xs:element name="Description" msprop:Generator_ColumnVarNameInTable="columnDescription" msprop:Generator_ColumnPropNameInRow="Description" msprop:Generator_ColumnPropNameInTable="DescriptionColumn" msprop:Generator_UserColumnName="Description" type="xs:string" minOccurs="0" />
+              <xs:element name="DateCreated" msprop:Generator_ColumnVarNameInTable="columnDateCreated" msprop:Generator_ColumnPropNameInRow="DateCreated" msprop:Generator_ColumnPropNameInTable="DateCreatedColumn" msprop:Generator_UserColumnName="DateCreated" type="xs:dateTime" minOccurs="0" />
+              <xs:element name="LastModified" msprop:Generator_ColumnVarNameInTable="columnLastModified" msprop:Generator_ColumnPropNameInRow="LastModified" msprop:Generator_ColumnPropNameInTable="LastModifiedColumn" msprop:Generator_UserColumnName="LastModified" type="xs:dateTime" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+    <xs:unique name="AnswerDataKey1" msdata:PrimaryKey="true">
+      <xs:selector xpath=".//mstns:Answers" />
+      <xs:field xpath="mstns:Filename" />
+    </xs:unique>
+  </xs:element>
 </xs:schema>
