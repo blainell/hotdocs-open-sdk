@@ -63,7 +63,7 @@ public partial class Disposition : System.Web.UI.Page
 				// Note for HotDocs host application developers: an informational log entry could be added 
 				// to a log file before (here) and after the call to _session.AssembleDocuments.
 				HotDocs.Sdk.Server.Document[] docs = _session.AssembleDocuments(null);
-				AssembledDocsCache cache = Util.GetAssembledDocsCache(this.Session);
+				AssembledDocsCache cache = Factory.GetAssembledDocsCache(this.Session);
 				foreach (HotDocs.Sdk.Server.Document doc in docs)
 					cache.AddDoc(doc);
 
@@ -183,7 +183,7 @@ public partial class Disposition : System.Web.UI.Page
 		{
 			System.Web.UI.WebControls.LinkButton btnTplImg = (System.Web.UI.WebControls.LinkButton)e.Item.Cells[0].FindControl("btnImgTemplate");
 			string docFile = e.Item.Cells[0].Text;
-			if (docFile == "&nbsp;" || Util.IsEmpty(docFile))
+			if (docFile == "&nbsp;" || string.IsNullOrEmpty(docFile))
 			{
 				btnTplImg.Text = "<div class=\"hd-sp-img hd-sp-img-blank\" ></div>";
 				return;

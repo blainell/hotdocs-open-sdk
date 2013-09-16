@@ -333,7 +333,7 @@ namespace HotDocs.Sdk.Server.Local
 			ansColl.OverlayXMLAnswers(answers == null ? "" : answers.ReadToEnd());
 			HotDocs.Server.OutputOptions outputOptions = ConvertOutputOptions(settings.OutputOptions);
 
-			//TODO: Make sure files get cleaned up.
+			//TODO: Make sure files get cleaned up. (It doesn't appear to be getting cleaned up.)
 			string docPath = CreateTempDocDirAndPath(template, settings.Format);
 
 			//TODO: Review this.

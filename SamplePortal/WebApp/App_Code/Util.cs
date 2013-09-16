@@ -11,119 +11,49 @@ using HotDocs.Sdk.Server.Contracts;
 
 namespace SamplePortal
 {
-	public enum AnsSrcType
-	{
-		NewSrc,
-		UploadedSrc,
-		ServerSrc
-	}
-
-	public class Document
-	{
-		private string m_templateTitle = "";
-		public string TemplateTitle
-		{
-			get
-			{
-				return m_templateTitle;
-			}
-			set
-			{
-				m_templateTitle = value;
-			}
-		}
-
-		private string m_documentFilePath = "";
-		public string DocumentFilePath
-		{
-			get
-			{
-				return m_documentFilePath;
-			}
-			set
-			{
-				m_documentFilePath = value;
-			}
-		}
-		public Document(string documentFilePath, string templateTitle)
-		{
-			TemplateTitle = templateTitle;
-			DocumentFilePath = documentFilePath;
-		}
-	}
 	/// <summary>
 	/// Global utility functions (all static methods).  No need to create an instance of Util.
 	/// </summary>
 	public static class Util
 	{
+		/// <summary>
+		/// Takes any positive integer (up to 64-bit) and returns a string representing that number int base n (max base == 37).
+		/// </summary>
+		/// <param name="num">Number to convert to a string.</param>
+		/// <param name="baseN">Base to convert to.</param>
+		/// <returns></returns>
 		public static string ConvertNumToBase(ulong num, byte baseN)
 		{
-			// takes any positive integer (up to 64-bit) and returns a string representing that number int base n (max base == 37)
 			const string alldigits = "0123456789abcdefghijklmnopqrstuvwxyz_";
 			if (num == 0)
 				return "";
 			return ConvertNumToBase(num / baseN, baseN) + alldigits[unchecked((int)(num % baseN))];
 		}
-
+		/// <summary>
+		/// Create a temporary file name.
+		/// </summary>
+		/// <param name="ext">The extension for the temporary file name.</param>
+		/// <returns></returns>
 		public static string MakeTempFilename(string ext)
 		{
-			string tmp = ConvertNumToBase(unchecked((ulong)DateTime.Now.Ticks), 36);
-			return (tmp.Length > 10 ? tmp.Substring(tmp.Length - 10) : tmp) + ext;
+			string fullExt = ext[0] == '.' ? ext : "." + ext;
+			return Path.GetRandomFileName() + fullExt;
 		}
-
-		public static string EnsureValidFilename(string filename)
-		{
-			return System.Text.RegularExpressions.Regex.Replace(filename, "[/\\:<>|?*\"]", "_");
-		}
-
-		public static bool IsEmpty(string s)
-		{
-			return (s == null || s == String.Empty || s.Length == 0);
-		}
-
+		/// <summary>
+		/// Delete a folder. This method does some validation on the folder name.
+		/// </summary>
+		/// <param name="folder"></param>
 		public static void SafeDeleteFolder(string folder)
 		{
 			if (folder != null && folder != "" && folder[0] != '\\')
 				System.IO.Directory.Delete(folder, true);
 		}
-		//TODO: Move this to HotDocs.Sdk.Template?
-		public static string GetDocExtension(string tplfname)
-		{
-			tplfname = Path.GetExtension(tplfname).ToLower();
-			switch (tplfname)
-			{
-				case ".rtf": return ".rtf";
-				case ".hpt": return ".pdf";
-				case ".wpt": return ".wpd";
-				case ".hft": return ".hfd";
-				case ".cmp": return null;
-			}
-			return ".rtf"; // default
-		}
-
 		/// <summary>
-		/// This method deletes a template package and its corresponding manifest file from the Templates folder.
+		/// Save an answer collection. Also save its title and description.
 		/// </summary>
-		/// <param name="packageID">The ID of the template package to delete.</param>
-		//TODO: Perhaps this should be moved to the PackageCache class.
-		public static void DeleteTemplatePackage(string packageID)
-		{
-			string packagePath = PackageCache.GetLocalPackagePath(packageID);
-
-			//Clean up any extracted files.
-			HotDocs.Sdk.PackagePathTemplateLocation location = new HotDocs.Sdk.PackagePathTemplateLocation(packageID, packagePath);
-			location.CleanPackageFiles();
-
-			// Delete the package file.
-			if (File.Exists(packagePath))
-				File.Delete(packagePath);
-
-			// Delete the manifest file.
-			string manifestPath = System.IO.Path.ChangeExtension(packagePath, ".xml");
-			if (File.Exists(manifestPath))
-				File.Delete(manifestPath);
-		}
-
+		/// <param name="ansColl">The answer collection to save.</param>
+		/// <param name="newTitle">The answer collection title to save.</param>
+		/// <param name="newDescription">The answer collection description to save.</param>
 		public static void SaveAnswers(HotDocs.Sdk.AnswerCollection ansColl, string newTitle, string newDescription)
 		{
 			string answerPath = ansColl.FilePath;
@@ -160,26 +90,25 @@ namespace SamplePortal
 				}
 			}
 		}
-
-		//TODO: Remove.
-		public static string GetTemporaryAnsFilename(string ansFilename)
-		{
-			return ansFilename.Substring(Settings.TempLen);
-		}
-
+		/// <summary>
+		/// Clean up old files.
+		/// </summary>
 		public static void SweepTempDirectories()
 		{
-			//TODO: Are we sweeping the right folders?
 			SweepDirectory(Settings.DocPath, 60);
 			SweepDirectory(Path.Combine(Settings.AnswerPath, Settings.TempRelPath), 60);
 		}
 
-		//TODO: Move the comment to XML comments.
+		/// <summary>
+		/// Delete old files.
+		/// This goes through every file in the named directory, and attempts to
+		/// delete all files that were created more than timeoutMinutes ago.
+		/// USE WITH CARE! THIS CAN DELETE ANY FILE THE USER HAS RIGHTS TO!
+		/// </summary>
+		/// <param name="dirName"></param>
+		/// <param name="timeoutMinutes"></param>
 		public static void SweepDirectory(string dirName, int timeoutMinutes)
 		{
-			// this goes through every file in the named directory, and attempts to
-			// delete all files that were created more than timeoutMinutes ago.
-			// USE WITH CARE! THIS CAN DELETE ANY FILE THE USER HAS RIGHTS TO!
 			DirectoryInfo dInfo = new DirectoryInfo(dirName);
 			if (dInfo.Exists)
 			{
@@ -188,6 +117,13 @@ namespace SamplePortal
 				{
 					if (fInfo.CreationTime.AddMinutes(timeoutMinutes) < DateTime.Now)
 						fInfo.Delete();
+				}
+
+				DirectoryInfo[] subDirInfoList = dInfo.GetDirectories();
+				foreach (DirectoryInfo subDirInfo in subDirInfoList)
+				{
+					if (subDirInfo.CreationTime.AddMinutes(timeoutMinutes) < DateTime.Now)
+						subDirInfo.Delete(true);
 				}
 			}
 		}
@@ -341,17 +277,6 @@ namespace SamplePortal
 		{
 			Directory.CreateDirectory(dirPath);
 			return dirPath;
-		}
-
-		public static AssembledDocsCache GetAssembledDocsCache(System.Web.SessionState.HttpSessionState session)
-		{
-			AssembledDocsCache cache = (AssembledDocsCache)session["AssembledDocsCache"];
-			if (cache == null)
-			{
-				cache = new AssembledDocsCache(Settings.TempPath);
-				session["AssembledDocsCache"] = cache;
-			}
-			return cache;
 		}
 
 		public static string GetInterviewAnswers(System.Web.HttpRequest request)

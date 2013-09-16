@@ -13,6 +13,7 @@ using HotDocs.Sdk.Server;
 using HotDocs.Sdk.Server.Cloud;
 using HotDocs.Sdk.Server.Contracts;
 using System.Reflection;
+using System.Web;
 
 namespace HotDocs.Sdk.ServerTest
 {
@@ -25,6 +26,7 @@ namespace HotDocs.Sdk.ServerTest
 		public UnitTest1()
 		{
 			HotDocs.Sdk.TemplateLocation.RegisterLocation(typeof(HotDocs.Sdk.PackagePathTemplateLocation));
+			HotDocs.Sdk.TemplateLocation.RegisterLocation(typeof(HotDocs.Sdk.PathTemplateLocation));
 		}
 
 		private TestContext testContextInstance;
@@ -107,36 +109,31 @@ namespace HotDocs.Sdk.ServerTest
 		[TestMethod]
 		public void GetInterview_Local()
 		{
-			IServices services = Util.GetLocalServicesInterface();
-			Template template = Util.OpenTemplate("d1f7cade-cb74-4457-a9a0-27d94f5c2d5b");
+			IServices svc = Util.GetLocalServicesInterface();
 			string logRef = "GetInterview_Local Unit Test";
-
-			GetInterview(services, template, logRef);
+			GetInterview(svc, logRef);
 		}
 
 		[TestMethod]
 		public void GetInterview_WebService()
 		{
-			IServices services = Util.GetWebServiceServicesInterface();
-			Template template = Util.OpenTemplate("d1f7cade-cb74-4457-a9a0-27d94f5c2d5b");
+			IServices svc = Util.GetWebServiceServicesInterface();
 			string logRef = "GetInterview_WebService Unit Test";
-
-			GetInterview(services, template, logRef);
+			GetInterview(svc, logRef);
 		}
 
 		[TestMethod]
 		public void GetInterview_Cloud()
 		{
-			IServices services = Util.GetCloudServicesInterface();
-			Template template = Util.OpenTemplate("d1f7cade-cb74-4457-a9a0-27d94f5c2d5b");
+			IServices svc = Util.GetCloudServicesInterface();
 			string logRef = "GetInterview_Cloud Unit Test";
-
-			GetInterview(services, template, logRef);
+			GetInterview(svc, logRef);
 		}
 
-		private void GetInterview(IServices svc, Template tmp, string logRef)
+		private void GetInterview(IServices svc, string logRef)
 		{
 			// Set up the InterviewOptions for the test.
+			Template tmp = Util.OpenTemplate("d1f7cade-cb74-4457-a9a0-27d94f5c2d5b");
 			string postInterviewUrl = "PostInterview.aspx";
 			string styleSheetUrl = "HDServerFiles/Stylesheets";
 			string runtimeUrl = "HDServerFiles/js";
@@ -177,22 +174,27 @@ namespace HotDocs.Sdk.ServerTest
 			// Now get another interview, but this time specify a url for doc preview and save answers.
 			settings.DocumentPreviewUrl = "DocPreview.aspx";
 			settings.SaveAnswersUrl = "SaveAnswers.aspx";
+			settings.Format = InterviewFormat.JavaScript; // explicitly set format to JS.
 			result = svc.GetInterview(tmp, null, settings, markedVars, logRef);
 			Assert.IsTrue(result.HtmlFragment.Contains(settings.DocumentPreviewUrl));
 			Assert.IsTrue(result.HtmlFragment.Contains(settings.SaveAnswersUrl));
+			Assert.IsTrue(result.HtmlFragment.Contains("HDJavaScriptInterview"));
 
 			// Now get another interview, but this time do the following:
 			// 1. Disable the doc preview and save answers urls.
 			// 2. Do not include the hdMainDiv.
 			// 3. "Mark" the Employee Name variable.
+			// 4. Set the interview format to Silverlight.
 			settings.DisableDocumentPreview = Tristate.True;
 			settings.DisableSaveAnswers = Tristate.True;
 			settings.AddHdMainDiv = Tristate.False;
+			settings.Format = InterviewFormat.Silverlight;
 			markedVars = new string[] { "Employee Name" };
 			result = svc.GetInterview(tmp, null, settings, markedVars, logRef);
 			Assert.IsFalse(result.HtmlFragment.Contains(settings.DocumentPreviewUrl));
 			Assert.IsFalse(result.HtmlFragment.Contains(settings.SaveAnswersUrl), "No Save Ans Url because it is disabled");
 			Assert.IsTrue(result.HtmlFragment.Contains("Employee Name\": { t: \"TX\", m:true")); // This interview does "mark" Employee Name.
+			Assert.IsTrue(result.HtmlFragment.Contains("HDSilverlightInterview"));
 
 			// Only HotDocs Cloud Services honors the AddHdMainDiv property of InterviewSettings, so only bother checking it if we are running a test against cloud services.
 			if (svc is HotDocs.Sdk.Server.Cloud.Services)
@@ -212,25 +214,25 @@ namespace HotDocs.Sdk.ServerTest
 		[TestMethod]
 		public void AssembleDocument_Local()
 		{
-			IServices services = Util.GetLocalServicesInterface();
+			IServices svc = Util.GetLocalServicesInterface();
 			string logRef = "AssembleDocument_Local Unit Test";
-			AssembleDocument(services, logRef);
+			AssembleDocument(svc, logRef);
 		}
 
 		[TestMethod]
 		public void AssembleDocument_WebService()
 		{
-			IServices services = Util.GetWebServiceServicesInterface();
+			IServices svc = Util.GetWebServiceServicesInterface();
 			string logRef = "AssembleDocument_WebService Unit Test";
-			AssembleDocument(services, logRef);
+			AssembleDocument(svc, logRef);
 		}
 
 		[TestMethod]
 		public void AssembleDocument_Cloud()
 		{
-			IServices services = Util.GetCloudServicesInterface();
+			IServices svc = Util.GetCloudServicesInterface();
 			string logRef = "AssembleDocument_Cloud Unit Test";
-			AssembleDocument(services, logRef);
+			AssembleDocument(svc, logRef);
 		}
 
 		private void AssembleDocument(IServices svc, string logRef)
@@ -255,8 +257,8 @@ namespace HotDocs.Sdk.ServerTest
 				Assert.Fail(); // We are not expecting a generic exception.
 			}
 
-			// Pass a null for settings and answers to ensure that defaults are used.
-			result = svc.AssembleDocument(tmp, null, null, logRef);
+			// Pass a null for settings, answers, and logRef to ensure that defaults are used.
+			result = svc.AssembleDocument(tmp, null, null, null);
 			Assert.AreEqual(result.PendingAssembliesCount, 0);
 			Assert.AreEqual(0, result.Document.SupportingFiles.Count<NamedStream>());
 			Assert.AreEqual(0, result.PendingAssembliesCount); ;
@@ -288,34 +290,29 @@ namespace HotDocs.Sdk.ServerTest
 		public void GetComponentInfo_Local()
 		{
 			IServices services = Util.GetLocalServicesInterface();
-			Template template = Util.OpenTemplate("d1f7cade-cb74-4457-a9a0-27d94f5c2d5b");
 			string logRef = "GetComponentInfo_Local Unit Test";
-
-			GetComponentInfo(services, template, logRef);
+			GetComponentInfo(services, logRef);
 		}
 
 		[TestMethod]
 		public void GetComponentInfo_WebService()
 		{
 			IServices services = Util.GetWebServiceServicesInterface();
-			Template template = Util.OpenTemplate("d1f7cade-cb74-4457-a9a0-27d94f5c2d5b");
 			string logRef = "GetComponentInfo_WebService Unit Test";
-
-			GetComponentInfo(services, template, logRef);
+			GetComponentInfo(services, logRef);
 		}
 
 		[TestMethod]
 		public void GetComponentInfo_Cloud()
 		{
 			IServices services = Util.GetCloudServicesInterface();
-			Template template = Util.OpenTemplate("d1f7cade-cb74-4457-a9a0-27d94f5c2d5b");
 			string logRef = "GetComponentInfo_Local Unit Test";
-
-			GetComponentInfo(services, template, logRef);
+			GetComponentInfo(services, logRef);
 		}
 
-		private void GetComponentInfo(IServices svc, Template tmp, string logRef)
+		private void GetComponentInfo(IServices svc, string logRef)
 		{
+			Template tmp = Util.OpenTemplate("d1f7cade-cb74-4457-a9a0-27d94f5c2d5b");
 			Server.Contracts.ComponentInfo result;
 
 			// Ensure that invalid parameters are throwing appropriate exceptions.
@@ -380,7 +377,7 @@ namespace HotDocs.Sdk.ServerTest
 			// Ensure that invalid parameters are throwing an appropriate exception.
 			try
 			{
-				xml = svc.GetAnswers(null, logRef);
+				xml = svc.GetAnswers(null, null);
 				Assert.Fail(); // Should have failed instead of reaching here.
 			}
 			catch (ArgumentNullException ex)
@@ -456,10 +453,15 @@ namespace HotDocs.Sdk.ServerTest
 		#region BuildSupportFiles
 
 		[TestMethod]
-		public void BuildSupportFiles_Local() { }
+		public void BuildSupportFiles_Local()
+		{
+			BuildSupportFiles(Util.GetLocalServicesInterface());
+		}
 
 		[TestMethod]
-		public void BuildSupportFiles_WebService() { }
+		public void BuildSupportFiles_WebService() {
+			BuildSupportFiles(Util.GetWebServiceServicesInterface());
+		}
 
 		[TestMethod]
 		public void BuildSupportFiles_Cloud()
@@ -473,11 +475,30 @@ namespace HotDocs.Sdk.ServerTest
 
 			try
 			{
-				svc.BuildSupportFiles(template, HDSupportFilesBuildFlags.BuildJavaScriptFiles);
+				HDSupportFilesBuildFlags flags = HDSupportFilesBuildFlags.BuildJavaScriptFiles;
+				flags |= HDSupportFilesBuildFlags.BuildSilverlightFiles;
+				flags |= HDSupportFilesBuildFlags.ForceRebuildAll;
+				flags |= HDSupportFilesBuildFlags.IncludeAssembleTemplates;
+				svc.BuildSupportFiles(template, flags);
 			}
 			catch (Exception ex)
 			{
 				Assert.Fail(ex.Message);
+			}
+
+			// Try building support files with a "null" template.
+			try
+			{
+				svc.BuildSupportFiles(null, HDSupportFilesBuildFlags.BuildJavaScriptFiles);
+				Assert.Fail(); // Should have thrown exception.
+			}
+			catch (ArgumentNullException)
+			{
+				Assert.IsTrue(true);
+			}
+			catch (Exception)
+			{
+				Assert.Fail();
 			}
 		}
 
@@ -486,10 +507,15 @@ namespace HotDocs.Sdk.ServerTest
 		#region RemoveSupportFiles
 
 		[TestMethod]
-		public void RemoveSupportFiles_Local() { }
+		public void RemoveSupportFiles_Local()
+		{
+			RemoveSupportFiles(Util.GetLocalServicesInterface());
+		}
 
 		[TestMethod]
-		public void RemoveSupportFiles_WebService() { }
+		public void RemoveSupportFiles_WebService() {
+			RemoveSupportFiles(Util.GetWebServiceServicesInterface());
+		}
 
 		[TestMethod]
 		public void RemoveSupportFiles_Cloud()
@@ -508,6 +534,21 @@ namespace HotDocs.Sdk.ServerTest
 			{
 				Assert.Fail(ex.Message);
 			}
+
+			// Try removing support files with a "null" template.
+			try
+			{
+				svc.RemoveSupportFiles(null);
+				Assert.Fail(); // Should have thrown exception.
+			}
+			catch (ArgumentNullException)
+			{
+				Assert.IsTrue(true);
+			}
+			catch (Exception)
+			{
+				Assert.Fail();
+			}
 		}
 
 		#endregion
@@ -515,10 +556,14 @@ namespace HotDocs.Sdk.ServerTest
 		#region GetInterviewDefinition Tests
 
 		[TestMethod]
-		public void GetInterviewDefinition_Local() { }
+		public void GetInterviewDefinition_Local() {
+			GetInterviewDefinition(Util.GetLocalServicesInterface());
+		}
 
 		[TestMethod]
-		public void GetInterviewDefinition_WebService() { }
+		public void GetInterviewDefinition_WebService() {
+			GetInterviewDefinition(Util.GetWebServiceServicesInterface());
+		}
 
 		[TestMethod]
 		public void GetInterviewDefinition_Cloud()
@@ -529,6 +574,13 @@ namespace HotDocs.Sdk.ServerTest
 		private void GetInterviewDefinition(IServices svc)
 		{
 			Template template = Util.OpenTemplate("d1f7cade-cb74-4457-a9a0-27d94f5c2d5b");
+			
+			// Get an interview for the template and find the state string 
+			InterviewResult IntvResult = svc.GetInterview(template, null, null, null, null);
+			string intvStateString = System.Text.RegularExpressions.Regex.Match(IntvResult.HtmlFragment, "stateString=[^&]+").Value;
+			//intvStateString = intvStateString.Replace("%2B", "+");
+			intvStateString = Uri.UnescapeDataString(intvStateString);
+
 			string templateState = null;
 			string templateFile = null;
 			InterviewFormat fmt = InterviewFormat.Unspecified;
@@ -554,7 +606,7 @@ namespace HotDocs.Sdk.ServerTest
 						templateFile = "";
 						break;
 					default:
-						templateState = template.CreateLocator();
+						templateState = intvStateString.Substring("stateString=".Length);
 						templateFile = "Demo Employment Agreement.docx";
 						break;
 				}

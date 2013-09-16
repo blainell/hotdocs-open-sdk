@@ -37,6 +37,9 @@ namespace HotDocs.Sdk.Server.Contracts
 		/// <returns>A canonicalized string</returns>
 		public static string Canonicalize(params object[] paramList)
 		{
+			if (paramList == null)
+				throw new ArgumentNullException();
+
 			var strings = paramList.Select<object, string>(param =>
 			{
 				if (param is string || param is int || param is Enum || param is bool)

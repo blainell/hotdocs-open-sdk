@@ -292,7 +292,7 @@ public partial class Upload : System.Web.UI.Page
 		foreach (UploadItem i in ConflictUploadItems)
 		{
 			// Delete the new package from disk since the user has decided not to go through with overwriting the old package.
-			Util.DeleteTemplatePackage(i.PackageID);
+			PackageCache.DeleteTemplatePackage(i.PackageID);
 
 			CanceledUploadItems.Add(i);	// Add the item to the list of canceled items.
 		}

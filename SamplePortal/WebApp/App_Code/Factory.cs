@@ -2,25 +2,31 @@
    Use, modification and redistribution of this source is subject
    to the New BSD License as set out in LICENSE.TXT. */
 
-//TODO: Add XML comments.
-
 using System;
 using System.IO;
 
 namespace SamplePortal
 {
-	////////////////////////////////////////////////////////////////////////////////////////////////////
-	// Class: Factory
-	//
-	//	Description: This is the factory class for producing adapter objects.
-	////////////////////////////////////////////////////////////////////////////////////////////////////
+	/// <summary>
+	/// The <c>Factory</c> class manages the allocation of objects whose lifetime is that of the user session.
+	/// </summary>
 	public class Factory
 	{
+		/// <summary>
+		/// Returns the WorkSession for the user session.
+		/// </summary>
+		/// <param name="session">The user session.</param>
+		/// <returns></returns>
 		public static HotDocs.Sdk.Server.WorkSession GetWorkSession(System.Web.SessionState.HttpSessionState session)
 		{
 			return (HotDocs.Sdk.Server.WorkSession)session["HdSession"];
 		}
-
+		/// <summary>
+		/// Creates and returns a new work session for a specific package.
+		/// </summary>
+		/// <param name="session">The user session.</param>
+		/// <param name="packageID">The ID of the package to create a work session for.</param>
+		/// <returns></returns>
 		public static HotDocs.Sdk.Server.WorkSession CreateWorkSession(System.Web.SessionState.HttpSessionState session, string packageID)
 		{
 			HotDocs.Sdk.Template template = OpenTemplate(packageID);
@@ -29,8 +35,10 @@ namespace SamplePortal
 			session["HdSession"] = workSession;
 			return workSession;
 		}
-
-		//TODO: This needs to be called but is not called.
+		/// <summary>
+		/// Removes the current work session, if there is one.
+		/// </summary>
+		/// <param name="session"></param>
 		public static void RetireWorkSession(System.Web.SessionState.HttpSessionState session)
 		{
 			HotDocs.Sdk.Server.WorkSession workSession = (HotDocs.Sdk.Server.WorkSession)session["HdSession"];
@@ -39,27 +47,41 @@ namespace SamplePortal
 				session["HdSession"] = null;
 			}
 		}
-
-		static public HotDocs.Sdk.Server.HdProtocol HdsRoute
+		/// <summary>
+		/// Returns the <c>AssembledDocsCache</c> for the user session.
+		/// </summary>
+		/// <param name="session">The user session</param>
+		/// <returns></returns>
+		public static AssembledDocsCache GetAssembledDocsCache(System.Web.SessionState.HttpSessionState session)
 		{
-			get
+			AssembledDocsCache cache = (AssembledDocsCache)session["AssembledDocsCache"];
+			if (cache == null)
 			{
-				string s = System.Configuration.ConfigurationManager.AppSettings["HdsRoute"];
-				if (s.Equals("WS", StringComparison.OrdinalIgnoreCase))
-					return HotDocs.Sdk.Server.HdProtocol.WebService;
-				if (s.Equals("CLOUD", StringComparison.OrdinalIgnoreCase))
-					return HotDocs.Sdk.Server.HdProtocol.Cloud;
-				if (s.Equals("LOCAL", StringComparison.OrdinalIgnoreCase))
-					return HotDocs.Sdk.Server.HdProtocol.Local;
-
-				//Default
-				return HotDocs.Sdk.Server.HdProtocol.Local;
+				cache = new AssembledDocsCache(Settings.DocPath);
+				session["AssembledDocsCache"] = cache;
+			}
+			return cache;
+		}
+		/// <summary>
+		/// Removes and disposes the current <c>AssembledDocsCache</c>, if there is one.
+		/// </summary>
+		/// <param name="session"></param>
+		public static void RetireAssembledDocsCache(System.Web.SessionState.HttpSessionState session)
+		{
+			AssembledDocsCache cache = (AssembledDocsCache)session["AssembledDocsCache"];
+			if (cache != null)
+			{
+				session["AssembledDocsCache"] = null;
+				cache.Dispose();
 			}
 		}
-
+		/// <summary>
+		/// Returns a new IServices object for the HdsRoute specified in the web.config file.
+		/// </summary>
+		/// <returns></returns>
 		static public HotDocs.Sdk.Server.IServices GetServices()
 		{
-			switch (HdsRoute)
+			switch (Settings.HdsRoute)
 			{
 				case HotDocs.Sdk.Server.HdProtocol.Cloud:
 					return new HotDocs.Sdk.Server.Cloud.Services(Settings.SubscriberID, Settings.SigningKey);
