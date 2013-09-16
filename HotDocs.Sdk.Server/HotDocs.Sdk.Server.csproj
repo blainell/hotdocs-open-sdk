@@ -60,7 +60,6 @@
     <Compile Include="WorkSession.cs" />
     <Compile Include="AssembleDocumentResult.cs" />
     <Compile Include="Document.cs" />
-    <Compile Include="Factory.cs" />
     <Compile Include="InterviewResult.cs" />
     <Compile Include="IServices.cs" />
     <Compile Include="Local\Local.Services.cs" />

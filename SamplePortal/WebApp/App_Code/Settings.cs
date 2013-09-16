@@ -31,21 +31,31 @@ namespace SamplePortal
 		#region HotDocs Server Settings
 
 		/// <summary>
+		/// <c>HdProtocol</c> is an enumeration of the different protocols used to connect to HotDocs Server, HotDocs Server Web Services, or HotDocs Cloud Services respectively.
+		/// </summary>
+		public enum HdProtocol
+		{
+			Local,
+			WebService,
+			Cloud
+		}
+
+		/// <summary>
 		/// This is the type of HotDocs engine that will service requests. It can be either a local instance of 
 		/// HotDocs Server (LOCAL), the HotDocs Server Web Service (WS), or HotDocs Cloud Services (CLOUD).
 		/// </summary>
-		public static HotDocs.Sdk.Server.HdProtocol HdsRoute
+		public static HdProtocol HdsRoute
 		{
 			get
 			{
 				switch (GetSettingOrDefault("HdsRoute", "LOCAL").ToUpper())
 				{
 					case "WS":
-						return HotDocs.Sdk.Server.HdProtocol.WebService;
+						return HdProtocol.WebService;
 					case "CLOUD":
-						return HotDocs.Sdk.Server.HdProtocol.Cloud;
+						return HdProtocol.Cloud;
 					default: // LOCAL
-						return HotDocs.Sdk.Server.HdProtocol.Local;
+						return HdProtocol.Local;
 				}
 			}
 		}
@@ -64,9 +74,9 @@ namespace SamplePortal
 
 				switch (HdsRoute)
 				{
-					case HotDocs.Sdk.Server.HdProtocol.WebService:
+					case HdProtocol.WebService:
 						return GetSettingOrDefault("HDServerFilesWS", defaultUrl);
-					case HotDocs.Sdk.Server.HdProtocol.Cloud:
+					case HdProtocol.Cloud:
 						return GetSettingOrDefault("HDServerFilesCloud", defaultUrl);
 					default: //local
 						return GetSettingOrDefault("HDServerFilesUrl", defaultUrl);

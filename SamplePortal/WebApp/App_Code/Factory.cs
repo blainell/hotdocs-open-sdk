@@ -83,11 +83,11 @@ namespace SamplePortal
 		{
 			switch (Settings.HdsRoute)
 			{
-				case HotDocs.Sdk.Server.HdProtocol.Cloud:
+				case Settings.HdProtocol.Cloud:
 					return new HotDocs.Sdk.Server.Cloud.Services(Settings.SubscriberID, Settings.SigningKey);
-				case HotDocs.Sdk.Server.HdProtocol.Local:
+				case Settings.HdProtocol.Local:
 					return new HotDocs.Sdk.Server.Local.Services(Settings.TempPath);
-				case HotDocs.Sdk.Server.HdProtocol.WebService:
+				case Settings.HdProtocol.WebService:
 					return new HotDocs.Sdk.Server.WebService.Services(Settings.WebServiceEndPoint, Settings.TemplatePath);
 			}
 			throw new Exception("Unsupported protocol.");
