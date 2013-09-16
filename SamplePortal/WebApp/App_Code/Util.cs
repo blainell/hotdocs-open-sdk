@@ -11,46 +11,6 @@ using HotDocs.Sdk.Server.Contracts;
 
 namespace SamplePortal
 {
-	public enum AnsSrcType
-	{
-		NewSrc,
-		UploadedSrc,
-		ServerSrc
-	}
-
-	public class Document
-	{
-		private string m_templateTitle = "";
-		public string TemplateTitle
-		{
-			get
-			{
-				return m_templateTitle;
-			}
-			set
-			{
-				m_templateTitle = value;
-			}
-		}
-
-		private string m_documentFilePath = "";
-		public string DocumentFilePath
-		{
-			get
-			{
-				return m_documentFilePath;
-			}
-			set
-			{
-				m_documentFilePath = value;
-			}
-		}
-		public Document(string documentFilePath, string templateTitle)
-		{
-			TemplateTitle = templateTitle;
-			DocumentFilePath = documentFilePath;
-		}
-	}
 	/// <summary>
 	/// Global utility functions (all static methods).  No need to create an instance of Util.
 	/// </summary>
