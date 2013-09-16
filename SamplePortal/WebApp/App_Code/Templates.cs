@@ -13,12 +13,19 @@ using System.IO;
 namespace SamplePortal.Data
 {
 	/// <summary>
-	/// Summary description for Templates.
+	/// The <c>Templates</c> class provides access to the list of main templates on the server. The templates
+	/// are listed in an XML document, index.xml, with the schema defined in TemplateData.xsd.
 	/// </summary>
 	public class Templates : IDisposable
 	{
+		/// <summary>
+		/// The template data set generated from TemplateData.xsd.
+		/// </summary>
 		protected TemplateData tplData;
 
+		/// <summary>
+		/// Construct a new <c>Template object</c>.
+		/// </summary>
 		public Templates()
 		{
 			tplData = new TemplateData();
@@ -33,11 +40,6 @@ namespace SamplePortal.Data
 			tplData.CaseSensitive = false;
 		}
 
-		public void FlushUpdates()
-		{
-			tplData.WriteXml(Path.Combine(Util.SafeDir(Settings.TemplatePath), "index.xml"));
-		}
-
 		#region IDisposable Members
 
 		public void Dispose()
@@ -47,40 +49,34 @@ namespace SamplePortal.Data
 
 		#endregion
 
-		private string EscapeStringForFilter(string str, bool like)
-		{
-			string result = str.Replace("'", "''");
-			if (like)
-			{
-				if (result.Contains("[") || result.Contains("]"))
-					result = result.Replace('[', '\x1B').Replace(']', '\x1D').Replace("\x1B", "[[]").Replace("\x1D", "[]]");
-
-				result = result.Replace("*", "[*]").Replace("%", "[%]");
-			}
-			return result;
-		}
-
+		/// <summary>
+		/// Returns a DataView for a specific template.
+		/// </summary>
+		/// <param name="tplname">The template name.</param>
+		/// <returns></returns>
 		public DataView SelectFile(string tplname)
 		{
 			DataView dv = new DataView(tplData.Templates);
 			dv.RowFilter = "[Filename] = '" + EscapeStringForFilter(tplname, false) + "'";
 			return dv;
 		}
-
-		//TODO: Not used. Remove?
-		public DataView SelectFileLike(string tplname)
-		{
-			DataView dv = new DataView(tplData.Templates);
-			dv.RowFilter = "[Filename] LIKE '" + EscapeStringForFilter(tplname, true) + "*'";
-			return dv;
-		}
-
-		//TODO: Not used. Remove?
+		/// <summary>
+		/// Returns a sorted DataView for a given filter.
+		/// </summary>
+		/// <param name="sortExpression">The sort expression. See DataView.Sort.</param>
+		/// <param name="searchFilter">The filter criterea. See DataView.RowFilter</param>
+		/// <returns></returns>
 		public DataView SelectAll(string sortExpression)
 		{
 			return SelectAll(sortExpression, null);
 		}
 
+		/// <summary>
+		/// Returns a sorted DataView for a given filter.
+		/// </summary>
+		/// <param name="sortExpression">The sort expression. See DataView.Sort.</param>
+		/// <param name="searchFilter">The filter criterea. See DataView.RowFilter</param>
+		/// <returns></returns>
 		public DataView SelectAll(string sortExpression, string searchFilter)
 		{
 			DataView dv = new DataView(tplData.Templates);
@@ -240,6 +236,22 @@ namespace SamplePortal.Data
 			FlushUpdates();
 		}
 
-	}
+		private void FlushUpdates()
+		{
+			tplData.WriteXml(Path.Combine(Util.SafeDir(Settings.TemplatePath), "index.xml"));
+		}
 
+		private string EscapeStringForFilter(string str, bool like)
+		{
+			string result = str.Replace("'", "''");
+			if (like)
+			{
+				if (result.Contains("[") || result.Contains("]"))
+					result = result.Replace('[', '\x1B').Replace(']', '\x1D').Replace("\x1B", "[[]").Replace("\x1D", "[]]");
+
+				result = result.Replace("*", "[*]").Replace("%", "[%]");
+			}
+			return result;
+		}
+	}
 }

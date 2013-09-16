@@ -2,40 +2,57 @@
    Use, modification and redistribution of this source is subject
    to the New BSD License as set out in LICENSE.TXT. */
 
-//TODO: Add XML documentation.
-
 /// <summary>
 /// Summary description for UploadItem
 /// </summary>
 namespace SamplePortal.Data
 {
+	/// <summary>
+	/// An <c>UploadItem</c> object represents a single uploaded template package.
+	/// </summary>
 	public class UploadItem
 	{
+		/// <summary>
+		/// The uploaded template's title.
+		/// </summary>
 		public string Title
 		{
 			get;
 			set;
 		}
+		//NOT USED
 		public string SessionID
 		{
 			get;
 			set;
 		}
+		/// <summary>
+		/// The main template of the package.
+		/// </summary>
 		public string MainTemplateFileName
 		{
 			get;
 			set;
 		}
+		/// <summary>
+		/// The ID of the package.
+		/// </summary>
 		public string PackageID
 		{
 			get;
 			set;
 		}
+		/// <summary>
+		/// The main template's description.
+		/// </summary>
 		public string Description
 		{
 			get;
 			set;
 		}
+		/// <summary>
+		/// The path of the package file.
+		/// </summary>
 		public string FullFilePath
 		{
 			get;
