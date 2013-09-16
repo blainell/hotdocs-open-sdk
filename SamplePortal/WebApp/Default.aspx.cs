@@ -58,7 +58,7 @@ public partial class _Default : System.Web.UI.Page
 	protected void tplGrid_SelectedIndexChanged(object sender, EventArgs e)
 	{
 		string packageId = tplGrid.SelectedItem.Cells[5].Text;
-		if (Util.IsEmpty(packageId) || packageId.IndexOfAny(new char[] { '/', '\\', ':' }) >= 0) //Don't allow path control elements in a package ID.
+		if (string.IsNullOrEmpty(packageId) || packageId.IndexOfAny(new char[] { '/', '\\', ':' }) >= 0) //Don't allow path control elements in a package ID.
 		{
 			MessageBox.Show("Invalid template path");
 			return;

@@ -31,5 +31,28 @@ namespace SamplePortal
 			string packagePath = GetLocalPackagePath(packageId);
 			return File.Exists(Path.Combine(Settings.TemplatePath, packagePath));
 		}
+		/// <summary>
+		/// This method deletes a template package and its corresponding manifest file from the Templates folder.
+		/// </summary>
+		/// <param name="packageID">The ID of the template package to delete.</param>
+		//TODO: Perhaps this should be moved to the PackageCache class.
+		public static void DeleteTemplatePackage(string packageID)
+		{
+			string packagePath = PackageCache.GetLocalPackagePath(packageID);
+
+			//Clean up any extracted files.
+			HotDocs.Sdk.PackagePathTemplateLocation location = new HotDocs.Sdk.PackagePathTemplateLocation(packageID, packagePath);
+			location.CleanPackageFiles();
+
+			// Delete the package file.
+			if (File.Exists(packagePath))
+				File.Delete(packagePath);
+
+			// Delete the manifest file.
+			string manifestPath = System.IO.Path.ChangeExtension(packagePath, ".xml");
+			if (File.Exists(manifestPath))
+				File.Delete(manifestPath);
+		}
+
 	}
 }

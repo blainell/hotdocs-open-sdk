@@ -214,7 +214,7 @@ namespace SamplePortal.Data
 				if (curPkgID != packageID)
 				{
 					// If the packageID is different than the old one, delete the old package from disk.
-					Util.DeleteTemplatePackage(curPkgID);
+					PackageCache.DeleteTemplatePackage(curPkgID);
 				}
 
 				dv[0]["PackageID"] = packageID;

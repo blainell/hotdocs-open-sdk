@@ -9,6 +9,54 @@ using System.IO;
 namespace SamplePortal
 {
 	/// <summary>
+	/// A <c>Document</c> object represents a single document stored in an <c>AssembledDocsCache</c> object.
+	/// </summary>
+	public class Document
+	{
+		private string m_templateTitle = "";
+		private string m_documentFilePath = "";
+
+		/// <summary>
+		/// Construct a new Document object.
+		/// </summary>
+		/// <param name="documentFilePath"></param>
+		/// <param name="templateTitle"></param>
+		public Document(string documentFilePath, string templateTitle)
+		{
+			TemplateTitle = templateTitle;
+			DocumentFilePath = documentFilePath;
+		}
+		/// <summary>
+		/// The title of the template associated with the document.
+		/// </summary>
+		public string TemplateTitle
+		{
+			get
+			{
+				return m_templateTitle;
+			}
+			set
+			{
+				m_templateTitle = value;
+			}
+		}
+		/// <summary>
+		/// The path of the assembled document.
+		/// </summary>
+		public string DocumentFilePath
+		{
+			get
+			{
+				return m_documentFilePath;
+			}
+			set
+			{
+				m_documentFilePath = value;
+			}
+		}
+	}
+
+	/// <summary>
 	/// The AssembledDocsCache cache manages the documents assembled by a set of templates--one document
 	///  for each template. This class does not yet manage ancillary files such as images for HTML.
 	///  Use one AssembledDocsCache object per user session.

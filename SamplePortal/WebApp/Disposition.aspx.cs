@@ -183,7 +183,7 @@ public partial class Disposition : System.Web.UI.Page
 		{
 			System.Web.UI.WebControls.LinkButton btnTplImg = (System.Web.UI.WebControls.LinkButton)e.Item.Cells[0].FindControl("btnImgTemplate");
 			string docFile = e.Item.Cells[0].Text;
-			if (docFile == "&nbsp;" || Util.IsEmpty(docFile))
+			if (docFile == "&nbsp;" || string.IsNullOrEmpty(docFile))
 			{
 				btnTplImg.Text = "<div class=\"hd-sp-img hd-sp-img-blank\" ></div>";
 				return;
