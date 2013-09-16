@@ -153,7 +153,7 @@ namespace HotDocs.Sdk.ServerTest
 			}
 			catch (ArgumentNullException ex)
 			{
-				Assert.IsTrue(ex.Message.IndexOf(": logRef") > 0);
+				Assert.IsTrue(ex.Message.IndexOf(": template") > 0);
 			}
 			catch (Exception)
 			{
@@ -322,7 +322,7 @@ namespace HotDocs.Sdk.ServerTest
 			}
 			catch (ArgumentNullException ex)
 			{
-				Assert.IsTrue(ex.Message.Contains("logRef"));
+				Assert.IsTrue(ex.Message.Contains("template"));
 			}
 			catch (Exception)
 			{

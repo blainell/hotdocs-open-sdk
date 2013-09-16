@@ -2,8 +2,6 @@
    Use, modification and redistribution of this source is subject
    to the New BSD License as set out in LICENSE.TXT. */
 
-//TODO: Put IHttpHandler overrides in a #region block?
-
 using HotDocs.Sdk.Server;
 using System;
 using System.IO;

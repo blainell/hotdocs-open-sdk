@@ -63,7 +63,7 @@ public partial class Disposition : System.Web.UI.Page
 				// Note for HotDocs host application developers: an informational log entry could be added 
 				// to a log file before (here) and after the call to _session.AssembleDocuments.
 				HotDocs.Sdk.Server.Document[] docs = _session.AssembleDocuments(null);
-				AssembledDocsCache cache = Util.GetAssembledDocsCache(this.Session);
+				AssembledDocsCache cache = Factory.GetAssembledDocsCache(this.Session);
 				foreach (HotDocs.Sdk.Server.Document doc in docs)
 					cache.AddDoc(doc);
 

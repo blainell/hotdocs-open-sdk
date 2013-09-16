@@ -2,8 +2,6 @@
    Use, modification and redistribution of this source is subject
    to the New BSD License as set out in LICENSE.TXT. */
 
-//TODO: Add XML comments.
-
 using System;
 using System.Collections;
 using System.Text;
@@ -12,14 +10,20 @@ using System.Web.UI;
 
 namespace SamplePortal
 {
-	// class MessageBox
-	// from The Code Project: http://www.codeproject.com/aspnet/AspNetMsgBox.asp
+	/// <summary>
+	///class MessageBox
+	/// from The Code Project: http://www.codeproject.com/aspnet/AspNetMsgBox.asp 
+	/// </summary>
 	public class MessageBox
 	{
 		private static Hashtable m_executingPages = new Hashtable();
 
 		private MessageBox(){}
 
+		/// <summary>
+		/// Show a message box.
+		/// </summary>
+		/// <param name="sMessage">The message to show.</param>
 		public static void Show( string sMessage )
 		{
 			// If this is the first time a page has called this method then

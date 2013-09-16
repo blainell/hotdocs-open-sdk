@@ -76,7 +76,7 @@ public partial class _Default : System.Web.UI.Page
 			_session = Factory.CreateWorkSession(Session, packageId);
 
 			// Make sure that there is a cache for the assembled documents, and that it is empty.
-			AssembledDocsCache cache = Util.GetAssembledDocsCache(this.Session);
+			AssembledDocsCache cache = Factory.GetAssembledDocsCache(this.Session);
 			cache.Clear();
 		}
 		catch (Exception ex)
