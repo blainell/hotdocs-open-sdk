@@ -146,7 +146,7 @@ namespace SamplePortal
 						string newfname = Util.MakeTempFilename(".anx");
 						ansColl.WriteFile(Path.Combine(Settings.AnswerPath, newfname), false);
 
-						answers.InsertNewAnswerFile(newfname, newTitle, newDescription, null);
+						answers.InsertNewAnswerFile(newfname, newTitle, newDescription);
 					}
 				}
 				else//If this assembly began with a new or uploaded answer file
@@ -156,7 +156,7 @@ namespace SamplePortal
 					ansColl.WriteFile(Path.Combine(Util.SafeDir(Settings.AnswerPath), newfname), false);
 
 					//Create a new entry.
-					answers.InsertNewAnswerFile(newfname, newTitle, newDescription, null);
+					answers.InsertNewAnswerFile(newfname, newTitle, newDescription);
 				}
 			}
 		}

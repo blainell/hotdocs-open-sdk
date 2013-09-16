@@ -37,16 +37,30 @@ namespace HotDocs.Sdk
 		/// <returns></returns>
 		public abstract TemplateLocation Duplicate();
 
+		/// <summary>
+		/// Overrides Object.Equals. Calls into IEquatable&lt;TemplateLocation&gt;.Equals() to
+		/// determine if instances of derived types are equal.
+		/// </summary>
+		/// <param name="obj"></param>
+		/// <returns></returns>
+		public override bool Equals(object obj)
+		{
+			// this override is effective for all derived classes, because they must all
+			// implement IEquatable<TemplateLocation>, which this calls.
+			return (obj != null) && (obj is TemplateLocation) && Equals((TemplateLocation)obj);
+
+			// NOTE: Object.GetHashCode() is overridden in each derived class, but not here.
+		}
+
 		#region IEquatable<TemplateLocation> Members
 
-		public bool Equals(TemplateLocation other)
-		{
-			if (other == null)
-				return false;
-			// cast this & other to (object) to ensure the virtual Equals() method gets called.
-			// this should ensure it is called on a concrete instance of a derived class.
-			return ((object)this).Equals((object)other);
-		}
+		/// <summary>
+		/// Implements IEquatable&lt;TemplateLocation&gt;. Used to determine equality/equivalency
+		/// between TemplateLocations.
+		/// </summary>
+		/// <param name="other"></param>
+		/// <returns></returns>
+		public abstract bool Equals(TemplateLocation other);
 
 		#endregion
 		/// <summary>
