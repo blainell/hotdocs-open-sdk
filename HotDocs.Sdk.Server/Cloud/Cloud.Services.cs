@@ -62,10 +62,9 @@ namespace HotDocs.Sdk.Server.Cloud
 		public InterviewResult GetInterview(Template template, TextReader answers, InterviewSettings settings, IEnumerable<string> markedVariables, string logRef)
 		{
 			// Validate input parameters, creating defaults as appropriate.
-			if (string.IsNullOrWhiteSpace(logRef))
-				throw new ArgumentNullException("logRef", @"Cloud.Services.GetInterview: the ""logRef"" parameter passed in was null or empty");
+			string logStr = logRef == null ? string.Empty : logRef;
 			if (template == null)
-				throw new ArgumentNullException("template", string.Format(@"Cloud.Services.GetInterview: the ""template"" parameter passed in was null, logRef: {0}", logRef));
+				throw new ArgumentNullException("template", string.Format(@"Cloud.Services.GetInterview: the ""template"" parameter passed in was null, logRef: {0}", logStr));
 
 			if (settings == null)
 				settings = new InterviewSettings();
@@ -123,8 +122,9 @@ namespace HotDocs.Sdk.Server.Cloud
 		public AssembleDocumentResult AssembleDocument(Template template, System.IO.TextReader answers, AssembleDocumentSettings settings, string logRef)
 		{
 			// Validate input parameters, creating defaults as appropriate.
+			string logStr = logRef == null ? string.Empty : logRef;
 			if (template == null)
-				throw new ArgumentNullException("template", "The template must not be null.");
+				throw new ArgumentNullException("template", "The template must not be null, logRef: " + logStr);
 
 			if (settings == null)
 				settings = new AssembleDocumentSettings();
@@ -202,10 +202,9 @@ namespace HotDocs.Sdk.Server.Cloud
 		public ComponentInfo GetComponentInfo(Template template, bool includeDialogs, string logRef)
 		{
 			// Validate input parameters, creating defaults as appropriate.
-			if (string.IsNullOrWhiteSpace(logRef))
-				throw new ArgumentNullException("logRef", @"Cloud.Services.GetComponentInfo: the ""logRef"" parameter pased in was null or empty");
+			string logStr = logRef == null ? string.Empty : logRef;
 			if (template == null)
-				throw new ArgumentNullException("template", @"Cloud.Services.GetComponentInfo: The ""template"" parameter must not be null, logRef: " + logRef);
+				throw new ArgumentNullException("template", @"Cloud.Services.GetComponentInfo: The ""template"" parameter must not be null, logRef: " + logStr);
 
 			ComponentInfo result;
 			using (var client = new SoapClient(_subscriberID, _signingKey))
@@ -224,8 +223,9 @@ namespace HotDocs.Sdk.Server.Cloud
 		public string GetAnswers(IEnumerable<System.IO.TextReader> answers, string logRef)
 		{
 			// Validate input parameters, creating defaults as appropriate.
+			string logStr = logRef == null ? string.Empty : logRef;
 			if (answers == null)
-				throw new ArgumentNullException("answers", "The answers collection must not be null.");
+				throw new ArgumentNullException("answers", "The answers collection must not be null, logRef: " + logStr);
 
 			BinaryObject combinedAnswers;
 			using (SoapClient client = new SoapClient(_subscriberID, _signingKey))

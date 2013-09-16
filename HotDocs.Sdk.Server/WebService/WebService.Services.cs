@@ -55,10 +55,9 @@ namespace HotDocs.Sdk.Server.WebService
 		/// <returns>An object which contains an HTML fragment to be inserted in a web page to display the interview.</returns>
 		public InterviewResult GetInterview(Template template, TextReader answers, InterviewSettings settings, IEnumerable<string> markedVariables, string logRef)
 		{
-			if (string.IsNullOrWhiteSpace(logRef))
-				throw new ArgumentNullException("logRef", @"WebServices.Services.GetInterview: the ""logRef"" parameter passed in was null or empty");
+			string logStr = logRef == null ? string.Empty : logRef;
 			if (template == null)
-				throw new ArgumentNullException("template", string.Format(@"WebServices.Services.GetInterview: the ""template"" parameter passed in was null, logRef: {0}", logRef));
+				throw new ArgumentNullException("template", string.Format(@"WebServices.Services.GetInterview: the ""template"" parameter passed in was null, logRef: {0}", logStr));
 			// Validate input parameters, creating defaults as appropriate.
 			if (settings == null)
 				settings = new InterviewSettings();
@@ -118,10 +117,9 @@ namespace HotDocs.Sdk.Server.WebService
 		/// <returns>returns information about the assembled document, the document type, the unanswered variables, the resulting answers, etc.</returns>
 		public AssembleDocumentResult AssembleDocument(Template template, TextReader answers, AssembleDocumentSettings settings, string logRef)
 		{
-			if (string.IsNullOrWhiteSpace(logRef))
-				throw new ArgumentNullException("logRef", @"WebService.Services.AssembleDocument: the ""logRef"" parameter pased in was null or empty");
+			string logStr = logRef == null ? string.Empty : logRef;
 			if (template == null)
-				throw new ArgumentNullException("template", string.Format(@"WebService.Services.AssembleDocument: the ""template"" parameter passed in was null, logRef: {0}", logRef));
+				throw new ArgumentNullException("template", string.Format(@"WebService.Services.AssembleDocument: the ""template"" parameter passed in was null, logRef: {0}", logStr));
 			if (settings == null)
 				settings = new AssembleDocumentSettings();
 			AssembleDocumentResult result = null;
@@ -156,10 +154,9 @@ namespace HotDocs.Sdk.Server.WebService
 		/// <returns>returns the list of variables and dialogs (if includeDialogs is true) associated with the <c>template</c> parameter</returns>
 		public ComponentInfo GetComponentInfo(Template template, bool includeDialogs, string logRef)
 		{
-			if (string.IsNullOrWhiteSpace(logRef))
-				throw new ArgumentNullException("logRef", @"WebService.Services.GetComponentInfo: the ""logRef"" parameter passed in was null or empty");
+			string logStr = logRef == null ? string.Empty : logRef;
 			if (template == null)
-				throw new ArgumentNullException("template", string.Format(@"WebService.Services.GetComponentInfo: the ""template"" parameter passed in was null, logRef: {0}", logRef));
+				throw new ArgumentNullException("template", string.Format(@"WebService.Services.GetComponentInfo: the ""template"" parameter passed in was null, logRef: {0}", logStr));
 			ComponentInfo result;
 			using (Proxy client = new Proxy(_endPointName))
 			{
@@ -184,10 +181,9 @@ namespace HotDocs.Sdk.Server.WebService
 		/// <returns></returns>
 		public string GetAnswers(IEnumerable<TextReader> answers, string logRef)
 		{
-			if (string.IsNullOrWhiteSpace(logRef))
-				throw new ArgumentNullException("logRef", @"WebService.Services.GetAnswers: the ""logRef"" parameter pased in was null or empty");
+			string logStr = logRef == null ? string.Empty : logRef;
 			if (answers == null)
-				throw new ArgumentNullException("answers", string.Format(@"WebService.Services.GetAnswers: the ""answers"" parameter passed in was null, logRef: {0}", logRef));
+				throw new ArgumentNullException("answers", string.Format(@"WebService.Services.GetAnswers: the ""answers"" parameter passed in was null, logRef: {0}", logStr));
 			BinaryObject combinedAnswers;
 			using (Proxy client = new Proxy(_endPointName))
 			{

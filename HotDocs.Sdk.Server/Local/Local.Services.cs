@@ -34,11 +34,10 @@ namespace HotDocs.Sdk.Server.Local
 
 		public ComponentInfo GetComponentInfo(Template template, bool includeDialogs, string logRef)
 		{
-			if (string.IsNullOrWhiteSpace(logRef))
-				throw new ArgumentNullException("logRef", @"Local.Services.GetInterviewDefinition: the ""logRef"" parameter pased in was null or empty");
+			string logStr = logRef == null ? string.Empty : logRef;
 			// Validate input parameters, creating defaults as appropriate.
 			if (template == null)
-				throw new ArgumentNullException("template", @"Local.Services.GetInterviewDefinition: the ""template"" parameter passed in was null or empty, logRef: " + logRef);
+				throw new ArgumentNullException("template", @"Local.Services.GetInterviewDefinition: the ""template"" parameter passed in was null or empty, logRef: " + logStr);
 
 			string templateFilePath = template.GetFullPath();
 
@@ -132,10 +131,9 @@ namespace HotDocs.Sdk.Server.Local
 		public InterviewResult GetInterview(Template template, TextReader answers, InterviewSettings settings, IEnumerable<string> markedVariables, string logRef)
 		{
 			// Validate input parameters, creating defaults as appropriate.
-			if (string.IsNullOrWhiteSpace(logRef))
-				throw new ArgumentNullException("logRef", @"Local.Services.GetInterview: the ""logRef"" parameter passed in was null or empty");
+			string logStr = logRef == null ? string.Empty : logRef;
 			if (template == null)
-				throw new ArgumentNullException("template", string.Format(@"Local.Services.GetInterview: the ""template"" parameter passed in was null, logRef: {0}", logRef));
+				throw new ArgumentNullException("template", string.Format(@"Local.Services.GetInterview: the ""template"" parameter passed in was null, logRef: {0}", logStr));
 
 			if (settings == null)
 				settings = new InterviewSettings();
@@ -324,10 +322,9 @@ namespace HotDocs.Sdk.Server.Local
 		public AssembleDocumentResult AssembleDocument(Template template, TextReader answers, AssembleDocumentSettings settings, string logRef)
 		{
 			// Validate input parameters, creating defaults as appropriate.
-			if (string.IsNullOrWhiteSpace(logRef))
-				throw new ArgumentNullException("logRef", @"Local.Services.AssembleDocument: the ""logRef"" parameter pased in was null or empty");
+			string logStr = logRef == null ? string.Empty : logRef;
 			if (template == null)
-				throw new ArgumentNullException("template", "Local.Services.AssembleDocument: The template must not be null, logRef: " + logRef);
+				throw new ArgumentNullException("template", "Local.Services.AssembleDocument: The template must not be null, logRef: " + logStr);
 
 			if (settings == null)
 				settings = new AssembleDocumentSettings();
@@ -419,10 +416,9 @@ namespace HotDocs.Sdk.Server.Local
 		public string GetAnswers(IEnumerable<TextReader> answers, string logRef)
 		{
 			// Validate input parameters, creating defaults as appropriate.
-			if (string.IsNullOrWhiteSpace(logRef))
-				throw new ArgumentNullException("logRef", @"Local.Services.GetAnswers: the ""logRef"" parameter pased in was null or empty");
+			string logStr = logRef == null ? string.Empty : logRef;
 			if (answers == null)
-				throw new ArgumentNullException("answers", @"Local.Services.GetAnswers: The ""answers"" parameter must not be null, logRef: " + logRef);
+				throw new ArgumentNullException("answers", @"Local.Services.GetAnswers: The ""answers"" parameter must not be null, logRef: " + logStr);
 
 			string result = "";
 			using (HotDocs.Server.AnswerCollection hdsAnsColl = new HotDocs.Server.AnswerCollection())
