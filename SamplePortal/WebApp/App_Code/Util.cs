@@ -343,17 +343,6 @@ namespace SamplePortal
 			return dirPath;
 		}
 
-		public static AssembledDocsCache GetAssembledDocsCache(System.Web.SessionState.HttpSessionState session)
-		{
-			AssembledDocsCache cache = (AssembledDocsCache)session["AssembledDocsCache"];
-			if (cache == null)
-			{
-				cache = new AssembledDocsCache(Settings.TempPath);
-				session["AssembledDocsCache"] = cache;
-			}
-			return cache;
-		}
-
 		public static string GetInterviewAnswers(System.Web.HttpRequest request)
 		{
 			string ansdata = String.Join(String.Empty, request.Form.GetValues("HDInfo"));

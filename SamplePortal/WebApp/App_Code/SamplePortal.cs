@@ -40,6 +40,27 @@ namespace SamplePortal
 			}
 		}
 
+		public static AssembledDocsCache GetAssembledDocsCache(System.Web.SessionState.HttpSessionState session)
+		{
+			AssembledDocsCache cache = (AssembledDocsCache)session["AssembledDocsCache"];
+			if (cache == null)
+			{
+				cache = new AssembledDocsCache(Settings.DocPath);
+				session["AssembledDocsCache"] = cache;
+			}
+			return cache;
+		}
+
+		public static void RetireAssembledDocsCache(System.Web.SessionState.HttpSessionState session)
+		{
+			AssembledDocsCache cache = (AssembledDocsCache)session["AssembledDocsCache"];
+			if (cache != null)
+			{
+				session["AssembledDocsCache"] = null;
+				cache.Dispose();
+			}
+		}
+
 		static public HotDocs.Sdk.Server.HdProtocol HdsRoute
 		{
 			get

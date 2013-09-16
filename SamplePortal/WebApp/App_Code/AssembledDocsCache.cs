@@ -2,21 +2,25 @@
    Use, modification and redistribution of this source is subject
    to the New BSD License as set out in LICENSE.TXT. */
 
-//TODO: Add XML documentation.
-//TODO: Make sure all files and folders created here are properly removed. Is Disposed always called?
 using System;
 using System.Collections.Generic;
 using System.IO;
 
 namespace SamplePortal
 {
-	//The AssembledDocsCache cache manages the documents assembled by a set of templates--one document
-	// for each template. This class does not yet manage ancillary files such as images for HTML.
-	// Use one AssembledDocsCache object per user session.
+	/// <summary>
+	/// The AssembledDocsCache cache manages the documents assembled by a set of templates--one document
+	///  for each template. This class does not yet manage ancillary files such as images for HTML.
+	///  Use one AssembledDocsCache object per user session.
+	/// </summary>
 	public class AssembledDocsCache : IDisposable
 	{
-		//Construct an AssembledDocsCache object. Pass the folder intended to contain all assembled
-		// document folders. (Assembled documents will be stored in a sub-folder of parentFolder.)
+		/// <summary>
+		///Construct an AssembledDocsCache object. 
+		/// document folders. (Assembled documents will be stored in a sub-folder of parentFolder.) 
+		/// </summary>
+		/// <param name="parentFolder">The folder intended to contain all assembled document folders.
+		/// (Assembled documents will be stored in a sub-folder of parentFolder.)</param>
 		public AssembledDocsCache(string parentFolder)
 		{
 			do
@@ -42,7 +46,10 @@ namespace SamplePortal
 			_docs.Clear();
 		}
 
-		//Serialize a document and associate the document with a template's path.
+		/// <summary>
+		/// Store a document and associate the document with its template's path.
+		/// </summary>
+		/// <param name="document">The document to be stored.</param>
 		public void AddDoc(HotDocs.Sdk.Server.Document document)
 		{
 			try
@@ -66,13 +73,19 @@ namespace SamplePortal
 			}
 		}
 
-		//Get a stream to a serialized document associated with a template path.
+		/// <summary>
+		/// Returns a document as a stream.
+		/// </summary>
+		/// <param name="index">The index of the document to return.</param>
+		/// <returns></returns>
 		public System.IO.Stream GetDoc(int index)
 		{
 			return File.OpenRead(_docs[index].DocumentFilePath);
 		}
 
-		//Return the number of documents.
+		/// <summary>
+		/// Returns the number of documents stored.
+		/// </summary>
 		public int Count
 		{
 			get
@@ -81,6 +94,10 @@ namespace SamplePortal
 			}
 		}
 
+		/// <summary>
+		/// Returns the list of documents as an array of Document objects.
+		/// </summary>
+		/// <returns></returns>
 		public Document[] ToArray()
 		{
 			return _docs.ToArray();
