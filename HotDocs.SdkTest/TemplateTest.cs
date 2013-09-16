@@ -181,8 +181,8 @@ namespace HotDocs.SdkTest
 			Assert.AreNotEqual(pkgloc3b, pkgloc5a);
 			Assert.AreNotEqual(pkgloc3b.GetHashCode(), pkgloc5a.GetHashCode());
 
-
-
+			// TODO: check comparisons/equality of different types of TemplateLocations with each other.
+			// (should always be not equal, hopefully even if null?) 
 		}
 
 		#region Utility methods
