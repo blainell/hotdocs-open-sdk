@@ -2,8 +2,6 @@
    Use, modification and redistribution of this source is subject
    to the New BSD License as set out in LICENSE.TXT. */
 
-	// TODO: Move all of the shared XML comments into a separate file and link to them in this code and all
-	// derived class files.
 
 using System;
 using System.Collections.Generic;
