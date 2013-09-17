@@ -163,8 +163,6 @@ namespace HotDocs.SdkTest
 			var pkgloc3b = new PackagePathTemplateLocation(@"l'identité unique", Path.Combine(dir3, "TËMP.pkg"));
 			var pkgloc4a = new PackagePathTemplateLocation(@"l'identité unique", Path.Combine(dir2, "tĕmp.pkg"));
 			var pkgloc5a = new PackagePathTemplateLocation(@"l'identite unique", Path.Combine(dir2, "TĔMP.pkg"));
-			PackagePathTemplateLocation pkgloc6 = null;
-			PackagePathTemplateLocation pkgloc7 = null;
 
 			// ensure package ID is case sensitive & package path is case insensitive
 			Assert.AreEqual(pkgloc1a, pkgloc1b);
