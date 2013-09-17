@@ -2,7 +2,6 @@
    Use, modification and redistribution of this source is subject
    to the New BSD License as set out in LICENSE.TXT. */
 
-//TODO: Add XML comments where missing.
 //TODO: Add method parameter validation.
 //TODO: Add appropriate unit tests.
 
@@ -34,6 +33,12 @@ namespace HotDocs.Sdk.Server.Local
 		/// <param name="tempPath">A path to a folder for storing temporary files.</param>
 		public Services(string tempPath)
 		{
+			//Parameter validation.
+			if (string.IsNullOrEmpty(tempPath))
+				throw new Exception("Non-empty path expected.");
+			if (!Directory.Exists(tempPath))
+				throw new Exception("The folder \"" + tempPath + "\" does not exist.");
+
 			_app = new HotDocs.Server.Application();
 			_tempPath = tempPath;
 		}
@@ -51,6 +56,7 @@ namespace HotDocs.Sdk.Server.Local
 		public ComponentInfo GetComponentInfo(Template template, bool includeDialogs, string logRef)
 		{
 			string logStr = logRef == null ? string.Empty : logRef;
+
 			// Validate input parameters, creating defaults as appropriate.
 			if (template == null)
 				throw new ArgumentNullException("template", @"Local.Services.GetInterviewFile: the ""template"" parameter passed in was null or empty, logRef: " + logStr);
@@ -143,13 +149,18 @@ namespace HotDocs.Sdk.Server.Local
 			}
 			return cmpInfo;
 		}
-		/// <include file="../Shared/Help.xml" path="Help/GetInterview/summary"/>
-		/// <include file="../Shared/Help.xml" path="Help/GetInterview/param[@name='template']"/>
-		/// <include file="../Shared/Help.xml" path="Help/GetInterview/param[@name='answers']"/>
-		/// <include file="../Shared/Help.xml" path="Help/GetInterview/param[@name='settings']"/>
-		/// <include file="../Shared/Help.xml" path="Help/GetInterview/param[@name='markedVariables']"/>
-		/// <include file="../Shared/Help.xml" path="Help/GetInterview/param[@name='logRef']"/>
-		/// <include file="../Shared/Help.xml" path="Help/GetInterview/returns"/>
+		///<summary>
+		///	GetInterview returns an HTML fragment suitable for inclusion in any standards-mode web page, which embeds a HotDocs interview
+		///	directly in that web page.
+		///</summary>
+		/// <param name="template">The template for which to return an interview.</param>
+		/// <param name="answers">The answers to use when building an interview.</param>
+		/// <param name="settings">The <see cref="InterviewSettings"/> to use when building an interview.</param>
+		/// <param name="markedVariables">The variables to highlight to the user as needing special attention.
+		/// 	This is usually populated with <see cref="AssembleDocumentResult.UnansweredVariables" />
+		/// 	from <see cref="AssembleDocument" />.</param>
+		/// <include file="../Shared/Help.xml" path="Help/string/param[@name='logRef']"/>
+		/// <returns>Returns the results of building the interview as an <see cref="InterviewResult"/> object.</returns>
 		public InterviewResult GetInterview(Template template, TextReader answers, InterviewSettings settings, IEnumerable<string> markedVariables, string logRef)
 		{
 			// Validate input parameters, creating defaults as appropriate.
@@ -318,12 +329,11 @@ namespace HotDocs.Sdk.Server.Local
 			ansColl.OverlayXMLAnswers(answers == null ? "" : answers.ReadToEnd());
 			HotDocs.Server.OutputOptions outputOptions = ConvertOutputOptions(settings.OutputOptions);
 
-			//TODO: Make sure files get cleaned up. (It doesn't appear to be getting cleaned up.)
-			string docPath = CreateTempDocDirAndPath(template, settings.Format);
 
 			//TODO: Review this.
 			int savePendingAssembliesCount = _app.PendingAssemblyCmdLineStrings.Count;
 
+			string docPath = CreateTempDocDirAndPath(template, settings.Format);
 			_app.AssembleDocument(
 				template.GetFullPath(),//Template path
 				hdsi.HDAssemblyOptions.asmOptMarkupView,
@@ -342,45 +352,6 @@ namespace HotDocs.Sdk.Server.Local
 					resultAnsColl.RemoveAnswer(ans.Name);
 			}
 
-			//Prepare the image information for the browser.
-			DocumentType docType = settings.Format;
-			List<NamedStream> supportingFiles = new List<NamedStream>();
-
-			if (docType == DocumentType.Native)
-			{
-				docType = Document.GetDocumentType(docPath);
-			}
-			else if (docType == DocumentType.HTMLwDataURIs)
-			{
-				File.WriteAllText(docPath, Util.EmbedImagesInURIs(docPath));  // Overwrite .html file.  If the consumer requested both HTML and HTMLwDataURIs, they'll only get the latter.
-			}
-			else if (docType == DocumentType.MHTML)
-			{
-
-				string mhtmlFilePath = Path.Combine(Path.GetDirectoryName(docPath), Path.GetFileNameWithoutExtension(docPath) + ".mhtml");
-				using (StreamWriter htmFile = File.CreateText(mhtmlFilePath))
-				{
-					htmFile.Write(Util.HtmlToMultiPartMime(docPath));
-				}
-			}
-			else if (docType == DocumentType.HTML)
-			{
-				string targetFilenameNoExtention = Path.GetFileNameWithoutExtension(docPath);
-				foreach (string img in Directory.EnumerateFiles(Path.GetDirectoryName(docPath)))
-				{
-					string ext = Path.GetExtension(img).ToLower();
-					if (Path.GetFileName(img).StartsWith(targetFilenameNoExtention) && (ext == ".jpg" || ext == ".jpeg" || ext == ".gif" || ext == ".png" || ext == ".bmp"))
-						supportingFiles.Add(LoadFileIntoNamedStream(img));
-				}
-			}
-
-			//Prepare the unanswered variables list for the assembly result.
-			//TODO: Just build an array from _app.UnansweredVariablesList???
-			List<string> list = new List<string>();
-			foreach (string unans in _app.UnansweredVariablesList)
-				list.Add(unans);
-			string[] unansweredVariables = list.ToArray();
-
 			//Build the list of pending assemblies.
 			List<Template> pendingAssemblies = new List<Template>();
 			for (int i = savePendingAssembliesCount; i < _app.PendingAssemblyCmdLineStrings.Count; i++)
@@ -391,10 +362,49 @@ namespace HotDocs.Sdk.Server.Local
 				pendingAssemblies.Add(new Template(Path.GetFileName(path), template.Location.Duplicate(), switches));
 			}
 
-			FileStream stream = File.OpenRead(docPath);
-			Document document = new Document(template, stream, docType, supportingFiles.ToArray(), unansweredVariables);
-			AssembleDocumentResult result = new AssembleDocumentResult(document, resultAnsColl.XmlAnswers, pendingAssemblies.ToArray(), unansweredVariables);
+			//Prepare the document stream and image information for the browser.
+			DocumentType docType = settings.Format;
+			List<NamedStream> supportingFiles = new List<NamedStream>();
+			MemoryStream docStream;
+			if (docType == DocumentType.Native)
+			{
+				docType = Document.GetDocumentType(docPath);
+				docStream = CreateMemStreamFromFile(docPath);
+			}
+			else if (docType == DocumentType.HTMLwDataURIs)
+			{
+				//If the consumer requested both HTML and HTMLwDataURIs, they'll only get the latter.
+				string content = Util.EmbedImagesInURIs(docPath);
+				docStream = new MemoryStream(Encoding.UTF8.GetBytes(content));
+			}
+			else if (docType == DocumentType.MHTML)
+			{
+				string content = Util.HtmlToMultiPartMime(docPath);
+				docStream = new MemoryStream(Encoding.UTF8.GetBytes(content));
+			}
+			else if (docType == DocumentType.HTML)
+			{
+				string targetFilenameNoExtention = Path.GetFileNameWithoutExtension(docPath);
+				foreach (string img in Directory.EnumerateFiles(Path.GetDirectoryName(docPath)))
+				{
+					string ext = Path.GetExtension(img).ToLower();
+					if (Path.GetFileName(img).StartsWith(targetFilenameNoExtention) && (ext == ".jpg" || ext == ".jpeg" || ext == ".gif" || ext == ".png" || ext == ".bmp"))
+						supportingFiles.Add(LoadFileIntoNamedStream(img));
+				}
 
+				docStream = CreateMemStreamFromFile(docPath);
+			}
+			else
+			{
+				docStream = CreateMemStreamFromFile(docPath);
+			}
+
+			//Now that we've loaded all of the assembly results into memory, remove the assembly files.
+			FreeTempDocDir(docPath);
+
+			//Return the results.
+			Document document = new Document(template, docStream, docType, supportingFiles.ToArray(), _app.UnansweredVariablesList.ToArray());
+			AssembleDocumentResult result = new AssembleDocumentResult(document, resultAnsColl.XmlAnswers, pendingAssemblies.ToArray(), _app.UnansweredVariablesList.ToArray());
 			return result;
 		}
 		/// <summary>
@@ -526,21 +536,18 @@ namespace HotDocs.Sdk.Server.Local
 
 		private string CreateTempDocDirAndPath(Template template, DocumentType docType)
 		{
-			//TODO: Don't re-use fullPath.
-			//TODO: Make sure the created files and folders get cleaned up.
-			string fullPath;
+			string dirPath;
 			string ext = GetDocExtension(template, docType);
 			do
 			{
-				fullPath = Path.Combine(_tempPath, Path.GetRandomFileName());
-			} while (Directory.Exists(fullPath));
-			Directory.CreateDirectory(fullPath);
-			fullPath = Path.Combine(fullPath, Path.GetRandomFileName() + ext);
-			using (File.Create(fullPath)) { }
-			return fullPath;
+				dirPath = Path.Combine(_tempPath, Path.GetRandomFileName());
+			} while (Directory.Exists(dirPath));
+			Directory.CreateDirectory(dirPath);
+			string filePath = Path.Combine(dirPath, Path.GetRandomFileName() + ext);
+			using (File.Create(filePath)) { }
+			return filePath;
 		}
 
-		//TODO: This is not used.
 		private void FreeTempDocDir(string docPath)
 		{
 			string dir = Path.GetDirectoryName(docPath);
@@ -678,6 +685,16 @@ namespace HotDocs.Sdk.Server.Local
 			}
 
 			return hdsOpts;
+		}
+
+		MemoryStream CreateMemStreamFromFile(string filePath)
+		{
+			using (FileStream fileStream = File.OpenRead(filePath))
+			{
+				byte[] bytes = new byte[fileStream.Length];
+				fileStream.Read(bytes, 0, (int)fileStream.Length);
+				return new MemoryStream(bytes);
+			}
 		}
 	}
 }
