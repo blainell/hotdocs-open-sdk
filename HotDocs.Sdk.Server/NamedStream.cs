@@ -20,6 +20,11 @@ namespace HotDocs.Sdk.Server
 	/// </summary>
 	public class NamedStream : IDisposable
 	{
+		/// <summary>
+		/// <c>NamedStream</c> constructor creates an instance with the <c>fileName</c> and <c>content</c> parameters.
+		/// </summary>
+		/// <param name="fileName"></param>
+		/// <param name="content"></param>
 		public NamedStream(string fileName, System.IO.Stream content)
 		{
 			if (String.IsNullOrEmpty(fileName))
@@ -31,10 +36,21 @@ namespace HotDocs.Sdk.Server
 			Content = content;
 		}
 
+		/// <summary>
+		/// <c>FileName</c> is the given name for the assocated Stream from the 'Content' property.
+		/// </summary>
 		public string FileName { get; private set; }
+
+		/// <summary>
+		/// <c>Content</c> returns the IO stream assocated with this object.
+		/// </summary>
 		public System.IO.Stream Content { get; private set; }
 		private bool disposed = false; // to detect redundant calls
 
+		/// <summary>
+		/// Calls <c>Dispose</c> from the <c>IDisposable</c> interface
+		/// </summary>
+		/// <param name="disposing"></param>
 		protected virtual void Dispose(bool disposing)
 		{
 			if (!disposed)
@@ -51,6 +67,9 @@ namespace HotDocs.Sdk.Server
 			}
 		}
 
+		/// <summary>
+		/// <c>Dispose</c> implements the <c>IDisposable</c> interface.
+		/// </summary>
 		public void Dispose()
 		{
 			Dispose(true);

@@ -147,7 +147,7 @@ namespace HotDocs.Sdk.Server.WebService
 		/// for the indicated template's interview.
 		/// </summary>
 		/// <param name="template">An instance of the Template class, for which you are requesting component information.</param>
-		/// <param name="includeDialogs">Whether to include dialog & mapping information in the returned results.</param>
+		/// <param name="includeDialogs">Whether to include dialog and mapping information in the returned results.</param>
 		/// <param name="logRef">A string to display in logs related to this request.</param>
 		/// <returns>returns the list of variables and dialogs (if includeDialogs is true) associated with the <c>template</c> parameter</returns>
 		public ComponentInfo GetComponentInfo(Template template, bool includeDialogs, string logRef)

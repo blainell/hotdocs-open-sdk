@@ -12,7 +12,6 @@ using System.Web.UI.WebControls;
 public partial class Templates : System.Web.UI.Page
 {
 	protected DataView _tplData;
-	protected string _siteName = Settings.SiteName;
 	protected static string _javascriptUrl = Settings.JavaScriptUrl;
 
 	protected void Page_Load(object sender, EventArgs e)
@@ -133,7 +132,7 @@ public partial class Templates : System.Web.UI.Page
 
 		using (TextWriter tw = new StreamWriter(Response.OutputStream))
 		{
-			tw.WriteLine(_siteName); // Name of the site (as found in web.config)
+			tw.WriteLine(Settings.SiteName); // Name of the site (as found in web.config)
 			tw.WriteLine(lblUploadURL.Text); // Url of the upload page, as determined in the Page_Load method above.
 			tw.Flush();
 		}

@@ -13,26 +13,16 @@ using System.Text.RegularExpressions;
 
 namespace HotDocs.Sdk.Server
 {
+
+	internal delegate string TemplateFilesRetriever(string templateKey, string state);
+
+	internal delegate Stream TemplatePackageRetriever(string packageID, string state, out bool closeStream);
+
 	/// <summary>
-	/// 
+	/// The <c>Util</c> class provides some methods needed for this class. Some of those methods are used for a specific implementation of IServices.
 	/// </summary>
-	/// <param name="template"></param>
-	/// <returns></returns>
-	delegate string TemplateFilesRetriever(string templateKey, string state);
-
-	delegate Stream TemplatePackageRetriever(string packageID, string state, out bool closeStream);
-
 	public class Util
 	{
-		static Util()
-		{
-			//CustomDataSourcesSection customDataSourcesSection = ConfigurationManager.GetSection("customDataSources") as CustomDataSourcesSection;
-			//if (customDataSourcesSection != null)
-			//{
-			//	CustomDataSources = customDataSourcesSection.DataSources;
-			//}
-		}
-
 		internal static void SafeDeleteFolder(string folder)
 		{
 			if (folder != null && folder != "" && folder[0] != '\\')
@@ -351,7 +341,7 @@ namespace HotDocs.Sdk.Server
 		/// </summary>
 		/// <param name="textReader">A text reader.</param>
 		/// <returns>A BinaryObject containing the contents of the text reader.</returns>
-		public static BinaryObject GetBinaryObjectFromTextReader(TextReader textReader)
+		internal static BinaryObject GetBinaryObjectFromTextReader(TextReader textReader)
 		{
 			string allText = textReader.ReadToEnd();
 			return new BinaryObject
@@ -368,6 +358,7 @@ namespace HotDocs.Sdk.Server
 		/// <param name="fileName"></param>
 		/// <param name="cacheFolder"></param>
 		/// <param name="sourceUrl"></param>
+		/// <param name="contentType">Output parameter containing the MIME type of requested runtime file.</param>
 		/// <returns></returns>
 		public static Stream GetInterviewRuntimeFile(string fileName, string cacheFolder, string sourceUrl, out string contentType)
 		{

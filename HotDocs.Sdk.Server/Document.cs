@@ -46,6 +46,9 @@ namespace HotDocs.Sdk.Server
 		/// </summary>
 		public IEnumerable<NamedStream> SupportingFiles { get; protected set; }
 
+		/// <summary>
+		/// <c>FileExtension</c> returns the file extension of the current document, given its <c>Type</c>
+		/// </summary>
 		public string FileExtension
 		{
 			get
@@ -69,7 +72,10 @@ namespace HotDocs.Sdk.Server
 			}
 		}
 
-		public string ContentType
+		/// <summary>
+		/// <c>ContentType</c> returns the MIME type according to the <c>Type</c> property
+		/// </summary>
+		public string ContentType 
 		{
 			get
 			{
@@ -103,6 +109,9 @@ namespace HotDocs.Sdk.Server
 			}
 		}
 
+		/// <summary>
+		/// Returns unanswered variables in the current document.
+		/// </summary>
 		public string[] UnansweredVariables { get; protected set; }
 
 		/// <summary>
@@ -152,6 +161,10 @@ namespace HotDocs.Sdk.Server
 		private bool disposed = false; // to detect redundant calls
 		private Template _source = null;
 
+		/// <summary>
+		/// Calls IDisposable.Dispose
+		/// </summary>
+		/// <param name="disposing"></param>
 		protected virtual void Dispose(bool disposing)
 		{
 			if (!disposed)
@@ -174,6 +187,9 @@ namespace HotDocs.Sdk.Server
 			}
 		}
 
+		/// <summary>
+		/// Implements IDisposable.Dispose
+		/// </summary>
 		public void Dispose()
 		{
 			Dispose(true);

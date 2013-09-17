@@ -14,7 +14,17 @@ namespace HotDocs.Sdk.Server
 	/// to the end user (for which InterviewWorkItem.GetInterview, and later InterviewWorkItem.FinishInterview, must be called);
 	/// each document work item represents a document to be generated (via a call to WorkSession.AssembleDocuments).
 	/// </summary>
-	public enum WorkItemType { Interview, Document }
+	public enum WorkItemType { 
+		/// <summary>
+		/// Indicates the current work item represents an interview to shown to the user.
+		/// </summary>
+		Interview, 
+
+		/// <summary>
+		/// Indicates the current work item represents a document assembly to be processed.
+		/// </summary>
+		Document 
+	}
 
 	/// <summary>
 	/// WorkItem is an abstract class representing either a browser interview OR an assembled document.
@@ -101,6 +111,9 @@ namespace HotDocs.Sdk.Server
 
 		/* properties/state */
 
+		/// <summary>
+		/// Returns the work item type (document or interview) of the current object.
+		/// </summary>
 		override public WorkItemType Type { get { return WorkItemType.Interview; } }
 
 		/* methods */
@@ -153,6 +166,10 @@ namespace HotDocs.Sdk.Server
 			UnansweredVariables = unansweredVariables;
 		}
 		// properties/state
+
+		/// <summary>
+		/// Returns the type work item type of the current object, which is always Document in this instance.
+		/// </summary>
 		override public WorkItemType Type { get { return WorkItemType.Document; } }
 
 		/// <summary>
