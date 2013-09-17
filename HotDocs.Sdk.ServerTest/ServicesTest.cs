@@ -137,8 +137,8 @@ namespace HotDocs.Sdk.ServerTest
 			string postInterviewUrl = "PostInterview.aspx";
 			string styleSheetUrl = "HDServerFiles/Stylesheets";
 			string runtimeUrl = "HDServerFiles/js";
-			string interviewDefUrl = "GetInterviewDef.ashx";
-			string interviewImgUrl = "GetImage.ashx";
+			string interviewDefUrl = "GetInterviewFile.ashx";
+			string interviewImgUrl = "GetInterviewFile.ashx";
 			InterviewSettings settings = new InterviewSettings(postInterviewUrl, runtimeUrl, styleSheetUrl, interviewDefUrl, interviewImgUrl);
 
 			// Set up the Marked Variables for the test.
@@ -553,76 +553,78 @@ namespace HotDocs.Sdk.ServerTest
 
 		#endregion
 
-		#region GetInterviewDefinition Tests
+		#region GetInterviewFile Tests
 
 		[TestMethod]
-		public void GetInterviewDefinition_Local() {
-			GetInterviewDefinition(Util.GetLocalServicesInterface());
-		}
-
-		[TestMethod]
-		public void GetInterviewDefinition_WebService() {
-			GetInterviewDefinition(Util.GetWebServiceServicesInterface());
-		}
-
-		[TestMethod]
-		public void GetInterviewDefinition_Cloud()
+		public void GetInterviewFile_Local()
 		{
-			GetInterviewDefinition(Util.GetCloudServicesInterface());
+			GetInterviewFile(Util.GetLocalServicesInterface());
 		}
 
-		private void GetInterviewDefinition(IServices svc)
+		[TestMethod]
+		public void GetInterviewFile_WebService()
+		{
+			GetInterviewFile(Util.GetWebServiceServicesInterface());
+		}
+
+		[TestMethod]
+		public void GetInterviewFile_Cloud()
+		{
+			GetInterviewFile(Util.GetCloudServicesInterface());
+		}
+
+		private void GetInterviewFile(IServices svc)
 		{
 			Template template = Util.OpenTemplate("d1f7cade-cb74-4457-a9a0-27d94f5c2d5b");
 			
 			// Get an interview for the template and find the state string 
 			InterviewResult IntvResult = svc.GetInterview(template, null, null, null, null);
-			string intvStateString = System.Text.RegularExpressions.Regex.Match(IntvResult.HtmlFragment, "stateString=[^&]+").Value;
+			//string intvStateString = System.Text.RegularExpressions.Regex.Match(IntvResult.HtmlFragment, "stateString=[^&]+").Value;
 			//intvStateString = intvStateString.Replace("%2B", "+");
-			intvStateString = Uri.UnescapeDataString(intvStateString);
+			//intvStateString = Uri.UnescapeDataString(intvStateString);
 
-			string templateState = null;
-			string templateFile = null;
-			InterviewFormat fmt = InterviewFormat.Unspecified;
+			string templateLocator = null;
+			string fileName = null;
+			string fileType = "js";
 
 			for (int i = 0; i < 7; i++)
 			{
 				switch (i)
 				{
 					case 0:
-						templateState = null;
-						templateFile = "filename";
+						templateLocator = null;
+						fileName = "filename";
 						break;
 					case 1:
-						templateState = "state";
-						templateFile = null;
+						templateLocator = "state";
+						fileName = null;
 						break;
 					case 2:
-						templateState = "";
-						templateFile = "filename";
+						templateLocator = "";
+						fileName = "filename";
 						break;
 					case 3:
-						templateState = "state";
-						templateFile = "";
+						templateLocator = "state";
+						fileName = "";
 						break;
 					default:
-						templateState = intvStateString.Substring("stateString=".Length);
-						templateFile = "Demo Employment Agreement.docx";
+						templateLocator = template.CreateLocator(); // intvStateString.Substring("stateString=".Length);
+						fileName = "Demo Employment Agreement.docx";
 						break;
 				}
 
 				if (i == 5)
-					fmt = InterviewFormat.JavaScript;
+					fileType = "js";
 
 				if (i == 6)
-					fmt = InterviewFormat.Silverlight;
+					fileType = "dll";
 
 				try
 				{
-					using (Stream definitionFile = svc.GetInterviewDefinition(templateState, templateFile, fmt))
+					using (Stream definitionFile = svc.GetInterviewFile(templateLocator, fileName, fileType))
 					{
 
-						if (string.IsNullOrEmpty(templateState) || string.IsNullOrEmpty(templateFile))
+						if (string.IsNullOrEmpty(templateLocator) || string.IsNullOrEmpty(fileName) || string.IsNullOrEmpty(fileType))
 							Assert.Fail(); // Should have hit an exception instead of reaching this.
 
 						Assert.IsTrue(definitionFile.Length > 0);
@@ -632,7 +634,8 @@ namespace HotDocs.Sdk.ServerTest
 				}
 				catch (ArgumentNullException ex)
 				{
-					Assert.IsTrue(ex.Message.Contains(string.IsNullOrEmpty(templateState) ? "state" : "templateFile"));
+
+					Assert.IsTrue(ex.Message.Contains(string.IsNullOrEmpty(templateLocator) ? "templateLocator" : "fileName"));
 				}
 			}
 		}

@@ -117,8 +117,8 @@ namespace HotDocs.Sdk
 			InterviewRuntimeUrl = ConfigurationManager.AppSettings["InterviewRuntimeUrl"]; // formerly known as "JavaScriptUrl"
 			StyleSheetUrl = ConfigurationManager.AppSettings["StyleSheetUrl"];
 			ThemeName = ConfigurationManager.AppSettings["InterviewTheme"];
-			InterviewDefinitionUrl = ConfigurationManager.AppSettings["InterviewDefinitionUrl"];
-			BaseInterviewImageUrl = ConfigurationManager.AppSettings["InterviewImageUrl"];
+			InterviewDefinitionUrl = ConfigurationManager.AppSettings["InterviewFileUrl"];
+			BaseInterviewImageUrl = ConfigurationManager.AppSettings["InterviewFileUrl"];
 
 			// Urls in host app to support optional interview features
 			DocumentPreviewUrl = ConfigurationManager.AppSettings["DocumentPreviewUrl"];
