@@ -2,11 +2,8 @@
    Use, modification and redistribution of this source is subject
    to the New BSD License as set out in LICENSE.TXT. */
 
-//TODO: Add XML documentation.
-
-//TODO: This code is referenced from CustomDataService.svc.
+//The central class here is CustomDataService, which is referenced from CustomDataService.svc.
 //	That data service is used by the employee recognition letter template.
-// Make sure that this is properly documented.
 
 using System;
 using System.Collections.Generic;
@@ -131,6 +128,10 @@ public class HumanResourceData
 	}
 }
 
+/// <summary>
+/// This <c>CustomDataService</c> class is an example data service to demonstrate how to use data services in HotDocs.
+/// It is referenced from CustomDataService.svc. The data service itself is used by the employee recognition letter template.
+/// </summary>
 public class CustomDataService : DataService<HumanResourceData>
 {
 	// This method is called only once to initialize service-wide policies.
