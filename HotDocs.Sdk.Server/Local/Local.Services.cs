@@ -17,6 +17,10 @@ using hdsi = HotDocs.Server.Interop;
 
 namespace HotDocs.Sdk.Server.Local
 {
+	/// <summary>
+	/// <c>The Local.Services class provides the local implementation of IServices, meaning that it provides
+	/// an implementation that expects HotDocs Server to be installed on the same machine as the host application.</c>
+	/// </summary>
 	public class Services : IServices
 	{
 		const int READ_BUF_SIZE = 0x10000;
@@ -24,6 +28,10 @@ namespace HotDocs.Sdk.Server.Local
 		private HotDocs.Server.Application _app;
 		private string _tempPath = null;
 
+		/// <summary>
+		/// Construct a new instance of <c>Local.Services</c>.
+		/// </summary>
+		/// <param name="tempPath">A path to a folder for storing temporary files.</param>
 		public Services(string tempPath)
 		{
 			_app = new HotDocs.Server.Application();
@@ -32,6 +40,14 @@ namespace HotDocs.Sdk.Server.Local
 
 		#region IServices implementation
 
+		/// <summary>
+		/// GetComponentInfo returns metadata about the variables/types (and optionally dialogs and mapping info)
+		/// for the indicated template's interview.
+		/// </summary>
+		/// <param name="template">The template for which to return a ComponentInfo object.</param>
+		/// <param name="includeDialogs">True if dialog components are to be included in the returned <c>ComponentInfo</c>.</param>
+		/// <include file="../../Shared/Help.xml" path="Help/string/param[@name='logRef']"/>
+		/// <returns></returns>
 		public ComponentInfo GetComponentInfo(Template template, bool includeDialogs, string logRef)
 		{
 			string logStr = logRef == null ? string.Empty : logRef;
@@ -127,7 +143,13 @@ namespace HotDocs.Sdk.Server.Local
 			}
 			return cmpInfo;
 		}
-
+		/// <include file="../Shared/Help.xml" path="Help/GetInterview/summary"/>
+		/// <include file="../Shared/Help.xml" path="Help/GetInterview/param[@name='template']"/>
+		/// <include file="../Shared/Help.xml" path="Help/GetInterview/param[@name='answers']"/>
+		/// <include file="../Shared/Help.xml" path="Help/GetInterview/param[@name='settings']"/>
+		/// <include file="../Shared/Help.xml" path="Help/GetInterview/param[@name='markedVariables']"/>
+		/// <include file="../Shared/Help.xml" path="Help/GetInterview/param[@name='logRef']"/>
+		/// <include file="../Shared/Help.xml" path="Help/GetInterview/returns"/>
 		public InterviewResult GetInterview(Template template, TextReader answers, InterviewSettings settings, IEnumerable<string> markedVariables, string logRef)
 		{
 			// Validate input parameters, creating defaults as appropriate.
@@ -233,6 +255,15 @@ namespace HotDocs.Sdk.Server.Local
 			return result;
 		}
 
+		/// <summary>
+		/// Retrieve an interview definition. An interview definition is the questionaire content of an interview specific
+		/// to a template. The template may be the main template or an inserted template.
+		/// </summary>
+		/// <param name="state">The template state string, passed as "state" on the query string by the browser interview.</param>
+		/// <param name="templateFile">The template file name, passed as "template" on the query string by the browser interview.</param>
+		/// <param name="format">The requested format of interview definition, according to the "type" query string parameter.
+		/// If type=="js", pass JavaScript; if type=="dll", pass Silverlight; otherwise pass Default.</param>
+		/// <returns>A stream containing the requested interview definition, to be returned to the caller.</returns>
 		public Stream GetInterviewDefinition(string state, string templateFile, InterviewFormat format)
 		{
 			// Validate input parameters, creating defaults as appropriate.
@@ -248,77 +279,15 @@ namespace HotDocs.Sdk.Server.Local
 					: hdsi.interviewFormat.javascript);
 			return File.OpenRead(interviewDefPath);
 		}
-		//TODO: Move this to the private area.
-		private HotDocs.Server.OutputOptions ConvertOutputOptions(OutputOptions sdkOpts)
-		{
-			HotDocs.Server.OutputOptions hdsOpts = null;
-			if (sdkOpts is PdfOutputOptions)
-			{
-				PdfOutputOptions sdkPdfOpts = (PdfOutputOptions)sdkOpts;
-				HotDocs.Server.PdfOutputOptions hdsPdfOpts = new HotDocs.Server.PdfOutputOptions();
-
-				hdsPdfOpts.Author = sdkPdfOpts.Author;
-				hdsPdfOpts.Comments = sdkPdfOpts.Comments;
-				hdsPdfOpts.Company = sdkPdfOpts.Company;
-				hdsPdfOpts.Keywords = sdkPdfOpts.Keywords;
-				hdsPdfOpts.Subject = sdkPdfOpts.Subject;
-				hdsPdfOpts.Title = sdkPdfOpts.Title;
-
-				//Remember that these are PDF passwords which are not highly secure.
-				hdsPdfOpts.OwnerPassword = sdkPdfOpts.OwnerPassword;
-				hdsPdfOpts.UserPassword = sdkPdfOpts.UserPassword;
-
-				hdsi.PdfOutputFlags hdsFlags = 0;
-				if (sdkPdfOpts.EmbedFonts == Tristate.True)//TODO: What do we do in the case of Default.
-					hdsFlags |= hdsi.PdfOutputFlags.pdfOut_EmbedFonts;
-				if (sdkPdfOpts.KeepFillablePdf)
-					hdsFlags |= hdsi.PdfOutputFlags.pdfOut_KeepFillablePdf;
-				if (sdkPdfOpts.PdfA)
-					hdsFlags |= hdsi.PdfOutputFlags.pdfOut_PdfA;
-				if (sdkPdfOpts.TaggedPdf)
-					hdsFlags |= hdsi.PdfOutputFlags.pdfOut_TaggedPdf;
-				if (sdkPdfOpts.TruncateFields)
-					hdsFlags |= hdsi.PdfOutputFlags.pdfOut_TruncateFields;
-				hdsPdfOpts.PdfOutputFlags = hdsFlags;
-
-				hdsi.PdfPermissions hdsPerm = 0;
-				if (sdkPdfOpts.Permissions.HasFlag(PdfPermissions.Copy))
-					hdsPerm |= hdsi.PdfPermissions.COPY;
-				if (sdkPdfOpts.Permissions.HasFlag(PdfPermissions.Modify))
-					hdsPerm |= hdsi.PdfPermissions.MOD;
-				if (sdkPdfOpts.Permissions.HasFlag(PdfPermissions.Print))
-					hdsPerm |= hdsi.PdfPermissions.PRINT;
-				hdsPdfOpts.PdfPermissions = hdsPerm;
-
-				hdsOpts = hdsPdfOpts;
-			}
-			else if (sdkOpts is HtmlOutputOptions)
-			{
-				HtmlOutputOptions sdkHtmOpts = (HtmlOutputOptions)sdkOpts;
-				HotDocs.Server.HtmlOutputOptions hdsHtmOpts = new HotDocs.Server.HtmlOutputOptions();
-
-				hdsHtmOpts.Author = sdkHtmOpts.Author;
-				hdsHtmOpts.Comments = sdkHtmOpts.Comments;
-				hdsHtmOpts.Company = sdkHtmOpts.Company;
-				hdsHtmOpts.Keywords = sdkHtmOpts.Keywords;
-				hdsHtmOpts.Subject = sdkHtmOpts.Subject;
-				hdsHtmOpts.Title = sdkHtmOpts.Title;
-
-				hdsHtmOpts.Encoding = sdkHtmOpts.Encoding;
-
-				hdsOpts = hdsHtmOpts;
-			}
-			else if (sdkOpts is TextOutputOptions)
-			{
-				TextOutputOptions sdkTxtOpts = (TextOutputOptions)sdkOpts;
-				HotDocs.Server.TextOutputOptions hdsTxtOpts = new HotDocs.Server.TextOutputOptions();
-				hdsTxtOpts.Encoding = sdkTxtOpts.Encoding;
-				hdsOpts = hdsTxtOpts;
-			}
-
-			return hdsOpts;
-		}
-
+		/// <summary>
+		/// Assemble a document from the given template, answers and settings.
+		/// </summary>
+		/// <param name="template">An instance of the Template class.</param>
+		/// <param name="answers">Either an XML answer string, or a string containing encoded
+		/// interview answers as posted from a HotDocs browser interview.</param>
+		/// <param name="settings">An instance of the AssembleDocumentResult class.</param>
+		/// <include file="../Shared/Help.xml" path="Help/string/param[@name='logRef']"/>
+		/// <returns>An AssemblyResult object containing all the files and data resulting from the request.</returns>
 		public AssembleDocumentResult AssembleDocument(Template template, TextReader answers, AssembleDocumentSettings settings, string logRef)
 		{
 			// Validate input parameters, creating defaults as appropriate.
@@ -412,7 +381,18 @@ namespace HotDocs.Sdk.Server.Local
 
 			return result;
 		}
-
+		/// <summary>
+		/// This method overlays any answer collections passed into it, into a single XML answer collection.
+		/// It has two primary uses: it can be used to combine multiple answer collections into a single
+		/// answer collection; and/or it can be used to "resolve" or standardize an answer collection
+		/// submitted from a browser interview (which may be specially encoded) into standard XML answers.
+		/// </summary>
+		/// <param name="answers">A sequence of answer collections. Each member of this sequence
+		/// must be either an (encoded) interview answer collection or a regular XML answer collection.
+		/// Each member will be successively overlaid (overlapped) on top of the prior members to
+		/// form one consolidated answer collection.</param>
+		/// <include file="../Shared/Help.xml" path="Help/string/param[@name='logRef']"/>
+		/// <returns>The consolidated XML answer collection.</returns>
 		public string GetAnswers(IEnumerable<TextReader> answers, string logRef)
 		{
 			// Validate input parameters, creating defaults as appropriate.
@@ -429,7 +409,11 @@ namespace HotDocs.Sdk.Server.Local
 			}
 			return result;
 		}
-
+		/// <summary>
+		/// Build the server files for the specified template.
+		/// </summary>
+		/// <param name="template"></param>
+		/// <param name="flags"></param>
 		public void BuildSupportFiles(Template template, HDSupportFilesBuildFlags flags)
 		{
 			if (template == null)
@@ -449,7 +433,10 @@ namespace HotDocs.Sdk.Server.Local
 				app.BuildSupportFiles(template.GetFullPath(), template.Key, hdBuildFlags);
 			}
 		}
-
+		/// <summary>
+		/// Remove the server files for the specified template.
+		/// </summary>
+		/// <param name="template"></param>
 		public void RemoveSupportFiles(Template template)
 		{
 			if (template == null)
@@ -606,6 +593,75 @@ namespace HotDocs.Sdk.Server.Local
 				default:
 					return "Unknown";
 			}
+		}
+		private HotDocs.Server.OutputOptions ConvertOutputOptions(OutputOptions sdkOpts)
+		{
+			HotDocs.Server.OutputOptions hdsOpts = null;
+			if (sdkOpts is PdfOutputOptions)
+			{
+				PdfOutputOptions sdkPdfOpts = (PdfOutputOptions)sdkOpts;
+				HotDocs.Server.PdfOutputOptions hdsPdfOpts = new HotDocs.Server.PdfOutputOptions();
+
+				hdsPdfOpts.Author = sdkPdfOpts.Author;
+				hdsPdfOpts.Comments = sdkPdfOpts.Comments;
+				hdsPdfOpts.Company = sdkPdfOpts.Company;
+				hdsPdfOpts.Keywords = sdkPdfOpts.Keywords;
+				hdsPdfOpts.Subject = sdkPdfOpts.Subject;
+				hdsPdfOpts.Title = sdkPdfOpts.Title;
+
+				//Remember that these are PDF passwords which are not highly secure.
+				hdsPdfOpts.OwnerPassword = sdkPdfOpts.OwnerPassword;
+				hdsPdfOpts.UserPassword = sdkPdfOpts.UserPassword;
+
+				hdsi.PdfOutputFlags hdsFlags = 0;
+				if (sdkPdfOpts.EmbedFonts == Tristate.True)//TODO: What do we do in the case of Default.
+					hdsFlags |= hdsi.PdfOutputFlags.pdfOut_EmbedFonts;
+				if (sdkPdfOpts.KeepFillablePdf)
+					hdsFlags |= hdsi.PdfOutputFlags.pdfOut_KeepFillablePdf;
+				if (sdkPdfOpts.PdfA)
+					hdsFlags |= hdsi.PdfOutputFlags.pdfOut_PdfA;
+				if (sdkPdfOpts.TaggedPdf)
+					hdsFlags |= hdsi.PdfOutputFlags.pdfOut_TaggedPdf;
+				if (sdkPdfOpts.TruncateFields)
+					hdsFlags |= hdsi.PdfOutputFlags.pdfOut_TruncateFields;
+				hdsPdfOpts.PdfOutputFlags = hdsFlags;
+
+				hdsi.PdfPermissions hdsPerm = 0;
+				if (sdkPdfOpts.Permissions.HasFlag(PdfPermissions.Copy))
+					hdsPerm |= hdsi.PdfPermissions.COPY;
+				if (sdkPdfOpts.Permissions.HasFlag(PdfPermissions.Modify))
+					hdsPerm |= hdsi.PdfPermissions.MOD;
+				if (sdkPdfOpts.Permissions.HasFlag(PdfPermissions.Print))
+					hdsPerm |= hdsi.PdfPermissions.PRINT;
+				hdsPdfOpts.PdfPermissions = hdsPerm;
+
+				hdsOpts = hdsPdfOpts;
+			}
+			else if (sdkOpts is HtmlOutputOptions)
+			{
+				HtmlOutputOptions sdkHtmOpts = (HtmlOutputOptions)sdkOpts;
+				HotDocs.Server.HtmlOutputOptions hdsHtmOpts = new HotDocs.Server.HtmlOutputOptions();
+
+				hdsHtmOpts.Author = sdkHtmOpts.Author;
+				hdsHtmOpts.Comments = sdkHtmOpts.Comments;
+				hdsHtmOpts.Company = sdkHtmOpts.Company;
+				hdsHtmOpts.Keywords = sdkHtmOpts.Keywords;
+				hdsHtmOpts.Subject = sdkHtmOpts.Subject;
+				hdsHtmOpts.Title = sdkHtmOpts.Title;
+
+				hdsHtmOpts.Encoding = sdkHtmOpts.Encoding;
+
+				hdsOpts = hdsHtmOpts;
+			}
+			else if (sdkOpts is TextOutputOptions)
+			{
+				TextOutputOptions sdkTxtOpts = (TextOutputOptions)sdkOpts;
+				HotDocs.Server.TextOutputOptions hdsTxtOpts = new HotDocs.Server.TextOutputOptions();
+				hdsTxtOpts.Encoding = sdkTxtOpts.Encoding;
+				hdsOpts = hdsTxtOpts;
+			}
+
+			return hdsOpts;
 		}
 	}
 }

@@ -21,16 +21,13 @@ namespace HotDocs.Sdk.Server
 	/// </summary>
 	public interface IServices
 	{
-		/// <summary>
-		/// GetInterview returns an HTML fragment suitable for inclusion in any standards-mode web page, which embeds a HotDocs interview
-		/// directly in that web page.
-		/// </summary>
-		/// <param name="template"></param>
-		/// <param name="answers"></param>
-		/// <param name="settings"></param>
-		/// <param name="markedVariables"></param>
-		/// <include file="../Shared/Help.xml" path="Help/string/param[@name='logRef']"/>
-		/// <returns></returns>
+		/// <include file="../Shared/Help.xml" path="Help/GetInterview/summary"/>
+		/// <include file="../Shared/Help.xml" path="Help/GetInterview/param[@name='template']"/>
+		/// <include file="../Shared/Help.xml" path="Help/GetInterview/param[@name='answers']"/>
+		/// <include file="../Shared/Help.xml" path="Help/GetInterview/param[@name='settings']"/>
+		/// <include file="../Shared/Help.xml" path="Help/GetInterview/param[@name='markedVariables']"/>
+		/// <include file="../Shared/Help.xml" path="Help/GetInterview/param[@name='logRef']"/>
+		/// <include file="../Shared/Help.xml" path="Help/GetInterview/returns"/>
 		InterviewResult GetInterview(Template template, TextReader answers, InterviewSettings settings, IEnumerable<string> markedVariables, string logRef);
 
 		/// <summary>
@@ -45,7 +42,8 @@ namespace HotDocs.Sdk.Server
 		AssembleDocumentResult AssembleDocument(Template template, TextReader answers, AssembleDocumentSettings settings, string logRef);
 
 		/// <summary>
-		/// GetComponentInfo returns metadata about the variables/types (and optionally dialogs and mapping info)		/// for the indicated template's interview.
+		/// GetComponentInfo returns metadata about the variables/types (and optionally dialogs and mapping info)
+		/// for the indicated template's interview.
 		/// </summary>
 		/// <param name="template">An instance of the Template class, for which you are requesting component information.</param>
 		/// <param name="includeDialogs">Whether to include dialog &amp; mapping information in the returned results.</param>
@@ -87,7 +85,8 @@ namespace HotDocs.Sdk.Server
 		//    necessarily persisting a "session" object server-side to manage state.
 
 		/// <summary>
-		/// Retrieve an interview definition.
+		/// Retrieve an interview definition. An interview definition is the questionaire content of an interview specific
+		/// to a template. The template may be the main template or an inserted template.
 		/// </summary>
 		/// <param name="state">The template state string, passed as "state" on the query string by the browser interview.</param>
 		/// <param name="templateFile">The template file name, passed as "template" on the query string by the browser interview.</param>
