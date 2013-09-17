@@ -166,4 +166,22 @@
 	<IFormatProvider>
 		<param name="provider">The format provider used during the conversion.</param>
 	</IFormatProvider>
+
+	<GetInterview>
+		<summary>
+			GetInterview returns an HTML fragment suitable for inclusion in any standards-mode web page, which embeds a HotDocs interview
+			directly in that web page.
+		</summary>
+		<param name="template">The template for which to return an interview.</param>
+		<param name="answers">The answers to use when building an interview.</param>
+		<param name="settings">The <see cref="InterviewSettings"/> to use when building an interview.</param>
+		<param name="markedVariables">The variables to highlight to the user as needing special attention.
+			This is usually populated with <see cref="AssembleDocumentResult.UnansweredVariables" />
+			from <see cref="AssembleDocument" />.</param>
+		<include file="../Shared/Help.xml" path="Help/string/param[@name='logRef']"/>
+		<returns>Returns the results of building the interview as an <see cref="InterviewResult"/> object.</returns>
+	</GetInterview>
+
+	<AssembleDocument>
+	</AssembleDocument>
 </Help>
