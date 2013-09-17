@@ -5,7 +5,7 @@
 <!DOCTYPE HTML>
 <html>
 <head runat="server">
-	<title><%= _siteName %></title>
+	<title><%= Header1.SiteName %></title>
 	<link href="css/SamplePortal.css" type="text/css" rel="stylesheet">
 </head>
 <body id="theBody" runat="server">

@@ -86,7 +86,12 @@ namespace SamplePortal
 				case Settings.HdProtocol.Cloud:
 					return new HotDocs.Sdk.Server.Cloud.Services(Settings.SubscriberID, Settings.SigningKey);
 				case Settings.HdProtocol.Local:
-					return new HotDocs.Sdk.Server.Local.Services(Settings.TempPath);
+				{
+					string tempPath = Settings.TempPath;
+					if (!Directory.Exists(tempPath))
+						Directory.CreateDirectory(tempPath);
+					return new HotDocs.Sdk.Server.Local.Services(tempPath);
+				}
 				case Settings.HdProtocol.WebService:
 					return new HotDocs.Sdk.Server.WebService.Services(Settings.WebServiceEndPoint, Settings.TemplatePath);
 			}

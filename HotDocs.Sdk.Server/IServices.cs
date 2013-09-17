@@ -19,13 +19,19 @@ namespace HotDocs.Sdk.Server
 	/// </summary>
 	public interface IServices
 	{
-		/// <include file="../Shared/Help.xml" path="Help/GetInterview/summary"/>
-		/// <include file="../Shared/Help.xml" path="Help/GetInterview/param[@name='template']"/>
-		/// <include file="../Shared/Help.xml" path="Help/GetInterview/param[@name='answers']"/>
-		/// <include file="../Shared/Help.xml" path="Help/GetInterview/param[@name='settings']"/>
-		/// <include file="../Shared/Help.xml" path="Help/GetInterview/param[@name='markedVariables']"/>
-		/// <include file="../Shared/Help.xml" path="Help/GetInterview/param[@name='logRef']"/>
-		/// <include file="../Shared/Help.xml" path="Help/GetInterview/returns"/>
+
+		///<summary>
+		///	GetInterview returns an HTML fragment suitable for inclusion in any standards-mode web page, which embeds a HotDocs interview
+		///	directly in that web page.
+		///</summary>
+		/// <param name="template">The template for which to return an interview.</param>
+		/// <param name="answers">The answers to use when building an interview.</param>
+		/// <param name="settings">The <see cref="InterviewSettings"/> to use when building an interview.</param>
+		/// <param name="markedVariables">The variables to highlight to the user as needing special attention.
+		/// 	This is usually populated with <see cref="AssembleDocumentResult.UnansweredVariables" />
+		/// 	from <see cref="AssembleDocument" />.</param>
+		/// <include file="../Shared/Help.xml" path="Help/string/param[@name='logRef']"/>
+		/// <returns>Returns the results of building the interview as an <see cref="InterviewResult"/> object.</returns>
 		InterviewResult GetInterview(Template template, TextReader answers, InterviewSettings settings, IEnumerable<string> markedVariables, string logRef);
 
 		/// <summary>
