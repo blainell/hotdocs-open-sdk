@@ -313,12 +313,11 @@ namespace HotDocs.Sdk.Server.Local
 			ansColl.OverlayXMLAnswers(answers == null ? "" : answers.ReadToEnd());
 			HotDocs.Server.OutputOptions outputOptions = ConvertOutputOptions(settings.OutputOptions);
 
-			//TODO: Make sure files get cleaned up. (It doesn't appear to be getting cleaned up.)
-			string docPath = CreateTempDocDirAndPath(template, settings.Format);
 
 			//TODO: Review this.
 			int savePendingAssembliesCount = _app.PendingAssemblyCmdLineStrings.Count;
 
+			string docPath = CreateTempDocDirAndPath(template, settings.Format);
 			_app.AssembleDocument(
 				template.GetFullPath(),//Template path
 				hdsi.HDAssemblyOptions.asmOptMarkupView,
@@ -337,45 +336,6 @@ namespace HotDocs.Sdk.Server.Local
 					resultAnsColl.RemoveAnswer(ans.Name);
 			}
 
-			//Prepare the image information for the browser.
-			DocumentType docType = settings.Format;
-			List<NamedStream> supportingFiles = new List<NamedStream>();
-
-			if (docType == DocumentType.Native)
-			{
-				docType = Document.GetDocumentType(docPath);
-			}
-			else if (docType == DocumentType.HTMLwDataURIs)
-			{
-				File.WriteAllText(docPath, Util.EmbedImagesInURIs(docPath));  // Overwrite .html file.  If the consumer requested both HTML and HTMLwDataURIs, they'll only get the latter.
-			}
-			else if (docType == DocumentType.MHTML)
-			{
-
-				string mhtmlFilePath = Path.Combine(Path.GetDirectoryName(docPath), Path.GetFileNameWithoutExtension(docPath) + ".mhtml");
-				using (StreamWriter htmFile = File.CreateText(mhtmlFilePath))
-				{
-					htmFile.Write(Util.HtmlToMultiPartMime(docPath));
-				}
-			}
-			else if (docType == DocumentType.HTML)
-			{
-				string targetFilenameNoExtention = Path.GetFileNameWithoutExtension(docPath);
-				foreach (string img in Directory.EnumerateFiles(Path.GetDirectoryName(docPath)))
-				{
-					string ext = Path.GetExtension(img).ToLower();
-					if (Path.GetFileName(img).StartsWith(targetFilenameNoExtention) && (ext == ".jpg" || ext == ".jpeg" || ext == ".gif" || ext == ".png" || ext == ".bmp"))
-						supportingFiles.Add(LoadFileIntoNamedStream(img));
-				}
-			}
-
-			//Prepare the unanswered variables list for the assembly result.
-			//TODO: Just build an array from _app.UnansweredVariablesList???
-			List<string> list = new List<string>();
-			foreach (string unans in _app.UnansweredVariablesList)
-				list.Add(unans);
-			string[] unansweredVariables = list.ToArray();
-
 			//Build the list of pending assemblies.
 			List<Template> pendingAssemblies = new List<Template>();
 			for (int i = savePendingAssembliesCount; i < _app.PendingAssemblyCmdLineStrings.Count; i++)
@@ -386,10 +346,49 @@ namespace HotDocs.Sdk.Server.Local
 				pendingAssemblies.Add(new Template(Path.GetFileName(path), template.Location.Duplicate(), switches));
 			}
 
-			FileStream stream = File.OpenRead(docPath);
-			Document document = new Document(template, stream, docType, supportingFiles.ToArray(), unansweredVariables);
-			AssembleDocumentResult result = new AssembleDocumentResult(document, resultAnsColl.XmlAnswers, pendingAssemblies.ToArray(), unansweredVariables);
+			//Prepare the document stream and image information for the browser.
+			DocumentType docType = settings.Format;
+			List<NamedStream> supportingFiles = new List<NamedStream>();
+			MemoryStream docStream;
+			if (docType == DocumentType.Native)
+			{
+				docType = Document.GetDocumentType(docPath);
+				docStream = CreateMemStreamFromFile(docPath);
+			}
+			else if (docType == DocumentType.HTMLwDataURIs)
+			{
+				//If the consumer requested both HTML and HTMLwDataURIs, they'll only get the latter.
+				string content = Util.EmbedImagesInURIs(docPath);
+				docStream = new MemoryStream(Encoding.UTF8.GetBytes(content));
+			}
+			else if (docType == DocumentType.MHTML)
+			{
+				string content = Util.HtmlToMultiPartMime(docPath);
+				docStream = new MemoryStream(Encoding.UTF8.GetBytes(content));
+			}
+			else if (docType == DocumentType.HTML)
+			{
+				string targetFilenameNoExtention = Path.GetFileNameWithoutExtension(docPath);
+				foreach (string img in Directory.EnumerateFiles(Path.GetDirectoryName(docPath)))
+				{
+					string ext = Path.GetExtension(img).ToLower();
+					if (Path.GetFileName(img).StartsWith(targetFilenameNoExtention) && (ext == ".jpg" || ext == ".jpeg" || ext == ".gif" || ext == ".png" || ext == ".bmp"))
+						supportingFiles.Add(LoadFileIntoNamedStream(img));
+				}
 
+				docStream = CreateMemStreamFromFile(docPath);
+			}
+			else
+			{
+				docStream = CreateMemStreamFromFile(docPath);
+			}
+
+			//Now that we've loaded all of the assembly results into memory, remove the assembly files.
+			FreeTempDocDir(docPath);
+
+			//Return the results.
+			Document document = new Document(template, docStream, docType, supportingFiles.ToArray(), _app.UnansweredVariablesList.ToArray());
+			AssembleDocumentResult result = new AssembleDocumentResult(document, resultAnsColl.XmlAnswers, pendingAssemblies.ToArray(), _app.UnansweredVariablesList.ToArray());
 			return result;
 		}
 		/// <summary>
@@ -521,21 +520,18 @@ namespace HotDocs.Sdk.Server.Local
 
 		private string CreateTempDocDirAndPath(Template template, DocumentType docType)
 		{
-			//TODO: Don't re-use fullPath.
-			//TODO: Make sure the created files and folders get cleaned up.
-			string fullPath;
+			string dirPath;
 			string ext = GetDocExtension(template, docType);
 			do
 			{
-				fullPath = Path.Combine(_tempPath, Path.GetRandomFileName());
-			} while (Directory.Exists(fullPath));
-			Directory.CreateDirectory(fullPath);
-			fullPath = Path.Combine(fullPath, Path.GetRandomFileName() + ext);
-			using (File.Create(fullPath)) { }
-			return fullPath;
+				dirPath = Path.Combine(_tempPath, Path.GetRandomFileName());
+			} while (Directory.Exists(dirPath));
+			Directory.CreateDirectory(dirPath);
+			string filePath = Path.Combine(dirPath, Path.GetRandomFileName() + ext);
+			using (File.Create(filePath)) { }
+			return filePath;
 		}
 
-		//TODO: This is not used.
 		private void FreeTempDocDir(string docPath)
 		{
 			string dir = Path.GetDirectoryName(docPath);

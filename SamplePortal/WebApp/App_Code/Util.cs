@@ -249,7 +249,7 @@ namespace SamplePortal
 			else
 			{
 				int version;
-				supportsInlineImages = IsIE(req, out version) && version >= 9; // IE9 supports up to 4GB in a data uri (http://msdn.microsoft.com/en-us/ie/ff468705.aspx#_DataURI)
+				supportsInlineImages = !IsIE(req, out version) || version >= 9; // IE9 supports up to 4GB in a data uri (http://msdn.microsoft.com/en-us/ie/ff468705.aspx#_DataURI)
 			}
 
 			return supportsInlineImages;
