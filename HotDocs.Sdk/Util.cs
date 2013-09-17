@@ -28,7 +28,7 @@ namespace HotDocs.Sdk
 			return DecryptStringFromBytes_Aes(encryptedBuffer, key, initializationVector);
 		}
 
-		internal static TEnum ReadConfigurationEnum<TEnum>(string settingName, TEnum defaultValue) where TEnum : struct
+		public static TEnum ReadConfigurationEnum<TEnum>(string settingName, TEnum defaultValue) where TEnum : struct
 		{
 			string sTemp = ConfigurationManager.AppSettings[settingName];
 			if (String.IsNullOrWhiteSpace(sTemp))

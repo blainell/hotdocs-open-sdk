@@ -8,15 +8,21 @@ using System.Web.UI.WebControls;
 
 public partial class Header : System.Web.UI.UserControl
 {
-	private string _homeLinkText = "Return to the home page";
-
-	protected string _siteName = Settings.SiteName;
-
 	public enum HeaderState { Home, Manage, NoLinks, Hidden }
+
+	public HeaderState Mode { get; set; }
+
+	public string SiteName { get; set; }
+
+	public string HomeLinkText { get; set; }
 
 	protected void Page_Load(object sender, EventArgs e)
 	{
-
+		// Set some default property values if they were not set already.
+		if (string.IsNullOrEmpty(SiteName)) 
+			SiteName = Settings.SiteName;
+		if (string.IsNullOrEmpty(HomeLinkText)) 
+			HomeLinkText = "Return to the home page";
 	}
 
 	protected void btnManageAnswers_Click(object sender, EventArgs e)
@@ -29,12 +35,5 @@ public partial class Header : System.Web.UI.UserControl
 		Response.Redirect("Templates.aspx");
 	}
 
-	public HeaderState Mode { get; set; }
-
-	public string HomeLinkText
-	{
-		get { return _homeLinkText; }
-		set { _homeLinkText = value; }
-	}
 
 }

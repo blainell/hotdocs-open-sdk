@@ -16,8 +16,6 @@ public partial class Upload : System.Web.UI.Page
 	private int RemainingTemplates = -1;
 	private int _gridSize = -1;
 
-	protected string _siteName = Settings.SiteName;
-
 	private List<UploadItem> ConflictUploadItems
 	{
 		get
@@ -351,7 +349,7 @@ public partial class Upload : System.Web.UI.Page
 
 			if (SuccessfulUploadItems.Count > 0)
 			{
-				lblStatus.Text += string.Format("<p>The following item{0} successfully uploaded to {1}:</p><ul>", SuccessfulUploadItems.Count == 1 ? " was" : "s were", _siteName);
+				lblStatus.Text += string.Format("<p>The following item{0} successfully uploaded to {1}:</p><ul>", SuccessfulUploadItems.Count == 1 ? " was" : "s were", Settings.SiteName);
 				foreach (UploadItem i in SuccessfulUploadItems)
 				{
 					lblStatus.Text += "<li>" + i.Title + "</li>";

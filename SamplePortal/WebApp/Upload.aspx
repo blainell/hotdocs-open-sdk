@@ -6,7 +6,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head id="Head1" runat="server">
 	<title>
-		<%= _siteName %></title>
+		<%= Header1.SiteName %></title>
 	<link href="css/SamplePortal.css" type="text/css" rel="stylesheet" />
 </head>
 <body>
@@ -48,7 +48,7 @@
 		<asp:Panel ID="panelHDForm" runat="server" Visible="false">
 			<p>
 				HotDocs has established communication with
-			<% =_siteName %>, and is ready to upload the packages you selected. Review the titles
+			<% =Header1.SiteName %>, and is ready to upload the packages you selected. Review the titles
 			and descriptions below, and then click Upload to continue.
 			</p>
 			<form id="HD_Templates_Upload_Form" runat="server" enctype="multipart/form-data">

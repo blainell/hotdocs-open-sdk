@@ -11,7 +11,6 @@ public partial class _Default : System.Web.UI.Page
 {
 	protected DataView _tplData;
 	protected HotDocs.Sdk.Server.WorkSession _session;
-	protected string _siteName = Settings.SiteName;
 	protected static string _javascriptUrl = Settings.JavaScriptUrl;
 
 	protected void Page_Load(object sender, EventArgs e)

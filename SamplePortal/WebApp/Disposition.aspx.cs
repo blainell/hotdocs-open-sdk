@@ -14,7 +14,6 @@ using System.Web.UI.WebControls;
 public partial class Disposition : System.Web.UI.Page
 {
 	protected HotDocs.Sdk.Server.WorkSession _session;
-	protected string _siteName = Settings.SiteName;
 
 	protected void Page_Load(object sender, EventArgs e)
 	{

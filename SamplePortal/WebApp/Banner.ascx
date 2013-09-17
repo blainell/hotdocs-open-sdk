@@ -7,7 +7,7 @@
 	<tr>
 		<td id="pageHeaderLeft">
 			<div class="hd-sp-img hd-sp-img-header">
-				<div class="hd-sp-title"><%= _siteName %></div>
+				<div class="hd-sp-title"><%= SiteName %></div>
 			</div>
 		</td>
 		<td id="pageHeaderMiddle">

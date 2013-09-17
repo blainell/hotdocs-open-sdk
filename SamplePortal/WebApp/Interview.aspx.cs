@@ -12,7 +12,6 @@ public partial class Interview : System.Web.UI.Page
 	private String _interviewContent;
 
 	protected HotDocs.Sdk.Server.WorkSession _session;
-	protected string _siteName = Settings.SiteName;
 
 	protected void Page_Load(object sender, EventArgs e)
 	{
