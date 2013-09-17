@@ -2,7 +2,6 @@
    Use, modification and redistribution of this source is subject
    to the New BSD License as set out in LICENSE.TXT. */
 
-//TODO: Add XML comments where missing.
 //TODO: Add method parameter validation.
 //TODO: Add appropriate unit tests.
 
@@ -34,6 +33,12 @@ namespace HotDocs.Sdk.Server.Local
 		/// <param name="tempPath">A path to a folder for storing temporary files.</param>
 		public Services(string tempPath)
 		{
+			//Parameter validation.
+			if (string.IsNullOrEmpty(tempPath))
+				throw new Exception("Non-empty path expected.");
+			if (!Directory.Exists(tempPath))
+				throw new Exception("The folder \"" + tempPath + "\" does not exist.");
+
 			_app = new HotDocs.Server.Application();
 			_tempPath = tempPath;
 		}
@@ -51,6 +56,7 @@ namespace HotDocs.Sdk.Server.Local
 		public ComponentInfo GetComponentInfo(Template template, bool includeDialogs, string logRef)
 		{
 			string logStr = logRef == null ? string.Empty : logRef;
+
 			// Validate input parameters, creating defaults as appropriate.
 			if (template == null)
 				throw new ArgumentNullException("template", @"Local.Services.GetInterviewDefinition: the ""template"" parameter passed in was null or empty, logRef: " + logStr);
@@ -143,13 +149,18 @@ namespace HotDocs.Sdk.Server.Local
 			}
 			return cmpInfo;
 		}
-		/// <include file="../Shared/Help.xml" path="Help/GetInterview/summary"/>
-		/// <include file="../Shared/Help.xml" path="Help/GetInterview/param[@name='template']"/>
-		/// <include file="../Shared/Help.xml" path="Help/GetInterview/param[@name='answers']"/>
-		/// <include file="../Shared/Help.xml" path="Help/GetInterview/param[@name='settings']"/>
-		/// <include file="../Shared/Help.xml" path="Help/GetInterview/param[@name='markedVariables']"/>
-		/// <include file="../Shared/Help.xml" path="Help/GetInterview/param[@name='logRef']"/>
-		/// <include file="../Shared/Help.xml" path="Help/GetInterview/returns"/>
+		///<summary>
+		///	GetInterview returns an HTML fragment suitable for inclusion in any standards-mode web page, which embeds a HotDocs interview
+		///	directly in that web page.
+		///</summary>
+		/// <param name="template">The template for which to return an interview.</param>
+		/// <param name="answers">The answers to use when building an interview.</param>
+		/// <param name="settings">The <see cref="InterviewSettings"/> to use when building an interview.</param>
+		/// <param name="markedVariables">The variables to highlight to the user as needing special attention.
+		/// 	This is usually populated with <see cref="AssembleDocumentResult.UnansweredVariables" />
+		/// 	from <see cref="AssembleDocument" />.</param>
+		/// <include file="../Shared/Help.xml" path="Help/string/param[@name='logRef']"/>
+		/// <returns>Returns the results of building the interview as an <see cref="InterviewResult"/> object.</returns>
 		public InterviewResult GetInterview(Template template, TextReader answers, InterviewSettings settings, IEnumerable<string> markedVariables, string logRef)
 		{
 			// Validate input parameters, creating defaults as appropriate.
@@ -662,6 +673,16 @@ namespace HotDocs.Sdk.Server.Local
 			}
 
 			return hdsOpts;
+		}
+
+		MemoryStream CreateMemStreamFromFile(string filePath)
+		{
+			using (FileStream fileStream = File.OpenRead(filePath))
+			{
+				byte[] bytes = new byte[fileStream.Length];
+				fileStream.Read(bytes, 0, (int)fileStream.Length);
+				return new MemoryStream(bytes);
+			}
 		}
 	}
 }
