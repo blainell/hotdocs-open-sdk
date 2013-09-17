@@ -270,7 +270,7 @@ namespace HotDocs.Sdk.Server
 		}
 
 		/// <summary>
-		/// 
+		/// Returns the current interview using default interview settings
 		/// </summary>
 		/// <returns></returns>
 		public InterviewResult GetCurrentInterview()
@@ -278,6 +278,13 @@ namespace HotDocs.Sdk.Server
 			return GetCurrentInterview(DefaultInterviewSettings, null);
 		}
 
+		/// <summary>
+		/// Returns the current interview with the given settings
+		/// </summary>
+		/// <param name="settings"></param>
+		/// <param name="markedVariables"></param>
+		/// <param name="logRef"></param>
+		/// <returns></returns>
 		public InterviewResult GetCurrentInterview(InterviewSettings settings, IEnumerable<string> markedVariables, string logRef = "")
 		{
 			WorkItem currentWorkItem = CurrentWorkItem;
