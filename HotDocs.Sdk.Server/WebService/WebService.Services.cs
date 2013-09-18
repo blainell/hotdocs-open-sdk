@@ -32,9 +32,9 @@ namespace HotDocs.Sdk.Server.WebService
 			if (string.IsNullOrWhiteSpace(endPointName))
 				throw new ArgumentNullException("WebServices.Services constructor: The parameter 'endPointName' is empty or null");
 			if (string.IsNullOrWhiteSpace(templatePath))
-				throw new ArgumentNullException("WebServices.Services constructor: the parameter 'templatePath' is empty or null"); 
+				throw new ArgumentNullException("WebServices.Services constructor: the parameter 'templatePath' is empty or null");
 			if (Directory.Exists(templatePath) == false)
-				throw new DirectoryNotFoundException(string.Format(@"WebServices.Services constructor: The parameter 'templatePath' folder does not exist at: ""{0}"".",  templatePath));
+				throw new DirectoryNotFoundException(string.Format(@"WebServices.Services constructor: The parameter 'templatePath' folder does not exist at: ""{0}"".", templatePath));
 			_endPointName = endPointName;
 			_baseTemplateLocation = templatePath.ToLower();
 		}
@@ -61,7 +61,7 @@ namespace HotDocs.Sdk.Server.WebService
 				settings = new InterviewSettings();
 
 			// Add the query string to the interview image url so dialog element images can be located.
-			settings.InterviewImageUrlQueryString = "?loc=" + template.CreateLocator() + "&img=";
+			settings.InterviewImageUrlQueryString = "?loc=" + template.CreateLocator() + "&type=img&template=";
 
 			// Configure interview options
 			InterviewOptions itvOpts = InterviewOptions.OmitImages; // Instructs HDS not to return images used by the interview; we'll get them ourselves from the template folder.
@@ -88,10 +88,10 @@ namespace HotDocs.Sdk.Server.WebService
 					settings.PostInterviewUrl, // page to which interview will submit its answers
 					settings.InterviewRuntimeUrl, // location (under this app's domain name) where HotDocs Server JS files are available
 					settings.StyleSheetUrl + "/" + settings.ThemeName + ".css", // URL of CSS stylesheet (typically called hdsuser.css).  hdssystem.css must exist in same directory.
-					settings.InterviewImageUrl, // interview images will be requested from GetImage.ashx, which will stream them from the template directory
+					settings.InterviewImageUrl, // interview images will be requested from GetInterviewFile.ashx, which will stream them from the template directory
 					settings.DisableSaveAnswers != Tristate.True ? settings.SaveAnswersUrl : "", //for the save answers button; if this is null the "Save Answers" button does not appear
 					settings.DisableDocumentPreview != Tristate.True ? settings.DocumentPreviewUrl : "", // document previews will be requested from here; if null the "Document Preview" button does not appear
-					settings.InterviewDefinitionUrl); //Silverlight interview DLLs will be requested from here -- careful with relative URLs!!
+					settings.InterviewDefinitionUrl + "?loc=" + template.CreateLocator()); //Silverlight interview DLLs will be requested from here -- careful with relative URLs!!
 				if (interviewFiles != null)
 				{
 					StringBuilder interview = new StringBuilder(Util.ExtractString(interviewFiles[0]));
@@ -206,8 +206,8 @@ namespace HotDocs.Sdk.Server.WebService
 				throw new ArgumentNullException("template", @"WebService.Services.BuildSupportFiles: the ""template"" parameter passed in was null");
 			using (Proxy client = new Proxy(_endPointName))
 			{
-				string templateId = template.FileName;
-				string templateKey = template.Key;
+				string templateId = GetRelativePath(template.GetFullPath());
+				string templateKey = template.FileName;
 				string templateState = null;
 				client.BuildSupportFiles(templateId, templateKey, flags, templateState);
 				SafeCloseClient(client, null);
@@ -225,8 +225,8 @@ namespace HotDocs.Sdk.Server.WebService
 				throw new ArgumentNullException("template", @"WebService.Services.RemoveSupportFiles: the ""template"" parameter passed in was null");
 			using (Proxy client = new Proxy(_endPointName))
 			{
-				string templateId = template.FileName;
-				string templateKey = template.Key;
+				string templateId = GetRelativePath(template.GetFullPath());
+				string templateKey = template.FileName;
 				string templateState = null;
 				client.RemoveSupportFiles(templateId, templateKey, templateState);
 				SafeCloseClient(client, null);
@@ -234,35 +234,51 @@ namespace HotDocs.Sdk.Server.WebService
 		}
 
 		/// <summary>
-		/// <c>GetInterviewDefinition</c> retrieves an interview definition, either javascript or Silverlight.
+		/// Retrieves a file required by the interview. This could be either an interview definition that contains the 
+		/// variables and logic required to display an interview (questionaire) for the main template or one of its 
+		/// inserted templates, or it could be an image file displayed on a dialog within the interview.
 		/// </summary>
-		/// <param name="state">The template state string, passed as "state" on the query string by the browser interview.</param>
-		/// <param name="templateFile">The template file name, passed as "template" on the query string by the browser interview.</param>
-		/// <param name="format">The requested format of interview definition, according to the "type" query string parameter.
-		/// If type=="js", pass JavaScript; if type=="dll", pass Silverlight; otherwise pass Default.</param>
-		/// <returns>A stream containing the requested interview definition, to be returned to the caller.</returns>
-		public System.IO.Stream GetInterviewDefinition(string state, string templateFile, InterviewFormat format)
+		/// <param name="templateLocator">A template locator string used to locate the template related to the requested file.</param>
+		/// <param name="fileName">The file name of the image, or the file name of the template for which the interview
+		/// definition is being requested. In either case, this value is passed as "template" on the query string by the browser interview.</param>
+		/// <param name="fileType">The type of file being requested: img (image file), js (JavaScript interview definition), 
+		/// or dll (Silverlight interview definition).</param>
+		/// <returns>A stream containing the requested interview file, to be returned to the caller.</returns>
+		public Stream GetInterviewFile(string templateLocator, string fileName, string fileType)
 		{
-			if (string.IsNullOrWhiteSpace(state))
-				throw new ArgumentNullException("state", @"GetInterviewDefinition: the ""state"" parameter pased in was null or empty");
-			if (string.IsNullOrWhiteSpace(templateFile))
-				throw new ArgumentNullException("templateFile", string.Format(@"GetComponentInfo: the ""templateFile"" parameter passed in was null or empty"));
+			// Validate input parameters, creating defaults as appropriate.
+			if (string.IsNullOrEmpty(templateLocator))
+				throw new ArgumentNullException("templateLocator", @"WebService.Services.GetInterviewFile: the ""templateLocator"" parameter passed in was null or empty");
 
-			// Make sure that the state string is unencoded (e.g., convert %2B to +, %3D to =, and %25 to %).
-			state = Uri.UnescapeDataString(state);
+			if (string.IsNullOrEmpty(fileName))
+				throw new ArgumentNullException("fileName", @"WebService.Services.GetInterviewFile: the ""fileName"" parameter passed in was null or empty");
 
-			System.IO.Stream result = null;
+			if (string.IsNullOrEmpty(fileType))
+				throw new ArgumentNullException("fileType", @"WebService.Services.GetInterviewFile: the ""fileType"" parameter passed in was null or empty");
 
-			using (Proxy client = new Proxy(_endPointName))
+			// Locate the template, which we will use to find the image or interview definition file.
+			Template template = Template.Locate(templateLocator);
+
+			// Return an image or interview definition from the template.
+			switch (fileType.ToUpper())
 			{
-				string templateId = string.Empty; // This is an ID for the template that is used in the event that we do not have a template state. But since we do have a template state, so we set this to empty.
-				string templateName = templateFile; // This is the name of the template file for which the interview is being requested (e.g., demoempl.rtf). 
-				string templateState = state; // This is the encrypted state string that was included in the html fragment returned by HotDocs Server when the interiew was first started.
-				BinaryObject binaryObject = client.GetInterviewDefinition(templateId, templateName, format, templateState);
-				SafeCloseClient(client, null);
-				result = new MemoryStream(binaryObject.Data);
+				case "IMG":
+					return template.Location.GetFile(fileName);
+				default:
+					System.IO.Stream result = null;
+
+					using (Proxy client = new Proxy(_endPointName))
+					{
+						string templateId = GetRelativePath(template.GetFullPath()); // The relative path to the template folder.
+						string templateName = fileName; // The name of the template file for which the interview is being requested (e.g., demoempl.rtf). 
+						string templateState = string.Empty; // We are using the templateId rather than template state since all we have to work with is a template locator.
+						InterviewFormat format = InterviewFormat.JavaScript;
+						BinaryObject binaryObject = client.GetInterviewDefinition(templateId, templateName, format, templateState);
+						SafeCloseClient(client, null);
+						result = new MemoryStream(binaryObject.Data);
+					}
+					return result;
 			}
-			return result;
 		}
 
 		#endregion
