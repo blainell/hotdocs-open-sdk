@@ -63,22 +63,20 @@ namespace HotDocs.Sdk.Server.Cloud
 		{
 			// Validate input parameters, creating defaults as appropriate.
 			string logStr = logRef == null ? string.Empty : logRef;
+
 			if (template == null)
 				throw new ArgumentNullException("template", string.Format(@"Cloud.Services.GetInterview: the ""template"" parameter passed in was null, logRef: {0}", logStr));
 
 			if (settings == null)
 				settings = new InterviewSettings();
 
-			string templateLocator = template.CreateLocator();
-
-			// Add the query string to the interview image url so dialog element images can be located.
-			settings.InterviewImageUrlQueryString = "?loc=" + templateLocator + "&type=img&template=";
+			// Set the template locator setting so the interview will know where to find images and interview definitions.
+			settings.TemplateLocator = template.CreateLocator();
 
 			// Configure interview settings
 			settings.Settings["OmitImages"] = "true"; // Instructs HDS not to return images used by the interview; we'll get them ourselves from the template folder.
 			settings.Settings["OmitDefinitions"] = "true"; // Instructs HDS not to return interview definitions; we'll get them ourselves from the template folder.
 			settings.MarkedVariables = (string[])(markedVariables ?? new string[0]);
-			settings.InterviewDefinitionUrl += "?loc=" + templateLocator;
 
 			// Get the interview.
 			InterviewResult result = new InterviewResult();

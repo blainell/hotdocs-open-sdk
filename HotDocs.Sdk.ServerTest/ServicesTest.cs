@@ -138,8 +138,8 @@ namespace HotDocs.Sdk.ServerTest
 			string styleSheetUrl = "HDServerFiles/Stylesheets";
 			string runtimeUrl = "HDServerFiles/js";
 			string interviewDefUrl = "GetInterviewFile.ashx";
-			string interviewImgUrl = "GetInterviewFile.ashx";
-			InterviewSettings settings = new InterviewSettings(postInterviewUrl, runtimeUrl, styleSheetUrl, interviewDefUrl, interviewImgUrl);
+			//string interviewImgUrl = "GetInterviewFile.ashx";
+			InterviewSettings settings = new InterviewSettings(postInterviewUrl, runtimeUrl, styleSheetUrl, interviewDefUrl);
 
 			// Set up the Marked Variables for the test.
 			string[] markedVars = null; // new string[] { };
@@ -167,7 +167,7 @@ namespace HotDocs.Sdk.ServerTest
 			Assert.IsTrue(result.HtmlFragment.Contains(runtimeUrl));
 			Assert.IsTrue(result.HtmlFragment.Contains(styleSheetUrl));
 			Assert.IsTrue(result.HtmlFragment.Contains(interviewDefUrl));
-			Assert.IsTrue(result.HtmlFragment.Contains(interviewImgUrl));
+			//Assert.IsTrue(result.HtmlFragment.Contains(interviewImgUrl));
 			Assert.IsTrue(result.HtmlFragment.Contains("hdMainDiv"));
 			Assert.IsFalse(result.HtmlFragment.Contains("Employee Name\": { t: \"TX\", m:true")); // Employee Name should not be "marked"
 

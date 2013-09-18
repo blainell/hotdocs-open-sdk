@@ -53,15 +53,17 @@ namespace HotDocs.Sdk.Server.WebService
 		/// <returns>An object which contains an HTML fragment to be inserted in a web page to display the interview.</returns>
 		public InterviewResult GetInterview(Template template, TextReader answers, InterviewSettings settings, IEnumerable<string> markedVariables, string logRef)
 		{
+			// Validate input parameters, creating defaults as appropriate.
 			string logStr = logRef == null ? string.Empty : logRef;
+			
 			if (template == null)
 				throw new ArgumentNullException("template", string.Format(@"WebServices.Services.GetInterview: the ""template"" parameter passed in was null, logRef: {0}", logStr));
-			// Validate input parameters, creating defaults as appropriate.
+			
 			if (settings == null)
 				settings = new InterviewSettings();
 
-			// Add the query string to the interview image url so dialog element images can be located.
-			settings.InterviewImageUrlQueryString = "?loc=" + template.CreateLocator() + "&type=img&template=";
+			// Set the template locator setting so the interview will know where to find images and interview definitions.
+			settings.TemplateLocator = template.CreateLocator();
 
 			// Configure interview options
 			InterviewOptions itvOpts = InterviewOptions.OmitImages; // Instructs HDS not to return images used by the interview; we'll get them ourselves from the template folder.
@@ -91,7 +93,7 @@ namespace HotDocs.Sdk.Server.WebService
 					settings.InterviewImageUrl, // interview images will be requested from GetInterviewFile.ashx, which will stream them from the template directory
 					settings.DisableSaveAnswers != Tristate.True ? settings.SaveAnswersUrl : "", //for the save answers button; if this is null the "Save Answers" button does not appear
 					settings.DisableDocumentPreview != Tristate.True ? settings.DocumentPreviewUrl : "", // document previews will be requested from here; if null the "Document Preview" button does not appear
-					settings.InterviewDefinitionUrl + "?loc=" + template.CreateLocator()); //Silverlight interview DLLs will be requested from here -- careful with relative URLs!!
+					settings.InterviewDefinitionUrl); // Interview definitions (Silverlight or JavaScript) will be requested from here -- careful with relative URLs!!
 				if (interviewFiles != null)
 				{
 					StringBuilder interview = new StringBuilder(Util.ExtractString(interviewFiles[0]));

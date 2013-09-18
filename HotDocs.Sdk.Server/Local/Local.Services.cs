@@ -164,14 +164,15 @@ namespace HotDocs.Sdk.Server.Local
 		{
 			// Validate input parameters, creating defaults as appropriate.
 			string logStr = logRef == null ? string.Empty : logRef;
+
 			if (template == null)
 				throw new ArgumentNullException("template", string.Format(@"Local.Services.GetInterview: the ""template"" parameter passed in was null, logRef: {0}", logStr));
 
 			if (settings == null)
 				settings = new InterviewSettings();
 
-			// Add the query string to the interview image url so dialog element images can be located.
-			settings.InterviewImageUrlQueryString = "?loc=" + template.CreateLocator() + "&type=img&template=";
+			// Set the template locator setting so the interview will know where to find images and interview definitions.
+			settings.TemplateLocator = template.CreateLocator();
 
 			// HotDocs Server reads the following settings out of the registry all the time; therefore these items are ignored when running against Server:
 			//		settings.AddHdMainDiv
@@ -246,7 +247,7 @@ namespace HotDocs.Sdk.Server.Local
 							ansColl,
 							settings.PostInterviewUrl,
 							settings.Title,
-							settings.InterviewDefinitionUrl + "?loc=" + template.CreateLocator(),
+							settings.InterviewDefinitionUrl,
 							tempFolder != null ? tempFolder.Path : null, // the path to which HDS should copy interview images; also the path that may become part of the DocumentPreviewStateString & passed to document preview handler
 							settings.InterviewImageUrl,
 							settings.DisableSaveAnswers != Tristate.True ? settings.SaveAnswersUrl : "", // TODO: After TFS #5598 is fixed, we can go back to just setting the Url here and let HDS do the work of determining whether to use the url or not.

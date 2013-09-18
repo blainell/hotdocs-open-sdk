@@ -23,8 +23,8 @@ public partial class Embedded : System.Web.UI.Page
 	protected string GetSessionID()
 	{
 		InterviewFormat format = HotDocs.Sdk.Util.ReadConfigurationEnum<InterviewFormat>("InterviewFormat", InterviewFormat.Unspecified);
-		var client = new RestClient(Settings.SubscriberID, Settings.SigningKey);
-		HotDocs.Sdk.Template template = new HotDocs.Sdk.Template(new HotDocs.Sdk.PackagePathTemplateLocation(_packageID, Path.Combine(Settings.TemplatePath, _packageID +  ".pkg")));
+		var client = new RestClient(Settings.SubscriberID, Settings.SigningKey, null, SamplePortal.Settings.CloudServicesAddress);
+		HotDocs.Sdk.Template template = new HotDocs.Sdk.Template(new HotDocs.Sdk.PackagePathTemplateLocation(_packageID, Path.Combine(Settings.TemplatePath, _packageID + ".pkg")));
 		return client.CreateSession(template, null, null, null, format);
 	}
 }
