@@ -63,9 +63,9 @@ namespace HotDocs.Sdk.Server.Local
 
 			string templateFilePath = template.GetFullPath();
 
-			//Get the hvc path. GetInterviewInformation will also validate the template file name.
-			string hvcPath, interviewPath;
-			GetInterviewInformation(templateFilePath, out hvcPath, out interviewPath);
+			//Get the hvc path. GetHvcPath will also validate the template file name.
+			string hvcPath;
+			GetHvcPath(templateFilePath, out hvcPath);
 			if (hvcPath.Length == 0)
 				throw new Exception("Invalid templateID");
 			if (!File.Exists(hvcPath))
@@ -353,7 +353,7 @@ namespace HotDocs.Sdk.Server.Local
 			if (docType == DocumentType.Native)
 			{
 				docType = Document.GetDocumentType(docPath);
-				docStream = CreateMemStreamFromFile(docPath);
+				docStream = LoadFileIntoMemStream(docPath);
 			}
 			else if (docType == DocumentType.HTMLwDataURIs)
 			{
@@ -376,11 +376,11 @@ namespace HotDocs.Sdk.Server.Local
 						supportingFiles.Add(LoadFileIntoNamedStream(img));
 				}
 
-				docStream = CreateMemStreamFromFile(docPath);
+				docStream = LoadFileIntoMemStream(docPath);
 			}
 			else
 			{
-				docStream = CreateMemStreamFromFile(docPath);
+				docStream = LoadFileIntoMemStream(docPath);
 			}
 
 			//Now that we've loaded all of the assembly results into memory, remove the assembly files.
@@ -458,70 +458,18 @@ namespace HotDocs.Sdk.Server.Local
 		}
 
 		#endregion
-		//TODO: Move this to HotDocs.Sdk.Template?
-		private string GetDocExtension(Template template, DocumentType docType)
-		{
-			string ext = "";
-			switch (docType)
-			{
-				case DocumentType.HFD:
-					ext = ".hfd";
-					break;
-				case DocumentType.HPD:
-					ext = ".hpd";
-					break;
-				case DocumentType.HTML:
-					ext = ".htm";
-					break;
-				case DocumentType.HTMLwDataURIs:
-					ext = ".htm";
-					break;
-				case DocumentType.MHTML:
-					ext = ".htm";
-					break;
-				case DocumentType.Native:
-					{
-						string templateExt = Path.GetExtension(template.FileName);
-						if (templateExt == ".hpt")
-							ext = ".pdf";
-						else if (templateExt == ".ttx")
-							ext = ".txt";
-						else if (templateExt == ".wpt")
-							ext = ".wpd";
-						else
-							ext = templateExt;
-						break;
-					}
-				case DocumentType.PDF:
-					ext = ".pdf";
-					break;
-				case DocumentType.PlainText:
-					ext = ".txt";
-					break;
-				//DOC isn't supported because DOC files aren't generated on a server.
-				//case DocumentType.WordDOC:
-				//	ext = ".doc";
-				//	break;
-				case DocumentType.WordDOCX:
-					ext = ".docx";
-					break;
-				case DocumentType.WordPerfect:
-					ext = ".wpd";
-					break;
-				case DocumentType.WordRTF:
-					ext = ".rtf";
-					break;
-				//TODO: Make sure all values are properly handled. XML is missing here.
-				default:
-					throw new Exception("Unsupported document type.");
-			}
-			return ext;
-		}
 
+		/// <summary>
+		/// Create a new directory and a new temporary file in that directory.
+		/// Use this method in conjunction with FreeTempDocDir to free the folder and its contents.
+		/// </summary>
+		/// <param name="template"></param>
+		/// <param name="docType"></param>
+		/// <returns></returns>
 		private string CreateTempDocDirAndPath(Template template, DocumentType docType)
 		{
 			string dirPath;
-			string ext = GetDocExtension(template, docType);
+			string ext = Template.GetDocExtension(docType, template);
 			do
 			{
 				dirPath = Path.Combine(_tempPath, Path.GetRandomFileName());
@@ -531,14 +479,17 @@ namespace HotDocs.Sdk.Server.Local
 			using (File.Create(filePath)) { }
 			return filePath;
 		}
-
+		/// <summary>
+		/// Free a folder and its content.
+		/// </summary>
+		/// <param name="docPath">A temporary document path returned by CreateTempDocDirAndPath.</param>
 		private void FreeTempDocDir(string docPath)
 		{
 			string dir = Path.GetDirectoryName(docPath);
 			Directory.Delete(dir, true);
 		}
 
-		private Stream LoadFileIntoMemStream(string filePath)
+		private MemoryStream LoadFileIntoMemStream(string filePath)
 		{
 			MemoryStream memStream = new MemoryStream();
 			using (FileStream fs = File.OpenRead(filePath))
@@ -568,17 +519,16 @@ namespace HotDocs.Sdk.Server.Local
 			return (val != null
 				&& Regex.IsMatch(val, c_templateIDRegEx, RegexOptions.IgnoreCase));
 		}
-		//TODO: Get rid of interviewPath???
-		private static void GetInterviewInformation(string templateFilePath, out string hvcPath, out string interviewPath)
+
+		private static void GetHvcPath(string templateFilePath, out string hvcPath)
 		{
 			string templateID = Path.GetFileName(templateFilePath);
 
 			if (!CheckTemplateId(templateID))
 				throw new HotDocs.Server.HotDocsServerException("Invalid template ID");
 
-			//calculate the interview path and hvc path. These files should be in the same directory
-			//and have the same name as the template file. They should only differ by extension.
-			interviewPath = System.IO.Path.ChangeExtension(templateFilePath, ".js");
+			//Calculate the hvc path. This file should be in the same directory
+			// and have the same name as the template file. They should only differ by extension.
 			hvcPath = System.IO.Path.ChangeExtension(templateFilePath, ".hvc");
 		}
 
@@ -596,11 +546,12 @@ namespace HotDocs.Sdk.Server.Local
 					return "True/False";
 				case hdsi.ansType.ansTypeMC:
 					return "Multiple Choice";
-				//TODO: Do we need DocText support?
+				case hdsi.ansType.ansTypeDocText://Not needed in this context.
 				default:
 					return "Unknown";
 			}
 		}
+
 		private HotDocs.Server.OutputOptions ConvertOutputOptions(OutputOptions sdkOpts)
 		{
 			HotDocs.Server.OutputOptions hdsOpts = null;
@@ -669,16 +620,6 @@ namespace HotDocs.Sdk.Server.Local
 			}
 
 			return hdsOpts;
-		}
-
-		MemoryStream CreateMemStreamFromFile(string filePath)
-		{
-			using (FileStream fileStream = File.OpenRead(filePath))
-			{
-				byte[] bytes = new byte[fileStream.Length];
-				fileStream.Read(bytes, 0, (int)fileStream.Length);
-				return new MemoryStream(bytes);
-			}
 		}
 	}
 }

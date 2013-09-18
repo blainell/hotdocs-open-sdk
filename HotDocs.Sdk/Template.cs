@@ -301,5 +301,76 @@ namespace HotDocs.Sdk
 				return DocumentType.Unknown;
 			}
 		}
+		/// <summary>
+		/// Returns the assembled document extension associated with the NativeDocumentType property.
+		/// </summary>
+		/// <returns></returns>
+		public string GetDocExtension()
+		{
+			return GetDocExtension(NativeDocumentType, this);
+		}
+		/// <summary>
+		/// Returns the assembled document extension for a specific document type.
+		/// </summary>
+		/// <param name="docType">The document type to find an extension for.</param>
+		/// <param name="template">The template to to derive an extension from if docType is DocumentType.Native.</param>
+		/// <returns></returns>
+		public static string GetDocExtension(DocumentType docType, Template template)
+		{
+			string ext = "";
+			switch (docType)
+			{
+				case DocumentType.HFD:
+					ext = ".hfd";
+					break;
+				case DocumentType.HPD:
+					ext = ".hpd";
+					break;
+				case DocumentType.HTML:
+					ext = ".htm";
+					break;
+				case DocumentType.HTMLwDataURIs:
+					ext = ".htm";
+					break;
+				case DocumentType.MHTML:
+					ext = ".htm";
+					break;
+				case DocumentType.Native:
+					{
+						string templateExt = Path.GetExtension(template.FileName);
+						if (templateExt == ".hpt")
+							ext = ".pdf";
+						else if (templateExt == ".ttx")
+							ext = ".txt";
+						else if (templateExt == ".wpt")
+							ext = ".wpd";
+						else
+							ext = templateExt;
+						break;
+					}
+				case DocumentType.PDF:
+					ext = ".pdf";
+					break;
+				case DocumentType.PlainText:
+					ext = ".txt";
+					break;
+				case DocumentType.WordDOC://Note that DOC files are not supported on a server.
+					ext = ".doc";
+					break;
+				case DocumentType.WordDOCX:
+					ext = ".docx";
+					break;
+				case DocumentType.WordPerfect:
+					ext = ".wpd";
+					break;
+				case DocumentType.WordRTF:
+					ext = ".rtf";
+					break;
+				//For XML, use plain text.
+				default:
+					throw new Exception("Unsupported document type.");
+			}
+			return ext;
+		}
 	}
 }
