@@ -101,7 +101,6 @@ namespace HotDocs.Sdk.Server.Local
 
 							using (HotDocs.Server.ComponentProperties properties = cmp.Properties)
 							{
-								//TODO: Use more descriptive variable names.
 								using (HotDocs.Server.ComponentProperty p = (HotDocs.Server.ComponentProperty)properties["Variables"])
 								{
 									variableNames = (object[])p.Value;
@@ -588,7 +587,7 @@ namespace HotDocs.Sdk.Server.Local
 				hdsPdfOpts.UserPassword = sdkPdfOpts.UserPassword;
 
 				hdsi.PdfOutputFlags hdsFlags = 0;
-				if (sdkPdfOpts.EmbedFonts == Tristate.True)//TODO: What do we do in the case of Default.
+				if (sdkPdfOpts.EmbedFonts)
 					hdsFlags |= hdsi.PdfOutputFlags.pdfOut_EmbedFonts;
 				if (sdkPdfOpts.KeepFillablePdf)
 					hdsFlags |= hdsi.PdfOutputFlags.pdfOut_KeepFillablePdf;
