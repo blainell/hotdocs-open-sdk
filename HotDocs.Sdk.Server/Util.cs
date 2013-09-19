@@ -217,6 +217,22 @@ namespace HotDocs.Sdk.Server
 			interview.AppendLine("</script>");
 		}
 
+		internal static string GetInterviewDefinitionUrl(InterviewSettings settings, Template template)
+		{
+			// Start with the base InterviewFilesUrl and see if it already has a query string.
+			//  If so, we will just be adding parameters. Otherwise, we will be appending a new query string to the base url.
+			string url = settings.InterviewFilesUrl;
+			url += url.Contains("?") ? "&" : "?";
+			url += ("loc=" + template.CreateLocator());
+			return url;
+		}
+
+		internal static string GetInterviewImageUrl(InterviewSettings settings, Template template)
+		{
+			// This is the same as the interview definition URL, but we also add the type and template parameters to the query string.
+			return GetInterviewDefinitionUrl(settings, template) + "&type=img&template=";
+		}
+
 		internal static string EmbedImagesInURIs(string fileName)
 		{
 			string html = null;
@@ -239,8 +255,6 @@ namespace HotDocs.Sdk.Server
 			}
 			return html;
 		}
-
-		
 
 		internal static string CreateMimePart(string contentBoundary, string contentType, string contentID, string content, string transferEncoding)
 		{
@@ -456,5 +470,5 @@ namespace HotDocs.Sdk.Server
 		}
 	}
 
-	
+
 }

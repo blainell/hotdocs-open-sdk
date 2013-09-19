@@ -59,13 +59,13 @@ namespace HotDocs.Sdk.Server.Local
 
 			// Validate input parameters, creating defaults as appropriate.
 			if (template == null)
-				throw new ArgumentNullException("template", @"Local.Services.GetInterviewDefinition: the ""template"" parameter passed in was null or empty, logRef: " + logStr);
+				throw new ArgumentNullException("template", @"Local.Services.GetInterviewFile: the ""template"" parameter passed in was null or empty, logRef: " + logStr);
 
 			string templateFilePath = template.GetFullPath();
 
-			//Get the hvc path. GetInterviewInformation will also validate the template file name.
-			string hvcPath, interviewPath;
-			GetInterviewInformation(templateFilePath, out hvcPath, out interviewPath);
+			//Get the hvc path. GetHvcPath will also validate the template file name.
+			string hvcPath;
+			GetHvcPath(templateFilePath, out hvcPath);
 			if (hvcPath.Length == 0)
 				throw new Exception("Invalid templateID");
 			if (!File.Exists(hvcPath))
@@ -101,7 +101,6 @@ namespace HotDocs.Sdk.Server.Local
 
 							using (HotDocs.Server.ComponentProperties properties = cmp.Properties)
 							{
-								//TODO: Use more descriptive variable names.
 								using (HotDocs.Server.ComponentProperty p = (HotDocs.Server.ComponentProperty)properties["Variables"])
 								{
 									variableNames = (object[])p.Value;
@@ -165,14 +164,12 @@ namespace HotDocs.Sdk.Server.Local
 		{
 			// Validate input parameters, creating defaults as appropriate.
 			string logStr = logRef == null ? string.Empty : logRef;
+
 			if (template == null)
 				throw new ArgumentNullException("template", string.Format(@"Local.Services.GetInterview: the ""template"" parameter passed in was null, logRef: {0}", logStr));
 
 			if (settings == null)
 				settings = new InterviewSettings();
-
-			// Add the query string to the interview image url so dialog element images can be located.
-			settings.InterviewImageUrlQueryString = "?loc=" + template.CreateLocator() + "&img=";
 
 			// HotDocs Server reads the following settings out of the registry all the time; therefore these items are ignored when running against Server:
 			//		settings.AddHdMainDiv
@@ -247,9 +244,9 @@ namespace HotDocs.Sdk.Server.Local
 							ansColl,
 							settings.PostInterviewUrl,
 							settings.Title,
-							settings.InterviewDefinitionUrl,
+							Util.GetInterviewDefinitionUrl(settings, template),
 							tempFolder != null ? tempFolder.Path : null, // the path to which HDS should copy interview images; also the path that may become part of the DocumentPreviewStateString & passed to document preview handler
-							settings.InterviewImageUrl,
+							Util.GetInterviewImageUrl(settings, template),
 							settings.DisableSaveAnswers != Tristate.True ? settings.SaveAnswersUrl : "", // TODO: After TFS #5598 is fixed, we can go back to just setting the Url here and let HDS do the work of determining whether to use the url or not.
 							settings.DisableDocumentPreview != Tristate.True ? settings.DocumentPreviewUrl : "") // TODO: Fix up after TFS #5598 is fixed (as above).
 						);
@@ -267,28 +264,41 @@ namespace HotDocs.Sdk.Server.Local
 		}
 
 		/// <summary>
-		/// Retrieve an interview definition. An interview definition is the questionaire content of an interview specific
-		/// to a template. The template may be the main template or an inserted template.
+		/// Retrieves a file required by the interview. This could be either an interview definition that contains the 
+		/// variables and logic required to display an interview (questionaire) for the main template or one of its 
+		/// inserted templates, or it could be an image file displayed on a dialog within the interview.
 		/// </summary>
-		/// <param name="state">The template state string, passed as "state" on the query string by the browser interview.</param>
-		/// <param name="templateFile">The template file name, passed as "template" on the query string by the browser interview.</param>
-		/// <param name="format">The requested format of interview definition, according to the "type" query string parameter.
-		/// If type=="js", pass JavaScript; if type=="dll", pass Silverlight; otherwise pass Default.</param>
-		/// <returns>A stream containing the requested interview definition, to be returned to the caller.</returns>
-		public Stream GetInterviewDefinition(string state, string templateFile, InterviewFormat format)
+		/// <param name="template">The template related to the requested file.</param>
+		/// <param name="fileName">The file name of the image, or the file name of the template for which the interview
+		/// definition is being requested. In either case, this value is passed as "template" on the query string by the browser interview.</param>
+		/// <param name="fileType">The type of file being requested: img (image file), js (JavaScript interview definition), 
+		/// or dll (Silverlight interview definition).</param>
+		/// <returns>A stream containing the requested interview file, to be returned to the caller.</returns>
+		public Stream GetInterviewFile(Template template, string fileName, string fileType)
 		{
 			// Validate input parameters, creating defaults as appropriate.
-			if (string.IsNullOrEmpty(state))
-				throw new ArgumentNullException("state", @"Local.Services.GetInterviewDefinition: the ""state"" parameter passed in was null or empty");
+			if (template == null)
+				throw new ArgumentNullException("template", @"Local.Services.GetInterviewFile: the ""template"" parameter passed in was null");
 
-			if (string.IsNullOrEmpty(templateFile))
-				throw new ArgumentNullException("templateFile", @"Local.Services.GetInterviewDefinition: the ""templateFile"" parameter passed in was null or empty");
+			if (string.IsNullOrEmpty(fileName))
+				throw new ArgumentNullException("fileName", @"Local.Services.GetInterviewFile: the ""fileName"" parameter passed in was null or empty");
 
-			string interviewDefPath = _app.GetInterviewDefinitionFromState(state, templateFile,
-				  format == InterviewFormat.Silverlight
-					? hdsi.interviewFormat.Silverlight
-					: hdsi.interviewFormat.javascript);
-			return File.OpenRead(interviewDefPath);
+			if (string.IsNullOrEmpty(fileType))
+				throw new ArgumentNullException("fileType", @"Local.Services.GetInterviewFile: the ""fileType"" parameter passed in was null or empty");
+
+			// Return an image or interview definition from the template.
+			switch (fileType.ToUpper())
+			{
+				case "IMG":
+					return template.Location.GetFile(fileName);
+				default:
+					string interviewDefPath = _app.GetInterviewDefinitionFromTemplate(
+						template.GetFullPath(), 
+						fileName,
+						fileType == "dll" ? hdsi.interviewFormat.Silverlight : hdsi.interviewFormat.javascript
+						);
+					return File.OpenRead(interviewDefPath);
+			}
 		}
 		/// <summary>
 		/// Assemble a document from the given template, answers and settings.
@@ -313,12 +323,11 @@ namespace HotDocs.Sdk.Server.Local
 			ansColl.OverlayXMLAnswers(answers == null ? "" : answers.ReadToEnd());
 			HotDocs.Server.OutputOptions outputOptions = ConvertOutputOptions(settings.OutputOptions);
 
-			//TODO: Make sure files get cleaned up. (It doesn't appear to be getting cleaned up.)
-			string docPath = CreateTempDocDirAndPath(template, settings.Format);
 
 			//TODO: Review this.
 			int savePendingAssembliesCount = _app.PendingAssemblyCmdLineStrings.Count;
 
+			string docPath = CreateTempDocDirAndPath(template, settings.Format);
 			_app.AssembleDocument(
 				template.GetFullPath(),//Template path
 				hdsi.HDAssemblyOptions.asmOptMarkupView,
@@ -337,45 +346,6 @@ namespace HotDocs.Sdk.Server.Local
 					resultAnsColl.RemoveAnswer(ans.Name);
 			}
 
-			//Prepare the image information for the browser.
-			DocumentType docType = settings.Format;
-			List<NamedStream> supportingFiles = new List<NamedStream>();
-
-			if (docType == DocumentType.Native)
-			{
-				docType = Document.GetDocumentType(docPath);
-			}
-			else if (docType == DocumentType.HTMLwDataURIs)
-			{
-				File.WriteAllText(docPath, Util.EmbedImagesInURIs(docPath));  // Overwrite .html file.  If the consumer requested both HTML and HTMLwDataURIs, they'll only get the latter.
-			}
-			else if (docType == DocumentType.MHTML)
-			{
-
-				string mhtmlFilePath = Path.Combine(Path.GetDirectoryName(docPath), Path.GetFileNameWithoutExtension(docPath) + ".mhtml");
-				using (StreamWriter htmFile = File.CreateText(mhtmlFilePath))
-				{
-					htmFile.Write(Util.HtmlToMultiPartMime(docPath));
-				}
-			}
-			else if (docType == DocumentType.HTML)
-			{
-				string targetFilenameNoExtention = Path.GetFileNameWithoutExtension(docPath);
-				foreach (string img in Directory.EnumerateFiles(Path.GetDirectoryName(docPath)))
-				{
-					string ext = Path.GetExtension(img).ToLower();
-					if (Path.GetFileName(img).StartsWith(targetFilenameNoExtention) && (ext == ".jpg" || ext == ".jpeg" || ext == ".gif" || ext == ".png" || ext == ".bmp"))
-						supportingFiles.Add(LoadFileIntoNamedStream(img));
-				}
-			}
-
-			//Prepare the unanswered variables list for the assembly result.
-			//TODO: Just build an array from _app.UnansweredVariablesList???
-			List<string> list = new List<string>();
-			foreach (string unans in _app.UnansweredVariablesList)
-				list.Add(unans);
-			string[] unansweredVariables = list.ToArray();
-
 			//Build the list of pending assemblies.
 			List<Template> pendingAssemblies = new List<Template>();
 			for (int i = savePendingAssembliesCount; i < _app.PendingAssemblyCmdLineStrings.Count; i++)
@@ -386,10 +356,49 @@ namespace HotDocs.Sdk.Server.Local
 				pendingAssemblies.Add(new Template(Path.GetFileName(path), template.Location.Duplicate(), switches));
 			}
 
-			FileStream stream = File.OpenRead(docPath);
-			Document document = new Document(template, stream, docType, supportingFiles.ToArray(), unansweredVariables);
-			AssembleDocumentResult result = new AssembleDocumentResult(document, resultAnsColl.XmlAnswers, pendingAssemblies.ToArray(), unansweredVariables);
+			//Prepare the document stream and image information for the browser.
+			DocumentType docType = settings.Format;
+			List<NamedStream> supportingFiles = new List<NamedStream>();
+			MemoryStream docStream;
+			if (docType == DocumentType.Native)
+			{
+				docType = Document.GetDocumentType(docPath);
+				docStream = LoadFileIntoMemStream(docPath);
+			}
+			else if (docType == DocumentType.HTMLwDataURIs)
+			{
+				//If the consumer requested both HTML and HTMLwDataURIs, they'll only get the latter.
+				string content = Util.EmbedImagesInURIs(docPath);
+				docStream = new MemoryStream(Encoding.UTF8.GetBytes(content));
+			}
+			else if (docType == DocumentType.MHTML)
+			{
+				string content = Util.HtmlToMultiPartMime(docPath);
+				docStream = new MemoryStream(Encoding.UTF8.GetBytes(content));
+			}
+			else if (docType == DocumentType.HTML)
+			{
+				string targetFilenameNoExtention = Path.GetFileNameWithoutExtension(docPath);
+				foreach (string img in Directory.EnumerateFiles(Path.GetDirectoryName(docPath)))
+				{
+					string ext = Path.GetExtension(img).ToLower();
+					if (Path.GetFileName(img).StartsWith(targetFilenameNoExtention) && (ext == ".jpg" || ext == ".jpeg" || ext == ".gif" || ext == ".png" || ext == ".bmp"))
+						supportingFiles.Add(LoadFileIntoNamedStream(img));
+				}
 
+				docStream = LoadFileIntoMemStream(docPath);
+			}
+			else
+			{
+				docStream = LoadFileIntoMemStream(docPath);
+			}
+
+			//Now that we've loaded all of the assembly results into memory, remove the assembly files.
+			FreeTempDocDir(docPath);
+
+			//Return the results.
+			Document document = new Document(template, docStream, docType, supportingFiles.ToArray(), _app.UnansweredVariablesList.ToArray());
+			AssembleDocumentResult result = new AssembleDocumentResult(document, resultAnsColl.XmlAnswers, pendingAssemblies.ToArray(), _app.UnansweredVariablesList.ToArray());
 			return result;
 		}
 		/// <summary>
@@ -459,90 +468,38 @@ namespace HotDocs.Sdk.Server.Local
 		}
 
 		#endregion
-		//TODO: Move this to HotDocs.Sdk.Template?
-		private string GetDocExtension(Template template, DocumentType docType)
-		{
-			string ext = "";
-			switch (docType)
-			{
-				case DocumentType.HFD:
-					ext = ".hfd";
-					break;
-				case DocumentType.HPD:
-					ext = ".hpd";
-					break;
-				case DocumentType.HTML:
-					ext = ".htm";
-					break;
-				case DocumentType.HTMLwDataURIs:
-					ext = ".htm";
-					break;
-				case DocumentType.MHTML:
-					ext = ".htm";
-					break;
-				case DocumentType.Native:
-					{
-						string templateExt = Path.GetExtension(template.FileName);
-						if (templateExt == ".hpt")
-							ext = ".pdf";
-						else if (templateExt == ".ttx")
-							ext = ".txt";
-						else if (templateExt == ".wpt")
-							ext = ".wpd";
-						else
-							ext = templateExt;
-						break;
-					}
-				case DocumentType.PDF:
-					ext = ".pdf";
-					break;
-				case DocumentType.PlainText:
-					ext = ".txt";
-					break;
-				//DOC isn't supported because DOC files aren't generated on a server.
-				//case DocumentType.WordDOC:
-				//	ext = ".doc";
-				//	break;
-				case DocumentType.WordDOCX:
-					ext = ".docx";
-					break;
-				case DocumentType.WordPerfect:
-					ext = ".wpd";
-					break;
-				case DocumentType.WordRTF:
-					ext = ".rtf";
-					break;
-				//TODO: Make sure all values are properly handled. XML is missing here.
-				default:
-					throw new Exception("Unsupported document type.");
-			}
-			return ext;
-		}
 
+		/// <summary>
+		/// Create a new directory and a new temporary file in that directory.
+		/// Use this method in conjunction with FreeTempDocDir to free the folder and its contents.
+		/// </summary>
+		/// <param name="template"></param>
+		/// <param name="docType"></param>
+		/// <returns></returns>
 		private string CreateTempDocDirAndPath(Template template, DocumentType docType)
 		{
-			//TODO: Don't re-use fullPath.
-			//TODO: Make sure the created files and folders get cleaned up.
-			string fullPath;
-			string ext = GetDocExtension(template, docType);
+			string dirPath;
+			string ext = Template.GetDocExtension(docType, template);
 			do
 			{
-				fullPath = Path.Combine(_tempPath, Path.GetRandomFileName());
-			} while (Directory.Exists(fullPath));
-			Directory.CreateDirectory(fullPath);
-			fullPath = Path.Combine(fullPath, Path.GetRandomFileName() + ext);
-			using (File.Create(fullPath)) { }
-			return fullPath;
+				dirPath = Path.Combine(_tempPath, Path.GetRandomFileName());
+			} while (Directory.Exists(dirPath));
+			Directory.CreateDirectory(dirPath);
+			string filePath = Path.Combine(dirPath, Path.GetRandomFileName() + ext);
+			using (File.Create(filePath)) { }
+			return filePath;
 		}
-
-		//TODO: This is not used.
+		/// <summary>
+		/// Free a folder and its content.
+		/// </summary>
+		/// <param name="docPath">A temporary document path returned by CreateTempDocDirAndPath.</param>
 		private void FreeTempDocDir(string docPath)
 		{
 			string dir = Path.GetDirectoryName(docPath);
 			Directory.Delete(dir, true);
 		}
 
-		private Stream LoadFileIntoMemStream(string filePath)
+		private MemoryStream LoadFileIntoMemStream(string filePath)
 		{
 			MemoryStream memStream = new MemoryStream();
 			using (FileStream fs = File.OpenRead(filePath))
@@ -572,17 +529,16 @@ namespace HotDocs.Sdk.Server.Local
 			return (val != null
 				&& Regex.IsMatch(val, c_templateIDRegEx, RegexOptions.IgnoreCase));
 		}
-		//TODO: Get rid of interviewPath???
-		private static void GetInterviewInformation(string templateFilePath, out string hvcPath, out string interviewPath)
+
+		private static void GetHvcPath(string templateFilePath, out string hvcPath)
 		{
 			string templateID = Path.GetFileName(templateFilePath);
 
 			if (!CheckTemplateId(templateID))
 				throw new HotDocs.Server.HotDocsServerException("Invalid template ID");
 
-			//calculate the interview path and hvc path. These files should be in the same directory
-			//and have the same name as the template file. They should only differ by extension.
-			interviewPath = System.IO.Path.ChangeExtension(templateFilePath, ".js");
+			//Calculate the hvc path. This file should be in the same directory
+			// and have the same name as the template file. They should only differ by extension.
 			hvcPath = System.IO.Path.ChangeExtension(templateFilePath, ".hvc");
 		}
 
@@ -600,11 +556,12 @@ namespace HotDocs.Sdk.Server.Local
 					return "True/False";
 				case hdsi.ansType.ansTypeMC:
 					return "Multiple Choice";
-				//TODO: Do we need DocText support?
+				case hdsi.ansType.ansTypeDocText://Not needed in this context.
 				default:
 					return "Unknown";
 			}
 		}
+
 		private HotDocs.Server.OutputOptions ConvertOutputOptions(OutputOptions sdkOpts)
 		{
 			HotDocs.Server.OutputOptions hdsOpts = null;
@@ -625,7 +582,7 @@ namespace HotDocs.Sdk.Server.Local
 				hdsPdfOpts.UserPassword = sdkPdfOpts.UserPassword;
 
 				hdsi.PdfOutputFlags hdsFlags = 0;
-				if (sdkPdfOpts.EmbedFonts == Tristate.True)//TODO: What do we do in the case of Default.
+				if (sdkPdfOpts.EmbedFonts)
 					hdsFlags |= hdsi.PdfOutputFlags.pdfOut_EmbedFonts;
 				if (sdkPdfOpts.KeepFillablePdf)
 					hdsFlags |= hdsi.PdfOutputFlags.pdfOut_KeepFillablePdf;
@@ -673,16 +630,6 @@ namespace HotDocs.Sdk.Server.Local
 			}
 
 			return hdsOpts;
-		}
-
-		MemoryStream CreateMemStreamFromFile(string filePath)
-		{
-			using (FileStream fileStream = File.OpenRead(filePath))
-			{
-				byte[] bytes = new byte[fileStream.Length];
-				fileStream.Read(bytes, 0, (int)fileStream.Length);
-				return new MemoryStream(bytes);
-			}
 		}
 	}
 }

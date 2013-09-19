@@ -137,9 +137,9 @@ namespace HotDocs.Sdk.ServerTest
 			string postInterviewUrl = "PostInterview.aspx";
 			string styleSheetUrl = "HDServerFiles/Stylesheets";
 			string runtimeUrl = "HDServerFiles/js";
-			string interviewDefUrl = "GetInterviewDef.ashx";
-			string interviewImgUrl = "GetImage.ashx";
-			InterviewSettings settings = new InterviewSettings(postInterviewUrl, runtimeUrl, styleSheetUrl, interviewDefUrl, interviewImgUrl);
+			string interviewDefUrl = "GetInterviewFile.ashx";
+			//string interviewImgUrl = "GetInterviewFile.ashx";
+			InterviewSettings settings = new InterviewSettings(postInterviewUrl, runtimeUrl, styleSheetUrl, interviewDefUrl);
 
 			// Set up the Marked Variables for the test.
 			string[] markedVars = null; // new string[] { };
@@ -167,7 +167,7 @@ namespace HotDocs.Sdk.ServerTest
 			Assert.IsTrue(result.HtmlFragment.Contains(runtimeUrl));
 			Assert.IsTrue(result.HtmlFragment.Contains(styleSheetUrl));
 			Assert.IsTrue(result.HtmlFragment.Contains(interviewDefUrl));
-			Assert.IsTrue(result.HtmlFragment.Contains(interviewImgUrl));
+			//Assert.IsTrue(result.HtmlFragment.Contains(interviewImgUrl));
 			Assert.IsTrue(result.HtmlFragment.Contains("hdMainDiv"));
 			Assert.IsFalse(result.HtmlFragment.Contains("Employee Name\": { t: \"TX\", m:true")); // Employee Name should not be "marked"
 
@@ -553,86 +553,80 @@ namespace HotDocs.Sdk.ServerTest
 
 		#endregion
 
-		#region GetInterviewDefinition Tests
+		#region GetInterviewFile Tests
 
 		[TestMethod]
-		public void GetInterviewDefinition_Local() {
-			GetInterviewDefinition(Util.GetLocalServicesInterface());
-		}
-
-		[TestMethod]
-		public void GetInterviewDefinition_WebService() {
-			GetInterviewDefinition(Util.GetWebServiceServicesInterface());
-		}
-
-		[TestMethod]
-		public void GetInterviewDefinition_Cloud()
+		public void GetInterviewFile_Local()
 		{
-			GetInterviewDefinition(Util.GetCloudServicesInterface());
+			GetInterviewFile(Util.GetLocalServicesInterface());
 		}
 
-		private void GetInterviewDefinition(IServices svc)
+		[TestMethod]
+		public void GetInterviewFile_WebService()
 		{
-			Template template = Util.OpenTemplate("d1f7cade-cb74-4457-a9a0-27d94f5c2d5b");
-			
-			// Get an interview for the template and find the state string 
-			InterviewResult IntvResult = svc.GetInterview(template, null, null, null, null);
-			string intvStateString = System.Text.RegularExpressions.Regex.Match(IntvResult.HtmlFragment, "stateString=[^&]+").Value;
-			//intvStateString = intvStateString.Replace("%2B", "+");
-			intvStateString = Uri.UnescapeDataString(intvStateString);
+			GetInterviewFile(Util.GetWebServiceServicesInterface());
+		}
 
-			string templateState = null;
-			string templateFile = null;
-			InterviewFormat fmt = InterviewFormat.Unspecified;
+		[TestMethod]
+		public void GetInterviewFile_Cloud()
+		{
+			GetInterviewFile(Util.GetCloudServicesInterface());
+		}
+
+		private void GetInterviewFile(IServices svc)
+		{
+			Template template = null;
+			string fileName = null;
+			string fileType = null;
 
 			for (int i = 0; i < 7; i++)
 			{
 				switch (i)
 				{
-					case 0:
-						templateState = null;
-						templateFile = "filename";
-						break;
 					case 1:
-						templateState = "state";
-						templateFile = null;
+						template = Util.OpenTemplate("d1f7cade-cb74-4457-a9a0-27d94f5c2d5b");
 						break;
 					case 2:
-						templateState = "";
-						templateFile = "filename";
+						fileName = "Demo Employment Agreement.docx";
 						break;
 					case 3:
-						templateState = "state";
-						templateFile = "";
+						fileName = "";
+						fileType = "js";
 						break;
-					default:
-						templateState = intvStateString.Substring("stateString=".Length);
-						templateFile = "Demo Employment Agreement.docx";
+					case 4:
+						fileName = "Demo Employment Agreement.docx";
+						fileType = "js";
+						break;
+					case 5:
+						fileType = "dll";
+						break;
+					case 6:
+						fileName = "Demo Employment Agreement.docx.js";
+						fileType = "img";
 						break;
 				}
 
-				if (i == 5)
-					fmt = InterviewFormat.JavaScript;
-
-				if (i == 6)
-					fmt = InterviewFormat.Silverlight;
-
 				try
 				{
-					using (Stream definitionFile = svc.GetInterviewDefinition(templateState, templateFile, fmt))
+					using (Stream definitionFile = svc.GetInterviewFile(i == 0 ? null : template, fileName, fileType))
 					{
-
-						if (string.IsNullOrEmpty(templateState) || string.IsNullOrEmpty(templateFile))
+						if (template == null || string.IsNullOrEmpty(fileName) || string.IsNullOrEmpty(fileType))
 							Assert.Fail(); // Should have hit an exception instead of reaching this.
 
 						Assert.IsTrue(definitionFile.Length > 0);
 					}
 
-
 				}
 				catch (ArgumentNullException ex)
 				{
-					Assert.IsTrue(ex.Message.Contains(string.IsNullOrEmpty(templateState) ? "state" : "templateFile"));
+					if (template == null)
+						Assert.IsTrue(ex.Message.Contains("template"));
+					else if (string.IsNullOrEmpty(fileName))
+						Assert.IsTrue(ex.Message.Contains("fileName"));
+					else if (string.IsNullOrEmpty(fileType))
+						Assert.IsTrue(ex.Message.Contains("fileType"));
+					else
+						Assert.Fail(); // After the first three times, we don't pass any invalid parameters so this should not happen.
 				}
 			}
 		}

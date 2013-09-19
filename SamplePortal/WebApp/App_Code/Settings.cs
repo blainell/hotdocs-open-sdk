@@ -124,6 +124,16 @@ namespace SamplePortal
 			}
 		}
 		/// <summary>
+		/// The Cloud Services subscriber ID.
+		/// </summary>
+		public static string CloudServicesAddress
+		{
+			get
+			{
+				return GetSettingOrDefault("CloudServicesAddress", null);
+			}
+		}
+		/// <summary>
 		/// The end-point name used when HdsRoute == "WS".
 		/// </summary>
 		public static string WebServiceEndPoint

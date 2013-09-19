@@ -291,6 +291,8 @@ namespace HotDocs.Sdk.Cloud
 
 			var timestamp = DateTime.UtcNow;
 
+			string interviewImageUrl = settings.Settings["TempInterviewUrl"];
+
 			string hmac = HMAC.CalculateHMAC(
 				SigningKey,
 				timestamp,
@@ -300,13 +302,13 @@ namespace HotDocs.Sdk.Cloud
 				false,
 				billingRef,
 				settings.Format,
-				settings.InterviewImageUrl,
+				interviewImageUrl,
 				settings.Settings);
 
 			StringBuilder urlBuilder = new StringBuilder(string.Format(
 				"{0}/RestfulSvc.svc/interview/{1}/{2}/{3}?format={4}&markedvariables={5}&tempimageurl={6}&billingref={7}",
 				EndpointAddress, SubscriberId, packageTemplateLocation.PackageID, template.FileName, settings.Format.ToString(),
-				settings.MarkedVariables != null ? string.Join(",", settings.MarkedVariables) : null, settings.InterviewImageUrl, billingRef));
+				settings.MarkedVariables != null ? string.Join(",", settings.MarkedVariables) : null, interviewImageUrl, billingRef));
 
 			if (settings.Settings != null)
 			{

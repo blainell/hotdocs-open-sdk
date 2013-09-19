@@ -63,20 +63,18 @@ namespace HotDocs.Sdk.Server.Cloud
 		{
 			// Validate input parameters, creating defaults as appropriate.
 			string logStr = logRef == null ? string.Empty : logRef;
+
 			if (template == null)
 				throw new ArgumentNullException("template", string.Format(@"Cloud.Services.GetInterview: the ""template"" parameter passed in was null, logRef: {0}", logStr));
 
 			if (settings == null)
 				settings = new InterviewSettings();
 
-			string templateLocator = template.CreateLocator();
-
-			// Add the query string to the interview image url so dialog element images can be located.
-			settings.InterviewImageUrlQueryString = "?loc=" + templateLocator + "&img=";
-
 			// Configure interview settings
 			settings.Settings["OmitImages"] = "true"; // Instructs HDS not to return images used by the interview; we'll get them ourselves from the template folder.
 			settings.Settings["OmitDefinitions"] = "true"; // Instructs HDS not to return interview definitions; we'll get them ourselves from the template folder.
+			settings.Settings["TempInterviewUrl"] = Util.GetInterviewImageUrl(settings, template);
+			settings.Settings["InterviewDefUrl"] = Util.GetInterviewDefinitionUrl(settings, template);
 			settings.MarkedVariables = (string[])(markedVariables ?? new string[0]);
 
 			// Get the interview.
@@ -103,9 +101,6 @@ namespace HotDocs.Sdk.Server.Cloud
 
 				Util.AppendSdkScriptBlock(htmlFragment, template, settings);
 				result.HtmlFragment = htmlFragment.ToString();
-
-				// Replace the state string in the html fragment with a template locator.
-				result.HtmlFragment = Regex.Replace(result.HtmlFragment, "stateString=[^&]+", "stateString=" + templateLocator);
 			}
 
 			return result;
@@ -265,25 +260,30 @@ namespace HotDocs.Sdk.Server.Cloud
 		}
 
 		/// <summary>
-		/// Returns the interview definition for the specified template.
+		/// Retrieves a file required by the interview. This could be either an interview definition that contains the 
+		/// variables and logic required to display an interview (questionaire) for the main template or one of its 
+		/// inserted templates, or it could be an image file displayed on a dialog within the interview.
 		/// </summary>
-		/// <param name="state">An encoded string used to find the original package associated with the requested interview.</param>
-		/// <param name="templateFile">The name of the template for which the definition is being requested.</param>
-		/// <param name="format">The format of the interview definition being requested (Silverlight or JavaScript). InterviewFormat.Unspecified will return a JavaScript interview.</param>
-		/// <returns>A stream containing the requested interview definition.</returns>
-		public Stream GetInterviewDefinition(string state, string templateFile, InterviewFormat format)
+		/// <param name="template">The template related to the requested file.</param>
+		/// <param name="fileName">The file name of the image, or the file name of the template for which the interview
+		/// definition is being requested. In either case, this value is passed as "template" on the query string by the browser interview.</param>
+		/// <param name="fileType">The type of file being requested: img (image file), js (JavaScript interview definition), 
+		/// or dll (Silverlight interview definition).</param>
+		/// <returns>A stream containing the requested interview file, to be returned to the caller.</returns>
+		public Stream GetInterviewFile(Template template, string fileName, string fileType)
 		{
 			// Validate input parameters, creating defaults as appropriate.
-			if (string.IsNullOrEmpty(state))
-				throw new ArgumentNullException("state");
+			if (template == null)
+				throw new ArgumentNullException("template", @"Cloud.Services.GetInterviewFile: the ""template"" parameter passed in was null");
 
-			if (string.IsNullOrEmpty(templateFile))
-				throw new ArgumentNullException("templateFile");
+			if (string.IsNullOrEmpty(fileName))
+				throw new ArgumentNullException("fileName", @"Cloud.Services.GetInterviewFile: the ""fileName"" parameter passed in was null or empty");
 
-			// Return the interview definition for the requested file. We return a JavaScript definition unless
-			// the format is Silverlight. (InterviewFormat.Unspecified will return a .js file.)
-			Template t = Template.Locate(state);
-			return t.Location.GetFile(templateFile + (format == InterviewFormat.Silverlight ? ".dll" : ".js"));
+			if (string.IsNullOrEmpty(fileType))
+				throw new ArgumentNullException("fileType", @"Cloud.Services.GetInterviewFile: the ""fileType"" parameter passed in was null or empty");
+
+			// Return an image or interview definition from the template.
+			return template.Location.GetFile(fileName + (fileType.ToLower() == "img" ? "" : "." + fileType));
 		}
 
 		#endregion

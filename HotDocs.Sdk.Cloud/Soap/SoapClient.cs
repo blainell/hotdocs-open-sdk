@@ -205,6 +205,8 @@ namespace HotDocs.Sdk.Cloud
 			if (settings.DisableSaveAnswers == Tristate.True)
 				settingsDict.Remove("SaveAnswersPageUrl");
 
+			string interviewImageUrl = settings.Settings["TempInterviewUrl"];
+
 			string hmac = HMAC.CalculateHMAC(
 				SigningKey,
 				timestamp,
@@ -214,7 +216,7 @@ namespace HotDocs.Sdk.Cloud
 				uploadPackage,
 				billingRef,
 				settings.Format,
-				settings.InterviewImageUrl,
+				interviewImageUrl,
 				settingsDict);
 
 			return _proxy.GetInterview(
@@ -224,7 +226,7 @@ namespace HotDocs.Sdk.Cloud
 				GetBinaryObjectArrayFromString(answers),
 				settings.Format,
 				settings.MarkedVariables.ToArray<string>(),
-				settings.InterviewImageUrl,
+				interviewImageUrl,
 				settingsDict,
 				billingRef,
 				timestamp,

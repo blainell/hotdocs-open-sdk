@@ -73,7 +73,7 @@ namespace HotDocs.Sdk
 	{
 		public PdfOutputOptions() : base() { }
 
-		public Tristate EmbedFonts { get; set; } // defauls to Default
+		public bool EmbedFonts { get; set; } // defauls to Default
 		public bool PdfA { get; set; } // defaults to false
 		public bool TaggedPdf { get; set; } // defaults to false
 		public bool KeepFillablePdf { get; set; } // defaults to false

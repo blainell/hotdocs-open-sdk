@@ -35,9 +35,11 @@ namespace HotDocs.Sdk
 	/// </summary>
 	public class InterviewSettings : Settings
 	{
+		#region Constructors
+
 		/// <summary>
-		/// There are five required parameters for any HotDocs Server interview request. The default (parameterless) constructor
-		/// REQUIRES that these five parameters have values that can be found in the host application's web.config file.
+		/// There are four required parameters for any HotDocs Server interview request. The default (parameterless) constructor
+		/// REQUIRES that these four parameters have values that can be found in the host application's web.config file.
 		/// If any required value is not found there, the constructor will throw an exception.
 		/// </summary>
 		public InterviewSettings()
@@ -47,45 +49,23 @@ namespace HotDocs.Sdk
 		}
 
 		/// <summary>
-		/// This constructor accepts values for the five "required" interview settings. HotDocs Server is unable to generate
+		/// This constructor accepts values for the four "required" interview settings. HotDocs Server is unable to generate
 		/// a functional browser-based interview without meaningful values for these five parameters.
 		/// </summary>
-		/// <param name="postInterviewUrl"></param>
-		/// <param name="interviewRuntimeUrl"></param>
-		/// <param name="styleSheetUrl"></param>
-		/// <param name="interviewDefinitionUrl"></param>
-		/// <param name="interviewImageUrl"></param>
-		public InterviewSettings(string postInterviewUrl, string interviewRuntimeUrl, string styleSheetUrl,
-			string interviewDefinitionUrl, string interviewImageUrl)
+		/// <param name="postInterviewUrl">The URL to which answers will be posted when the user finishes the interview. This page is commonly known as the "disposition" page.</param>
+		/// <param name="interviewRuntimeUrl">The URL from which the browser interview will request the common runtime script files used by the interview.</param>
+		/// <param name="styleSheetUrl">The URL of the stylesheet to use with the interview.</param>
+		/// <param name="interviewFileUrl">The URL from which the browser interview will request template-specific files required by the interview at runtime.
+		/// These files include the interview definitions for the main and inserted templates, as well as images used on dialogs.</param>
+		public InterviewSettings(string postInterviewUrl, string interviewRuntimeUrl, string styleSheetUrl, string interviewFileUrl)
 			: this(InterviewSettings.Default)
 		{
-			// Required - disposition page Url
 			PostInterviewUrl = postInterviewUrl; // "disposition" page
-			// Required - base Urls in host app to provide required files to browser interviews
-			InterviewRuntimeUrl = interviewRuntimeUrl; // formerly known as "JavaScriptUrl"
+			InterviewRuntimeUrl = interviewRuntimeUrl; // formerly known as "JavaScriptUrl"; base Urls in host app to provide required files to browser interview
 			StyleSheetUrl = styleSheetUrl;
-			InterviewDefinitionUrl = interviewDefinitionUrl;
-			BaseInterviewImageUrl = interviewImageUrl;
+			InterviewFilesUrl = interviewFileUrl;
 
 			ValidateRequiredProperties();
-		}
-
-		/// <summary>
-		/// <c>ValidateRequiredProperties</c> is called by the constructor and it throws exceptions if required settings are not present in the
-		/// app or web config file.
-		/// </summary>
-		protected void ValidateRequiredProperties()
-		{
-			if (PostInterviewUrl == null)
-				throw new ArgumentException("PostInterviewUrl must be specified in GetInterviewOptions", "PostInterviewUrl");
-			if (InterviewRuntimeUrl == null)
-				throw new ArgumentException("InterviewRuntimeUrl must be specified in GetInterviewOptions", "InterviewRuntimeUrl");
-			if (StyleSheetUrl == null)
-				throw new ArgumentException("StyleSheetUrl must be specified in GetInterviewOptions", "StyleSheetUrl");
-			if (InterviewDefinitionUrl == null)
-				throw new ArgumentException("InterviewDefinitionUrl must be specified in GetInterviewOptions", "InterviewDefinitionUrl");
-			if (BaseInterviewImageUrl == null)
-				throw new ArgumentException("InterviewImageUrl must be specified in GetInterviewOptions", "InterviewImageUrl");
 		}
 
 		/// <summary>
@@ -95,12 +75,13 @@ namespace HotDocs.Sdk
 		/// <param name="source"></param>
 		private InterviewSettings(InterviewSettings source)
 		{
+			// Copy the four required settings.
 			PostInterviewUrl = source.PostInterviewUrl;
 			InterviewRuntimeUrl = source.InterviewRuntimeUrl;
 			StyleSheetUrl = source.StyleSheetUrl;
-			InterviewDefinitionUrl = source.InterviewDefinitionUrl;
-			BaseInterviewImageUrl = source.BaseInterviewImageUrl;
+			InterviewFilesUrl = source.InterviewFilesUrl;
 
+			// Copy the rest of the (optional) interview settings.
 			DocumentPreviewUrl = source.DocumentPreviewUrl;
 			SaveAnswersUrl = source.SaveAnswersUrl;
 			AnswerFileDataServiceUrl = source.AnswerFileDataServiceUrl;
@@ -133,14 +114,13 @@ namespace HotDocs.Sdk
 		/// <param name="readDefaults"></param>
 		private InterviewSettings(bool readDefaults)
 		{
-			// Required - disposition page Url
+			// Read each of the four required settings.
 			PostInterviewUrl = ConfigurationManager.AppSettings["PostInterviewUrl"]; // "disposition" page
-			// Required - base Urls in host app to provide required files to browser interviews
-			InterviewRuntimeUrl = ConfigurationManager.AppSettings["InterviewRuntimeUrl"]; // formerly known as "JavaScriptUrl"
+			InterviewRuntimeUrl = ConfigurationManager.AppSettings["InterviewRuntimeUrl"]; // formerly known as "JavaScriptUrl"; base Urls in host app to provide required files to browser interviews
 			StyleSheetUrl = ConfigurationManager.AppSettings["StyleSheetUrl"];
+			InterviewFilesUrl = ConfigurationManager.AppSettings["GetInterviewFileUrl"];
+
 			ThemeName = ConfigurationManager.AppSettings["InterviewTheme"];
-			InterviewDefinitionUrl = ConfigurationManager.AppSettings["InterviewDefinitionUrl"];
-			BaseInterviewImageUrl = ConfigurationManager.AppSettings["InterviewImageUrl"];
 
 			// Urls in host app to support optional interview features
 			DocumentPreviewUrl = ConfigurationManager.AppSettings["DocumentPreviewUrl"];
@@ -187,6 +167,21 @@ namespace HotDocs.Sdk
 			s_default = null;
 		}
 
+		/// <summary>
+		/// Ensures that the required interview settings have a value.
+		/// </summary>
+		protected void ValidateRequiredProperties()
+		{
+			if (PostInterviewUrl == null)
+				throw new ArgumentException("PostInterviewUrl must be specified in GetInterviewOptions", "PostInterviewUrl");
+			if (InterviewRuntimeUrl == null)
+				throw new ArgumentException("InterviewRuntimeUrl must be specified in GetInterviewOptions", "InterviewRuntimeUrl");
+			if (StyleSheetUrl == null)
+				throw new ArgumentException("StyleSheetUrl must be specified in GetInterviewOptions", "StyleSheetUrl");
+			if (InterviewFilesUrl == null)
+				throw new ArgumentException("InterviewFilesUrl must be specified in GetInterviewOptions", "InterviewFilesUrl");
+		}
+
 		private static InterviewSettings s_default = null;
 
 		/// <summary>
@@ -196,16 +191,18 @@ namespace HotDocs.Sdk
 		{
 			get
 			{
-				// Avoid reading defaults out of web.config until/unless they are actually needed
+				// Avoid reading defaults out of the config file until/unless they are actually needed
 				if (s_default == null)
 					s_default = new InterviewSettings(true);
 				return s_default;
 			}
 		}
 
-		/* ------------------------------------------------------------------------------------------------
-		 * Urls to handlers in the host app that are REQUIRED in order to retrieve a functional interview
-		 */
+		#endregion
+
+		#region Required Settings
+
+		// Urls to handlers in the host app that are REQUIRED in order to retrieve a functional interview
 
 		/// <summary>
 		/// The url to which finished interview answers will be posted.
@@ -258,6 +255,15 @@ namespace HotDocs.Sdk
 		}
 
 		/// <summary>
+		/// The base URL from which the interview will request interview definitions and dialog element images.
+		/// For JavaScript interviews, interview definitions are JavaScript files; for Silverlight interviews, interview
+		/// definitions are compiled DLLs. HotDocs generates these interview definitions, but a host application must
+		/// deliver them from the host application's own domain name.
+		/// <para>A value for this property is required by the SDK.</para>
+		/// </summary>
+		public string InterviewFilesUrl { get; set; }
+
+		/// <summary>
 		/// The base Url from which interview style sheets and graphics will be requested by the web browser.
 		/// <para>A value for this property is required by the SDK.</para>
 		/// </summary>
@@ -297,115 +303,12 @@ namespace HotDocs.Sdk
 		}
 		private string _stylesheetUrl;
 
-		/// <summary>
-		/// The base Url from which interview definition files are fetched.
-		/// For JavaScript interviews, interview definitions are JavaScript files; for Silverlight interviews, interview
-		/// definitions are compiled DLLs. HotDocs generates these interview definitions, but a host application must
-		/// deliver them from the host application's own domain name.
-		/// <para>A value for this property is required by the SDK.</para>
-		/// </summary>
-		/// <remarks>
-		/// <para>At runtime HotDocs appends the file name of the requested interview definition to the supplied string and
-		/// issues an HTTP GET to the resulting URL.</para>
-		/// <para>TODO: HotDocs must also specify the requested interview format on the query string, correct?
-		/// Also explain the %VERSION% macro.</para>
-		/// <para>This property is equivalent to the InterviewDefinitionUrl property in the HotDocs Server .NET API and
-		/// the InterviewDefUrl setting in Core Services.</para>
-		/// <para>As with all properties of GetInterviewOptions and AssemblyOptions, a default value for this property
-		/// can be specified in your web app's web.config file.</para>
-		/// <para>TODO: Should this be combined with/the same thing as InterviewImageUrl?</para>
-		/// </remarks>
-		public string InterviewDefinitionUrl
-		{
-			get
-			{
-				return GetSettingString("InterviewDefUrl");
-			}
-			set // private?
-			{
-				SetSettingString("InterviewDefUrl", value);
-			}
-		}
 
-		/// <summary>
-		/// The base Url from which interview images will be fetched.  Interview images are those images that
-		/// the template author placed on dialogs, etc. using Image Dialog Elements within HotDocs Developer.
-		/// <para>A value for this property is required by the SDK.</para>
-		/// </summary>
-		/// <remarks>
-		/// <para>TODO: document the syntax of the query string.</para>
-		/// <para>When you request an interview from the SDK, you must choose one of two ways to
-		/// handle these interview images: you can get all the images for a given interview
-		/// up-front, placing them in temporary (session) storage for later delivery (on demand)
-		/// to the browser; or you can wait and retrieve the images from template storage at the time the
-		/// browser requests them.  Either way, this URL dictates the URL from which the browser will
-		/// request those images.  Your host application needs to be able to respond to these HTTP GET
-		/// requests with the appropriate MIME type and image data.</para>
-		/// <para>This property is equivalent to the TempInterviewUrl property on the HotDocs Server API and the
-		/// TempInterviewUrl setting on Core Services.</para>
-		/// <para>As with all properties of GetInterviewOptions and AssemblyOptions, a default value for this property
-		/// can be specified in your web app's web.config file.</para>
-		/// <para>TODO: Should this be combined with/the same thing as InterviewDefinitionUrl?</para>
-		/// </remarks>
-		public string BaseInterviewImageUrl
-		{
-			get
-			{
-				int queryIndex = InterviewImageUrl.IndexOf("?");
-				return queryIndex < 0 ? InterviewImageUrl : InterviewImageUrl.Substring(0, queryIndex);
-			}
-			set
-			{
-				InterviewImageUrl = (value ?? string.Empty) + InterviewImageUrlQueryString;
-			}
-		}
+		#endregion
 
-		/// <summary>
-		/// The query string that will be appended to the base interview image url when images are requested at runtime.
-		/// The interview will append the name of the image being requested to the end of this query string, so it will typically
-		/// end with an equal sign (e.g., ?template=abc.docx&amp;img=).
-		/// </summary>
-		public string InterviewImageUrlQueryString
-		{
-			get
-			{
-				int queryIndex = InterviewImageUrl.IndexOf("?");
-				return queryIndex < 0 ? string.Empty : InterviewImageUrl.Substring(queryIndex);
-			}
-			set
-			{
-				if (string.IsNullOrEmpty(value))
-					value = string.Empty;
-				else
-				{
-					// Make sure that the query string begins with a question mark.
-					if (value.IndexOf("?") < 0)
-						value = "?" + value;
-				}
+		#region Optional Settings
 
-				InterviewImageUrl = BaseInterviewImageUrl + value;
-			}
-		}
-
-		/// <summary>
-		/// The complete URL from which interview images will be requested at runtime. It is a combination of BaseInterviewImageUrl
-		/// and InterviewImageUrlQueryString.
-		/// </summary>
-		public string InterviewImageUrl
-		{
-			get
-			{
-				return GetSettingString("TempInterviewUrl") ?? string.Empty;
-			}
-			private set
-			{
-				SetSettingString("TempInterviewUrl", value);
-			}
-		}
-
-		/* ------------------------------------------------------------
-		 * Urls in host app to support optional interview features
-		 */
+		// Urls in host app to support optional interview features
 
 		/// <summary>
 		/// The URL to which answers will be posted when a browser interview requests an HTML document preview.
@@ -469,10 +372,11 @@ namespace HotDocs.Sdk
 		/// </remarks>
 		public Dictionary<string, string> CustomDataSources { get; private set; }
 
+		#endregion
 
-		/* ------------------------------------------------------------------------------------------------------------
-		 * other settings having to do with the interview request or structure, rather than its user-observable behavior
-		 */
+		#region Other Settings
+
+		// other settings having to do with the interview request or structure, rather than its user-observable behavior
 
 		/// <summary>
 		/// Whether HotDocs should include in the returned HTML fragment an HTML DIV with its id set to "hdMainDiv".
@@ -510,9 +414,9 @@ namespace HotDocs.Sdk
 		/// </remarks>
 		public Tristate RoundTripUnusedAnswers { get; set; }
 
-		/* ------------------------------------------------------------------------------------------------------------
-		 * other interview settings
-		 */
+		#endregion
+
+		#region Yet More Settings
 
 		/// <summary>
 		/// List of marked variables
@@ -550,7 +454,7 @@ namespace HotDocs.Sdk
 		/// For JavaScript interviews, interview definitions are JavaScript files; for Silverlight interviews, interview
 		/// definitions are compiled DLLs. HotDocs generates these interview definitions, but a host application must deliver them
 		/// from the host application's own domain name.
-		/// At runtime HotDocs appends the file name of the requested interview definition to the supplied string and
+		/// At runtime HotDocs appends the file name and type of the requested interview definition to the supplied string and
 		/// issues an HTTP GET to the resulting URL.
 		/// Note that for HotDocs 10.x interviews, this URL was only used to deliver Silverlight interview definitions.</description></item>
 		/// <item><term>DocPreviewUrl</term>
@@ -566,10 +470,14 @@ namespace HotDocs.Sdk
 		/// This is sometimes referred to as the "Disposition Page"; it typically proceeds to perform a document assembly based on
 		/// those answers and may give the user options to decide whether to return to the interview, proceed to another interview,
 		/// or go do something else.</description></item>
-		/// <item><term>TempInterviewUrl</term>
+		/// <item>
+		/// <term>TempInterviewUrl</term>
 		/// <description>The base URL from which the browser interview can request graphics or other peripheral files necessary
 		/// for an interview in progress. For example, when an interview is displayed that uses Image dialog elements, your host
-		/// application must know about those image files, and be able to deliver them in response to requests to this URL.</description></item>
+		/// application must know about those image files, and be able to deliver them in response to requests to this URL. 
+		/// The interview will append the name of the image file it needs to the end of this URL when it makes the request.
+		/// </description>
+		/// </item>
 		/// <item><term>RequestTimeout</term>
 		/// <description>(number of seconds) By default, HotDocs Core Services will assume a request to produce an interview has hung if the
 		/// response takes longer than (a certain time). Setting RequestTimeout to another value can raise or lower the
@@ -835,25 +743,11 @@ namespace HotDocs.Sdk
 		/// </remarks>
 		public AnswerSummaryOptions AnswerSummary { get; set; } // initialized to a new AnswerSummaryOptions()
 
-		/* ------------------------------------------------------------------------------------------------------------
-		 * Other global variables in the JavaScript that could be added to GetInterviewOptions in the future:
-		 * - HDRequiredAsterisk
-		 * - HDShowProgressBar
-		 * - HDInterviewWidth
-		 * - HDInterviewHeight
-		 * - HDBottomMargin
-		 * - HDInterviewOutlineWidth
-		 * - HDResourcePaneHeight
-		 * - HDDisableBrowserWarning
-		 * - HDDisableFinishWarning
-		 * - HDLeaveWarning
-		 * - HDDisableOnSubmit
-		 * - HDFinalSubmitFrame
-		 */
+		#endregion
 
-		/* ------------------------------------------------------------------------------------------------------------
-		 * "shared" or "common" properties (also AssemblyOptions)
-		 */
+		#region Shared or Common Properties
+
+		// "shared" or "common" properties (also AssemblyOptions)
 
 		/// <summary>
 		/// This specifies what text will be merged when no answer has been provided for the requested variable.
@@ -970,13 +864,33 @@ namespace HotDocs.Sdk
 			}
 		}
 
-		/* ------------------------------------------------------------------------------------------------------------
-		 * some previously-included or discussed properties that have been intentionally omitted:
-		 */
+		#endregion
+
+		#region Omitted and Future Properties
+
+		// These are some previously-included or discussed properties that have been intentionally omitted
 
 		//public string TempInterviewPath { get; set; } // this is where interview images get copied & where doc previews are created -- redundant with InterviewResult.SupportingFiles
 		//public int MaxWhileCount { get; set; } // defaults to Default (only changeable for CS)
 		//public int MaxRecursionDepth { get; set; } // defaults to Default (only changeable for CS)
+
+		/* ------------------------------------------------------------------------------------------------------------
+		 * Other global variables in the JavaScript that could be added to GetInterviewOptions in the future:
+		 * - HDRequiredAsterisk
+		 * - HDShowProgressBar
+		 * - HDInterviewWidth
+		 * - HDInterviewHeight
+		 * - HDBottomMargin
+		 * - HDInterviewOutlineWidth
+		 * - HDResourcePaneHeight
+		 * - HDDisableBrowserWarning
+		 * - HDDisableFinishWarning
+		 * - HDLeaveWarning
+		 * - HDDisableOnSubmit
+		 * - HDFinalSubmitFrame
+		 */
+
+		#endregion
 	}
 
 }

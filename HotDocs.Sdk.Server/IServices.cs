@@ -82,31 +82,18 @@ namespace HotDocs.Sdk.Server
 		/// <param name="template"></param>
 		void RemoveSupportFiles(Template template);
 
-		// NOTE: The idea with GetInterviewDefinition and GetFile below is to be as stateless as possible, meaning:
-		//    we want to require as little from the host application as possible, in regard to managing our state for us.
-		//    So when the browser interview makes a request from a host app proxy page, the host app should ideally be able
-		//    to pass the information it gets on to the SDK, and be giving the SDK everything it needs, rather than
-		//    necessarily persisting a "session" object server-side to manage state.
-
 		/// <summary>
-		/// Retrieve an interview definition. An interview definition is the questionaire content of an interview specific
-		/// to a template. The template may be the main template or an inserted template.
+		/// Retrieves a file required by the interview. This could be either an interview definition that contains the 
+		/// variables and logic required to display an interview (questionaire) for the main template or one of its 
+		/// inserted templates, or it could be an image file displayed on a dialog within the interview.
 		/// </summary>
-		/// <param name="state">The template state string, passed as "state" on the query string by the browser interview.</param>
-		/// <param name="templateFile">The template file name, passed as "template" on the query string by the browser interview.</param>
-		/// <param name="format">The requested format of interview definition, according to the "type" query string parameter.
-		/// If type=="js", pass JavaScript; if type=="dll", pass Silverlight; otherwise pass Default.</param>
-		/// <returns>A stream containing the requested interview definition, to be returned to the caller.</returns>
-		Stream GetInterviewDefinition(string state, string templateFile, InterviewFormat format);
-		// TODO: we should also probably return the necessary MIME type for the returned data.  Maybe we need a
-		// InterviewDefinitionResult type?
-		// Q: Should this somehow be combined with GetFile below?
-		// Host apps working with Local or WS can use state, host apps working with CS... state is not so useful.  The templatelocator is needed.
-
-		// TODO: should GetInterviewDefinition and GetFile be combined into the same thing?  The problem is, one takes a
-		// stateString (as emitted by HotDocs Server itself), and the other takes a templateLocator (as specified by the SDK).
-		// Q: How should the templateLocator get included as part of the request (from the browser to the host app) for a graphic?
-		//    Could the templateLocator also be included in the same way when it requests an interview definition?
+		/// <param name="template">The template related to the requested file.</param>
+		/// <param name="fileName">The file name of the image, or the file name of the template for which the interview
+		/// definition is being requested. In either case, this value is passed as "template" on the query string by the browser interview.</param>
+		/// <param name="fileType">The type of file being requested: img (image file), js (JavaScript interview definition), 
+		/// or dll (Silverlight interview definition).</param>
+		/// <returns>A stream containing the requested interview file, to be returned to the caller.</returns>
+		Stream GetInterviewFile(Template template, string fileName, string fileType);
 
 		// Get the template manifest for the specified template. Can optionally parse an entire template manifest spanning tree.
 		//TemplateManifest GetManifest(string templateLocator, string templateFileName, ManifestParseFlags parseFlags);
