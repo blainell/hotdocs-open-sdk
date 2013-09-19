@@ -7,6 +7,10 @@ using System.Collections.Generic;
 
 namespace HotDocs.Sdk
 {
+
+	/// <summary>
+	/// <c>PdfPermissions</c> 
+	/// </summary>
 	[Flags]
 	public enum PdfPermissions
 	{

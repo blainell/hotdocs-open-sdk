@@ -7,14 +7,17 @@ using System.Collections.Generic;
 
 namespace HotDocs.Sdk
 {
+	/// <summary>
+	/// This <c>Settings</c> class provides a means to associate a setting with a string value. 
+	/// Also converting settings from <c>Tristate</c> boolean to string and vice versa
+	/// are provided here.
+	/// </summary>
 	public class Settings
 	{
-		protected Dictionary<string, string> _settings;
-
-		public Settings()
-		{
-			_settings = new Dictionary<string,string>();
-		}
+		/// <summary>
+		/// <c>_settings</c> uses the generic <c>Dictionary&lt;string, string&gt;</c> class to match settings with string values.
+		/// </summary>
+		protected Dictionary<string, string> _settings = new Dictionary<string,string>();
 
 		/// <summary>
 		/// Convert a Tristate value to a string value.

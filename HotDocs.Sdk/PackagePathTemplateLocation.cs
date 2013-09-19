@@ -121,6 +121,11 @@ namespace HotDocs.Sdk
 			// does not need not be overridden here.
 		}
 
+		public override bool Equals(object obj)
+		{
+			return base.Equals(obj);
+		}
+
 		#region IEquatable<TemplateLocation> Members
 
 		/// <summary>
