@@ -70,12 +70,11 @@ namespace HotDocs.Sdk.Server.Cloud
 			if (settings == null)
 				settings = new InterviewSettings();
 
-			// Set the template locator setting so the interview will know where to find images and interview definitions.
-			settings.TemplateLocator = template.CreateLocator();
-
 			// Configure interview settings
 			settings.Settings["OmitImages"] = "true"; // Instructs HDS not to return images used by the interview; we'll get them ourselves from the template folder.
 			settings.Settings["OmitDefinitions"] = "true"; // Instructs HDS not to return interview definitions; we'll get them ourselves from the template folder.
+			settings.Settings["TempInterviewUrl"] = Util.GetInterviewImageUrl(settings, template);
+			settings.Settings["InterviewDefUrl"] = Util.GetInterviewDefinitionUrl(settings, template);
 			settings.MarkedVariables = (string[])(markedVariables ?? new string[0]);
 
 			// Get the interview.
@@ -265,26 +264,23 @@ namespace HotDocs.Sdk.Server.Cloud
 		/// variables and logic required to display an interview (questionaire) for the main template or one of its 
 		/// inserted templates, or it could be an image file displayed on a dialog within the interview.
 		/// </summary>
-		/// <param name="templateLocator">A template locator string used to locate the template related to the requested file.</param>
+		/// <param name="template">The template related to the requested file.</param>
 		/// <param name="fileName">The file name of the image, or the file name of the template for which the interview
 		/// definition is being requested. In either case, this value is passed as "template" on the query string by the browser interview.</param>
 		/// <param name="fileType">The type of file being requested: img (image file), js (JavaScript interview definition), 
 		/// or dll (Silverlight interview definition).</param>
 		/// <returns>A stream containing the requested interview file, to be returned to the caller.</returns>
-		public Stream GetInterviewFile(string templateLocator, string fileName, string fileType)
+		public Stream GetInterviewFile(Template template, string fileName, string fileType)
 		{
 			// Validate input parameters, creating defaults as appropriate.
-			if (string.IsNullOrEmpty(templateLocator))
-				throw new ArgumentNullException("templateLocator", @"Cloud.Services.GetInterviewFile: the ""templateLocator"" parameter passed in was null or empty");
+			if (template == null)
+				throw new ArgumentNullException("template", @"Cloud.Services.GetInterviewFile: the ""template"" parameter passed in was null");
 
 			if (string.IsNullOrEmpty(fileName))
 				throw new ArgumentNullException("fileName", @"Cloud.Services.GetInterviewFile: the ""fileName"" parameter passed in was null or empty");
 
 			if (string.IsNullOrEmpty(fileType))
 				throw new ArgumentNullException("fileType", @"Cloud.Services.GetInterviewFile: the ""fileType"" parameter passed in was null or empty");
-
-			// Locate the template, which we will use to find the image or interview definition file.
-			Template template = Template.Locate(templateLocator);
 
 			// Return an image or interview definition from the template.
 			return template.Location.GetFile(fileName + (fileType.ToLower() == "img" ? "" : "." + fileType));

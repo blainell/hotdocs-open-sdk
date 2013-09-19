@@ -171,9 +171,6 @@ namespace HotDocs.Sdk.Server.Local
 			if (settings == null)
 				settings = new InterviewSettings();
 
-			// Set the template locator setting so the interview will know where to find images and interview definitions.
-			settings.TemplateLocator = template.CreateLocator();
-
 			// HotDocs Server reads the following settings out of the registry all the time; therefore these items are ignored when running against Server:
 			//		settings.AddHdMainDiv
 			//		settings.AnswerSummary.*
@@ -247,9 +244,9 @@ namespace HotDocs.Sdk.Server.Local
 							ansColl,
 							settings.PostInterviewUrl,
 							settings.Title,
-							settings.InterviewDefinitionUrl,
+							Util.GetInterviewDefinitionUrl(settings, template),
 							tempFolder != null ? tempFolder.Path : null, // the path to which HDS should copy interview images; also the path that may become part of the DocumentPreviewStateString & passed to document preview handler
-							settings.InterviewImageUrl,
+							Util.GetInterviewImageUrl(settings, template),
 							settings.DisableSaveAnswers != Tristate.True ? settings.SaveAnswersUrl : "", // TODO: After TFS #5598 is fixed, we can go back to just setting the Url here and let HDS do the work of determining whether to use the url or not.
 							settings.DisableDocumentPreview != Tristate.True ? settings.DocumentPreviewUrl : "") // TODO: Fix up after TFS #5598 is fixed (as above).
 						);
@@ -271,26 +268,23 @@ namespace HotDocs.Sdk.Server.Local
 		/// variables and logic required to display an interview (questionaire) for the main template or one of its 
 		/// inserted templates, or it could be an image file displayed on a dialog within the interview.
 		/// </summary>
-		/// <param name="templateLocator">A template locator string used to locate the template related to the requested file.</param>
+		/// <param name="template">The template related to the requested file.</param>
 		/// <param name="fileName">The file name of the image, or the file name of the template for which the interview
 		/// definition is being requested. In either case, this value is passed as "template" on the query string by the browser interview.</param>
 		/// <param name="fileType">The type of file being requested: img (image file), js (JavaScript interview definition), 
 		/// or dll (Silverlight interview definition).</param>
 		/// <returns>A stream containing the requested interview file, to be returned to the caller.</returns>
-		public Stream GetInterviewFile(string templateLocator, string fileName, string fileType)
+		public Stream GetInterviewFile(Template template, string fileName, string fileType)
 		{
 			// Validate input parameters, creating defaults as appropriate.
-			if (string.IsNullOrEmpty(templateLocator))
-				throw new ArgumentNullException("templateLocator", @"Local.Services.GetInterviewFile: the ""templateLocator"" parameter passed in was null or empty");
+			if (template == null)
+				throw new ArgumentNullException("template", @"Local.Services.GetInterviewFile: the ""template"" parameter passed in was null");
 
 			if (string.IsNullOrEmpty(fileName))
 				throw new ArgumentNullException("fileName", @"Local.Services.GetInterviewFile: the ""fileName"" parameter passed in was null or empty");
 
 			if (string.IsNullOrEmpty(fileType))
 				throw new ArgumentNullException("fileType", @"Local.Services.GetInterviewFile: the ""fileType"" parameter passed in was null or empty");
-
-			// Locate the template, which we will use to find the image or interview definition file.
-			Template template = Template.Locate(templateLocator);
 
 			// Return an image or interview definition from the template.
 			switch (fileType.ToUpper())

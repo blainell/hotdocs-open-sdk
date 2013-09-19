@@ -17,13 +17,6 @@ namespace HotDocs.Sdk
 	/// </summary>
 	public class InterviewSettings : Settings
 	{
-		#region Private Members
-
-		private string _intvFilesUrl;
-		private string _tempLocator;
-
-		#endregion
-
 		#region Constructors
 
 		/// <summary>
@@ -246,76 +239,8 @@ namespace HotDocs.Sdk
 		/// definitions are compiled DLLs. HotDocs generates these interview definitions, but a host application must
 		/// deliver them from the host application's own domain name.
 		/// <para>A value for this property is required by the SDK.</para>
-
 		/// </summary>
-		public string InterviewFilesUrl
-		{
-			get
-			{
-				if (_intvFilesUrl == null)
-					_intvFilesUrl = string.Empty;
-				return _intvFilesUrl;
-			}
-			set
-			{
-				_intvFilesUrl = value;
-
-				// Since the base URL changed, update the two separate settings used by cloud services.
-				SetSettingString("TempInterviewUrl", InterviewImageUrl);
-				SetSettingString("InterviewDefUrl", InterviewDefinitionUrl);
-			}
-		}
-
-		/// <summary>
-		/// A string used to locate the template associated with the interview.
-		/// </summary>
-		public string TemplateLocator
-		{
-			get
-			{
-				if (_tempLocator == null)
-					_tempLocator = string.Empty;
-
-				return _tempLocator;
-			}
-			set
-			{
-				_tempLocator = value;
-
-				// Since the base URL changed, update the two separate settings used by cloud services.
-				SetSettingString("TempInterviewUrl", InterviewImageUrl);
-				SetSettingString("InterviewDefUrl", InterviewDefinitionUrl);
-			}
-		}
-
-		/// <summary>
-		/// The URL from which the interview will request dialog element images. It is formed by combining the InterviewFilesUrl with 
-		/// the TemplateLocator and some other query string values.
-		/// <para>At runtime, the interview appends the file name of the requested image file to this value and issues an HTTP GET to the resulting URL.</para>
-		/// </summary>
-		public string InterviewImageUrl
-		{
-			get
-			{
-				// Append the appropriate query string to the base URL.
-				return InterviewFilesUrl + "?loc=" + TemplateLocator + "&type=img&template=";
-			}
-		}
-
-		/// <summary>
-		/// The URL from which the interview will request interview definitions. It is formed by combining the InterviewFilesUrl with the Template Locator.
-		/// <para>At runtime, the interview appends the file name of the template for which it is requesting the interview definition, 
-		/// as well as the type of interview, and then issues an HTTP GET to the resulting URL.</para>
-		/// <para>This property is equivalent to the InterviewDefinitionUrl property in the HotDocs Server .NET API and
-		/// the InterviewDefUrl setting in Core Services.</para>
-		/// </summary>
-		public string InterviewDefinitionUrl
-		{
-			get
-			{
-				return InterviewFilesUrl + "?loc=" + TemplateLocator;
-			}
-		}
+		public string InterviewFilesUrl { get; set; }
 
 		/// <summary>
 		/// The base Url from which interview style sheets and graphics will be requested by the web browser.
@@ -357,7 +282,7 @@ namespace HotDocs.Sdk
 		}
 		private string _stylesheetUrl;
 
-	
+
 		#endregion
 
 		#region Optional Settings
@@ -508,7 +433,7 @@ namespace HotDocs.Sdk
 		/// For JavaScript interviews, interview definitions are JavaScript files; for Silverlight interviews, interview
 		/// definitions are compiled DLLs. HotDocs generates these interview definitions, but a host application must deliver them
 		/// from the host application's own domain name.
-		/// At runtime HotDocs appends the file name of the requested interview definition to the supplied string and
+		/// At runtime HotDocs appends the file name and type of the requested interview definition to the supplied string and
 		/// issues an HTTP GET to the resulting URL.
 		/// Note that for HotDocs 10.x interviews, this URL was only used to deliver Silverlight interview definitions.</description></item>
 		/// <item><term>DocPreviewUrl</term>
@@ -524,10 +449,14 @@ namespace HotDocs.Sdk
 		/// This is sometimes referred to as the "Disposition Page"; it typically proceeds to perform a document assembly based on
 		/// those answers and may give the user options to decide whether to return to the interview, proceed to another interview,
 		/// or go do something else.</description></item>
-		/// <item><term>TempInterviewUrl</term>
+		/// <item>
+		/// <term>TempInterviewUrl</term>
 		/// <description>The base URL from which the browser interview can request graphics or other peripheral files necessary
 		/// for an interview in progress. For example, when an interview is displayed that uses Image dialog elements, your host
-		/// application must know about those image files, and be able to deliver them in response to requests to this URL.</description></item>
+		/// application must know about those image files, and be able to deliver them in response to requests to this URL. 
+		/// The interview will append the name of the image file it needs to the end of this URL when it makes the request.
+		/// </description>
+		/// </item>
 		/// <item><term>RequestTimeout</term>
 		/// <description>(number of seconds) By default, HotDocs Core Services will assume a request to produce an interview has hung if the
 		/// response takes longer than (a certain time). Setting RequestTimeout to another value can raise or lower the

@@ -575,67 +575,58 @@ namespace HotDocs.Sdk.ServerTest
 
 		private void GetInterviewFile(IServices svc)
 		{
-			Template template = Util.OpenTemplate("d1f7cade-cb74-4457-a9a0-27d94f5c2d5b");
-			
-			// Get an interview for the template and find the state string 
-			InterviewResult IntvResult = svc.GetInterview(template, null, null, null, null);
-			//string intvStateString = System.Text.RegularExpressions.Regex.Match(IntvResult.HtmlFragment, "stateString=[^&]+").Value;
-			//intvStateString = intvStateString.Replace("%2B", "+");
-			//intvStateString = Uri.UnescapeDataString(intvStateString);
-
-			string templateLocator = null;
+			Template template = null;
 			string fileName = null;
-			string fileType = "js";
+			string fileType = null;
 
 			for (int i = 0; i < 7; i++)
 			{
 				switch (i)
 				{
-					case 0:
-						templateLocator = null;
-						fileName = "filename";
-						break;
 					case 1:
-						templateLocator = "state";
-						fileName = null;
+						template = Util.OpenTemplate("d1f7cade-cb74-4457-a9a0-27d94f5c2d5b");
 						break;
 					case 2:
-						templateLocator = "";
-						fileName = "filename";
+						fileName = "Demo Employment Agreement.docx";
 						break;
 					case 3:
-						templateLocator = "state";
 						fileName = "";
+						fileType = "js";
 						break;
-					default:
-						templateLocator = template.CreateLocator(); // intvStateString.Substring("stateString=".Length);
+					case 4:
 						fileName = "Demo Employment Agreement.docx";
+						fileType = "js";
+						break;
+					case 5:
+						fileType = "dll";
+						break;
+					case 6:
+						fileName = "Demo Employment Agreement.docx.js";
+						fileType = "img";
 						break;
 				}
 
-				if (i == 5)
-					fileType = "js";
-
-				if (i == 6)
-					fileType = "dll";
-
 				try
 				{
-					using (Stream definitionFile = svc.GetInterviewFile(templateLocator, fileName, fileType))
+					using (Stream definitionFile = svc.GetInterviewFile(i == 0 ? null : template, fileName, fileType))
 					{
-
-						if (string.IsNullOrEmpty(templateLocator) || string.IsNullOrEmpty(fileName) || string.IsNullOrEmpty(fileType))
+						if (template == null || string.IsNullOrEmpty(fileName) || string.IsNullOrEmpty(fileType))
 							Assert.Fail(); // Should have hit an exception instead of reaching this.
 
 						Assert.IsTrue(definitionFile.Length > 0);
 					}
 
-
 				}
 				catch (ArgumentNullException ex)
 				{
-
-					Assert.IsTrue(ex.Message.Contains(string.IsNullOrEmpty(templateLocator) ? "templateLocator" : "fileName"));
+					if (template == null)
+						Assert.IsTrue(ex.Message.Contains("template"));
+					else if (string.IsNullOrEmpty(fileName))
+						Assert.IsTrue(ex.Message.Contains("fileName"));
+					else if (string.IsNullOrEmpty(fileType))
+						Assert.IsTrue(ex.Message.Contains("fileType"));
+					else
+						Assert.Fail(); // After the first three times, we don't pass any invalid parameters so this should not happen.
 				}
 			}
 		}

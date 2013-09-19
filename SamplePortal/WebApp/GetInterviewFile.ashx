@@ -5,6 +5,7 @@
 <%@ WebHandler Language="C#" Class="GetInterviewFile" %>
 
 using System;
+using System.IO;
 using System.Web;
 using System.Web.SessionState;
 using HotDocs.Sdk.Server;
@@ -46,7 +47,7 @@ public class GetInterviewFile : IHttpHandler, IRequiresSessionState
 			resp.AppendHeader("Content-Disposition", "attachment; filename=" + outputFileName);
 
 		// Get the file and copy it to the output stream.
-		using (System.IO.Stream stream = session.Service.GetInterviewFile(templateLocator, fileName, fileType))
+		using (Stream stream = session.Service.GetInterviewFile(HotDocs.Sdk.Template.Locate(templateLocator), fileName, fileType))
 		{
 			stream.CopyTo(resp.OutputStream);
 		}

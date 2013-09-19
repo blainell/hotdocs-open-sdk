@@ -87,13 +87,13 @@ namespace HotDocs.Sdk.Server
 		/// variables and logic required to display an interview (questionaire) for the main template or one of its 
 		/// inserted templates, or it could be an image file displayed on a dialog within the interview.
 		/// </summary>
-		/// <param name="templateLocator">A template locator string used to locate the template related to the requested file.</param>
+		/// <param name="template">The template related to the requested file.</param>
 		/// <param name="fileName">The file name of the image, or the file name of the template for which the interview
 		/// definition is being requested. In either case, this value is passed as "template" on the query string by the browser interview.</param>
 		/// <param name="fileType">The type of file being requested: img (image file), js (JavaScript interview definition), 
 		/// or dll (Silverlight interview definition).</param>
 		/// <returns>A stream containing the requested interview file, to be returned to the caller.</returns>
-		Stream GetInterviewFile(string templateLocator, string fileName, string fileType);
+		Stream GetInterviewFile(Template template, string fileName, string fileType);
 
 		// Get the template manifest for the specified template. Can optionally parse an entire template manifest spanning tree.
 		//TemplateManifest GetManifest(string templateLocator, string templateFileName, ManifestParseFlags parseFlags);
