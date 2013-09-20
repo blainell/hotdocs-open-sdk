@@ -14,16 +14,17 @@ namespace HotDocs.Sdk.Server
 	/// to the end user (for which InterviewWorkItem.GetInterview, and later InterviewWorkItem.FinishInterview, must be called);
 	/// each document work item represents a document to be generated (via a call to WorkSession.AssembleDocuments).
 	/// </summary>
-	public enum WorkItemType { 
+	public enum WorkItemType
+	{
 		/// <summary>
 		/// Indicates the current work item represents an interview to shown to the user.
 		/// </summary>
-		Interview, 
+		Interview,
 
 		/// <summary>
 		/// Indicates the current work item represents a document assembly to be processed.
 		/// </summary>
-		Document 
+		Document
 	}
 
 	/// <summary>
@@ -63,10 +64,13 @@ namespace HotDocs.Sdk.Server
 			get
 			{
 				if (_title == null)
-					_title = Template.GetTitle();
+					_title = Template.Title;
 				return _title;
 			}
-			private set{}
+			private set
+			{
+				_title = value;
+			}
 		}
 
 		/// <summary>
@@ -86,7 +90,7 @@ namespace HotDocs.Sdk.Server
 
 		//public string ID { get; } // Don't know if we would want or need something like this, maybe if a host app has need to refer to a specific work item in the future?
 		//public WorkSession Parent { get; private set; } // If we had this, InterviewWorkItem could fetch the default InterviewOptions from the WorkSession.
-			// Without it, we can't, and that's inconvenient.  But we would need to do custom serialization to have this... maybe we'll need to anyway.
+		// Without it, we can't, and that's inconvenient.  But we would need to do custom serialization to have this... maybe we'll need to anyway.
 		private string _title = null;
 	}
 
@@ -98,6 +102,7 @@ namespace HotDocs.Sdk.Server
 	[Serializable]
 	public class InterviewWorkItem : WorkItem
 	{
+		// TODO: The template does now have a Title property--should we now remove the title parameter?
 		/// <summary>
 		/// The constructor is internal; it is only called from the WorkSession class.  The WorkSession
 		/// is in charge of adding work items to itself.
@@ -161,7 +166,8 @@ namespace HotDocs.Sdk.Server
 		/// <param name="title">The title of the work item.  If we add a Title property to a template, we would not need this.</param>
 		/// <param name="template">The template upon which the work item is based.</param>
 		internal DocumentWorkItem(string title, Template template) : this(title, template, new string[0]) { }
-		internal DocumentWorkItem(string title, Template template, string[] unansweredVariables) : base(title, template)
+		internal DocumentWorkItem(string title, Template template, string[] unansweredVariables)
+			: base(title, template)
 		{
 			UnansweredVariables = unansweredVariables;
 		}

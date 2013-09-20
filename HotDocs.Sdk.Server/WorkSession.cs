@@ -78,9 +78,9 @@ namespace HotDocs.Sdk.Server
 			// add the work items
 			_workItems = new List<WorkItem>();
 			if (template.HasInterview)
-				_workItems.Add(new InterviewWorkItem(template.FileName, template));
+				_workItems.Add(new InterviewWorkItem(template.Title, template));
 			if (template.GeneratesDocument)
-				_workItems.Add(new DocumentWorkItem(template.FileName, template));
+				_workItems.Add(new DocumentWorkItem(template.Title, template));
 		}
 
 		/* properties/state */
@@ -289,6 +289,10 @@ namespace HotDocs.Sdk.Server
 		{
 			WorkItem currentWorkItem = CurrentWorkItem;
 			TextReader answers = new StringReader(AnswerCollection.XmlAnswers);
+
+
+			settings.Title = settings.Title ?? CurrentWorkItem.Template.Title;
+
 			return _service.GetInterview(currentWorkItem.Template, answers, settings, markedVariables, logRef);
 		}
 

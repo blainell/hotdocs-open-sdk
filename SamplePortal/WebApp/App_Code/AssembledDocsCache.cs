@@ -112,7 +112,7 @@ namespace SamplePortal
 					document.Content.CopyTo(outputStream);
 				}
 
-				SamplePortal.Document doc = new Document(docPath, document.Source.GetTitle());
+				SamplePortal.Document doc = new Document(docPath, document.Source.Title);
 				_docs.Add(doc);
 			}
 			catch (Exception)

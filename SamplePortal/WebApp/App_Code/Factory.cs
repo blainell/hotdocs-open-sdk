@@ -29,7 +29,19 @@ namespace SamplePortal
 		/// <returns></returns>
 		public static HotDocs.Sdk.Server.WorkSession CreateWorkSession(System.Web.SessionState.HttpSessionState session, string packageID)
 		{
+			return CreateWorkSession(session, packageID, null);
+		}
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="session"></param>
+		/// <param name="packageID"></param>
+		/// <param name="templateTitle"></param>
+		/// <returns></returns>
+		public static HotDocs.Sdk.Server.WorkSession CreateWorkSession(System.Web.SessionState.HttpSessionState session, string packageID, string templateTitle)
+		{
 			HotDocs.Sdk.Template template = OpenTemplate(packageID);
+			template.Title = templateTitle;
 			HotDocs.Sdk.Server.IServices service = GetServices();
 			HotDocs.Sdk.Server.WorkSession workSession = new HotDocs.Sdk.Server.WorkSession(service, template);
 			session["HdSession"] = workSession;

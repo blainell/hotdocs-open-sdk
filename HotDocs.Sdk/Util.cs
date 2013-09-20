@@ -28,10 +28,15 @@ namespace HotDocs.Sdk
 			return DecryptStringFromBytes_Aes(encryptedBuffer, key, initializationVector);
 		}
 
+		public static string ReadConfigurationString(string settingName) {
+			string sTemp = ConfigurationManager.AppSettings[settingName];
+			return (String.IsNullOrWhiteSpace(sTemp)) ? null : sTemp;
+		}
+
 		public static TEnum ReadConfigurationEnum<TEnum>(string settingName, TEnum defaultValue) where TEnum : struct
 		{
-			string sTemp = ConfigurationManager.AppSettings[settingName];
-			if (String.IsNullOrWhiteSpace(sTemp))
+			string sTemp = ReadConfigurationString(settingName);
+			if (sTemp == null)
 				return defaultValue;
 			TEnum result;
 			if (Enum.TryParse<TEnum>(sTemp, true, out result))
@@ -47,8 +52,8 @@ namespace HotDocs.Sdk
 
 		internal static bool ReadConfigurationBoolean(string settingName, bool defaultValue)
 		{
-			string sTemp = ConfigurationManager.AppSettings[settingName];
-			if (String.IsNullOrWhiteSpace(sTemp))
+			string sTemp = ReadConfigurationString(settingName);
+			if (sTemp == null)
 				return defaultValue;
 			bool result;
 			if (Boolean.TryParse(sTemp, out result))
@@ -59,8 +64,8 @@ namespace HotDocs.Sdk
 
 		internal static int ReadConfigurationInt(string settingName, int defaultValue)
 		{
-			string sTemp = ConfigurationManager.AppSettings[settingName];
-			if (String.IsNullOrWhiteSpace(sTemp))
+			string sTemp = ReadConfigurationString(settingName);
+			if (sTemp == null)
 				return defaultValue;
 			int result;
 			if (Int32.TryParse(sTemp, out result))
@@ -71,9 +76,9 @@ namespace HotDocs.Sdk
 
 		private static byte[] GetPersistentEncryptionKey()
 		{
-			string key = System.Configuration.ConfigurationManager.AppSettings["EncryptionKey"];
+			string key = ReadConfigurationString("EncryptionKey");
 			// TODO: Remove this
-			if (String.IsNullOrEmpty(key))
+			if (key == null)
 				key = "dummy";
 			return GetFixedSizeByteArray(key, 16);
 		}

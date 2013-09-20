@@ -123,14 +123,11 @@ namespace HotDocs.Sdk
 			RoundTripUnusedAnswers = Util.ReadConfigurationTristate("RoundTripUnusedAnswers", Tristate.Default);
 
 			// other interview settings
-			Format = Util.ReadConfigurationEnum<InterviewFormat>("InterviewFormat",
-				InterviewFormat.Unspecified);
+			Format = Util.ReadConfigurationEnum<InterviewFormat>("InterviewFormat", InterviewFormat.Unspecified);
 			if (String.IsNullOrEmpty(ThemeName))
-				ThemeName = ConfigurationManager.AppSettings["ThemeName"];
-			if (String.IsNullOrWhiteSpace(ThemeName))
-				ThemeName = "hdsuser";
-			Title = ConfigurationManager.AppSettings["InterviewTitle"];
-			Locale = ConfigurationManager.AppSettings["InterviewLocale"];
+				ThemeName = Util.ReadConfigurationString("ThemeName") ?? "hdsuser";
+			Title = Util.ReadConfigurationString("InterviewTitle");
+			Locale = Util.ReadConfigurationString("InterviewLocale");
 			NextFollowsOutline = Util.ReadConfigurationTristate("NextFollowsOutline", Tristate.Default);
 			ShowAllResourceButtons = Util.ReadConfigurationTristate("ShowAllResourceButtons", Tristate.Default);
 			DisableDocumentPreview = Util.ReadConfigurationTristate("DisableDocumentPreview", Tristate.Default);
