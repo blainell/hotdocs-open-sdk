@@ -22,8 +22,6 @@ namespace HotDocs.Sdk.Server.Local
 	/// </summary>
 	public class Services : IServices
 	{
-		const int READ_BUF_SIZE = 0x10000;
-
 		private HotDocs.Server.Application _app;
 		private string _tempPath = null;
 
@@ -504,15 +502,8 @@ namespace HotDocs.Sdk.Server.Local
 			MemoryStream memStream = new MemoryStream();
 			using (FileStream fs = File.OpenRead(filePath))
 			{
-				byte[] buffer = new byte[READ_BUF_SIZE];
-				int offset = 0, bytesRead = 0;
-				do
-				{
-					bytesRead = fs.Read(buffer, offset, READ_BUF_SIZE);
-					if (bytesRead > 0)
-						memStream.Write(buffer, 0, bytesRead);
-					offset += bytesRead;
-				} while (bytesRead == READ_BUF_SIZE);
+				fs.CopyTo(memStream);
+				memStream.Position = 0;
 			}
 			return memStream;
 		}

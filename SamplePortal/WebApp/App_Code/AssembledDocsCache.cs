@@ -107,10 +107,9 @@ namespace SamplePortal
 				//Write the document to a file.
 				using (FileStream outputStream = File.Create(docPath))
 				{
-					long len = document.Content.Length;
-					byte[] buffer = new byte[len];
-					document.Content.Read(buffer, 0, (int)len);
-					outputStream.Write(buffer, 0, (int)len);
+					// Make sure we copy from the start of the memory stream.
+					document.Content.Position = 0;
+					document.Content.CopyTo(outputStream);
 				}
 
 				SamplePortal.Document doc = new Document(docPath, document.Source.GetTitle());
