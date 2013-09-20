@@ -56,10 +56,10 @@ namespace HotDocs.Sdk.Server.WebService
 		{
 			// Validate input parameters, creating defaults as appropriate.
 			string logStr = logRef == null ? string.Empty : logRef;
-			
+
 			if (template == null)
 				throw new ArgumentNullException("template", string.Format(@"WebServices.Services.GetInterview: the ""template"" parameter passed in was null, logRef: {0}", logStr));
-			
+
 			if (settings == null)
 				settings = new InterviewSettings();
 
@@ -390,10 +390,10 @@ namespace HotDocs.Sdk.Server.WebService
 			MemoryStream document = null;
 			StreamReader ansRdr = null;
 			List<NamedStream> supportingFiles = new List<NamedStream>();
-			IEnumerable<Template> pendingAssemblies = null;
-			if (asmResult.PendingAssemblies != null)
-				pendingAssemblies = from pa in asmResult.PendingAssemblies
-									select new Template(Path.GetFileName(pa.TemplateName), template.Location.Duplicate(), pa.Switches);
+			IEnumerable<Template> pendingAssemblies = 
+				asmResult.PendingAssemblies == null ? new List<Template>() :
+				from pa in asmResult.PendingAssemblies select new Template(Path.GetFileName(pa.TemplateName), template.Location.Duplicate(), pa.Switches);
+
 			for (int i = 0; i < asmResult.Documents.Length; i++)
 			{
 				switch (asmResult.Documents[i].Format)
@@ -421,7 +421,7 @@ namespace HotDocs.Sdk.Server.WebService
 				result = new AssembleDocumentResult(
 					new Document(template, document, docType, supportingFiles.ToArray(), asmResult.UnansweredVariables),
 					ansRdr == null ? null : ansRdr.ReadToEnd(),
-					pendingAssemblies,
+					pendingAssemblies.ToArray(),
 					asmResult.UnansweredVariables
 				);
 			}
