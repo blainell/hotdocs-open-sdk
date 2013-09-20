@@ -468,6 +468,61 @@ namespace HotDocs.Sdk.Server
 			}
 
 		}
+
+		/// <summary>
+		/// This method is used by both WS and Cloud implementations of AssembleDocument to convert an AssemblyResult to an AssembleDocumentResult.
+		/// </summary>
+		/// <param name="template"></param>
+		/// <param name="asmResult"></param>
+		/// <param name="docType"></param>
+		/// <returns></returns>
+		internal static AssembleDocumentResult ConvertAssemblyResult(Template template, AssemblyResult asmResult, DocumentType docType)
+		{
+			AssembleDocumentResult result = null;
+			MemoryStream document = null;
+			StreamReader ansRdr = null;
+			List<NamedStream> supportingFiles = new List<NamedStream>();
+
+			// Create the list of pending assemblies.
+			IEnumerable<Template> pendingAssemblies =
+				asmResult.PendingAssemblies == null ? new List<Template>() :
+				from pa in asmResult.PendingAssemblies select new Template(Path.GetFileName(pa.TemplateName) /* TODO: or should this just be pa.TemplateName? */, template.Location.Duplicate(), pa.Switches);
+
+			for (int i = 0; i < asmResult.Documents.Length; i++)
+			{
+				switch (asmResult.Documents[i].Format)
+				{
+					case OutputFormat.Answers:
+						ansRdr = new StreamReader(new MemoryStream(asmResult.Documents[i].Data));
+						break;
+					case OutputFormat.JPEG:
+					case OutputFormat.PNG:
+						// If the output document is plain HTML, we might also get additional image files in the 
+						// AssemblyResult that we need to pass on to the caller.
+						supportingFiles.Add(new NamedStream(asmResult.Documents[i].FileName, new MemoryStream(asmResult.Documents[i].Data)));
+						break;
+					default:
+						document = new MemoryStream(asmResult.Documents[i].Data);
+						if (docType == DocumentType.Native)
+						{
+							docType = Document.GetDocumentType(asmResult.Documents[i].FileName);
+						}
+						break;
+				}
+			}
+
+			if (document != null)
+			{
+				result = new AssembleDocumentResult(
+					new Document(template, document, docType, supportingFiles.ToArray(), asmResult.UnansweredVariables),
+					ansRdr == null ? null : ansRdr.ReadToEnd(),
+					pendingAssemblies.ToArray(),
+					asmResult.UnansweredVariables
+				);
+			}
+
+			return result;
+		}
 	}
 
 

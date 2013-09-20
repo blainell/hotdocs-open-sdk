@@ -118,69 +118,29 @@ namespace HotDocs.Sdk.Server.Cloud
 		{
 			// Validate input parameters, creating defaults as appropriate.
 			string logStr = logRef == null ? string.Empty : logRef;
+
 			if (template == null)
-				throw new ArgumentNullException("template", "The template must not be null, logRef: " + logStr);
+				throw new ArgumentNullException("template", string.Format(@"Cloud.Services.AssembleDocument: the ""template"" parameter passed in was null, logRef: {0}", logStr));
 
 			if (settings == null)
 				settings = new AssembleDocumentSettings();
 
 			AssembleDocumentResult result = null;
+			AssemblyResult asmResult = null;
+
 			using (var client = new SoapClient(_subscriberID, _signingKey))
 			{
-				AssemblyResult asmResult = client.AssembleDocument(
+				asmResult = client.AssembleDocument(
 					template,
 					answers == null ? "" : answers.ReadToEnd(),
 					settings,
 					logRef
 				);
+			}
 
-				MemoryStream document = null;
-				StreamReader ansRdr = null;
-				DocumentType docType = settings.Format;
-				List<NamedStream> supportingFiles = new List<NamedStream>();
-
-				// Build the list of pending assemblies.
-				List<Template> pendingAssemblies = new List<Template>();
-				if (asmResult.PendingAssemblies != null)
-				{
-					foreach (PendingAssembly asm in asmResult.PendingAssemblies)
-					{
-						pendingAssemblies.Add(new Template(asm.TemplateName, template.Location.Duplicate(), asm.Switches));
-					}
-				}
-
-				for (int i = 0; i < asmResult.Documents.Length; i++)
-				{
-					switch (asmResult.Documents[i].Format)
-					{
-						case OutputFormat.Answers:
-							ansRdr = new StreamReader(new MemoryStream(asmResult.Documents[i].Data));
-							break;
-						case OutputFormat.JPEG:
-						case OutputFormat.PNG:
-							// If the output document is plain HTML, we might also get additional image files in the 
-							// AssemblyResult that we need to pass on to the caller.
-							supportingFiles.Add(new NamedStream(asmResult.Documents[i].FileName, new MemoryStream(asmResult.Documents[i].Data)));
-							break;
-						default:
-							document = new MemoryStream(asmResult.Documents[i].Data);
-							if (docType == DocumentType.Native)
-							{
-								docType = Document.GetDocumentType(asmResult.Documents[i].FileName);
-							}
-							break;
-					}
-				}
-
-				if (document != null)
-				{
-					result = new AssembleDocumentResult(
-						new Document(template, document, docType, supportingFiles.ToArray(), asmResult.UnansweredVariables),
-						ansRdr.ReadToEnd(),
-						pendingAssemblies.ToArray(),
-						asmResult.UnansweredVariables
-					);
-				}
+			if (asmResult != null)
+			{
+				result = Util.ConvertAssemblyResult(template, asmResult, settings.Format);
 			}
 
 			return result;

@@ -291,7 +291,7 @@ namespace HotDocs.Sdk.Server.Local
 					return template.Location.GetFile(fileName);
 				default:
 					string interviewDefPath = _app.GetInterviewDefinitionFromTemplate(
-						template.GetFullPath(), 
+						template.GetFullPath(),
 						fileName,
 						fileType == "dll" ? hdsi.interviewFormat.Silverlight : hdsi.interviewFormat.javascript
 						);
@@ -312,15 +312,15 @@ namespace HotDocs.Sdk.Server.Local
 			// Validate input parameters, creating defaults as appropriate.
 			string logStr = logRef == null ? string.Empty : logRef;
 			if (template == null)
-				throw new ArgumentNullException("template", "Local.Services.AssembleDocument: The template must not be null, logRef: " + logStr);
+				throw new ArgumentNullException("template", string.Format(@"Local.Services.AssembleDocument: the ""template"" parameter passed in was null, logRef: {0}", logStr));
 
 			if (settings == null)
 				settings = new AssembleDocumentSettings();
 
+
 			HotDocs.Server.AnswerCollection ansColl = new HotDocs.Server.AnswerCollection();
 			ansColl.OverlayXMLAnswers(answers == null ? "" : answers.ReadToEnd());
 			HotDocs.Server.OutputOptions outputOptions = ConvertOutputOptions(settings.OutputOptions);
-
 
 			//TODO: Review this.
 			int savePendingAssembliesCount = _app.PendingAssemblyCmdLineStrings.Count;
