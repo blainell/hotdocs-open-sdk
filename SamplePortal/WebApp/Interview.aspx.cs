@@ -47,20 +47,25 @@ public partial class Interview : System.Web.UI.Page
 			// Determine which interview format to use, depending on the values for InterviewFormat and InterviewFallback in web.config.
 			HotDocs.Sdk.Server.Contracts.InterviewFormat format = HotDocs.Sdk.Server.Contracts.InterviewFormat.Unspecified;
 			string formatString = ConfigurationManager.AppSettings["InterviewFormat"];
-			if (!String.IsNullOrWhiteSpace(formatString) && formatString.ToUpper() == "SILVERLIGHT")
-			{
-				// The interview fallback option only comes into play if the specified format in web.config is Silverlight.
-				// (We never "fallback" to Silverlight since it is the more restrictive interview format; JavaScript will work in any browser.)
-
-				// See if fallback is allowed and then fallback to JavaScript if Silverlight is unavailable.
-				if (Settings.AllowInterviewFallback)
+			if (!String.IsNullOrWhiteSpace(formatString)) {
+				if (formatString.ToUpper() == "SILVERLIGHT")
 				{
-					// Get the cookie we set that indicates whether or not Silverlight 5.0 is installed.
-					HttpCookie slCookie = Request.Cookies["SilverlightAvailable"];
-					if (slCookie != null ? !bool.Parse(Request.Cookies["SilverlightAvailable"].Value) : true)
-						format = HotDocs.Sdk.Server.Contracts.InterviewFormat.JavaScript;
-				}
+					// The interview fallback option only comes into play if the specified format in web.config is Silverlight.
+					// (We never "fallback" to Silverlight since it is the more restrictive interview format; JavaScript will work in any browser.)
 
+					// See if fallback is allowed and then fallback to JavaScript if Silverlight is unavailable.
+					if (Settings.AllowInterviewFallback)
+					{
+						// Get the cookie we set that indicates whether or not Silverlight 5.0 is installed.
+						HttpCookie slCookie = Request.Cookies["SilverlightAvailable"];
+						if (slCookie != null ? !bool.Parse(Request.Cookies["SilverlightAvailable"].Value) : true)
+							format = HotDocs.Sdk.Server.Contracts.InterviewFormat.JavaScript;
+					}
+				}
+				else if (formatString.ToUpper() == "JAVASCRIPT")
+				{
+					format = HotDocs.Sdk.Server.Contracts.InterviewFormat.JavaScript;
+				}
 			}
 
 			// Note for HotDocs host application developers: an informational log entry could be added to a 
