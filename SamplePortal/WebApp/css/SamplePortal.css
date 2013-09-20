@@ -41,7 +41,7 @@ body a:hover { text-decoration: underline; }
 a.HeaderLink:link, a.HeaderLink:visited { text-decoration: underline; color: White; }
 .DataGrid { width: 100%; border-color: #99B2CC;  }
 
-.InputField { font-family: Tahoma, Arial, Sans-Serif; }
+.InputField { font-family:inherit; font-size:inherit; }
 
 .UnansweredWarnPanel { padding: 10px; background-color: #c4d7ef; /*#B3C5D9;*/ }
 
