@@ -57,7 +57,7 @@ namespace SamplePortal.Data
 		public DataView SelectFile(string tplname)
 		{
 			DataView dv = new DataView(tplData.Templates);
-			dv.RowFilter = "[Filename] = '" + EscapeStringForFilter(tplname, false) + "'";
+			dv.RowFilter = "[Filename] = '" + EncodeString(tplname) + "'";
 			return dv;
 		}
 		/// <summary>
@@ -82,7 +82,8 @@ namespace SamplePortal.Data
 			DataView dv = new DataView(tplData.Templates);
 			if (sortExpression != null)
 				dv.Sort = sortExpression;
-			if (searchFilter != null && searchFilter.Length > 0)
+			searchFilter = EncodeString(searchFilter);
+			if (!string.IsNullOrEmpty(searchFilter))
 				dv.RowFilter = "[Title] LIKE '%" + searchFilter + "%' OR [Description] LIKE '%" + searchFilter + "%'";
 			return dv;
 		}
@@ -95,7 +96,7 @@ namespace SamplePortal.Data
 			{
 				try
 				{
-					dv.RowFilter = "[Name] = '" + EscapeStringForFilter(name, false) + "'";
+					dv.RowFilter = "[Name] = '" + EncodeString(name) + "'";
 				}
 				catch (Exception)
 				{
@@ -241,17 +242,39 @@ namespace SamplePortal.Data
 			tplData.WriteXml(Path.Combine(Util.SafeDir(Settings.TemplatePath), "index.xml"));
 		}
 
-		private string EscapeStringForFilter(string str, bool like)
+		private string EncodeString(string s)
 		{
-			string result = str.Replace("'", "''");
-			if (like)
+			System.Text.StringBuilder sb = new System.Text.StringBuilder();
+			for (int i = 0; i < s.Length; i++)
 			{
-				if (result.Contains("[") || result.Contains("]"))
-					result = result.Replace('[', '\x1B').Replace(']', '\x1D').Replace("\x1B", "[[]").Replace("\x1D", "[]]");
-
-				result = result.Replace("*", "[*]").Replace("%", "[%]");
+				char c = s[i];
+				switch (c)
+				{
+					case '*':
+					case '%':
+					case '[':
+					case ']':
+						sb.Append("[").Append(c).Append("]");
+						break;
+					case '\'':
+						sb.Append("''");
+						break;
+					case '<':
+						sb.Append("&lt;");
+						break;
+					case '>':
+						sb.Append("&gt;");
+						break;
+					case '&':
+						sb.Append("&amp;");
+						break;
+					default:
+						sb.Append(c);
+						break;
+				}
 			}
-			return result;
+
+			return sb.ToString();
 		}
 	}
 }

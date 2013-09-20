@@ -211,8 +211,8 @@ namespace HotDocs.Sdk
 			settings.IgnoreProcessingInstructions = true;
 			settings.IgnoreComments = true;
 			settings.ValidationType = ValidationType.None;
-			settings.ProhibitDtd = false; // obsolete in .NET 4.0, replaced with:
-			//settings.DtdProcessing = DtdProcessing.Ignore; // .NET 4.0 only
+			//settings.ProhibitDtd = false; // obsolete in .NET 4.0, replaced with:
+			settings.DtdProcessing = DtdProcessing.Ignore; // .NET 4.0 only
 			using (XmlReader reader = XmlReader.Create(input, settings))
 			{
 				// then read the XML and create the answers...

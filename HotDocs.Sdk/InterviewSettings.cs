@@ -9,8 +9,26 @@ using System.Configuration;
 
 namespace HotDocs.Sdk
 {
-	public enum Tristate { Default, True, False }
-	//public enum InterviewFormat { Default, JavaScript, Silverlight }
+	/// <summary>
+	/// <c>Tristate</c> is a way to represent boolean values and allow "default" values if defined elsewhere
+	/// </summary>
+	public enum Tristate 
+	{ 
+		/// <summary>
+		/// A <c>Default</c> value means the current setting is defined somewhere else, such as on HotDocs server.
+		/// </summary>
+		Default, 
+		
+		/// <summary>
+		/// a <c>True</c> value means the respective boolean setting evaluates to the "true" value.
+		/// </summary>
+		True,
+
+		/// <summary>
+		/// a <c>False</c> value means the respective boolean setting evaluates to the "false" value.
+		/// </summary>
+		False
+	}
 
 	/// <summary>
 	/// InterviewSettings encapsulates all the settings that can be specified when requesting HotDocs browser-based interviews.
@@ -43,7 +61,7 @@ namespace HotDocs.Sdk
 			: this(InterviewSettings.Default)
 		{
 			PostInterviewUrl = postInterviewUrl; // "disposition" page
-			InterviewRuntimeUrl = interviewRuntimeUrl; // formerly known as "JavaScriptUrl"; base Urls in host app to provide required files to browser interviews
+			InterviewRuntimeUrl = interviewRuntimeUrl; // formerly known as "JavaScriptUrl"; base Urls in host app to provide required files to browser interview
 			StyleSheetUrl = styleSheetUrl;
 			InterviewFilesUrl = interviewFileUrl;
 
@@ -163,6 +181,9 @@ namespace HotDocs.Sdk
 
 		private static InterviewSettings s_default = null;
 
+		/// <summary>
+		/// Returns the default parameters defined 
+		/// </summary>
 		public static InterviewSettings Default
 		{
 			get

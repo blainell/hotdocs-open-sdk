@@ -4,8 +4,53 @@
 
 namespace HotDocs.Sdk
 {
-	public enum BorderType { Default, None, Plain, Sculpted }
-	public enum AnswerSummaryFormat { Default, OneColumn, TwoColumns }
+	/// <summary>
+	/// <c>BorderType</c> specifies the border style for the answer summary table:
+	/// None, Plain or Sculpted. Applicable only to 2-column answer summary layout.
+	/// By default the property defers to the behavior configured on the server.
+	/// </summary>
+	public enum BorderType { 
+		/// <summary>
+		/// defers to the behavior configured on the server.
+		/// </summary>
+		Default, 
+
+		/// <summary>
+		/// No border is applied
+		/// </summary>
+		None, 
+		
+		/// <summary>
+		/// Plain border
+		/// </summary>
+		Plain, 
+
+		/// <summary>
+		/// Sculpted border
+		/// </summary>
+		Sculpted 
+	}
+
+	/// <summary>
+	/// Answer summaries can be formatted in 1-column or 2-column format.
+	/// By default the property defers to the default configured on the server.
+	/// </summary>
+	public enum AnswerSummaryFormat {
+		/// <summary>
+		/// defers to the behavior configured on the server.
+		/// </summary>
+		Default, 
+
+		/// <summary>
+		/// One column format for the answer summaries
+		/// </summary>
+		OneColumn, 
+		
+		/// <summary>
+		/// Two column format for the answer summaries
+		/// </summary>
+		TwoColumns 
+	}
 
 	/// <summary>
 	/// AnswerSummaryOptions encapsulates the interview options related to Answer summaries.

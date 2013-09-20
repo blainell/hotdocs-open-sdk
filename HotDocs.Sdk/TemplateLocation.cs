@@ -49,8 +49,13 @@ namespace HotDocs.Sdk
 			// implement IEquatable<TemplateLocation>, which this calls.
 			return (obj != null) && (obj is TemplateLocation) && Equals((TemplateLocation)obj);
 
-			// NOTE: Object.GetHashCode() is overridden in each derived class, but not here.
 		}
+
+		/// <summary>
+		/// <c>GetHashCode</c> is needed wherever Equals(object) is defined.
+		/// </summary>
+		/// <returns></returns>
+		public abstract override int GetHashCode();
 
 		#region IEquatable<TemplateLocation> Members
 
