@@ -65,3 +65,4 @@
 	window.HDSamplePortal = $;
 
 }(typeof HDSamplePortal === "undefined" ? {} : HDSamplePortal));
+
