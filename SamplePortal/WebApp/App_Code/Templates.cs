@@ -274,4 +274,5 @@ namespace SamplePortal.Data
 			return sb.ToString();
 		}
 	}
-}
+} 
+

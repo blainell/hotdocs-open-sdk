@@ -6,8 +6,7 @@
 {
 	jQuery(document).ready(function()
 	{
-		return jQuery('#txtSearch')
-		.on('keydown', function(e)
+		return jQuery('#txtSearch').on('keydown', function(e)
 		{
 			var bOk = true;
 			switch (e.which)
@@ -34,8 +33,7 @@
 			return bOk;
 		});
 
-		return jQuery('#txtSearch')
-		.on('keypress', function (e) {
+		return jQuery('#txtSearch').on('keypress', function (e) {
 			var bOk = true;
 			switch (e.which) {
 				case 188: // "," or ">" character
