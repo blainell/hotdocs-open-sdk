@@ -36,7 +36,7 @@
 									<div class="hd-sp-searchbox">
 										<div>Search:&nbsp;</div>
 										<div>
-											<asp:TextBox ID="txtSearch" runat="server" CssClass="InputField" onkeyup="txtSearch_FilterSearchText()"></asp:TextBox>
+											<asp:TextBox ID="txtSearch" runat="server" CssClass="InputField"></asp:TextBox>
 										</div>
 										<div>
 											<asp:LinkButton ID="btnSearch" runat="server" ToolTip="Search" OnClick="btnSearch_Click"><div class="hd-sp-img hd-sp-img-search" ></div></asp:LinkButton>
@@ -71,26 +71,6 @@
 			<input style="DISPLAY: none; VISIBILITY: hidden" type="text" /><!-- workaround for weird IE behavior when auto-submitting via Enter key -->
 		</div>
 	</form>
-
-    <script type="text/javascript">
-        function txtSearch_FilterSearchText() {
-            var txtSearchCtl = document.getElementById('<%=txtSearch.ClientID %>');
-            var searchText = txtSearchCtl.value;
-            var bChanged = false;
-            if (searchText.indexOf("&", 0) != -1) {
-                searchText = searchText.replace("&", "");
-                bChanged = true;
-            }
-            if (searchText.indexOf("<", 0) != -1) {
-                searchText = searchText.replace("<", "");
-                bChanged = true;
-            }
-            if (bChanged) {
-                txtSearchCtl.value = searchText;
-            }
-        }
-
-    </script>
 
 </body>
 </html>

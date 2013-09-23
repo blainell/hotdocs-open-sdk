@@ -265,9 +265,6 @@ namespace SamplePortal.Data
 					case '>':
 						sb.Append("&gt;");
 						break;
-					case '&':
-						sb.Append("&amp;");
-						break;
 					default:
 						sb.Append(c);
 						break;

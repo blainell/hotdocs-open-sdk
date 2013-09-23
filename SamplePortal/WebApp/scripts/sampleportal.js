@@ -6,27 +6,47 @@
 {
 	jQuery(document).ready(function()
 	{
-		jQuery('#txtSearch')
-			.on('keydown', function(e)
+		return jQuery('#txtSearch')
+		.on('keydown', function(e)
+		{
+			var bOk = true;
+			switch (e.which)
 			{
-				switch (e.which)
-				{
-					case 13: // Key.Enter
-						// Execute the search by clicking the search button.
-						var searchButton = jQuery('#btnSearch');
-						if (searchButton.length > 0)
-							searchButton[0].click();
-						e.preventDefault();
-						break;
-					case 27: // Key.Escape
-						// Clear the search by clicking the clear button.
-						var clearButton = jQuery('#btnSearchClear');
-						if (clearButton.length > 0)
-							clearButton[0].click();
-						e.preventDefault();
-						break;
-				}
-			});
+				case 13: // Key.Enter
+					// Execute the search by clicking the search button.
+					var searchButton = jQuery('#btnSearch');
+					if (searchButton.length > 0)
+						searchButton[0].click();
+					e.preventDefault();
+					break;
+				case 27: // Key.Escape
+					// Clear the search by clicking the clear button.
+					var clearButton = jQuery('#btnSearchClear');
+					if (clearButton.length > 0)
+						clearButton[0].click();
+					e.preventDefault();
+					break;
+				case 188: // "," or ">" character
+					if (e.shiftKey)
+						bOk = false;
+				    break;
+			}
+			return bOk;
+		});
+
+		return jQuery('#txtSearch')
+		.on('keypress', function (e) {
+			var bOk = true;
+			switch (e.which) {
+				case 188: // "," or ">" character
+					if (e.shiftKey)
+						bOk = false;
+					break;
+                default:
+                    break;
+			}
+			return bOk;
+		});
 	});
 
 	// This function is used on the "Select Answers" page to enable/disable 
