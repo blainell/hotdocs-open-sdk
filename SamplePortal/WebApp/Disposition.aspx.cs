@@ -57,8 +57,6 @@ public partial class Disposition : System.Web.UI.Page
 					}
 				}
 
-				string switches = _session.CurrentWorkItem.Template.Switches;
-
 				// Note for HotDocs host application developers: an informational log entry could be added 
 				// to a log file before (here) and after the call to _session.AssembleDocuments.
 				HotDocs.Sdk.Server.Document[] docs = _session.AssembleDocuments(null);

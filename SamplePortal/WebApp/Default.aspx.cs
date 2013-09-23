@@ -72,7 +72,9 @@ public partial class _Default : System.Web.UI.Page
 		//Open a new work session.
 		try
 		{
-			_session = Factory.CreateWorkSession(Session, packageId);
+			// title is in Cells[2].
+			string templateTitle = tplGrid.SelectedItem.Cells[2].Text;
+			_session = Factory.CreateWorkSession(Session, packageId, templateTitle);
 
 			// Make sure that there is a cache for the assembled documents, and that it is empty.
 			AssembledDocsCache cache = Factory.GetAssembledDocsCache(this.Session);

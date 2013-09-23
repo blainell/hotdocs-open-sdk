@@ -23,6 +23,12 @@ public class GetInterviewFile : IHttpHandler, IRequiresSessionState
 		HttpRequest req = context.Request;
 		HttpResponse resp = context.Response;
 
+		// Cache the file for 60 minutes to improve performance.
+		resp.Cache.SetCacheability(HttpCacheability.Public);
+		resp.Cache.SetExpires(DateTime.Now.AddMinutes(60));
+		resp.Cache.SetMaxAge(new TimeSpan(0, 60, 0));
+		resp.AddHeader("Last-Modified", DateTime.Now.ToLongDateString());
+
 		// Read and validate the required parameters from the query string.
 		string templateLocator = req.QueryString["loc"];
 		if (string.IsNullOrEmpty(templateLocator))
@@ -45,7 +51,7 @@ public class GetInterviewFile : IHttpHandler, IRequiresSessionState
 		// Add an appropriate header if we are returning a Silverlight DLL.
 		if (fileType == "dll")
 			resp.AppendHeader("Content-Disposition", "attachment; filename=" + outputFileName);
-
+		
 		// Get the file and copy it to the output stream.
 		using (Stream stream = session.Service.GetInterviewFile(HotDocs.Sdk.Template.Locate(templateLocator), fileName, fileType))
 		{

@@ -22,8 +22,6 @@ namespace HotDocs.Sdk.Server.Local
 	/// </summary>
 	public class Services : IServices
 	{
-		const int READ_BUF_SIZE = 0x10000;
-
 		private HotDocs.Server.Application _app;
 		private string _tempPath = null;
 
@@ -293,7 +291,7 @@ namespace HotDocs.Sdk.Server.Local
 					return template.Location.GetFile(fileName);
 				default:
 					string interviewDefPath = _app.GetInterviewDefinitionFromTemplate(
-						template.GetFullPath(), 
+						template.GetFullPath(),
 						fileName,
 						fileType == "dll" ? hdsi.interviewFormat.Silverlight : hdsi.interviewFormat.javascript
 						);
@@ -314,15 +312,15 @@ namespace HotDocs.Sdk.Server.Local
 			// Validate input parameters, creating defaults as appropriate.
 			string logStr = logRef == null ? string.Empty : logRef;
 			if (template == null)
-				throw new ArgumentNullException("template", "Local.Services.AssembleDocument: The template must not be null, logRef: " + logStr);
+				throw new ArgumentNullException("template", string.Format(@"Local.Services.AssembleDocument: the ""template"" parameter passed in was null, logRef: {0}", logStr));
 
 			if (settings == null)
 				settings = new AssembleDocumentSettings();
 
+
 			HotDocs.Server.AnswerCollection ansColl = new HotDocs.Server.AnswerCollection();
 			ansColl.OverlayXMLAnswers(answers == null ? "" : answers.ReadToEnd());
 			HotDocs.Server.OutputOptions outputOptions = ConvertOutputOptions(settings.OutputOptions);
-
 
 			//TODO: Review this.
 			int savePendingAssembliesCount = _app.PendingAssemblyCmdLineStrings.Count;
@@ -504,15 +502,8 @@ namespace HotDocs.Sdk.Server.Local
 			MemoryStream memStream = new MemoryStream();
 			using (FileStream fs = File.OpenRead(filePath))
 			{
-				byte[] buffer = new byte[READ_BUF_SIZE];
-				int offset = 0, bytesRead = 0;
-				do
-				{
-					bytesRead = fs.Read(buffer, offset, READ_BUF_SIZE);
-					if (bytesRead > 0)
-						memStream.Write(buffer, 0, bytesRead);
-					offset += bytesRead;
-				} while (bytesRead == READ_BUF_SIZE);
+				fs.CopyTo(memStream);
+				memStream.Position = 0;
 			}
 			return memStream;
 		}

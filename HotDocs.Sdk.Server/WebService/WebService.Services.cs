@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 
 using HotDocs.Sdk.Server.Contracts;
+using System.Text.RegularExpressions;
 
 namespace HotDocs.Sdk.Server.WebService
 {
@@ -55,10 +56,10 @@ namespace HotDocs.Sdk.Server.WebService
 		{
 			// Validate input parameters, creating defaults as appropriate.
 			string logStr = logRef == null ? string.Empty : logRef;
-			
+
 			if (template == null)
 				throw new ArgumentNullException("template", string.Format(@"WebServices.Services.GetInterview: the ""template"" parameter passed in was null, logRef: {0}", logStr));
-			
+
 			if (settings == null)
 				settings = new InterviewSettings();
 
@@ -96,6 +97,13 @@ namespace HotDocs.Sdk.Server.WebService
 					StringBuilder interview = new StringBuilder(Util.ExtractString(interviewFiles[0]));
 					Util.AppendSdkScriptBlock(interview, template, settings);
 					result.HtmlFragment = interview.ToString();
+
+					// The Web Services do not have a way to set the title of the template--it always uses the title from the component file.
+					// So here we are replacing the title that was put in the html fragment with the template's title, which may have
+					// been set later and does not match its component file.
+					// TODO: It would be a good enhancement for the web service API to allow the caller to specify the template title.
+					result.HtmlFragment = Regex.Replace(result.HtmlFragment, "HDTemplateName=\\\".+?\"", "HDTemplateName=\"" + settings.Title + "\"");
+
 				}
 				SafeCloseClient(client, logRef);
 			}
@@ -114,17 +122,22 @@ namespace HotDocs.Sdk.Server.WebService
 		/// <returns>returns information about the assembled document, the document type, the unanswered variables, the resulting answers, etc.</returns>
 		public AssembleDocumentResult AssembleDocument(Template template, TextReader answers, AssembleDocumentSettings settings, string logRef)
 		{
+			// Validate input parameters, creating defaults as appropriate.
 			string logStr = logRef == null ? string.Empty : logRef;
+
 			if (template == null)
 				throw new ArgumentNullException("template", string.Format(@"WebService.Services.AssembleDocument: the ""template"" parameter passed in was null, logRef: {0}", logStr));
+			
 			if (settings == null)
 				settings = new AssembleDocumentSettings();
+
 			AssembleDocumentResult result = null;
 			AssemblyResult asmResult = null;
-			OutputFormat outputFormat = ConvertFormat(settings.Format);
-			AssemblyOptions assemblyOptions = ConvertOptions(settings);
+
 			using (Proxy client = new Proxy(_endPointName))
 			{
+				OutputFormat outputFormat = ConvertFormat(settings.Format);
+				AssemblyOptions assemblyOptions = ConvertOptions(settings);
 				string fileName = GetRelativePath(template.GetFullPath());
 				asmResult = client.AssembleDocument(
 					fileName,
@@ -134,10 +147,12 @@ namespace HotDocs.Sdk.Server.WebService
 					null);
 				SafeCloseClient(client, logRef);
 			}
+
 			if (asmResult != null)
 			{
-				result = ConvertAssemblyResult(template, asmResult, settings.Format);
+				result = Util.ConvertAssemblyResult(template, asmResult, settings.Format);
 			}
+
 			return result;
 		}
 
@@ -373,51 +388,6 @@ namespace HotDocs.Sdk.Server.WebService
 			if (settings.UseMarkupSyntax == Tristate.True)
 				assemblyOptions |= AssemblyOptions.MarkupView;
 			return assemblyOptions;
-		}
-
-		//TODO: move this over to the Util class so that both WS and Cloud implementions of the IService class can use it
-		AssembleDocumentResult ConvertAssemblyResult(Template template, AssemblyResult asmResult, DocumentType docType)
-		{
-			AssembleDocumentResult result = null;
-			MemoryStream document = null;
-			StreamReader ansRdr = null;
-			List<NamedStream> supportingFiles = new List<NamedStream>();
-			IEnumerable<Template> pendingAssemblies = null;
-			if (asmResult.PendingAssemblies != null)
-				pendingAssemblies = from pa in asmResult.PendingAssemblies
-									select new Template(Path.GetFileName(pa.TemplateName), template.Location.Duplicate(), pa.Switches);
-			for (int i = 0; i < asmResult.Documents.Length; i++)
-			{
-				switch (asmResult.Documents[i].Format)
-				{
-					case OutputFormat.Answers:
-						ansRdr = new StreamReader(new MemoryStream(asmResult.Documents[i].Data));
-						break;
-					case OutputFormat.JPEG:
-					case OutputFormat.PNG:
-						// If the output document is plain HTML, we might also get additional image files in the 
-						// AssemblyResult that we need to pass on to the caller.
-						supportingFiles.Add(new NamedStream(asmResult.Documents[i].FileName, new MemoryStream(asmResult.Documents[i].Data)));
-						break;
-					default:
-						document = new MemoryStream(asmResult.Documents[i].Data);
-						if (docType == DocumentType.Native)
-						{
-							docType = Document.GetDocumentType(asmResult.Documents[i].FileName);
-						}
-						break;
-				}
-			}
-			if (document != null)
-			{
-				result = new AssembleDocumentResult(
-					new Document(template, document, docType, supportingFiles.ToArray(), asmResult.UnansweredVariables),
-					ansRdr == null ? null : ansRdr.ReadToEnd(),
-					pendingAssemblies,
-					asmResult.UnansweredVariables
-				);
-			}
-			return result;
 		}
 
 		private string GetRelativePath(string fullPath)

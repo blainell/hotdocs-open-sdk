@@ -128,7 +128,7 @@ namespace HotDocs.Sdk
 		/// <returns></returns>
 		public string CreateLocator()
 		{
-			string locator = FileName + "|" + Switches + "|" + Key +"|" + Location.CreateLocator();
+			string locator = FileName + "|" + Switches + "|" + Key + "|" + Location.CreateLocator();
 			return Util.EncryptString(locator);
 		}
 		/// <summary>
@@ -158,25 +158,32 @@ namespace HotDocs.Sdk
 		}
 
 		//Public methods.
+
 		/// <summary>
-		/// Returns the template title as defined in the template's manifest.
+		/// The template title, which comes from the template's manifest file by default.
 		/// </summary>
-		/// <returns></returns>
-		public string GetTitle()
+		public string Title
 		{
-			if (_title == null)
+			get
 			{
-				try
+				if (_title == null)
 				{
-					TemplateManifest manifest = GetManifest(ManifestParseFlags.ParseTemplateInfo);
-					_title = manifest.Title;
+					try
+					{
+						TemplateManifest manifest = GetManifest(ManifestParseFlags.ParseTemplateInfo);
+						_title = manifest.Title;
+					}
+					catch (Exception)
+					{
+						_title = "";
+					}
 				}
-				catch (Exception)
-				{
-					_title = "";
-				}
+				return _title;
 			}
-			return _title;
+			set
+			{
+				_title = value;
+			}
 		}
 		/// <summary>
 		/// Gets the template manifest for this template. Can optionally parse an entire template manifest spanning tree.

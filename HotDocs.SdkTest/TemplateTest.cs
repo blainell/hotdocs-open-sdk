@@ -37,7 +37,7 @@ namespace HotDocs.SdkTest
 			Assert.AreEqual(switches, template.Switches);
 
 			//TODO: Update the package so that the template title and template type agree.
-			Assert.AreEqual("Employment Agreement (Word RTF version)", template.GetTitle().Trim());
+			Assert.AreEqual("Employment Agreement (Word RTF version)", template.Title.Trim());
 
 			string filePath = template.GetFullPath();
 			Assert.IsTrue(File.Exists(filePath));
@@ -61,7 +61,7 @@ namespace HotDocs.SdkTest
 			string switches = "/ni";
 			string key = "Test file key";
 			Template template = new Template("Demo Employment Agreement.docx", location, switches, key);
-			Assert.AreEqual(template.GetTitle(), "Employment Agreement");
+			Assert.AreEqual(template.Title, "Employment Agreement");
 
 			string filePath = template.GetFullPath();
 			Assert.IsTrue(File.Exists(filePath));
@@ -83,7 +83,7 @@ namespace HotDocs.SdkTest
 			Assert.AreEqual(template.FileName, template2.FileName);
 			Assert.AreEqual(template.Key, template2.Key);
 			Assert.AreEqual(template.Switches, template2.Switches);
-			Assert.AreEqual(template.GetTitle(), template2.GetTitle());
+			Assert.AreEqual(template.Title, template2.Title);
 			Assert.AreEqual(template.GeneratesDocument, template2.GeneratesDocument);
 			Assert.AreEqual(template.HasInterview, template2.HasInterview);
 			Assert.AreEqual(template.NativeDocumentType, template2.NativeDocumentType);
