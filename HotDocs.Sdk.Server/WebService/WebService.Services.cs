@@ -65,11 +65,11 @@ namespace HotDocs.Sdk.Server.WebService
 
 			// Configure interview options
 			InterviewOptions itvOpts = InterviewOptions.OmitImages; // Instructs HDS not to return images used by the interview; we'll get them ourselves from the template folder.
-			if (settings.DisableDocumentPreview == Tristate.True)
+			if (settings.DisableDocumentPreview)
 				itvOpts |= InterviewOptions.NoPreview; // Disables (omits) the Document Preview button on the interview toolbar.
-			if (settings.DisableSaveAnswers == Tristate.True)
+			if (settings.DisableSaveAnswers)
 				itvOpts |= InterviewOptions.NoSave; // Disables (omits) the Save Answers button on the interview toolbar.
-			if (settings.RoundTripUnusedAnswers != Tristate.True)
+			if (!settings.RoundTripUnusedAnswers)
 				itvOpts |= InterviewOptions.ExcludeStateFromOutput; // Prevents original answer file from being encrypted and sent to the interview and then posted back at the end.
 
 			// Get the interview.
@@ -89,8 +89,8 @@ namespace HotDocs.Sdk.Server.WebService
 					settings.InterviewRuntimeUrl, // location (under this app's domain name) where HotDocs Server JS files are available
 					settings.StyleSheetUrl + "/" + settings.ThemeName + ".css", // URL of CSS stylesheet (typically called hdsuser.css).  hdssystem.css must exist in same directory.
 					Util.GetInterviewImageUrl(settings, template), // interview images will be requested from GetInterviewFile.ashx, which will stream them from the template directory
-					settings.DisableSaveAnswers != Tristate.True ? settings.SaveAnswersUrl : "", //for the save answers button; if this is null the "Save Answers" button does not appear
-					settings.DisableDocumentPreview != Tristate.True ? settings.DocumentPreviewUrl : "", // document previews will be requested from here; if null the "Document Preview" button does not appear
+					!settings.DisableSaveAnswers ? settings.SaveAnswersUrl : "", //for the save answers button; if this is null the "Save Answers" button does not appear
+					!settings.DisableDocumentPreview ? settings.DocumentPreviewUrl : "", // document previews will be requested from here; if null the "Document Preview" button does not appear
 					Util.GetInterviewDefinitionUrl(settings, template)); // Interview definitions (Silverlight or JavaScript) will be requested from here -- careful with relative URLs!!
 				if (interviewFiles != null)
 				{

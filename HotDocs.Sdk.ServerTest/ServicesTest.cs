@@ -185,8 +185,8 @@ namespace HotDocs.Sdk.ServerTest
 			// 2. Do not include the hdMainDiv.
 			// 3. "Mark" the Employee Name variable.
 			// 4. Set the interview format to Silverlight.
-			settings.DisableDocumentPreview = Tristate.True;
-			settings.DisableSaveAnswers = Tristate.True;
+			settings.DisableDocumentPreview = true;
+			settings.DisableSaveAnswers = true;
 			settings.AddHdMainDiv = Tristate.False;
 			settings.Format = InterviewFormat.Silverlight;
 			markedVars = new string[] { "Employee Name" };

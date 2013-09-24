@@ -200,9 +200,9 @@ namespace HotDocs.Sdk.Cloud
 			// in the call to Cloud Services.
 			// TODO: After TFS #5598 is fixed, we can remove this workaround.
 			Dictionary<string, string> settingsDict = new Dictionary<string, string>(settings.Settings);
-			if (settings.DisableDocumentPreview == Tristate.True)
+			if (settings.DisableDocumentPreview)
 				settingsDict.Remove("DocPreviewUrl");
-			if (settings.DisableSaveAnswers == Tristate.True)
+			if (settings.DisableSaveAnswers)
 				settingsDict.Remove("SaveAnswersPageUrl");
 
 			string interviewImageUrl = settings.Settings["TempInterviewUrl"];

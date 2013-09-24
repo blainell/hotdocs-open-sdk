@@ -138,7 +138,7 @@ namespace HotDocs.Sdk
 
 			// other settings having to do with the interview request or structure, rather than its user-observable behavior
 			AddHdMainDiv = Util.ReadConfigurationTristate("AddHdMainDiv", Tristate.True);
-			RoundTripUnusedAnswers = Util.ReadConfigurationTristate("RoundTripUnusedAnswers", Tristate.Default);
+			RoundTripUnusedAnswers = Util.ReadConfigurationBoolean("RoundTripUnusedAnswers", true);
 
 			// other interview settings
 			Format = Util.ReadConfigurationEnum<InterviewFormat>("InterviewFormat", InterviewFormat.Unspecified);
@@ -148,8 +148,8 @@ namespace HotDocs.Sdk
 			Locale = Util.ReadConfigurationString("InterviewLocale");
 			NextFollowsOutline = Util.ReadConfigurationTristate("NextFollowsOutline", Tristate.Default);
 			ShowAllResourceButtons = Util.ReadConfigurationTristate("ShowAllResourceButtons", Tristate.Default);
-			DisableDocumentPreview = Util.ReadConfigurationTristate("DisableDocumentPreview", Tristate.Default);
-			DisableSaveAnswers = Util.ReadConfigurationTristate("DisableSaveAnswers", Tristate.False);
+			DisableDocumentPreview = Util.ReadConfigurationBoolean("DisableDocumentPreview", false);
+			DisableSaveAnswers = Util.ReadConfigurationBoolean("DisableSaveAnswers", false);
 			DisableAnswerSummary = Util.ReadConfigurationTristate("DisableAnswerSummary", Tristate.Default);
 			AnswerSummary = AnswerSummaryOptions.Default;
 
@@ -409,7 +409,7 @@ namespace HotDocs.Sdk
 		/// choosing Default for this setting is equivalent to False. When used with HotDocs Core Services,
 		/// however, Default is equivalent to True. Beware.
 		/// </remarks>
-		public Tristate RoundTripUnusedAnswers { get; set; }
+		public bool RoundTripUnusedAnswers { get; set; }
 
 		#endregion
 
@@ -698,7 +698,7 @@ namespace HotDocs.Sdk
 		/// This property corresponds to (but is reversed from) the "Allow document preview" setting in the HotDocs Server
 		/// management console and the DocumentPreview property in the HotDocs Server API.
 		/// </remarks>
-		public Tristate DisableDocumentPreview { get; set; } // defaults to Default
+		public bool DisableDocumentPreview { get; set; } // defaults to Default
 
 		/// <summary>
 		/// Specifies that the Save Answers button should not appear on the interview toolbar, independent of whether
@@ -707,7 +707,7 @@ namespace HotDocs.Sdk
 		/// <remarks>
 		/// There is no server default behavior to fall back on. Property is Tristate instead of bool only for consistency with the other "Disable..." properties.
 		/// </remarks>
-		public Tristate DisableSaveAnswers { get; set; }
+		public bool DisableSaveAnswers { get; set; }
 
 		/// <summary>
 		/// HotDocs interviews normally allow users to request answer summaries from the interview toolbar.

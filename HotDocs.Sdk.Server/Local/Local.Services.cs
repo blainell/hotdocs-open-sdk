@@ -200,13 +200,11 @@ namespace HotDocs.Sdk.Server.Local
 			// Configure the interview options
 			hdsi.HDInterviewOptions itvOpts = hdsi.HDInterviewOptions.intOptNoImages; // Instructs HDS not to return images used by the interview; we'll get them ourselves from the template folder.
 
-			// TODO: Application interface provides no way to request the "server default" for each of the following option flags.
-			// That would require changing the .NET (and probably COM) interfaces
-			if (settings.DisableDocumentPreview == Tristate.True)
+			if (settings.DisableDocumentPreview)
 				itvOpts |= hdsi.HDInterviewOptions.intOptNoPreview; // Disables (omits) the Document Preview button on the interview toolbar. TODO: Fix TFS #5598 so this actually has an effect.
-			if (settings.DisableSaveAnswers == Tristate.True)
+			if (settings.DisableSaveAnswers)
 				itvOpts |= hdsi.HDInterviewOptions.intOptNoSave; // Disables (omits) the Save Answers button on the interview toolbar. TODO: Fix TFS #5598 so this actually has an effect.
-			if (settings.RoundTripUnusedAnswers == Tristate.True)
+			if (settings.RoundTripUnusedAnswers)
 				itvOpts |= hdsi.HDInterviewOptions.intOptStateless; // Prevents original answer file from being encrypted and sent to the interview and then posted back at the end.
 
 			// Get the interview.
@@ -245,8 +243,8 @@ namespace HotDocs.Sdk.Server.Local
 							Util.GetInterviewDefinitionUrl(settings, template),
 							tempFolder != null ? tempFolder.Path : null, // the path to which HDS should copy interview images; also the path that may become part of the DocumentPreviewStateString & passed to document preview handler
 							Util.GetInterviewImageUrl(settings, template),
-							settings.DisableSaveAnswers != Tristate.True ? settings.SaveAnswersUrl : "", // TODO: After TFS #5598 is fixed, we can go back to just setting the Url here and let HDS do the work of determining whether to use the url or not.
-							settings.DisableDocumentPreview != Tristate.True ? settings.DocumentPreviewUrl : "") // TODO: Fix up after TFS #5598 is fixed (as above).
+							!settings.DisableSaveAnswers ? settings.SaveAnswersUrl : "", // TODO: After TFS #5598 is fixed, we can go back to just setting the Url here and let HDS do the work of determining whether to use the url or not.
+							!settings.DisableDocumentPreview ? settings.DocumentPreviewUrl : "") // TODO: Fix up after TFS #5598 is fixed (as above).
 						);
 				}
 				Util.AppendSdkScriptBlock(htmlFragment, template, settings);
