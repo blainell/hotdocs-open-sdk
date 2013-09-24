@@ -209,53 +209,43 @@ namespace HotDocs.Sdk.Server.Local
 
 			// Get the interview.
 			InterviewResult result = new InterviewResult();
-			//TODO: Remove the temp folder.
-			TempFolder tempFolder = null;
 
-			try
+			StringBuilder htmlFragment;
+			using (var ansColl = new HotDocs.Server.AnswerCollection())
 			{
-				StringBuilder htmlFragment;
-				using (var ansColl = new HotDocs.Server.AnswerCollection())
+				if (answers != null)
 				{
-					if (answers != null)
-					{
-						if (answers.Peek() == 0xFEFF)
-							answers.Read(); // discard BOM if present
-						ansColl.XmlAnswers = answers.ReadToEnd();
-					}
-
-					if (markedVariables == null)
-						_app.UnansweredVariablesList = new string[0];
-					else
-						_app.UnansweredVariablesList = markedVariables;
-
-					htmlFragment = new StringBuilder(
-						_app.GetInterview(
-							template.GetFullPath(),
-							template.Key,
-							fmt,
-							itvOpts,
-							settings.InterviewRuntimeUrl,
-							settings.StyleSheetUrl + "/" + settings.ThemeName + ".css",
-							ansColl,
-							settings.PostInterviewUrl,
-							settings.Title,
-							Util.GetInterviewDefinitionUrl(settings, template),
-							tempFolder != null ? tempFolder.Path : null, // the path to which HDS should copy interview images; also the path that may become part of the DocumentPreviewStateString & passed to document preview handler
-							Util.GetInterviewImageUrl(settings, template),
-							!settings.DisableSaveAnswers ? settings.SaveAnswersUrl : "", // TODO: After TFS #5598 is fixed, we can go back to just setting the Url here and let HDS do the work of determining whether to use the url or not.
-							!settings.DisableDocumentPreview ? settings.DocumentPreviewUrl : "") // TODO: Fix up after TFS #5598 is fixed (as above).
-						);
+					if (answers.Peek() == 0xFEFF)
+						answers.Read(); // discard BOM if present
+					ansColl.XmlAnswers = answers.ReadToEnd();
 				}
-				Util.AppendSdkScriptBlock(htmlFragment, template, settings);
 
-				result.HtmlFragment = htmlFragment.ToString();
+				if (markedVariables == null)
+					_app.UnansweredVariablesList = new string[0];
+				else
+					_app.UnansweredVariablesList = markedVariables;
+
+				htmlFragment = new StringBuilder(
+					_app.GetInterview(
+						template.GetFullPath(),
+						template.Key,
+						fmt,
+						itvOpts,
+						settings.InterviewRuntimeUrl,
+						settings.StyleSheetUrl + "/" + settings.ThemeName + ".css",
+						ansColl,
+						settings.PostInterviewUrl,
+						settings.Title,
+						Util.GetInterviewDefinitionUrl(settings, template),
+						null, // the path to which HDS should copy interview images; also the path that may become part of the DocumentPreviewStateString & passed to document preview handler
+						Util.GetInterviewImageUrl(settings, template),
+						!settings.DisableSaveAnswers ? settings.SaveAnswersUrl : "", // TODO: After TFS #5598 is fixed, we can go back to just setting the Url here and let HDS do the work of determining whether to use the url or not.
+						!settings.DisableDocumentPreview ? settings.DocumentPreviewUrl : "") // TODO: Fix up after TFS #5598 is fixed (as above).
+					);
 			}
-			finally
-			{
-				if (tempFolder != null)
-					tempFolder.Dispose();
-			}
+			Util.AppendSdkScriptBlock(htmlFragment, template, settings);
+
+			result.HtmlFragment = htmlFragment.ToString();
 			return result;
 		}
 
