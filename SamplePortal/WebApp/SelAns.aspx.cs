@@ -64,7 +64,7 @@ public partial class SelAns : System.Web.UI.Page
 				string ext = Path.GetExtension(file.FileName).ToLower();
 				if (ext == ".anx")
 				{
-					_session.AnswerCollection.ReadFile(file.FileName);
+					_session.AnswerCollection.ReadFile(file.InputStream);
 					Advance();
 					return;
 				}

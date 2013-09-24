@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Text;
 using System.Xml;
 
@@ -120,7 +121,7 @@ namespace HotDocs.Sdk
 		/// Read an answer file into this answer collection. Store the answer file name in the FilePath property.
 		/// Currently, the only supported file format is XML.
 		/// </summary>
-		/// <param name="path"></param>
+		/// <param name="path">The file path to an XML answer file.</param>
 		public void ReadFile(string path)
 		{
 			using (System.IO.FileStream fs = new System.IO.FileStream(path, System.IO.FileMode.Open))
@@ -128,6 +129,16 @@ namespace HotDocs.Sdk
 				ReadXml(fs);
 			}
 			_filePath = path;
+		}
+
+		/// <summary>
+		/// Reads an answer file from a stream. Since it comes from a stream, the answer file name is empty.
+		/// </summary>
+		/// <param name="fileStream">A stream containing an XML answer file.</param>
+		public void ReadFile(Stream fileStream)
+		{
+			ReadXml(fileStream);
+			_filePath = string.Empty;
 		}
 
 		/// <summary>
