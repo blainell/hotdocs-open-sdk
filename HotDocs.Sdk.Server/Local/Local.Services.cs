@@ -65,7 +65,7 @@ namespace HotDocs.Sdk.Server.Local
 			string hvcPath;
 			GetHvcPath(templateFilePath, out hvcPath);
 			if (hvcPath.Length == 0)
-				throw new Exception("Invalid templateID");
+				throw new Exception("Invalid template path.");
 			if (!File.Exists(hvcPath))
 				throw new HotDocs.Server.HotDocsServerException("You do not have read access to the variable collection file (.hvc)");
 

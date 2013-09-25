@@ -38,7 +38,8 @@ namespace HotDocs.Sdk
 		#region Constructors
 
 		/// <summary>
-		/// There are four required parameters for any HotDocs Server interview request. The default (parameterless) constructor
+		/// Contruct an InterviewSettings object with the default settings.
+		/// Four parameters are required for any HotDocs Server interview request. The default (parameterless) constructor
 		/// REQUIRES that these four parameters have values that can be found in the host application's web.config file.
 		/// If any required value is not found there, the constructor will throw an exception.
 		/// </summary>
