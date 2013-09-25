@@ -244,6 +244,9 @@ namespace SamplePortal.Data
 
 		private string EncodeString(string s)
 		{
+			if (string.IsNullOrEmpty(s))
+				return string.Empty;
+
 			System.Text.StringBuilder sb = new System.Text.StringBuilder();
 			for (int i = 0; i < s.Length; i++)
 			{

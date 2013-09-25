@@ -68,6 +68,8 @@ namespace HotDocs.Sdk.ServerTest
 		public static HotDocs.Sdk.Server.IServices GetLocalServicesInterface()
 		{
 			string tempPath = ConfigurationManager.AppSettings["TempPath"];
+			if (!Directory.Exists(tempPath))
+				Directory.CreateDirectory(tempPath);
 			return new HotDocs.Sdk.Server.Local.Services(tempPath);
 		}
 
