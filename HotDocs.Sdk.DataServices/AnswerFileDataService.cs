@@ -17,6 +17,9 @@ using HotDocs.Sdk.Server;
 
 namespace HotDocs.Sdk.DataServices
 {
+	/// <summary>
+	/// <c>AnswerFileDataService</c> 
+	/// </summary>
 	public class AnswerFileDataService : DSPDataService<DSPContext>
 	{
 		private const string DefineAnswerFileDataSourceOperationName = "DefineAnswerFileDataSource";

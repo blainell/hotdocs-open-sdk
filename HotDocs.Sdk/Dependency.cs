@@ -168,6 +168,7 @@ namespace HotDocs.Sdk
 				}
 			}
 		}
+
 		/// <summary>
 		/// Returns true if HintPath should be serialized to XML. For internal use only. 
 		/// </summary>

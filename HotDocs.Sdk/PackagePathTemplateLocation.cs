@@ -121,6 +121,12 @@ namespace HotDocs.Sdk
 			// does not need not be overridden here.
 		}
 
+		/// <summary>
+		/// Overrides Object.Equals. This should be present wherever GetHashCode is overridden 
+		/// and vice versa.
+		/// </summary>
+		/// <param name="obj">The object to compare to 'this'</param>
+		/// <returns>boolean true or false, indicating whether or not the two objects are equal</returns>
 		public override bool Equals(object obj)
 		{
 			return base.Equals(obj);

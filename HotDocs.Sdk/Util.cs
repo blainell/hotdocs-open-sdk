@@ -10,6 +10,10 @@ using System.Text;
 
 namespace HotDocs.Sdk
 {
+	/// <summary>
+	/// The <c>Util</c> class contains many helper methods and properties used by other 
+	/// classes in the Sdk, including HotDocs.Sdk.Server and SamplePortal.
+	/// </summary>
 	public partial class Util
 	{
 		internal static string EncryptString(string textToEncrypt)
@@ -28,11 +32,24 @@ namespace HotDocs.Sdk
 			return DecryptStringFromBytes_Aes(encryptedBuffer, key, initializationVector);
 		}
 
+		/// <summary>
+		/// <c>ReadConfigurationString</c> retrieves the string value associated with <c>settingName</c>
+		/// </summary>
+		/// <param name="settingName">the name of the setting</param>
+		/// <returns>the string value associated with <c>settingName</c></returns>
 		public static string ReadConfigurationString(string settingName) {
 			string sTemp = ConfigurationManager.AppSettings[settingName];
 			return (String.IsNullOrWhiteSpace(sTemp)) ? null : sTemp;
 		}
 
+		/// <summary>
+		/// <c>ReadConfigurationEnum&lt;TEnum&gt;</c> retrieves the enumerated value associated
+		/// with <c>settingName</c>
+		/// </summary>
+		/// <typeparam name="TEnum">the enumeration type of the setting</typeparam>
+		/// <param name="settingName">the name of the setting</param>
+		/// <param name="defaultValue">the default value of the setting</param>
+		/// <returns>the enumerated value associated with <c>settingName</c></returns>
 		public static TEnum ReadConfigurationEnum<TEnum>(string settingName, TEnum defaultValue) where TEnum : struct
 		{
 			string sTemp = ReadConfigurationString(settingName);
@@ -205,8 +222,14 @@ namespace HotDocs.Sdk
 
 	#region Data sources configuration file section handler
 
+	/// <summary>
+	/// <c>CustomDataSourcesSection</c> contains the settings used for data sources
+	/// </summary>
 	public class CustomDataSourcesSection : ConfigurationSection
 	{
+		/// <summary>
+		/// <c>DataSources</c> returns the data sources for the current configuration
+		/// </summary>
 		[ConfigurationProperty("", IsDefaultCollection = true)]
 		[ConfigurationCollection(typeof(DataSourcesCollection))]
 		public DataSourcesCollection DataSources
@@ -218,8 +241,14 @@ namespace HotDocs.Sdk
 		}
 	}
 
+	/// <summary>
+	/// <c>DataSourcesCollection</c> a collection of data sources
+	/// </summary>
 	public class DataSourcesCollection : ConfigurationElementCollection
 	{
+		/// <summary>
+		/// <c>CollectionType</c> the type of the collection
+		/// </summary>
 		public override ConfigurationElementCollectionType CollectionType
 		{
 			get
@@ -228,16 +257,30 @@ namespace HotDocs.Sdk
 			}
 		}
 
+		/// <summary>
+		/// <c>CreateNewElement</c> creates a new configuration element
+		/// </summary>
+		/// <returns></returns>
 		protected override ConfigurationElement CreateNewElement()
 		{
 			return new DataSourceElement();
 		}
 
+		/// <summary>
+		/// <c>GetElementKey</c> retrieves the name of the specified element.
+		/// </summary>
+		/// <param name="element">the element</param>
+		/// <returns>the name of the specified element.</returns>
 		protected override Object GetElementKey(ConfigurationElement element)
 		{
 			return ((DataSourceElement)element).Name;
 		}
 
+		/// <summary>
+		/// Return the <c>DataSourceElement</c> at the given <c>index</c>
+		/// </summary>
+		/// <param name="index">the index value</param>
+		/// <returns>the <c>DataSourceElement</c> at the given <c>index</c></returns>
 		public DataSourceElement this[int index]
 		{
 			get
@@ -254,6 +297,11 @@ namespace HotDocs.Sdk
 			}
 		}
 
+		/// <summary>
+		/// Return the <c>DataSourceElement</c> associated with <c>Name</c>
+		/// </summary>
+		/// <param name="Name">the string value associated with the returned object</param>
+		/// <returns>the <c>DataSourceElement</c> associated with <c>Name</c></returns>
 		new public DataSourceElement this[string Name]
 		{
 			get
@@ -262,45 +310,86 @@ namespace HotDocs.Sdk
 			}
 		}
 
+		/// <summary>
+		/// Returns the index of <c>dataServiceElement</c>
+		/// </summary>
+		/// <param name="dataServiceElement">the <c>DataSourceElement</c> 
+		/// for which the returned index will be returned</param>
+		/// <returns>the index of <c>dataServiceElement</c></returns>
 		public int IndexOf(DataSourceElement dataServiceElement)
 		{
 			return BaseIndexOf(dataServiceElement);
 		}
 
+		/// <summary>
+		/// <c>Add</c> adds <c>dataServiceElement</c> to the collection of 
+		/// data sources in this class
+		/// </summary>
+		/// <param name="dataServiceElement">the <c>DataSourceElement</c> being added to the
+		/// data sources in this class</param>
 		public void Add(DataSourceElement dataServiceElement)
 		{
 			BaseAdd(dataServiceElement);
 		}
 
+		/// <summary>
+		/// <c>BaseAdd</c> overrides ConfigurationElementCollection.BaseAdd
+		/// </summary>
+		/// <param name="element"></param>
 		protected override void BaseAdd(ConfigurationElement element)
 		{
 			BaseAdd(element, false);
 		}
 
+		/// <summary>
+		/// <c>Remove</c> removes <c>dataServiceElement</c> from the collection
+		/// of data sources in this class.
+		/// </summary>
+		/// <param name="dataServiceElement">the <c>DataSourceElement</c> being removed from the
+		/// data sources in this class instance</param>
 		public void Remove(DataSourceElement dataServiceElement)
 		{
 			if (BaseIndexOf(dataServiceElement) >= 0)
 				BaseRemove(dataServiceElement.Name);
 		}
 
+		/// <summary>
+		/// <c>RemoveAt</c> removes the data source located at <c>index</c>
+		/// </summary>
+		/// <param name="index">the integer based location</param>
 		public void RemoveAt(int index)
 		{
 			BaseRemoveAt(index);
 		}
 
+		/// <summary>
+		/// <c>Remove</c> removes the data source specified by <c>name</c>
+		/// </summary>
+		/// <param name="name">identifies the data source being removed from the 
+		/// data sources in this class instance</param>
 		public void Remove(string name)
 		{
 			BaseRemove(name);
 		}
 
+		/// <summary>
+		/// <c>Clear</c> removes all data sources in this class instance.
+		/// </summary>
 		public void Clear()
 		{
 			BaseClear();
 		}
 	}
 
+	/// <summary>
+	/// <c>DataSourceElement</c> is a class representing a data source. 
+	/// It has <c>Name</c> and <c>Address</c> properties
+	/// </summary>
 	public class DataSourceElement : ConfigurationElement
 	{
+		/// <summary>
+		/// Returns the <c>Name</c> associated with this data source element
+		/// </summary>
 		[ConfigurationProperty("name", IsRequired = true, IsKey = true)]
 		public string Name
 		{
@@ -314,6 +403,9 @@ namespace HotDocs.Sdk
 			}
 		}
 
+		/// <summary>
+		/// Returns the <c>Address</c> associated with this data source element
+		/// </summary>
 		[ConfigurationProperty("address", IsRequired = true)]
 		public string Address
 		{

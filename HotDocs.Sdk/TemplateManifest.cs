@@ -47,30 +47,94 @@ namespace HotDocs.Sdk
 		ParseAll				= ParseVariables|ParseDependencies|ParseAdditionalFiles|ParseDataSources
 	};
 
+
+	/// <summary>
+	/// <c>DataSourceFieldType</c> specifies the value of the data source field
+	/// (text, number, date, or TrueFalse).
+	/// </summary>
 	public enum DataSourceFieldType
 	{
+		/// <summary>
+		/// The type of the data source field is <c>Text</c>
+		/// </summary>
 		Text,
+
+		/// <summary>
+		/// The type of the data source field is <c>Number</c>
+		/// </summary>
 		Number,
+
+		/// <summary>
+		/// The type of the data source field is <c>Date</c>
+		/// </summary>
 		Date,
+
+		/// <summary>
+		/// The type of the data source field is <c>TrueFalse</c>
+		/// </summary>
 		TrueFalse
 	};
 
+	/// <summary>
+	/// <c>DataSourceBackfillType</c> is an enumeration that specifies 
+	/// whether and under what conditions the current field will be stored back to 
+	/// the data source.
+	/// </summary>
 	public enum DataSourceBackfillType
 	{
+		/// <summary>
+		/// Indicates never store the current field back to the data source.
+		/// </summary>
 		Never,
+
+		/// <summary>
+		/// Indicates always store the current field back to the data source.
+		/// </summary>
 		Always,
+
+		/// <summary>
+		/// Indicates to prompt whether to store the current field back to
+		/// the data source.
+		/// </summary>
 		Prompt,
+
+		/// <summary>
+		/// Indicates the the current field should be specifically prevented from
+		/// storing back to the data source.
+		/// </summary>
 		DoNotAllow
 	};
 
+	/// <summary>
+	/// <c>DataSourceType</c> indicates from where the answers were supplied to the interview or assembly.
+	/// </summary>
 	public enum DataSourceType
 	{
+		/// <summary>
+		/// Indicates the current answer file is being supplied to the interview or assembly.
+		/// </summary>
 		CurrentAnswerFile,
+
+		/// <summary>
+		/// Indicates a specified answer file is being supplied to the interview or assembly.
+		/// </summary>
 		AnswerFile,
+
+		/// <summary>
+		/// Indicates answers from a database component are being supplied to the interview or assembly.
+		/// </summary>
 		DatabaseComponent,
+
+		/// <summary>
+		/// Indicates answers from a customized source are being supplied to the interview or assembly.
+		/// </summary>
 		Custom
 	};
 
+	/// <summary>
+	/// <c>VariableInfo</c> contains information (name and type) about a HotDocs variable. An instance of this
+	/// class can be used with equality and comparison methods.
+	/// </summary>
 	public class VariableInfo : IEquatable<VariableInfo>, IComparable<VariableInfo>
 	{
 		private string _key;
@@ -86,20 +150,39 @@ namespace HotDocs.Sdk
 			_key = Name + Type.ToString();
 		}
 
+		/// <summary>
+		/// <c>Name</c> and <c>Type</c> help to identify the current variable
+		/// </summary>
 		public string Name { get; private set; }
 
+		/// <summary>
+		/// <c>Name</c> and <c>Type</c> help to identify the current variable
+		/// </summary>
 		public ValueType Type { get; private set; }
 		
+		/// <summary>
+		/// Overrides Object.Equals
+		/// </summary>
+		/// <param name="obj"></param>
+		/// <returns></returns>
 		public override bool Equals(object obj)
 		{
 			return (obj != null) && (obj is VariableInfo) && Equals((VariableInfo)obj);
 		}
 
+		/// <summary>
+		/// Overrides Object.GetHashCode()
+		/// </summary>
+		/// <returns>a number of type int</returns>
 		public override int GetHashCode()
 		{
 			return _key.GetHashCode();
 		}
 
+		/// <summary>
+		/// Overrides Object.ToString()
+		/// </summary>
+		/// <returns>a string instance similar in content to 'this'</returns>
 		public override string ToString()
 		{
 			return String.Format("Name: {0}  AnswerType: {1}", Name, Type);
@@ -107,6 +190,11 @@ namespace HotDocs.Sdk
 
 		#region IEquatable<Variable> Members
 
+		/// <summary>
+		/// <c>Equals</c> determines whether of not 'other' is equivalent to 'this'
+		/// </summary>
+		/// <param name="other">The object being compared to 'this'</param>
+		/// <returns>boolean (true or false)</returns>
 		public bool Equals(VariableInfo other)
 		{
 			return CompareTo(other) == 0;
@@ -116,6 +204,12 @@ namespace HotDocs.Sdk
 
 		#region IComparable<Variable> Members
 
+		/// <summary>
+		/// <c>CompareTo</c> implements IComparable.CompareTo
+		/// </summary>
+		/// <param name="other">The object being compared to 'this'</param>
+		/// <returns>-1, 0, or 1 depending on whether 'other' is less than,
+		/// equal to, or greater than 'this'</returns>
 		public int CompareTo(VariableInfo other)
 		{
 			return string.CompareOrdinal(other._key, _key);
@@ -124,6 +218,10 @@ namespace HotDocs.Sdk
 		#endregion
 	}
 
+	/// <summary>
+	/// <c>AdditionalFile</c> provides information about a file (its name) to be added
+	/// to template manifests and that can be used with IEquatable and IComparable methods. 
+	/// </summary>
 	public class AdditionalFile : IEquatable<AdditionalFile>, IComparable<AdditionalFile>
 	{
 		internal AdditionalFile(string fileName)
@@ -134,18 +232,34 @@ namespace HotDocs.Sdk
 			FileName = fileName;
 		}
 
+		/// <summary>
+		/// <c>FileName</c> specifies the file name but its location or path.
+		/// </summary>
 		public string FileName { get; private set; }
 
+		/// <summary>
+		/// Overrides IEquatable.Equals
+		/// </summary>
+		/// <param name="obj">The object being compared to 'this'</param>
+		/// <returns>boolean (true or false)</returns>
 		public override bool Equals(object obj)
 		{
 			return (obj != null) && (obj is AdditionalFile) && Equals((AdditionalFile)obj);
 		}
 
+		/// <summary>
+		/// Overrides Object.GetHashCode
+		/// </summary>
+		/// <returns>a number of type int</returns>
 		public override int GetHashCode()
 		{
 			return FileName.ToLower().GetHashCode();
 		}
 
+		/// <summary>
+		/// Overrides Object.ToString
+		/// </summary>
+		/// <returns>a string instance similar in content to 'this'</returns>
 		public override string ToString()
 		{
 			return String.Format("FileName: {0}", FileName);
@@ -153,6 +267,11 @@ namespace HotDocs.Sdk
 
 		#region IEquatable<AdditionalFile> Members
 
+		/// <summary>
+		/// Implements IEquatable.Equals
+		/// </summary>
+		/// <param name="other">The object being compared to 'this'</param>
+		/// <returns>boolean (true or false)</returns>
 		public bool Equals(AdditionalFile other)
 		{
 			return CompareTo(other) == 0;
@@ -162,6 +281,12 @@ namespace HotDocs.Sdk
 
 		#region IComparable<AdditionalFile> Members
 
+		/// <summary>
+		/// Implements IComparable.CompareTo
+		/// </summary>
+		/// <param name="other">The object being compared to 'this'</param>
+		/// <returns>-1, 0, or 1 depending on whether 'other' is less than,
+		/// equal to, or greater than 'this'</returns>
 		public int CompareTo(AdditionalFile other)
 		{
 			return string.Compare(other.FileName, FileName, true);
@@ -170,6 +295,9 @@ namespace HotDocs.Sdk
 		#endregion
 	}
 
+	/// <summary>
+	/// <c>DataSourceField</c> provides information about the current field (such as source name, type, etc.)
+	/// </summary>
 	public class DataSourceField
 	{
 		internal DataSourceField(string sourceName, DataSourceFieldType fieldType, DataSourceBackfillType backfillType, bool isKey)
@@ -183,15 +311,34 @@ namespace HotDocs.Sdk
 			IsKey = isKey;
 		}
 
+		/// <summary>
+		/// <c>SourceName</c> is a string that describes the source of the current data field.
+		/// </summary>
 		public string SourceName { get; private set; }
 
+		/// <summary>
+		/// <c>DataSourceFieldType</c> is an enumeration that describes the type (such as text, number, etc.) 
+		/// of the current field.
+		/// </summary>
 		public DataSourceFieldType FieldType { get; private set; }
 
+		/// <summary>
+		/// <c>DataSourceBackfillType</c> is an enumeration that specifies 
+		/// whether and under what conditions the current field will be stored back to 
+		/// the data source.
+		/// </summary>
 		public DataSourceBackfillType BackfillType { get; private set; }
 
+		/// <summary>
+		/// <c>IsKey</c> is a boolean key that indicates whether or not the current data source field 
+		/// is a key for unique identification.
+		/// </summary>
 		public bool IsKey { get; private set; }
 	}
 
+	/// <summary>
+	/// <c>DataSource</c> has information about the current data source, such as id, name, type, and fields.
+	/// </summary>
 	public class DataSource : IEquatable<DataSource>, IComparable<DataSource>
 	{
 		internal DataSource(string id, string name, DataSourceType type, DataSourceField[] fields)
@@ -207,24 +354,49 @@ namespace HotDocs.Sdk
 			Fields = fields;
 		}
 
+		/// <summary>
+		/// <c>Id</c> is a string the identifies the current data source.
+		/// </summary>
 		public string Id { get; private set; }
 
+		/// <summary>
+		/// <c>Name</c> is a string that provides a name for the current data source.
+		/// </summary>
 		public string Name { get; private set; }
 
+		/// <summary>
+		/// <c>Type</c> is an enumeration that indicates the type of the current data source.
+		/// </summary>
 		public DataSourceType Type { get; private set; }
 
+		/// <summary>
+		/// <c>Fields</c> a group of data fields associated with the current data source.
+		/// </summary>
 		public DataSourceField[] Fields { get; private set; }
 
+		/// <summary>
+		/// Overrides Object.Equals
+		/// </summary>
+		/// <param name="obj">The object being compared to 'this'</param>
+		/// <returns>boolean (true or false)</returns>
 		public override bool Equals(object obj)
 		{
 			return (obj != null) && (obj is DataSource) && Equals((DataSource)obj);
 		}
 
+		/// <summary>
+		/// Overrides Object.GetHashCode
+		/// </summary>
+		/// <returns>a number of type int</returns>
 		public override int GetHashCode()
 		{
 			return Id.GetHashCode();
 		}
 
+		/// <summary>
+		/// Overrides Object.ToString
+		/// </summary>
+		/// <returns>a string instance similar in content to 'this'</returns>
 		public override string ToString()
 		{
 			return String.Format("Id: {0}  Name: {1}  Type: {2}", Id, Name, Type);
@@ -232,6 +404,11 @@ namespace HotDocs.Sdk
 
 		#region IEquatable<DataSource> Members
 
+		/// <summary>
+		/// Overrides IEquatable<DataSource>.Equals</DataSource>
+		/// </summary>
+		/// <param name="other">The object being compared to 'this'</param>
+		/// <returns>boolean (true or false)</returns>
 		public bool Equals(DataSource other)
 		{
 			return CompareTo(other) == 0;
@@ -241,6 +418,12 @@ namespace HotDocs.Sdk
 
 		#region IComparable<DataSource> Members
 
+		/// <summary>
+		/// Overrides IComparable&lt;DataSource&gt;.CompareTo
+		/// </summary>
+		/// <param name="other">The object being compared to 'this'</param>
+		/// <returns>-1, 0, or 1 depending on whether 'other' is less than,
+		/// equal to, or greater than 'this'</returns>
 		public int CompareTo(DataSource other)
 		{
 			return string.CompareOrdinal(other.Id, Id);
@@ -249,6 +432,10 @@ namespace HotDocs.Sdk
 		#endregion
 	}
 
+	/// <summary>
+	/// <c>TemplateManifest</c> contains the information needed for document assembly creation with
+	/// the specified template file, sometimes called the 'main template'
+	/// </summary>
 	public class TemplateManifest
 	{
 		private static readonly XNamespace s_namespace = "http://www.hotdocs.com/schemas/template_manifest/2012";
@@ -285,6 +472,10 @@ namespace HotDocs.Sdk
 				return (obj != null) && (obj is TemplateFileLocation) && Equals((TemplateFileLocation)obj);
 			}
 
+			/// <summary>
+			/// Overrides Object.GetHashCode
+			/// </summary>
+			/// <returns>a number of type int</returns>
 			public override int GetHashCode()
 			{
 				const int prime = 397;
@@ -295,6 +486,11 @@ namespace HotDocs.Sdk
 
 			#region IEquatable<TemplateFileLocation> Members
 
+			/// <summary>
+			/// Implements IEquatable.Equals
+			/// </summary>
+			/// <param name="other">The object being compared to 'this'</param>
+			/// <returns>boolean (true or false)</returns>
 			public bool Equals(TemplateFileLocation other)
 			{
 				return string.Equals(other.FileName, FileName, StringComparison.OrdinalIgnoreCase)
@@ -306,32 +502,91 @@ namespace HotDocs.Sdk
 
 		internal TemplateManifest() {}
 
+		/// <summary>
+		/// <c>HotDocsVersion</c> indicates the version of HotDocs that was used to create
+		/// the current template manifest.
+		/// </summary>
 		public string HotDocsVersion { get; private set; }
 
+		/// <summary>
+		/// <c>TemplateId</c> identifies the template to distinguish it from other templates.
+		/// </summary>
 		public string TemplateId { get; private set; }
 
+		/// <summary>
+		/// <c>FileName</c> indicates the file name of the current template.
+		/// </summary>
 		public string FileName { get; private set; }
 
+		/// <summary>
+		/// <c>EffectiveCmpFileName</c> is the component file name that is used 
+		/// for document assembly creation with the main template contained in 
+		/// this template manifest.
+		/// </summary>
 		public string EffectiveCmpFileName { get; private set; }
 
+		/// <summary>
+		/// <c>ExpirationDate</c> indicates the current template cannot be used for 
+		/// document assembly creations after the given date, except
+		/// possibly for a given number of <c>ExtensionDays</c>
+		/// </summary>
 		public DateTime? ExpirationDate { get; private set; }
 
+		/// <summary>
+		/// <c>WarningDays</c> indicates for how many days prior to a document's expiration date
+		/// users should be warned about using the current template for document assembly creations.
+		/// </summary>
 		public int? WarningDays { get; private set; }
 
+		/// <summary>
+		/// <c>ExtensionDays</c> indicates for how many days after the current templates 
+		/// expiration date has passed users can still perform document assembly creations.
+		/// </summary>
 		public int? ExtensionDays { get; private set; }
 
+		/// <summary>
+		/// <c>Title</c> provides the title for the main template
+		/// in the current template manifest.
+		/// </summary>
 		public string Title { get; private set; }
 
+		/// <summary>
+		/// <c>Description</c> provides a description for the main template
+		/// in the current template manifest.
+		/// </summary>
 		public string Description { get; private set; }
 
+		/// <summary>
+		/// <c>Variables</c> Contains the set of variables associated with the
+		/// main template in the current template manifest.
+		/// </summary>
 		public VariableInfo[] Variables { get; private set; }
 
+		/// <summary>
+		/// <c>Dependencies</c> indicates a collection of files associated with
+		/// the the main template of the template manifest.
+		/// </summary>
 		public Dependency[] Dependencies { get; private set; }
 
+		/// <summary>
+		/// <c>AdditionalFiles</c> indicates a set of additional files that may 
+		/// possibly be used during document assembly creations.
+		/// </summary>
 		public AdditionalFile[] AdditionalFiles { get; private set; }
 
+		/// <summary>
+		/// <c>DataSources</c> indicates DataSources that may be used during
+		/// document assembly creations.
+		/// </summary>
 		public DataSource[] DataSources { get; private set; }
 
+		/// <summary>
+		/// <c>ParseManifest</c> parses <c>templatePath</c> and creates a corresponding instance of
+		/// <c>TemplateManifest</c>
+		/// </summary>
+		/// <param name="templatePath">The full path of the template</param>
+		/// <param name="parseFlags">Specifies settings related to template manifest creation</param>
+		/// <returns>a reference to the newly created <c>TemplateManifest</c></returns>
 		public static TemplateManifest ParseManifest(string templatePath, ManifestParseFlags parseFlags)
 		{
 			string fileName = Path.GetFileName(templatePath);
@@ -340,8 +595,18 @@ namespace HotDocs.Sdk
 			return ParseManifest(fileName, fileLoc, parseFlags);
 		}
 
+		
 		// TODO: Condider re-writing this using an XmlReader so that the entire document does not need to be allocated in a DOM. Doing so
 		// should make processing template manifest files faster. For now using an XDocument to just get things done fast.
+		/// <summary>
+		/// <c>ParseManifest</c> parses <c>templatePath</c> and creates a corresponding instance of
+		/// <c>TemplateManifest</c>
+		/// </summary>
+		/// <param name="fileName">The full path of the template</param>
+		/// <param name="location">specifies the location of the template, such as a 
+		/// file system folder, a package file, a database, etc.</param>
+		/// <param name="parseFlags">Specifies settings related to template manifest creation</param>
+		/// <returns>a reference to the newly created <c>TemplateManifest</c></returns>
 		public static TemplateManifest ParseManifest(string fileName, TemplateLocation location, ManifestParseFlags parseFlags)
 		{
 			TemplateManifest templateManifest = new TemplateManifest();
