@@ -70,7 +70,7 @@ namespace HotDocs.Sdk.Cloud
 		/// <param name="template">The name of the template package for which a bookmark was saved.</param>
 		/// <param name="state">The serialized state.</param>
 		/// <returns>The URL to use in the src attribute of the iframe.</returns>
-		public string ResumeSession(string template, string state)
+		public string ResumeSession(string state)
 		{
 			var timestamp = DateTime.UtcNow;
 
