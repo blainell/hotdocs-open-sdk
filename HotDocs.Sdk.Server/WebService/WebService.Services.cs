@@ -271,25 +271,34 @@ namespace HotDocs.Sdk.Server.WebService
 				throw new ArgumentNullException("fileType", @"WebService.Services.GetInterviewFile: the ""fileType"" parameter passed in was null or empty");
 
 			// Return an image or interview definition from the template.
+			InterviewFormat format = InterviewFormat.Unspecified;
 			switch (fileType.ToUpper())
 			{
 				case "IMG":
 					return template.Location.GetFile(fileName);
-				default:
-					System.IO.Stream result = null;
-
-					using (Proxy client = new Proxy(_endPointName))
-					{
-						string templateId = GetRelativePath(template.GetFullPath()); // The relative path to the template folder.
-						string templateName = fileName; // The name of the template file for which the interview is being requested (e.g., demoempl.rtf). 
-						string templateState = string.Empty; // We are using the templateId rather than template state since all we have to work with is a template locator.
-						InterviewFormat format = InterviewFormat.JavaScript;
-						BinaryObject binaryObject = client.GetInterviewDefinition(templateId, templateName, format, templateState);
-						SafeCloseClient(client, null);
-						result = new MemoryStream(binaryObject.Data);
-					}
-					return result;
+				case "DLL":
+					format = InterviewFormat.Silverlight;
+					break;
+				case "JS":
+					format = InterviewFormat.JavaScript;
+					break;
 			}
+
+			if (format == InterviewFormat.Unspecified)
+				throw new ArgumentOutOfRangeException(); // The format must be either JS or DLL.
+
+			System.IO.Stream result = null;
+
+			using (Proxy client = new Proxy(_endPointName))
+			{
+				string templateId = GetRelativePath(template.GetFullPath()); // The relative path to the template folder.
+				string templateName = fileName; // The name of the template file for which the interview is being requested (e.g., demoempl.rtf). 
+				string templateState = string.Empty; // We are using the templateId rather than template state since all we have to work with is a template locator.
+				BinaryObject binaryObject = client.GetInterviewDefinition(templateId, templateName, format, templateState);
+				SafeCloseClient(client, null);
+				result = new MemoryStream(binaryObject.Data);
+			}
+			return result;
 		}
 
 		#endregion

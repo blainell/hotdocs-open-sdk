@@ -334,7 +334,7 @@ namespace HotDocs.Sdk.Server.Local
 
 			//Build the list of pending assemblies.
 			List<Template> pendingAssemblies = new List<Template>();
-			for (int i = savePendingAssembliesCount; i < _app.PendingAssemblyCmdLineStrings.Count; i++)
+			for (int i = 0; i < _app.PendingAssemblyCmdLineStrings.Count - savePendingAssembliesCount; i++)
 			{
 				string cmdLine = _app.PendingAssemblyCmdLineStrings[i];
 				string path, switches;
