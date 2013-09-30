@@ -255,7 +255,7 @@ public partial class Upload : System.Web.UI.Page
 
 							using (SamplePortal.Data.Templates templates = new SamplePortal.Data.Templates())
 							{
-								if (templates.TemplateExists(infoItem.MainTemplateFileName))
+								if (templates.TemplateExists(infoItem.MainTemplateFileName, infoItem.Title))
 									ConflictUploadItems.Add(infoItem);
 								else
 								{

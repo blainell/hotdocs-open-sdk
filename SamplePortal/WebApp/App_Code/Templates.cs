@@ -60,6 +60,19 @@ namespace SamplePortal.Data
 			dv.RowFilter = "[Filename] = '" + EncodeString(tplname) + "'";
 			return dv;
 		}
+
+		/// <summary>
+		/// Returns a DataView for a specific template.
+		/// </summary>
+		/// <param name="tplname">The template name.</param>
+		/// <returns></returns>
+		public DataView SelectTitle(string title, string extension)
+		{
+			DataView dv = new DataView(tplData.Templates);
+			dv.RowFilter = "[Title] = '" + EncodeString(title) + "' and [Filename] like '%" + extension + "'";
+			return dv;
+		}
+
 		/// <summary>
 		/// Returns a sorted DataView for a given filter.
 		/// </summary>
@@ -173,9 +186,20 @@ namespace SamplePortal.Data
 		}
 
 
-		public bool TemplateExists(string filename)
+		public bool TemplateExists(string filename, string title)
 		{
-			DataView dv = SelectFile(filename);
+			FileInfo finfo = new FileInfo(filename);
+			DataView dv = null;
+			switch (finfo.Extension)
+			{
+				case ".RawFile":
+				case ".Url":
+					dv = SelectTitle(title, finfo.Extension);
+					break;
+				default:
+					dv = SelectFile(filename);
+					break;
+			}
 			return (dv.Count > 0);
 		}
 
@@ -206,8 +230,18 @@ namespace SamplePortal.Data
 
 		public void UpdateTemplate(string filename, string title, string desc, string packageID)
 		{
-			DataView dv = SelectFile(filename);
-
+			DataView dv = null;
+			FileInfo finfo = new FileInfo(filename);
+			switch (finfo.Extension)
+			{
+				case ".RawFile":
+				case ".Url":
+					dv = SelectTitle(title, finfo.Extension);
+					break;
+				default:
+					dv = SelectFile(filename);
+					break;
+			}
 			string curPkgID = dv[0]["PackageID"].ToString();
 
 			if (packageID != null)
@@ -220,7 +254,10 @@ namespace SamplePortal.Data
 
 				dv[0]["PackageID"] = packageID;
 			}
-			if (title != null) // pass null if you don't want something changed
+			// pass null if you don't want something changed
+			if (filename != null)
+				dv[0]["Filename"] = filename;
+			if (title != null) 
 				dv[0]["Title"] = title;
 			if (desc != null)
 				dv[0]["Description"] = desc;
