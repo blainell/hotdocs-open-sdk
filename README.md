@@ -1,6 +1,6 @@
 HotDocs Open SDK
 ================
-v0.9, September 2013
+v0.95, October 1 2013
 
 The HotDocs Open SDK is a toolkit designed to ease integration between 3rd party applications and HotDocs.
 It is implemented in C# and can be utilized by any managed (.NET) application to simplify communication
@@ -41,6 +41,17 @@ used together or (when it makes sense) individually:
 *	**SamplePortal** - This is a sample ASP.NET (Web Forms) application that illustrates how to use the
 	HotDocs.Sdk.Server abstraction layer for communicating transparently with HotDocs Server and Cloud
 	Services.
+
+Documentation
+-------------
+Documentation still needs to be added to the project wiki, but in the meantime please refer to the following
+sources of information:
+
+*	The [auto-generated documentation](http://help.hotdocs.com/opensdk/) built from the XML comments in the code.
+*	The **SamplePortal** project that is part of this code. This illustrates using HotDocs.Sdk.Server
+	as an abstraction layer for talking to either HotDocs Server or Cloud Services.
+*	The [HotDocs Embedded tutorials](http://help.hotdocs.com/cstutorial/), which illustrate how to
+	easily embed HotDocs Cloud Services interviews & document assembly in a web page.
 
 Requirements
 ------------
