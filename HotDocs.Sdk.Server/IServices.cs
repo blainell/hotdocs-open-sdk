@@ -14,8 +14,14 @@ using HotDocs.Sdk.Server.Contracts;
 namespace HotDocs.Sdk.Server
 {
 	/// <summary>
-	/// This is a stateless, object-oriented interface for basic communications with HotDocs Server, including
-	/// getting interviews, assembling documents, and other simple, stateless operations.
+	/// This is a stateless, object-oriented interface for basic communications with HotDocs Server or Cloud Services, including
+	/// getting interviews, assembling documents, and other simple operations.
+	/// There are three implementations of <c>IServices</c>:
+	/// <list type="bullet">
+	/// <item><c>Local.Services</c> - talks to a locally-running copy of HotDocs Server;</item>
+	/// <item><c>WebService.Services</c> - talks to a remotely-running copy of HotDocs Server via the HotDocs Server web services interface;</item>
+	/// <item><c>Cloud.Services</c> - talks to HotDocs Cloud Services running in Windows Azure.</item>
+	/// </list>
 	/// </summary>
 	public interface IServices
 	{

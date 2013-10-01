@@ -71,6 +71,7 @@
     <Compile Include="DSPResource.cs" />
     <Compile Include="DSPResourceQueryProvider.cs" />
     <Compile Include="ExpressionVisitor.cs" />
+    <Compile Include="NamespaceDoc.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ResourcePropertyAnnotation.cs" />
     <Compile Include="ResourceTypeAnnotation.cs" />

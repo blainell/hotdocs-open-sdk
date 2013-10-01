@@ -11,7 +11,7 @@ using System.Xml.Linq;
 namespace HotDocs.Sdk
 {
 	/// <summary>
-	/// These flags specify which portions of a template manifest (or manifests) should be parsed (when calling ParseManifest).
+	/// These flags enumerate which portions of a template manifest (or manifests) can be parsed (when calling <c>ParseManifest</c>).
 	/// </summary>
 	[Flags]
 	public enum ManifestParseFlags
@@ -49,8 +49,7 @@ namespace HotDocs.Sdk
 
 
 	/// <summary>
-	/// <c>DataSourceFieldType</c> specifies the value of the data source field
-	/// (text, number, date, or TrueFalse).
+	/// <c>DataSourceFieldType</c> lists the possible types of fields in data sources (Text, Number, Date, or TrueFalse).
 	/// </summary>
 	public enum DataSourceFieldType
 	{
@@ -76,9 +75,8 @@ namespace HotDocs.Sdk
 	};
 
 	/// <summary>
-	/// <c>DataSourceBackfillType</c> is an enumeration that specifies 
-	/// whether and under what conditions the current field will be stored back to 
-	/// the data source.
+	/// <c>DataSourceBackfillType</c> enumerates the ways in which modified answers
+	/// may be written back to the original data source.
 	/// </summary>
 	public enum DataSourceBackfillType
 	{
@@ -132,8 +130,9 @@ namespace HotDocs.Sdk
 	};
 
 	/// <summary>
-	/// <c>VariableInfo</c> contains information (name and type) about a HotDocs variable. An instance of this
-	/// class can be used with equality and comparison methods.
+	/// <c>VariableInfo</c> contains basic metadata (name and type) about a HotDocs variable. This type is used
+	/// by <c>TemplateManifest</c> to list the variables that may potentially be gathered by an interview
+	/// and/or used in a template.
 	/// </summary>
 	public class VariableInfo : IEquatable<VariableInfo>, IComparable<VariableInfo>
 	{
@@ -219,8 +218,12 @@ namespace HotDocs.Sdk
 	}
 
 	/// <summary>
-	/// <c>AdditionalFile</c> provides information about a file (its name) to be added
-	/// to template manifests and that can be used with IEquatable and IComparable methods. 
+	/// <c>AdditionalFile</c> is used by <c>TemplateManifest</c> to identify files that were listed in the manifest
+	/// as miscellaneous dependencies. Such files are not typically referred to <i>directly</i> by the template
+	/// or component file, but were explicitly declared by the template author as being necessary for the proper operation
+	/// of the template. Examples may include image files that could potentially be referred to by a dynamic INSERT IMAGE
+	/// instruction, or other files that may be required to be in the same location as the template in custom integration
+	/// scenarios.
 	/// </summary>
 	public class AdditionalFile : IEquatable<AdditionalFile>, IComparable<AdditionalFile>
 	{
@@ -569,20 +572,20 @@ namespace HotDocs.Sdk
 		public Dependency[] Dependencies { get; private set; }
 
 		/// <summary>
-		/// <c>AdditionalFiles</c> indicates a set of additional files that may 
-		/// possibly be used during document assembly creations.
+		/// <c>AdditionalFiles</c> lists additional files that may be required during interviews,
+		/// assemblies or other processing associated with the template.
 		/// </summary>
 		public AdditionalFile[] AdditionalFiles { get; private set; }
 
 		/// <summary>
-		/// <c>DataSources</c> indicates DataSources that may be used during
-		/// document assembly creations.
+		/// <c>DataSources</c> lists the data sources (<c>DataSource</c> objects) from which the template
+		/// may (at user request) attempt to retrieve data during an interview.
 		/// </summary>
 		public DataSource[] DataSources { get; private set; }
 
 		/// <summary>
-		/// <c>ParseManifest</c> parses <c>templatePath</c> and creates a corresponding instance of
-		/// <c>TemplateManifest</c>
+		/// <c>ParseManifest</c> parses the XML template manifest indicated by <paramref name="templatePath"/>
+		/// and creates a corresponding instance of <c>TemplateManifest</c>.
 		/// </summary>
 		/// <param name="templatePath">The full path of the template</param>
 		/// <param name="parseFlags">Specifies settings related to template manifest creation</param>
@@ -595,16 +598,12 @@ namespace HotDocs.Sdk
 			return ParseManifest(fileName, fileLoc, parseFlags);
 		}
 
-		
-		// TODO: Condider re-writing this using an XmlReader so that the entire document does not need to be allocated in a DOM. Doing so
-		// should make processing template manifest files faster. For now using an XDocument to just get things done fast.
 		/// <summary>
-		/// <c>ParseManifest</c> parses <c>templatePath</c> and creates a corresponding instance of
-		/// <c>TemplateManifest</c>
+		/// <c>ParseManifest</c> parses the XML template manifest indicated by <paramref name="fileName"/>
+		/// and <paramref name="location"/>, and creates a corresponding instance of <c>TemplateManifest</c>.
 		/// </summary>
-		/// <param name="fileName">The full path of the template</param>
-		/// <param name="location">specifies the location of the template, such as a 
-		/// file system folder, a package file, a database, etc.</param>
+		/// <param name="fileName">The file name of the template</param>
+		/// <param name="location">The location of the template, such as a file system folder, a package file, a database, etc.</param>
 		/// <param name="parseFlags">Specifies settings related to template manifest creation</param>
 		/// <returns>a reference to the newly created <c>TemplateManifest</c></returns>
 		public static TemplateManifest ParseManifest(string fileName, TemplateLocation location, ManifestParseFlags parseFlags)
@@ -630,6 +629,9 @@ namespace HotDocs.Sdk
 				{
 					try
 					{
+						// TODO: Condider re-writing this using an XmlReader so that the entire document does not need to be allocated in a DOM. Doing so
+						// should make processing template manifest files faster. For now using an XDocument to just get things done fast.
+
 						// Read the template manifest so that it can be parsed.
 						XDocument manifest = XDocument.Load(templateFileLoc.FileLocation.GetFile(GetManifestName(templateFileLoc.FileName)), LoadOptions.None);
 

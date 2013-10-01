@@ -1,4 +1,5 @@
 *.suo
+*.bak
 *.cache
 *.vspscc
 *.vssscc

@@ -56,6 +56,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Cloud\Cloud.Services.cs" />
+    <Compile Include="NamespaceDoc.cs" />
     <Compile Include="WebService\WebService.Services.cs" />
     <Compile Include="WorkSession.cs" />
     <Compile Include="AssembleDocumentResult.cs" />
