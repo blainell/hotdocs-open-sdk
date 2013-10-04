@@ -224,76 +224,83 @@ namespace HotDocs.Sdk
 			settings.ValidationType = ValidationType.None;
 			//settings.ProhibitDtd = false; // obsolete in .NET 4.0, replaced with:
 			settings.DtdProcessing = DtdProcessing.Ignore; // .NET 4.0 only
-			using (XmlReader reader = XmlReader.Create(input, settings))
+			try
 			{
-				// then read the XML and create the answers...
-				reader.MoveToContent();
-				if (reader.Name == "AnswerSet")
+				using (XmlReader reader = XmlReader.Create(input, settings))
 				{
-					if (reader.HasAttributes)
+					// then read the XML and create the answers...
+					reader.MoveToContent();
+					if (reader.Name == "AnswerSet")
 					{
-						while (reader.MoveToNextAttribute())
+						if (reader.HasAttributes)
 						{
-							if (reader.Name == "title")
-								_title = reader.Value;
-							else if (reader.Name == "version")
-								_version = XmlConvert.ToSingle(reader.Value);
+							while (reader.MoveToNextAttribute())
+							{
+								if (reader.Name == "title")
+									_title = reader.Value;
+								else if (reader.Name == "version")
+									_version = XmlConvert.ToSingle(reader.Value);
+							}
 						}
 					}
-				}
-				else
-					throw new XmlException("Expected an AnswerSet element.");
+					else
+						throw new XmlException("Expected an AnswerSet element.");
 
-				int[] repeatStack = RepeatIndices.Empty;
+					int[] repeatStack = RepeatIndices.Empty;
 
-				// read answers:
-				while (reader.Read())
-				{
-					reader.MoveToContent();
-					if (reader.Name == "Answer" && reader.HasAttributes)
+					// read answers:
+					while (reader.Read())
 					{
-						string answerName = null;
-						bool? answerSave = null;
-						bool? userExtendible = null;
-						while (reader.MoveToNextAttribute())
+						reader.MoveToContent();
+						if (reader.Name == "Answer" && reader.HasAttributes)
 						{
-							if (reader.Name == "name")
+							string answerName = null;
+							bool? answerSave = null;
+							bool? userExtendible = null;
+							while (reader.MoveToNextAttribute())
 							{
-								answerName = TextValue.XMLUnescape(reader.Value).Trim();
-							}
-							else if (reader.Name == "save")
-							{
-								switch (reader.Value)
+								if (reader.Name == "name")
 								{
-									case "true":
-										answerSave = true;
-										break;
-									case "false":
-										answerSave = false;
-										break;
-									// else no change
+									answerName = TextValue.XMLUnescape(reader.Value).Trim();
+								}
+								else if (reader.Name == "save")
+								{
+									switch (reader.Value)
+									{
+										case "true":
+											answerSave = true;
+											break;
+										case "false":
+											answerSave = false;
+											break;
+										// else no change
+									}
+								}
+								else if (reader.Name == "userExtendible")
+								{
+									userExtendible = XmlConvert.ToBoolean(reader.Value);
 								}
 							}
-							else if (reader.Name == "userExtendible")
-							{
-								userExtendible = XmlConvert.ToBoolean(reader.Value);
-							}
+							if (String.IsNullOrEmpty(answerName))
+								throw new XmlException("Answer name is missing.");
+
+							Answer ans = null;
+
+							reader.Read();
+							reader.MoveToContent();
+							ReadValue(reader, ref ans, answerName, repeatStack);
+
+							if (answerSave.HasValue && !answerSave.Value)
+								ans.Save = false;
+							if (userExtendible.HasValue)
+								ans.UserExtendible = userExtendible.Value;
 						}
-						if (String.IsNullOrEmpty(answerName))
-							throw new XmlException("Answer name is missing.");
-
-						Answer ans = null;
-
-						reader.Read();
-						reader.MoveToContent();
-						ReadValue(reader, ref ans, answerName, repeatStack);
-
-						if (answerSave.HasValue && !answerSave.Value)
-							ans.Save = false;
-						if (userExtendible.HasValue)
-							ans.UserExtendible = userExtendible.Value;
 					}
 				}
+			}
+			catch
+			{
+				// Just eat any exceptions that are thrown for now. 
 			}
 		}
 

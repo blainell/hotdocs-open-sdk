@@ -326,10 +326,16 @@ namespace HotDocs.Sdk.Server.Local
 			resultAnsColl.ReadXml(new StringReader(ansColl.XmlAnswers));
 			if (!settings.RetainTransientAnswers && _app.PendingAssemblyCmdLineStrings.Count == 0)
 			{
-				//Discard transient answers.
+				// Create a list of all "transient" answers to remove.
 				IEnumerable<Answer> transAnswers = from a in resultAnsColl where !a.Save select a;
+				List<string> answersToRemove = new List<string>();
 				foreach (Answer ans in transAnswers)
-					resultAnsColl.RemoveAnswer(ans.Name);
+					answersToRemove.Add(ans.Name);
+
+				// Iterate through the list of answers to remove and remove them from the result answer collection.
+				// This is done as a separate step so we are not modifying the collecion over which we are iterating.
+				foreach (string s in answersToRemove)
+					resultAnsColl.RemoveAnswer(s);
 			}
 
 			//Build the list of pending assemblies.
