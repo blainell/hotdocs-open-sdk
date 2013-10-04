@@ -279,7 +279,7 @@ namespace HotDocs.Sdk.Server.Local
 					return template.Location.GetFile(fileName);
 				default:
 					string interviewDefPath = _app.GetInterviewDefinitionFromTemplate(
-						template.GetFullPath(),
+						Path.Combine(Path.GetDirectoryName(template.GetFullPath()), fileName),
 						fileName,
 						fileType == "dll" ? hdsi.interviewFormat.Silverlight : hdsi.interviewFormat.javascript
 						);
