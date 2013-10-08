@@ -61,15 +61,12 @@ ability to write and compile ASP.NET web applications.
 
 Other Platforms
 ---------------
-Parts of the Open SDK have been ported to other languages and platforms to facilitate HotDocs integration
+The Cloud Services Client Library has been ported to other languages and platforms to facilitate HotDocs integration
 from those platforms:
 
 *	[Java](https://github.com/HotDocsCorp/hotdocs-cloud-java)
-*	[PHP](https://github.com/HotDocsCorp/hotdocs-cloud-php)
+*	[PHP](https://github.com/HotDocsCorp/hotdocs-cloud-php) (HotDocs Embedded API only)
 *	[Ruby](https://github.com/pifleo/hotdocs-cloud) (maintained by pifleo)
-
-*NOTE: At the present time, these ports are limited and include only portions of the Cloud Services
-Client Library -- typically the interfaces necessary to work with HotDocs Embedded.
 
 Contributing
 ------------
