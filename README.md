@@ -68,6 +68,9 @@ from those platforms:
 *	[PHP](https://github.com/HotDocsCorp/hotdocs-cloud-php) (HotDocs Embedded API only)
 *	[Ruby](https://github.com/pifleo/hotdocs-cloud) (maintained by pifleo)
 
+See the [Cloud Services Client Libraries wiki page](https://github.com/HotDocsCorp/hotdocs-open-sdk/wiki/HotDocs-Cloud-Services-Client-Libraries)
+for more information on the implementations in these languages..
+
 Contributing
 ------------
 We welcome pull requests from potential contributors. If you think of a great way to improve HotDocs
