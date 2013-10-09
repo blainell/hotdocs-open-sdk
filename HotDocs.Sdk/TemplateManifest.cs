@@ -631,9 +631,12 @@ namespace HotDocs.Sdk
 					{
 						// TODO: Condider re-writing this using an XmlReader so that the entire document does not need to be allocated in a DOM. Doing so
 						// should make processing template manifest files faster. For now using an XDocument to just get things done fast.
-
-						// Read the template manifest so that it can be parsed.
-						XDocument manifest = XDocument.Load(templateFileLoc.FileLocation.GetFile(GetManifestName(templateFileLoc.FileName)), LoadOptions.None);
+						XDocument manifest;
+						using (Stream manifestStream = templateFileLoc.FileLocation.GetFile(GetManifestName(templateFileLoc.FileName)))
+						{
+							// Read the template manifest so that it can be parsed.
+							manifest = XDocument.Load(manifestStream, LoadOptions.None);
+						}
 
 						if (templateFileLoc.Equals(baseTemplateLoc))
 						{
@@ -862,8 +865,8 @@ namespace HotDocs.Sdk
 
 								foreach (var templateDependency in templateDependencies)
 								{
-									templateQueue.Enqueue(GetDependencyFileLocation(baseTemplateLoc, 
-										(templateDependency.Attribute("hintPath") != null) ? templateDependency.Attribute("hintPath").Value : null, 
+									templateQueue.Enqueue(GetDependencyFileLocation(baseTemplateLoc,
+										(templateDependency.Attribute("hintPath") != null) ? templateDependency.Attribute("hintPath").Value : null,
 										templateDependency.Attribute("fileName").Value));
 								}
 							}
