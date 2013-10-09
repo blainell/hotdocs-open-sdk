@@ -205,7 +205,8 @@ namespace HotDocs.Sdk.Cloud
 			if (settings.DisableSaveAnswers)
 				settingsDict.Remove("SaveAnswersPageUrl");
 
-			string interviewImageUrl = settings.Settings["TempInterviewUrl"];
+			string interviewImageUrl = string.Empty;
+			settings.Settings.TryGetValue("TempInterviewUrl", out interviewImageUrl);
 
 			string hmac = HMAC.CalculateHMAC(
 				SigningKey,

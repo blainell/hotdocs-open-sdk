@@ -294,7 +294,8 @@ namespace HotDocs.Sdk.Cloud
 
 			var timestamp = DateTime.UtcNow;
 
-			string interviewImageUrl = settings.Settings["TempInterviewUrl"];
+			string interviewImageUrl = string.Empty;
+			settings.Settings.TryGetValue("TempInterviewUrl", out interviewImageUrl);
 
 			string hmac = HMAC.CalculateHMAC(
 				SigningKey,
@@ -415,8 +416,8 @@ namespace HotDocs.Sdk.Cloud
 				includeDialogs);
 
 			StringBuilder urlBuilder = new StringBuilder(string.Format(
-				"{0}/RestfulSvc.svc/componentinfo/{1}/{2}/?includedialogs={3}&billingref={4}",
-				EndpointAddress, SubscriberId, packageTemplateLocation.PackageID, includeDialogs.ToString(), billingRef));
+				"{0}/RestfulSvc.svc/componentinfo/{1}/{2}/{3}?includedialogs={4}&billingref={5}",
+				EndpointAddress, SubscriberId, packageTemplateLocation.PackageID, template.FileName, includeDialogs.ToString(), billingRef));
 
 			HttpWebRequest request = (HttpWebRequest)WebRequest.Create(urlBuilder.ToString());
 			request.Method = "GET";
