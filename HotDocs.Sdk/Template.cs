@@ -93,16 +93,16 @@ namespace HotDocs.Sdk
 		/// <include file="../Shared/Help.xml" path="Help/string/param[@name='key']"></include>
 		public Template(string fileName, TemplateLocation location, string switches = "", string key = "")
 		{
-			if (fileName == null || location == null)
-				throw new Exception("Invalid parameter.");
+			if (string.IsNullOrEmpty(fileName))
+				throw new ArgumentException("fileName");
 
-			if (switches == null) switches = "";
-			if (key == null) key = "";
+			if (location == null)
+				throw new ArgumentException("location");
 
 			FileName = fileName;
 			Location = location;
-			Switches = switches;
-			Key = key;
+			Switches = string.IsNullOrEmpty(switches) ? "" : switches;
+			Key = string.IsNullOrEmpty(key) ? "" : key;
 		}
 		/// <summary>
 		/// Construct a Template object for the main template in a package.
@@ -112,14 +112,14 @@ namespace HotDocs.Sdk
 		/// <include file="../Shared/Help.xml" path="Help/string/param[@name='key']"></include>
 		public Template(PackageTemplateLocation location, string switches = "", string key = "")
 		{
-			if (location == null || switches == null || key == null)
-				throw new Exception("Invalid parameter.");
+			if (location == null)
+				throw new ArgumentNullException("location");
 
 			HotDocs.Sdk.TemplateInfo ti = location.GetPackageManifest().MainTemplate;
 			FileName = ti.FileName;
 			Location = location;
-			Switches = switches;
-			Key = key;
+			Switches = string.IsNullOrEmpty(switches) ? "" : switches;
+			Key = string.IsNullOrEmpty(key) ? "" : key;
 		}
 		/// <summary>
 		/// Returns a locator string to recreate the template object at a later time.
@@ -138,8 +138,8 @@ namespace HotDocs.Sdk
 		/// <returns></returns>
 		public static Template Locate(string locator)
 		{
-			if (locator == null)
-				throw new Exception("Invalid parameter.");
+			if (string.IsNullOrEmpty(locator))
+				throw new ArgumentNullException("locator");
 
 			string decryptedLocator = Util.DecryptString(locator);
 			string[] tokens = decryptedLocator.Split('|');
@@ -173,7 +173,7 @@ namespace HotDocs.Sdk
 						TemplateManifest manifest = GetManifest(ManifestParseFlags.ParseTemplateInfo);
 						_title = manifest.Title;
 					}
-					catch (Exception)
+					catch (Exception ex)
 					{
 						_title = "";
 					}
@@ -215,6 +215,8 @@ namespace HotDocs.Sdk
 		/// <returns></returns>
 		public string GetFullPath()
 		{
+			// Note: As the code is currently written, Location will never be null, but in the sake of defensive programming, 
+			// we are checking it anyway lest we try to access its members if it were in fact a null object.
 			if (Location == null)
 				throw new Exception("No location has been specified.");
 			return Path.Combine(Location.GetTemplateDirectory(), FileName);
@@ -344,9 +346,14 @@ namespace HotDocs.Sdk
 					break;
 				case DocumentType.Native:
 					{
+						if (template == null)
+							throw new ArgumentNullException("template", "The template cannot be null if the DocumentType is Native.");
+
 						string templateExt = Path.GetExtension(template.FileName);
 						if (templateExt == ".hpt")
 							ext = ".pdf";
+						else if (templateExt == ".hft")
+							ext = ".hfd";
 						else if (templateExt == ".ttx")
 							ext = ".txt";
 						else if (templateExt == ".wpt")
