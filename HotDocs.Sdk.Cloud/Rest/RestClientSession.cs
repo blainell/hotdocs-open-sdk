@@ -8,6 +8,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Text;
+using System.Runtime.Serialization.Json;
+using System.Web.Script.Serialization;
 
 namespace HotDocs.Sdk.Cloud
 {
@@ -67,43 +69,16 @@ namespace HotDocs.Sdk.Cloud
 		/// <summary>
 		/// Resumes a saved session.
 		/// </summary>
-		/// <param name="state">The serialized state.</param>
-		/// <returns>The URL to use in the src attribute of the iframe.</returns>
-		public string ResumeSession(string state)
+		/// <param name="state">The serialized state of the interrupted session, i.e. the "snapshot".</param>
+		/// <returns>A session ID to be passed into the JavaScript HD$.CreateInterviewFrame call.</returns>
+		public string ResumeSession(string state, Func<string, Stream> streamGetter = null)
 		{
-			var timestamp = DateTime.UtcNow;
-
-			string hmac = HMAC.CalculateHMAC(
-				SigningKey,
-				timestamp,
-				SubscriberId,
-				state);
-
-			string url = string.Format("{0}/embed/resumesession/{1}", EndpointAddress, SubscriberId);
-
-			HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-			request.Method = "POST";
-			request.ContentType = "text/xml";
-			request.Headers["x-hd-date"] = timestamp.ToString("r");
-			request.Headers[HttpRequestHeader.Authorization] = hmac;
-			request.ContentLength = state.Length;
-
-			if (!string.IsNullOrEmpty(ProxyServerAddress))
+			if (streamGetter != null)
 			{
-				request.Proxy = new WebProxy(ProxyServerAddress);
+				return (string)TryWithoutAndWithPackage(
+					(uploadPackage) => ResumeSessionImpl(state, streamGetter, uploadPackage));
 			}
-			else
-			{
-				request.Proxy = null;
-			}
-
-			Stream stream = request.GetRequestStream();
-			byte[] data = Encoding.UTF8.GetBytes(state);
-			stream.Write(data, 0, data.Length);
-
-			HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-			StreamReader reader = new StreamReader(response.GetResponseStream());
-			return reader.ReadLine();
+			return ResumeSessionImpl(state, streamGetter, false);
 		}
 
 		/// <summary>
@@ -251,6 +226,55 @@ namespace HotDocs.Sdk.Cloud
 				byte[] data = Encoding.UTF8.GetBytes(answers);
 				stream.Write(data, 0, data.Length);
 			}
+			HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+			StreamReader reader = new StreamReader(response.GetResponseStream());
+			return reader.ReadLine();
+		}
+
+		private string ResumeSessionImpl(string state, Func<string, Stream> streamGetter, bool uploadPackage)
+		{
+			if (uploadPackage)
+			{
+				string base64 = state.Split('#')[0];
+				string json = Encoding.UTF8.GetString(Convert.FromBase64String(base64));
+				JavaScriptSerializer jss = new JavaScriptSerializer();
+				var stateDict = jss.Deserialize<dynamic>(json);
+				string packageID = stateDict["PackageID"];
+				string billingRef = stateDict["BillingRef"];
+
+				UploadPackage(packageID, billingRef, streamGetter(packageID));
+			}
+
+			var timestamp = DateTime.UtcNow;
+
+			string hmac = HMAC.CalculateHMAC(
+				SigningKey,
+				timestamp,
+				SubscriberId,
+				state);
+
+			string url = string.Format("{0}/embed/resumesession/{1}", EndpointAddress, SubscriberId);
+
+			HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+			request.Method = "POST";
+			request.ContentType = "text/xml";
+			request.Headers["x-hd-date"] = timestamp.ToString("r");
+			request.Headers[HttpRequestHeader.Authorization] = hmac;
+			request.ContentLength = state.Length;
+
+			if (!string.IsNullOrEmpty(ProxyServerAddress))
+			{
+				request.Proxy = new WebProxy(ProxyServerAddress);
+			}
+			else
+			{
+				request.Proxy = null;
+			}
+
+			Stream stream = request.GetRequestStream();
+			byte[] data = Encoding.UTF8.GetBytes(state);
+			stream.Write(data, 0, data.Length);
+
 			HttpWebResponse response = (HttpWebResponse)request.GetResponse();
 			StreamReader reader = new StreamReader(response.GetResponseStream());
 			return reader.ReadLine();

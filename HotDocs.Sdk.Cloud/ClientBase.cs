@@ -82,7 +82,7 @@ namespace HotDocs.Sdk.Cloud
 		/// <param name="settings">The options to use when assembling the document.</param>
 		/// <param name="billingRef">This parameter lets you specify information that will be included in usage logs for this call. For example, you can use a string to uniquely identify the end user that initiated the request and/or the context in which the call was made. When you review usage logs, you can then see which end users initiated each request. That information could then be used to pass costs on to those end users if desired.</param>
 		/// <returns></returns>
-		public AssemblyResult AssembleDocument(Template template, string answers, AssembleDocumentSettings settings, string billingRef)
+		public AssemblyResult AssembleDocument(Template template, string answers=null, AssembleDocumentSettings settings=null, string billingRef=null)
 		{
 			return (AssemblyResult)TryWithoutAndWithPackage(
 				uploadPackage => AssembleDocumentImpl(template, answers, settings, billingRef, uploadPackage));
@@ -96,7 +96,7 @@ namespace HotDocs.Sdk.Cloud
 		/// <param name="settings">The settings to use when getting an interview.</param>
 		/// <param name="billingRef">This parameter lets you specify information that will be included in usage logs for this call. For example, you can use a string to uniquely identify the end user that initiated the request and/or the context in which the call was made. When you review usage logs, you can then see which end users initiated each request. That information could then be used to pass costs on to those end users if desired.</param>
 		/// <returns></returns>
-		public BinaryObject[] GetInterview(Template template, string answers, InterviewSettings settings, string billingRef)
+		public BinaryObject[] GetInterview(Template template, string answers=null, InterviewSettings settings=null, string billingRef=null)
 		{
 			return (BinaryObject[])TryWithoutAndWithPackage(
 				uploadPackage => GetInterviewImpl(template, answers, settings, billingRef, uploadPackage));
@@ -109,7 +109,7 @@ namespace HotDocs.Sdk.Cloud
 		/// <param name="includeDialogs">This indicates whether or not the returned data should include information about dialogs and their contents.</param>
 		/// <param name="billingRef">This parameter lets you specify information that will be included in usage logs for this call. For example, you can use a string to uniquely identify the end user that initiated the request and/or the context in which the call was made. When you review usage logs, you can then see which end users initiated each request. That information could then be used to pass costs on to those end users if desired.</param>
 		/// <returns></returns>
-		public ComponentInfo GetComponentInfo(Template template, bool includeDialogs, string billingRef)
+		public ComponentInfo GetComponentInfo(Template template, bool includeDialogs=false, string billingRef=null)
 		{
 			return (ComponentInfo)TryWithoutAndWithPackage(
 				uploadPackage => GetComponentInfoImpl(template, includeDialogs, billingRef, uploadPackage));
@@ -121,7 +121,7 @@ namespace HotDocs.Sdk.Cloud
 		/// <param name="answers">The answers to use with the request.</param>
 		/// <param name="billingRef">This parameter lets you specify information that will be included in usage logs for this call. For example, you can use a string to uniquely identify the end user that initiated the request and/or the context in which the call was made. When you review usage logs, you can then see which end users initiated each request. That information could then be used to pass costs on to those end users if desired.</param>
 		/// <returns></returns>
-		public BinaryObject GetAnswers(BinaryObject[] answers, string billingRef)
+		public BinaryObject GetAnswers(BinaryObject[] answers, string billingRef=null)
 		{
 			return GetAnswersImpl(answers, billingRef);
 		}
