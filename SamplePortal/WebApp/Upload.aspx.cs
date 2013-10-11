@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Web;
 using System.Web.UI.WebControls;
+using System.Text.RegularExpressions;
 
 public partial class Upload : System.Web.UI.Page
 {
@@ -194,7 +195,19 @@ public partial class Upload : System.Web.UI.Page
 					FileInfo finfo = new FileInfo(postedFile.FileName);
 					if (finfo.Extension.ToLower() != ".xml")
 					{
-						string packageID = Path.GetFileNameWithoutExtension(postedFile.FileName);
+						string ext = Path.GetExtension(postedFile.FileName).ToLower();
+						string baseFileName = Path.GetFileNameWithoutExtension(postedFile.FileName);
+						// note: there are three possibilities here:
+						// 1) The fileName is a template package, formatted <guid>.pkg
+						// 2) The fileName is a url, formatted <guid>.url
+						// 3) The filename is a raw file, formatted with the a non-guid base file name and extension:
+						// Note: Here in this sample portal we ignore 2) and 3) because we are only concerned
+						// with uploading templates:
+						if (!IsGuid(baseFileName) || ext == ".url")
+						{
+							return;
+						}
+						string packageID = baseFileName;
 						string packagePath = PackageCache.GetLocalPackagePath(packageID);
 						if (!string.IsNullOrEmpty(packageID))
 						{
@@ -312,6 +325,25 @@ public partial class Upload : System.Web.UI.Page
 		}
 
 		UpdatePanelVisibility();
+	}
+
+	private static Regex isGuid =
+	  new Regex(@"^(\{){0,1}[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}(\}){0,1}$", RegexOptions.Compiled);
+
+	internal static bool IsGuid(string candidate)
+	{
+		bool isValid = false;
+
+		if (candidate != null)
+		{
+
+			if (isGuid.IsMatch(candidate))
+			{
+				isValid = true;
+			}
+		}
+
+		return isValid;
 	}
 
 	private void UpdatePanelVisibility()

@@ -188,18 +188,7 @@ namespace SamplePortal.Data
 
 		public bool TemplateExists(string filename, string title)
 		{
-			FileInfo finfo = new FileInfo(filename);
-			DataView dv = null;
-			switch (finfo.Extension)
-			{
-				case ".RawFile":
-				case ".Url":
-					dv = SelectTitle(title, finfo.Extension);
-					break;
-				default:
-					dv = SelectFile(filename);
-					break;
-			}
+			DataView dv = dv = SelectFile(filename);
 			return (dv.Count > 0);
 		}
 
@@ -232,10 +221,9 @@ namespace SamplePortal.Data
 		{
 			DataView dv = null;
 			FileInfo finfo = new FileInfo(filename);
-			switch (finfo.Extension)
+			switch (finfo.Extension.ToLower())
 			{
-				case ".RawFile":
-				case ".Url":
+				case ".url":
 					dv = SelectTitle(title, finfo.Extension);
 					break;
 				default:
