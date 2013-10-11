@@ -6,6 +6,15 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace HotDocs.SdkTest
 {
+	public class TemplateInfo
+	{
+		public string DocExtension { get; set; }
+		public string TplExtension { get; set; }
+		public string Title { get; set; }
+		public TemplateType TmpType { get; set; }
+		public DocumentType DocType { get; set; }
+	}
+
 	/// <summary>
 	///This is a test class for the Template and TemplateLocation classes and is intended
 	///to contain all Template-related Unit Tests
@@ -25,12 +34,20 @@ namespace HotDocs.SdkTest
 			string packageID = "d1f7cade-cb74-4457-a9a0-27d94f5c2d5b";
 			string templateFileName = "Demo Employment Agreement.docx";
 			HotDocs.Sdk.PackagePathTemplateLocation location = CreatePackagePathLocation(packageID);
-
+			Template template;
 			Assert.IsTrue(File.Exists(location.PackagePath));
+
+			// Verify that null switches and key are resolved to empty strings.
+			template = new Template(location, null, null);
+			Assert.AreEqual("", template.Switches);
+			Assert.AreEqual("", template.Key);
+			Assert.IsTrue(template.HasInterview);
+			template.Switches = "/nw /naw /ni";
+			Assert.IsFalse(template.HasInterview);
 
 			string switches = "/ni";
 			string key = "Test file key";
-			Template template = new Template(location, switches, key);
+			template = new Template(location, switches, key);
 
 			Assert.AreEqual(templateFileName, template.FileName);
 			Assert.AreEqual(key, template.Key);
@@ -48,7 +65,15 @@ namespace HotDocs.SdkTest
 			//Assert.IsTrue(File.Exists(filePath));
 			//Directory.Delete(Path.GetDirectoryName(filePath));//Clean up.
 
-			TestTemplate(template);
+
+
+			TestTemplate(template, new TemplateInfo()
+			{
+				Title = "Employment Agreement",
+				DocExtension = ".docx",
+				TmpType = TemplateType.WordDOCX,
+				DocType = DocumentType.WordDOCX
+			});
 		}
 
 		[TestMethod]
@@ -57,25 +82,167 @@ namespace HotDocs.SdkTest
 			string templateDir = Path.Combine(GetSamplePortalTemplateDir(), "TestTemplates");
 			Assert.IsTrue(Directory.Exists(templateDir));
 			PathTemplateLocation location = new PathTemplateLocation(templateDir);
+			Template template;
+
+			// Make sure that null fileName causes exception.
+			try
+			{
+				template = new Template(null, location, null, null);
+				Assert.Fail();
+			}
+			catch (Exception ex)
+			{
+				Assert.IsTrue(ex.Message.Contains("fileName"));
+			}
+
+			// Make sure that null location causes exception.
+			try
+			{
+				template = new Template("filename.docx", null, null, null);
+				Assert.Fail();
+			}
+			catch (Exception ex)
+			{
+				Assert.IsTrue(ex.Message.Contains("location"));
+			}
+
+			// Make sure that a null location causes exception.
+			try
+			{
+				template = new Template(null, null, null);
+				Assert.Fail();
+			}
+			catch (Exception ex)
+			{
+				Assert.IsTrue(ex.Message.Contains("location"));
+			}
+
+			// Try to locate a template with a null locator.
+			try
+			{
+				template = Template.Locate(null);
+				Assert.Fail();
+			}
+			catch (ArgumentNullException ex)
+			{
+				Assert.IsTrue(ex.Message.Contains("locator"));
+			}
+
+			// Try to locate a template with an empty string locator.
+			try
+			{
+				template = Template.Locate("");
+				Assert.Fail();
+			}
+			catch (ArgumentNullException ex)
+			{
+				Assert.IsTrue(ex.Message.Contains("locator"));
+			}
+
+			// Try to locate a template with an invalid template locator.
+			try
+			{
+				template = Template.Locate(Util.EncryptString("abcdefg")); 
+				Assert.Fail();
+			}
+			catch (Exception ex)
+			{
+				Assert.IsTrue(ex.Message.Contains("Invalid template locator."));
+			}
+
+			try
+			{
+				HotDocs.Sdk.TemplateLocation.RegisterLocation(typeof(string));
+				Assert.Fail();
+			}
+			catch (Exception ex)
+			{
+				Assert.IsTrue(ex.Message.Contains("The registered location must be of type TemplateLocation."));
+			}
+
+			// Try to get the TemplateType for an unknown template type.
+			template = new Template("filename.tfx", location, null, null);
+			Assert.AreEqual(TemplateType.Unknown, template.TemplateType);
+			Assert.AreEqual("", template.Title);
+
+			// Verify that null switches and key resolve to empty string.
+			template = new Template("Demo Employment Agreement.docx", location, null, null);
+			Assert.AreEqual("", template.Switches);
+			Assert.AreEqual("", template.Key);
+
+
 
 			string switches = "/ni";
 			string key = "Test file key";
-			Template template = new Template("Demo Employment Agreement.docx", location, switches, key);
-			Assert.AreEqual(template.Title, "Employment Agreement");
 
-			string filePath = template.GetFullPath();
-			Assert.IsTrue(File.Exists(filePath));
+			Dictionary<string, TemplateInfo> testTemplates = new Dictionary<string, TemplateInfo>();
+			testTemplates.Add("Demo Employment Agreement.docx", new TemplateInfo()
+			{
+				Title = "Employment Agreement",
+				DocExtension = ".docx",
+				TmpType = TemplateType.WordDOCX,
+				DocType = DocumentType.WordDOCX
+			});
+			testTemplates.Add("Sample rtf template.rtf", new TemplateInfo()
+			{
+				Title = "Sample rtf template",
+				DocExtension = ".rtf",
+				TmpType = TemplateType.WordRTF,
+				DocType = DocumentType.WordRTF
+			});
+			testTemplates.Add("Sample wpt template.wpt", new TemplateInfo()
+			{
+				Title = "Sample wpt template",
+				DocExtension = ".wpd",
+				TmpType = TemplateType.WordPerfect,
+				DocType = DocumentType.WordPerfect
+			});
+			testTemplates.Add("sample interview template.cmp", new TemplateInfo()
+			{
+				Title = "sample interview template",
+				DocExtension = ".wpd",
+				TmpType = TemplateType.InterviewOnly,
+				DocType = DocumentType.Unknown
+			});
+			testTemplates.Add("sample hft template.hft", new TemplateInfo()
+			{
+				Title = "sample hft template",
+				DocExtension = ".hfd",
+				TmpType = TemplateType.HotDocsHFT,
+				DocType = DocumentType.HFD
+			});
+			testTemplates.Add("sample pdf template.hpt", new TemplateInfo()
+			{
+				Title = "sample pdf template",
+				DocExtension = ".pdf",
+				TmpType = TemplateType.HotDocsPDF,
+				DocType = DocumentType.PDF
+			});
+			testTemplates.Add("sample ttx template.ttx", new TemplateInfo()
+			{
+				Title = "sample ttx template",
+				DocExtension = ".txt",
+				TmpType = TemplateType.PlainText,
+				DocType = DocumentType.PlainText
+			});
 
-			TestTemplate(template);
+
+			foreach (var t in testTemplates)
+			{
+				template = new Template(t.Key, location, switches, key);
+				Assert.AreEqual(template.Title, t.Value.Title);
+				string filePath = template.GetFullPath();
+				Assert.IsTrue(File.Exists(filePath));
+				TestTemplate(template, t.Value);
+			}
 		}
 
-		private void TestTemplate(Template template)
+		private void TestTemplate(Template template, TemplateInfo tInfo)
 		{
-			Assert.AreEqual(template.TemplateType, TemplateType.WordDOCX);
 			Assert.IsFalse(template.HasInterview);
-			Assert.IsTrue(template.GeneratesDocument);
-			Assert.AreEqual(template.NativeDocumentType, DocumentType.WordDOCX);
-			Assert.AreEqual(template.TemplateType, TemplateType.WordDOCX);
+			Assert.IsTrue(template.GeneratesDocument == (tInfo.TmpType != TemplateType.InterviewOnly));
+			Assert.AreEqual(template.NativeDocumentType, tInfo.DocType);
+			Assert.AreEqual(template.TemplateType, tInfo.TmpType);
 
 			string locator = template.CreateLocator();
 			Template template2 = Template.Locate(locator);
@@ -91,6 +258,54 @@ namespace HotDocs.SdkTest
 
 			template.UpdateFileName();
 			Assert.AreEqual(template.FileName, template2.FileName);
+
+			Assert.AreEqual(".hfd", HotDocs.Sdk.Template.GetDocExtension(DocumentType.HFD, null));
+			Assert.AreEqual(".hpd", HotDocs.Sdk.Template.GetDocExtension(DocumentType.HPD, null));
+			Assert.AreEqual(".htm", HotDocs.Sdk.Template.GetDocExtension(DocumentType.HTML, null));
+			Assert.AreEqual(".htm", HotDocs.Sdk.Template.GetDocExtension(DocumentType.HTMLwDataURIs, null));
+			Assert.AreEqual(".htm", HotDocs.Sdk.Template.GetDocExtension(DocumentType.MHTML, null));
+			Assert.AreEqual(".pdf", HotDocs.Sdk.Template.GetDocExtension(DocumentType.PDF, null));
+			Assert.AreEqual(".txt", HotDocs.Sdk.Template.GetDocExtension(DocumentType.PlainText, null));
+			Assert.AreEqual(".doc", HotDocs.Sdk.Template.GetDocExtension(DocumentType.WordDOC, null));
+			Assert.AreEqual(".docx", HotDocs.Sdk.Template.GetDocExtension(DocumentType.WordDOCX, null));
+			Assert.AreEqual(".wpd", HotDocs.Sdk.Template.GetDocExtension(DocumentType.WordPerfect, null));
+			Assert.AreEqual(".rtf", HotDocs.Sdk.Template.GetDocExtension(DocumentType.WordRTF, null));
+			//Assert.AreEqual(".xml", HotDocs.Sdk.Template.GetDocExtension(DocumentType.XML, null)); // TODO: Should we be testing XML?
+
+			// Unknown doc type.
+			try
+			{
+				Assert.AreEqual(".unk", HotDocs.Sdk.Template.GetDocExtension(DocumentType.Unknown, null));
+				Assert.Fail(); // Should have thrown exception.
+			}
+			catch (Exception ex)
+			{
+				Assert.IsTrue(ex.Message.Contains("Unsupported document type."));
+			}
+
+			// Native doc type.
+			try
+			{
+				string extension = HotDocs.Sdk.Template.GetDocExtension(DocumentType.Native, null);
+				Assert.Fail(); // We should have had an exception.
+			}
+			catch (ArgumentNullException ex)
+			{
+				Assert.IsTrue(ex.Message.Contains("template")); // templae cannot be null if the type is Native.
+			}
+
+			// Native doc type.
+			if (tInfo.DocType != DocumentType.Unknown)
+			{
+				Assert.AreEqual(tInfo.DocExtension, template.GetDocExtension());
+				Assert.AreEqual(tInfo.DocExtension, HotDocs.Sdk.Template.GetDocExtension(DocumentType.Native, template));
+			}
+
+
+			// Set the template title.
+			template.Title = "This has been done.";
+			Assert.AreEqual("This has been done.", template.Title);
+
 		}
 
 		[TestMethod]
@@ -110,7 +325,22 @@ namespace HotDocs.SdkTest
 			PathTemplateLocation loc4 = null;
 			PathTemplateLocation loc5 = null;
 
+			// Try to get a TemplateLocation from an invalid locator.
+			TemplateLocation loc = TemplateLocation.Locate(Util.EncryptString("abcdefg"));
+			Assert.IsNull(loc);
+
+			try
+			{
+				loc = TemplateLocation.Locate(Util.EncryptString("abc|defg"));
+				Assert.Fail();
+			}
+			catch (Exception ex)
+			{
+				Assert.IsTrue(ex.Message.Contains("The type abc is not registered"));
+			}
+
 			// ensure PathTemplateLocation is case insensitive
+			Assert.AreNotEqual(loc1a, "");
 			Assert.AreEqual(loc1a, loc1b);
 			Assert.AreEqual(loc1a.GetHashCode(), loc1b.GetHashCode());
 			Assert.AreEqual(loc2a, loc2b);

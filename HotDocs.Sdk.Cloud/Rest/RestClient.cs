@@ -84,41 +84,54 @@ namespace HotDocs.Sdk.Cloud
 			string billingRef,
 			Stream packageStream)
 		{
-			var timestamp = DateTime.UtcNow;
-
-			string hmac = HMAC.CalculateHMAC(
-				SigningKey,
-				timestamp,
-				SubscriberId,
-				packageID,
-				null,
-				true,
-				billingRef);
-
-			StringBuilder urlBuilder = new StringBuilder(string.Format(
-				"{0}/RestfulSvc.svc/{1}/{2}", EndpointAddress, SubscriberId, packageID));
-
-			if (!string.IsNullOrEmpty(billingRef))
+			try
 			{
-				urlBuilder.AppendFormat("?billingRef={0}", billingRef);
+				var timestamp = DateTime.UtcNow;
+
+				string hmac = HMAC.CalculateHMAC(
+					SigningKey,
+					timestamp,
+					SubscriberId,
+					packageID,
+					null,
+					true,
+					billingRef);
+
+				StringBuilder urlBuilder = new StringBuilder(string.Format(
+					"{0}/RestfulSvc.svc/{1}/{2}", EndpointAddress, SubscriberId, packageID));
+
+				if (!string.IsNullOrEmpty(billingRef))
+				{
+					urlBuilder.AppendFormat("?billingRef={0}", billingRef);
+				}
+
+				HttpWebRequest request = (HttpWebRequest)WebRequest.Create(urlBuilder.ToString());
+				request.Method = "PUT";
+				request.ContentType = "application/binary";
+				request.Headers["x-hd-date"] = timestamp.ToString("r");
+				request.Headers[HttpRequestHeader.Authorization] = hmac;
+
+				if (packageStream.CanSeek)
+				{
+					request.ContentLength = packageStream.Length;
+					request.AllowWriteStreamBuffering = false;
+				}
+
+				if (!string.IsNullOrEmpty(ProxyServerAddress))
+				{
+					request.Proxy = new WebProxy(ProxyServerAddress);
+				}
+
+				packageStream.CopyTo(request.GetRequestStream());
+
+				using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+				{
+					// Throw away the response, which will be empty.
+				}
 			}
-
-			HttpWebRequest request = (HttpWebRequest)WebRequest.Create(urlBuilder.ToString());
-			request.Method = "PUT";
-			request.ContentType = "application/binary";
-			request.Headers["x-hd-date"] = timestamp.ToString("r");
-			request.Headers[HttpRequestHeader.Authorization] = hmac;
-
-			if (!string.IsNullOrEmpty(ProxyServerAddress))
+			finally
 			{
-				request.Proxy = new WebProxy(ProxyServerAddress);
-			}
-
-			packageStream.CopyTo(request.GetRequestStream());
-
-			using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
-			{
-				// Throw away the response, which will be empty.
+				packageStream.Close();
 			}
 		}
 		#endregion
@@ -140,15 +153,11 @@ namespace HotDocs.Sdk.Cloud
 			{
 				using (HttpWebResponse httpResponse = (HttpWebResponse)ex.Response)
 				{
-					using (Stream data = httpResponse.GetResponseStream())
+					if (httpResponse.StatusCode == HttpStatusCode.NotFound)
 					{
-						string text = new StreamReader(data).ReadToEnd();
-						if (text.Contains("HotDocs.Cloud.Storage.PackageNotFoundException"))
-						{
-							return func(true);
-						}
-						throw;
+						return func(true);
 					}
+					throw;
 				}
 			}
 		}
@@ -227,28 +236,22 @@ namespace HotDocs.Sdk.Cloud
 			Directory.CreateDirectory(OutputDir);
 			using (var resultsStream = new MemoryStream())
 			{
-				// Each part is written to a file named after the Content-ID value,
-				// except for the AssemblyResult part, which has a Content-ID of "XML0",
+				// Each part is written to a file whose name is specified in the content-disposition
+				// header, except for the AssemblyResult part, which has a file name of "meta0.xml",
 				// and is parsed into an AssemblyResult object.
 				_parser.WritePartsToStreams(
 					response.GetResponseStream(),
 					h =>
 					{
-						string id;
-						if (h.TryGetValue("Content-ID", out id))
+						string fileName = GetFileNameFromHeaders(h);
+						if (fileName != null)
 						{
-							// Remove angle brackets if present
-							if (id.StartsWith("<") && id.EndsWith(">"))
-							{
-								id = id.Substring(1, id.Length - 2);
-							}
-
-							if (id.Equals("XML0", StringComparison.OrdinalIgnoreCase))
+							if (fileName.Equals("meta0.xml", StringComparison.OrdinalIgnoreCase))
 							{
 								return resultsStream;
 							}
 
-							return new FileStream(Path.Combine(OutputDir, id), FileMode.Create);
+							return new FileStream(Path.Combine(OutputDir, fileName), FileMode.Create);
 						}
 						return Stream.Null;
 					},
@@ -291,7 +294,8 @@ namespace HotDocs.Sdk.Cloud
 
 			var timestamp = DateTime.UtcNow;
 
-			string interviewImageUrl = settings.Settings["TempInterviewUrl"];
+			string interviewImageUrl = string.Empty;
+			settings.Settings.TryGetValue("TempInterviewUrl", out interviewImageUrl);
 
 			string hmac = HMAC.CalculateHMAC(
 				SigningKey,
@@ -344,23 +348,17 @@ namespace HotDocs.Sdk.Cloud
 				Directory.CreateDirectory(OutputDir);
 				using (var resultsStream = new MemoryStream())
 				{
-					// Each part is written to a file named after the Content-ID value,
-					// except for the BinaryObject[] part, which has a Content-ID of "XML0",
+					// Each part is written to a file whose name is specified in the content-disposition
+					// header, except for the BinaryObject[] part, which has a file name of "meta0.xml",
 					// and is parsed into an BinaryObject[] object.
 					_parser.WritePartsToStreams(
 						response.GetResponseStream(),
 						h =>
 						{
-							string id;
-							if (h.TryGetValue("Content-ID", out id))
+							string id = GetFileNameFromHeaders(h);
+							if (id != null)
 							{
-								// Remove angle brackets if present
-								if (id.StartsWith("<") && id.EndsWith(">"))
-								{
-									id = id.Substring(1, id.Length - 2);
-								}
-
-								if (id.Equals("XML0", StringComparison.OrdinalIgnoreCase))
+								if (id.Equals("meta0.xml", StringComparison.OrdinalIgnoreCase))
 								{
 									return resultsStream;
 								}
@@ -418,8 +416,8 @@ namespace HotDocs.Sdk.Cloud
 				includeDialogs);
 
 			StringBuilder urlBuilder = new StringBuilder(string.Format(
-				"{0}/RestfulSvc.svc/componentinfo/{1}/{2}/?includedialogs={3}&billingref={4}",
-				EndpointAddress, SubscriberId, packageTemplateLocation.PackageID, includeDialogs.ToString(), billingRef));
+				"{0}/RestfulSvc.svc/componentinfo/{1}/{2}/{3}?includedialogs={4}&billingref={5}",
+				EndpointAddress, SubscriberId, packageTemplateLocation.PackageID, template.FileName, includeDialogs.ToString(), billingRef));
 
 			HttpWebRequest request = (HttpWebRequest)WebRequest.Create(urlBuilder.ToString());
 			request.Method = "GET";
@@ -462,6 +460,26 @@ namespace HotDocs.Sdk.Cloud
 				_parser.Dispose();
 				_parser = null;
 			}
+		}
+		#endregion
+
+		#region Private methods
+		private string GetFileNameFromHeaders(Dictionary<string, string> headers)
+		{
+			string disp;
+			if (headers.TryGetValue("Content-Disposition", out disp))
+			{
+				string[] pairs = disp.Split(';');
+				foreach (string pair in pairs)
+				{
+					string trimmed = pair.Trim();
+					if (trimmed.StartsWith("filename="))
+					{
+						return trimmed.Substring("filename=".Length);
+					}
+				}
+			}
+			return null;
 		}
 		#endregion
 	}

@@ -291,7 +291,7 @@ namespace HotDocs.Sdk.Server.WebService
 
 			using (Proxy client = new Proxy(_endPointName))
 			{
-				string templateId = GetRelativePath(template.GetFullPath()); // The relative path to the template folder.
+				string templateId = GetRelativePath(Path.Combine(Path.GetDirectoryName(template.GetFullPath()), fileName)); // The relative path to the template folder.
 				string templateName = fileName; // The name of the template file for which the interview is being requested (e.g., demoempl.rtf). 
 				string templateState = string.Empty; // We are using the templateId rather than template state since all we have to work with is a template locator.
 				BinaryObject binaryObject = client.GetInterviewDefinition(templateId, templateName, format, templateState);
@@ -402,10 +402,9 @@ namespace HotDocs.Sdk.Server.WebService
 		private string GetRelativePath(string fullPath)
 		{
 			string sRet = string.Empty;
-			string full = fullPath.ToLower();
-			int i = full.IndexOf(_baseTemplateLocation);
+			int i = fullPath.IndexOf(_baseTemplateLocation, StringComparison.InvariantCultureIgnoreCase);
 			if (i == 0)
-				sRet = full.Substring(_baseTemplateLocation.Length + 1);
+				sRet = fullPath.Substring(_baseTemplateLocation.Length + 1);
 			else
 			{
 				throw new Exception(string.Format(@"Error: The configured TemplatePath location ""{0}"" does not match the location of the current template ""{1}""",
