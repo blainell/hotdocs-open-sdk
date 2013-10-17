@@ -70,15 +70,16 @@ namespace HotDocs.Sdk.Cloud
 		/// Resumes a saved session.
 		/// </summary>
 		/// <param name="state">The serialized state of the interrupted session, i.e. the "snapshot".</param>
+		/// <param name="locationGetter">A delegate that takes a package ID and returns the template location.</param>
 		/// <returns>A session ID to be passed into the JavaScript HD$.CreateInterviewFrame call.</returns>
-		public string ResumeSession(string state, Func<string, Stream> streamGetter = null)
+		public string ResumeSession(string state, Func<string, PackageTemplateLocation> locationGetter = null)
 		{
-			if (streamGetter != null)
+			if (locationGetter != null)
 			{
 				return (string)TryWithoutAndWithPackage(
-					(uploadPackage) => ResumeSessionImpl(state, streamGetter, uploadPackage));
+					(uploadPackage) => ResumeSessionImpl(state, locationGetter, uploadPackage));
 			}
-			return ResumeSessionImpl(state, streamGetter, false);
+			return ResumeSessionImpl(state, locationGetter, false);
 		}
 
 		/// <summary>
@@ -231,7 +232,7 @@ namespace HotDocs.Sdk.Cloud
 			return reader.ReadLine();
 		}
 
-		private string ResumeSessionImpl(string state, Func<string, Stream> streamGetter, bool uploadPackage)
+		private string ResumeSessionImpl(string state, Func<string, PackageTemplateLocation> locationGetter, bool uploadPackage)
 		{
 			if (uploadPackage)
 			{
@@ -242,7 +243,7 @@ namespace HotDocs.Sdk.Cloud
 				string packageID = stateDict["PackageID"];
 				string billingRef = stateDict["BillingRef"];
 
-				UploadPackage(packageID, billingRef, streamGetter(packageID));
+				UploadPackage(packageID, billingRef, locationGetter(packageID).GetPackageStream());
 			}
 
 			var timestamp = DateTime.UtcNow;
