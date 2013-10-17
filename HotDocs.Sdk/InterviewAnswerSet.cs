@@ -90,6 +90,7 @@ namespace HotDocs.Sdk.Server
 								{
 									if (orgLen > 0 && originalAnswers != null)
 										originalAnswers = ansPkg.Substring(end + ansLen + 3, orgLen);
+
 									// decode & then return XML
 									ansPkg = Encoding.UTF8.GetString(Convert.FromBase64String(ansPkg.Substring(end + 2, ansLen)));
 									if (ansPkg[0] == 0xFEFF)
@@ -109,7 +110,7 @@ namespace HotDocs.Sdk.Server
 				}
 				else // otherwise should be base64 encoded UTF16 XML
 				{
-					byte [] buffer = Convert.FromBase64String(input.ReadToEnd());
+					byte[] buffer = Convert.FromBase64String(input.ReadToEnd());
 					string decoded = Encoding.Unicode.GetString(buffer);//This was "Unicode" (not "UTF8").
 					if (decoded.Length > 0 && decoded[0] == '\xfeff')
 						decoded = decoded.Substring(1);
@@ -125,8 +126,9 @@ namespace HotDocs.Sdk.Server
 		/// <param name="input">TextReader that contains answers to decode.</param>
 		public void DecodeInterviewAnswers(System.IO.TextReader input)
 		{
+			Clear();
 			System.IO.TextReader decoded = GetDecodedInterviewAnswers(input, ref _originalAnswers);
-			ReadXml(decoded);
+			OverlayXml(decoded);
 		}
 
 		/// <summary>
