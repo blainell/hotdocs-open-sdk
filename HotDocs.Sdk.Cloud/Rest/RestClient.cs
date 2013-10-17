@@ -37,6 +37,11 @@ namespace HotDocs.Sdk.Cloud
 		{
 			OutputDir = outputDir ?? _defaultOutputDir;
 			SetTcpKeepAlive();
+
+#if DEBUG
+			// For debug builds, allow invalid server certificates.
+			ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+#endif
 		}
 		#endregion
 
