@@ -10,25 +10,30 @@
 	<link href="css/SamplePortal.css" type="text/css" rel="stylesheet" />
 	<script type="text/javascript" src="http://files.hotdocs.ws/download/easyXDM.min.js"></script>
 	<script type="text/javascript" src="http://files.hotdocs.ws/download/hotdocs.js"></script>
+	<!-- Load jQuery 1.x for IE8, and jQuery 2.x for all other browsers. -->
+	<!--[if lt IE 9]>
+    <script type="text/javascript" src="<%= _javascriptUrl %>/jquery.js" id="jquery"></script>
+	<![endif]-->
+	<!--[if gte IE 9]><!-->
+	<script type="text/javascript" src="<%= _javascriptUrl %>/jquery2.js" id="jquery"></script>
+	<!--<![endif]-->
+	<script type="text/javascript" src="scripts/sampleportal-embedded.js"></script>
 	<script type="text/javascript">
-		function LoadEmbeddedInterview(bShow)
-		{
-			if (bShow == "True")
-			{
-				document.getElementById('TemplateInterview').style.display = 'block';
+		CloudServiceAddress = '<%= SamplePortal.Settings.CloudServicesAddress %>';
 
-				var cloudSvcUrl = '<%= SamplePortal.Settings.CloudServicesAddress %>';
-				if (cloudSvcUrl != "")
-					HD$.CloudServicesAddress = cloudSvcUrl;
-				HD$.CreateInterviewFrame('TemplateInterview', '<%= GetSessionID() %>');
-			}
+		function SetSessionID()
+		{
+			// Set the session ID; this must take place after we have set the value of the hidden field that contains the embedded snapshot cookie.
+			CloudSessionID = '<%= GetSessionID() %>';
 		}
 	</script>
 </head>
-<body onload="LoadEmbeddedInterview('<%= ShouldShowInterview %>');">
+<body>
 	<uc1:Header ID="Header1" runat="server" HomeLink="true" />
 	<form id="form1" runat="server">
 		<p>Select Template > Answers > Complete Interview</p>
+		<asp:Button ID="ResumeSessionButton" runat="server" Text="Resume Session from Snapshot" OnClick="ResumeSessionButton_Click" />
+		<asp:HiddenField ID="SnapshotField" runat="server" />
 		<asp:DataGrid ID="tplGrid" runat="server" CssClass="DataGrid" DataSource="<%# _tplData %>" AllowPaging="False" AllowSorting="False" AutoGenerateColumns="False" CellPadding="3" BorderColor="#99B2CC" OnItemDataBound="tplGrid_ItemDataBound" OnSelectedIndexChanged="tplGrid_SelectedIndexChanged">
 			<AlternatingItemStyle CssClass="DataGridAlternateItem"></AlternatingItemStyle>
 			<ItemStyle CssClass="DataGridItem"></ItemStyle>

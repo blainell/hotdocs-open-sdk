@@ -17,20 +17,12 @@ using System.Web.UI.WebControls;
 public partial class Embedded : System.Web.UI.Page
 {
 	public enum EmbeddedPageMode { SelectTemplate, SelectAnswers, ShowInterview }
-
+	protected bool _resume = false;
 	protected string _packageID;
 	protected EmbeddedPageMode _pageMode;
-
+	protected static string _javascriptUrl = Settings.JavaScriptUrl;
 	protected DataView _tplData;
 	protected DataView ansData;
-
-	protected bool ShouldShowInterview
-	{
-		get
-		{
-			return tplGrid.Visible == false && ansGrid.Visible == false; // pageMode == EmbeddedPageMode.ShowInterview;
-		}
-	}
 
 	protected void Page_Load(object sender, EventArgs e)
 	{
@@ -76,14 +68,27 @@ public partial class Embedded : System.Web.UI.Page
 
 	protected string GetSessionID()
 	{
+	
 
-		if (string.IsNullOrEmpty(_packageID))
-			return null;
-
-		InterviewFormat format = HotDocs.Sdk.Util.ReadConfigurationEnum<InterviewFormat>("InterviewFormat", InterviewFormat.Unspecified);
 		var client = new RestClient(Settings.SubscriberID, Settings.SigningKey, null, SamplePortal.Settings.CloudServicesAddress);
-		HotDocs.Sdk.Template template = new HotDocs.Sdk.Template(new HotDocs.Sdk.PackagePathTemplateLocation(_packageID, Path.Combine(Settings.TemplatePath, _packageID + ".pkg")));
-		return client.CreateSession(template, null, null, null, format);
+
+		if (_resume)
+		{
+			// Resume a previously-saved session.
+			_resume = false;
+			return client.ResumeSession(SnapshotField.Value);
+		}
+		else
+		{
+			// Make sure we have a packageID to use with the new session.
+			if (string.IsNullOrEmpty(_packageID))
+				return null;
+
+			// Create the new session.
+			InterviewFormat format = HotDocs.Sdk.Util.ReadConfigurationEnum<InterviewFormat>("InterviewFormat", InterviewFormat.Unspecified);
+			HotDocs.Sdk.Template template = new HotDocs.Sdk.Template(new HotDocs.Sdk.PackagePathTemplateLocation(_packageID, Path.Combine(Settings.TemplatePath, _packageID + ".pkg")));
+			return client.CreateSession(template, null, null, null, format);
+		}
 	}
 
 	#region DataGrid
@@ -136,4 +141,9 @@ public partial class Embedded : System.Web.UI.Page
 
 	#endregion
 
+	protected void ResumeSessionButton_Click(object sender, EventArgs e)
+	{
+		_resume = true;
+		SwitchMode(EmbeddedPageMode.ShowInterview);
+	}
 }
