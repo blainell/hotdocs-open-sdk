@@ -2,9 +2,6 @@
    Use, modification and redistribution of this source is subject
    to the New BSD License as set out in LICENSE.TXT. */
 
-//TODO: Add method parameter validation.
-//TODO: Add appropriate unit tests.
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -201,9 +198,9 @@ namespace HotDocs.Sdk.Server.Local
 			hdsi.HDInterviewOptions itvOpts = hdsi.HDInterviewOptions.intOptNoImages; // Instructs HDS not to return images used by the interview; we'll get them ourselves from the template folder.
 
 			if (settings.DisableDocumentPreview)
-				itvOpts |= hdsi.HDInterviewOptions.intOptNoPreview; // Disables (omits) the Document Preview button on the interview toolbar. TODO: Fix TFS #5598 so this actually has an effect.
+				itvOpts |= hdsi.HDInterviewOptions.intOptNoPreview; // Disables (omits) the Document Preview button on the interview toolbar.
 			if (settings.DisableSaveAnswers)
-				itvOpts |= hdsi.HDInterviewOptions.intOptNoSave; // Disables (omits) the Save Answers button on the interview toolbar. TODO: Fix TFS #5598 so this actually has an effect.
+				itvOpts |= hdsi.HDInterviewOptions.intOptNoSave; // Disables (omits) the Save Answers button on the interview toolbar.
 			if (settings.RoundTripUnusedAnswers)
 				itvOpts |= hdsi.HDInterviewOptions.intOptStateless; // Prevents original answer file from being encrypted and sent to the interview and then posted back at the end.
 
@@ -239,8 +236,8 @@ namespace HotDocs.Sdk.Server.Local
 						Util.GetInterviewDefinitionUrl(settings, template),
 						null, // the path to which HDS should copy interview images; also the path that may become part of the DocumentPreviewStateString & passed to document preview handler
 						Util.GetInterviewImageUrl(settings, template),
-						!settings.DisableSaveAnswers ? settings.SaveAnswersUrl : "", // TODO: After TFS #5598 is fixed, we can go back to just setting the Url here and let HDS do the work of determining whether to use the url or not.
-						!settings.DisableDocumentPreview ? settings.DocumentPreviewUrl : "") // TODO: Fix up after TFS #5598 is fixed (as above).
+						settings.SaveAnswersUrl,
+						settings.DocumentPreviewUrl)
 					);
 			}
 			Util.AppendSdkScriptBlock(htmlFragment, template, settings);
