@@ -306,7 +306,7 @@ namespace SamplePortal
 		{
 			if (!Path.IsPathRooted(path))
 			{
-				string siteRoot = System.Web.Hosting.HostingEnvironment.MapPath("~");
+				string siteRoot = System.Web.Hosting.HostingEnvironment.MapPath("~").Trim('\\'); // Trim the trailing backslash; otherwise the parent will be the same as the root.
 				string siteRootParent = Directory.GetParent(siteRoot).FullName;
 				path = Path.Combine(siteRootParent, "Files", path);
 			}
