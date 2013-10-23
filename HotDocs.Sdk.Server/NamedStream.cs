@@ -50,7 +50,7 @@ namespace HotDocs.Sdk.Server
 		/// <summary>
 		/// Calls <c>Dispose</c> from the <c>IDisposable</c> interface
 		/// </summary>
-		/// <param name="disposing"></param>
+		/// <param name="disposing">Indicates whether or not managed resources should be disposed.</param>
 		protected virtual void Dispose(bool disposing)
 		{
 			if (!disposed)

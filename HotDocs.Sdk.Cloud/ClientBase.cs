@@ -81,7 +81,7 @@ namespace HotDocs.Sdk.Cloud
 		/// <param name="answers">The answers to use with the request.</param>
 		/// <param name="settings">The options to use when assembling the document.</param>
 		/// <param name="billingRef">This parameter lets you specify information that will be included in usage logs for this call. For example, you can use a string to uniquely identify the end user that initiated the request and/or the context in which the call was made. When you review usage logs, you can then see which end users initiated each request. That information could then be used to pass costs on to those end users if desired.</param>
-		/// <returns></returns>
+		/// <returns>An <c>AssemblyResult</c>, which contains the assembled documents, pending assemblies, and unanswered variables from the assembly.</returns>
 		public AssemblyResult AssembleDocument(Template template, string answers=null, AssembleDocumentSettings settings=null, string billingRef=null)
 		{
 			return (AssemblyResult)TryWithoutAndWithPackage(
@@ -95,7 +95,7 @@ namespace HotDocs.Sdk.Cloud
 		/// <param name="answers">The answers to use with the request.</param>
 		/// <param name="settings">The settings to use when getting an interview.</param>
 		/// <param name="billingRef">This parameter lets you specify information that will be included in usage logs for this call. For example, you can use a string to uniquely identify the end user that initiated the request and/or the context in which the call was made. When you review usage logs, you can then see which end users initiated each request. That information could then be used to pass costs on to those end users if desired.</param>
-		/// <returns></returns>
+		/// <returns>An <c>BinaryObject</c> array, which contains the HTML fragment and any dialog element images required by the requested interview.</returns>
 		public BinaryObject[] GetInterview(Template template, string answers=null, InterviewSettings settings=null, string billingRef=null)
 		{
 			return (BinaryObject[])TryWithoutAndWithPackage(
@@ -108,7 +108,7 @@ namespace HotDocs.Sdk.Cloud
 		/// <param name="template">Template to assemble</param>
 		/// <param name="includeDialogs">This indicates whether or not the returned data should include information about dialogs and their contents.</param>
 		/// <param name="billingRef">This parameter lets you specify information that will be included in usage logs for this call. For example, you can use a string to uniquely identify the end user that initiated the request and/or the context in which the call was made. When you review usage logs, you can then see which end users initiated each request. That information could then be used to pass costs on to those end users if desired.</param>
-		/// <returns></returns>
+		/// <returns>A <c>ComponentInfo</c> object containing information about the requested components.</returns>
 		public ComponentInfo GetComponentInfo(Template template, bool includeDialogs=false, string billingRef=null)
 		{
 			return (ComponentInfo)TryWithoutAndWithPackage(
@@ -120,7 +120,7 @@ namespace HotDocs.Sdk.Cloud
 		/// </summary>
 		/// <param name="answers">The answers to use with the request.</param>
 		/// <param name="billingRef">This parameter lets you specify information that will be included in usage logs for this call. For example, you can use a string to uniquely identify the end user that initiated the request and/or the context in which the call was made. When you review usage logs, you can then see which end users initiated each request. That information could then be used to pass costs on to those end users if desired.</param>
-		/// <returns></returns>
+		/// <returns>A <c>BinaryObject</c> containing the aggregated answers.</returns>
 		public BinaryObject GetAnswers(BinaryObject[] answers, string billingRef=null)
 		{
 			return GetAnswersImpl(answers, billingRef);
@@ -135,8 +135,8 @@ namespace HotDocs.Sdk.Cloud
 		/// <param name="template"></param>
 		/// <param name="answers"></param>
 		/// <param name="settings"></param>
-		/// <param name="billingRef"></param>
-		/// <param name="uploadPackage"></param>
+		/// <param name="billingRef">This parameter lets you specify information that will be included in usage logs for this call. For example, you can use a string to uniquely identify the end user that initiated the request and/or the context in which the call was made. When you review usage logs, you can then see which end users initiated each request. That information could then be used to pass costs on to those end users if desired.</param>
+		/// <param name="uploadPackage">Indicates if the package should be uploaded (forcefully) or not. This should only be true if the package does not already exist in the Cloud Services cache.</param>
 		/// <returns></returns>
 		protected internal abstract AssemblyResult AssembleDocumentImpl(
 			Template template,
@@ -151,8 +151,8 @@ namespace HotDocs.Sdk.Cloud
 		/// <param name="template"></param>
 		/// <param name="answers"></param>
 		/// <param name="settings"></param>
-		/// <param name="billingRef"></param>
-		/// <param name="uploadPackage"></param>
+		/// <param name="billingRef">This parameter lets you specify information that will be included in usage logs for this call. For example, you can use a string to uniquely identify the end user that initiated the request and/or the context in which the call was made. When you review usage logs, you can then see which end users initiated each request. That information could then be used to pass costs on to those end users if desired.</param>
+		/// <param name="uploadPackage">Indicates if the package should be uploaded (forcefully) or not. This should only be true if the package does not already exist in the Cloud Services cache.</param>
 		/// <returns></returns>
 		protected internal abstract BinaryObject[] GetInterviewImpl(
 			Template template,
@@ -165,9 +165,9 @@ namespace HotDocs.Sdk.Cloud
 		/// 
 		/// </summary>
 		/// <param name="template"></param>
-		/// <param name="includeDialogs"></param>
-		/// <param name="billingRef"></param>
-		/// <param name="uploadPackage"></param>
+		/// <param name="includeDialogs">Indicates whether or not information about dialogs should be included.</param>
+		/// <param name="billingRef">This parameter lets you specify information that will be included in usage logs for this call. For example, you can use a string to uniquely identify the end user that initiated the request and/or the context in which the call was made. When you review usage logs, you can then see which end users initiated each request. That information could then be used to pass costs on to those end users if desired.</param>
+		/// <param name="uploadPackage">Indicates if the package should be uploaded (forcefully) or not. This should only be true if the package does not already exist in the Cloud Services cache.</param>
 		/// <returns></returns>
 		protected internal abstract ComponentInfo GetComponentInfoImpl(
 			Template template,
@@ -179,7 +179,7 @@ namespace HotDocs.Sdk.Cloud
 		/// 
 		/// </summary>
 		/// <param name="answers"></param>
-		/// <param name="billingRef"></param>
+		/// <param name="billingRef">This parameter lets you specify information that will be included in usage logs for this call. For example, you can use a string to uniquely identify the end user that initiated the request and/or the context in which the call was made. When you review usage logs, you can then see which end users initiated each request. That information could then be used to pass costs on to those end users if desired.</param>
 		/// <returns></returns>
 		protected internal abstract BinaryObject GetAnswersImpl(
 			BinaryObject[] answers,
@@ -220,7 +220,7 @@ namespace HotDocs.Sdk.Cloud
 		/// 
 		/// </summary>
 		/// <param name="location"></param>
-		/// <param name="uploadPackage"></param>
+		/// <param name="uploadPackage">Indicates if the package should be uploaded (forcefully) or not. This should only be true if the package does not already exist in the Cloud Services cache.</param>
 		/// <returns></returns>
 		protected internal BinaryObject GetPackageIfNeeded(PackageTemplateLocation location, bool uploadPackage)
 		{

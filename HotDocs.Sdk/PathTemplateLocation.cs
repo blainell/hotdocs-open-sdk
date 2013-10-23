@@ -58,8 +58,8 @@ namespace HotDocs.Sdk
 		/// <summary>
 		/// Implements IEquatable&lt;TemplateLocation&gt;.Equals().
 		/// </summary>
-		/// <param name="other"></param>
-		/// <returns></returns>
+		/// <param name="other">The other template location to compare equality.</param>
+		/// <returns>A value indicating whether or not the two locations are the same.</returns>
 		public override bool Equals(TemplateLocation other)
 		{
 			var otherPathLoc = other as PathTemplateLocation;

@@ -68,7 +68,7 @@ namespace HotDocs.Sdk.Server.WebService
 		/// Call GetComponentInfo on HotDocs Server via web services
 		/// </summary>
 		/// <param name="templateID"></param>
-		/// <param name="includeDialogs"></param>
+		/// <param name="includeDialogs">Indicates whether or not information about dialogs should be included.</param>
 		/// <returns></returns>
 		public ComponentInfo GetComponentInfo(string templateID, bool includeDialogs)
 		{

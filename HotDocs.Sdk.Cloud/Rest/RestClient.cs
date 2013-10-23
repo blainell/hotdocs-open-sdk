@@ -173,8 +173,8 @@ namespace HotDocs.Sdk.Cloud
 		/// <param name="template"></param>
 		/// <param name="answers"></param>
 		/// <param name="settings"></param>
-		/// <param name="billingRef"></param>
-		/// <param name="uploadPackage"></param>
+		/// <param name="billingRef">This parameter lets you specify information that will be included in usage logs for this call. For example, you can use a string to uniquely identify the end user that initiated the request and/or the context in which the call was made. When you review usage logs, you can then see which end users initiated each request. That information could then be used to pass costs on to those end users if desired.</param>
+		/// <param name="uploadPackage">Indicates if the package should be uploaded (forcefully) or not. This should only be true if the package does not already exist in the Cloud Services cache.</param>
 		/// <returns></returns>
 		protected internal override AssemblyResult AssembleDocumentImpl(
 			Template template,
@@ -278,8 +278,8 @@ namespace HotDocs.Sdk.Cloud
 		/// <param name="template"></param>
 		/// <param name="answers"></param>
 		/// <param name="settings"></param>
-		/// <param name="billingRef"></param>
-		/// <param name="uploadPackage"></param>
+		/// <param name="billingRef">This parameter lets you specify information that will be included in usage logs for this call. For example, you can use a string to uniquely identify the end user that initiated the request and/or the context in which the call was made. When you review usage logs, you can then see which end users initiated each request. That information could then be used to pass costs on to those end users if desired.</param>
+		/// <param name="uploadPackage">Indicates if the package should be uploaded (forcefully) or not. This should only be true if the package does not already exist in the Cloud Services cache.</param>
 		/// <returns></returns>
 		protected internal override BinaryObject[] GetInterviewImpl(
 			Template template,
@@ -390,9 +390,9 @@ namespace HotDocs.Sdk.Cloud
 		/// 
 		/// </summary>
 		/// <param name="template"></param>
-		/// <param name="includeDialogs"></param>
-		/// <param name="billingRef"></param>
-		/// <param name="uploadPackage"></param>
+		/// <param name="includeDialogs">Indicates whether or not information about dialogs should be included.</param>
+		/// <param name="billingRef">This parameter lets you specify information that will be included in usage logs for this call. For example, you can use a string to uniquely identify the end user that initiated the request and/or the context in which the call was made. When you review usage logs, you can then see which end users initiated each request. That information could then be used to pass costs on to those end users if desired.</param>
+		/// <param name="uploadPackage">Indicates if the package should be uploaded (forcefully) or not. This should only be true if the package does not already exist in the Cloud Services cache.</param>
 		/// <returns></returns>
 		protected internal override ComponentInfo GetComponentInfoImpl(
 			Template template,
@@ -445,7 +445,7 @@ namespace HotDocs.Sdk.Cloud
 		/// 
 		/// </summary>
 		/// <param name="answers"></param>
-		/// <param name="billingRef"></param>
+		/// <param name="billingRef">This parameter lets you specify information that will be included in usage logs for this call. For example, you can use a string to uniquely identify the end user that initiated the request and/or the context in which the call was made. When you review usage logs, you can then see which end users initiated each request. That information could then be used to pass costs on to those end users if desired.</param>
 		/// <returns></returns>
 		protected internal override BinaryObject GetAnswersImpl(BinaryObject[] answers, string billingRef)
 		{

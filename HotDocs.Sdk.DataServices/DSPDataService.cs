@@ -34,6 +34,10 @@ namespace HotDocs.Sdk.DataServices
         /// <returns>The metadata definition for the service. Note that this is called only once per the service lifetime.</returns>
         protected abstract DSPMetadata CreateDSPMetadata();
 
+		/// <summary>
+		/// Abstract method which a derived class implements to create a query provider for the service.
+		/// </summary>
+		/// <returns>A service query provider.</returns>
 		protected abstract DSPResourceQueryProvider CreateDSPQueryProvider();
 
         /// <summary>Returns the metadata definition for the service. It will create it if no metadata is available yet.</summary>

@@ -34,15 +34,15 @@ namespace HotDocs.Sdk
 		/// <summary>
 		/// Returns a copy of this object.
 		/// </summary>
-		/// <returns></returns>
+		/// <returns>A new <c>TemplateLocation</c> object, which is a copy of the original.</returns>
 		public abstract TemplateLocation Duplicate();
 
 		/// <summary>
 		/// Overrides Object.Equals. Calls into IEquatable&lt;TemplateLocation&gt;.Equals() to
 		/// determine if instances of derived types are equal.
 		/// </summary>
-		/// <param name="obj"></param>
-		/// <returns></returns>
+		/// <param name="obj">An object to use in the equality comparison.</param>
+		/// <returns>A value indicating whether or not the two locations are equal.</returns>
 		public override bool Equals(object obj)
 		{
 			// this override is effective for all derived classes, because they must all
@@ -54,7 +54,7 @@ namespace HotDocs.Sdk
 		/// <summary>
 		/// <c>GetHashCode</c> is needed wherever Equals(object) is defined.
 		/// </summary>
-		/// <returns></returns>
+		/// <returns>An integer hash code for the object.</returns>
 		public abstract override int GetHashCode();
 
 		#region IEquatable<TemplateLocation> Members
@@ -63,8 +63,8 @@ namespace HotDocs.Sdk
 		/// Implements IEquatable&lt;TemplateLocation&gt;. Used to determine equality/equivalency
 		/// between TemplateLocations.
 		/// </summary>
-		/// <param name="other"></param>
-		/// <returns></returns>
+		/// <param name="other">The other location to compare with when testing equality.</param>
+		/// <returns>A value indicating whether or not the two locations are equal.</returns>
 		public abstract bool Equals(TemplateLocation other);
 
 		#endregion
@@ -72,7 +72,7 @@ namespace HotDocs.Sdk
 		/// Returns a Stream for a file living at the same location as the template.
 		/// </summary>
 		/// <param name="fileName">The name of the file (without any path information).</param>
-		/// <returns></returns>
+		/// <returns>A Stream containing the file.</returns>
 		public abstract System.IO.Stream GetFile(string fileName);
 		/// <summary>
 		/// Returns the directory for the template.
@@ -103,7 +103,7 @@ namespace HotDocs.Sdk
 		/// <summary>
 		/// Initialize a <c>TemplateLocation</c> object from a string created by SerializeContent.
 		/// </summary>
-		/// <param name="content"></param>
+		/// <param name="content">A string representing a serialized <c>TemplateLocation</c>.</param>
 		protected abstract void DeserializeContent(string content);
 		/// <summary>
 		/// Return an encrypted locator string.
@@ -120,9 +120,9 @@ namespace HotDocs.Sdk
 		/// should be overridden for file storage systems where the template is stored in a database
 		/// such that a file name is created on demand.
 		/// </summary>
-		/// <param name="template"></param>
-		/// <param name="fileName"></param>
-		/// <returns></returns>
+		/// <param name="template">The template.</param>
+		/// <param name="fileName">The updated file name for the specified template.</param>
+		/// <returns>True if the file name was updated, or false otherwise.</returns>
 		public virtual bool GetUpdatedFileName(Template template, out string fileName)
 		{
 			fileName = "";
@@ -131,8 +131,8 @@ namespace HotDocs.Sdk
 		/// <summary>
 		/// Create a <c>TemplateLocation</c> object from an encrypted locator string returned by <c>TemplateLocation.CreateLocator</c>.
 		/// </summary>
-		/// <param name="encodedLocator"></param>
-		/// <returns></returns>
+		/// <param name="encodedLocator">An encoded template locator.</param>
+		/// <returns>A <c>TemplateLocation</c> object.</returns>
 		public static TemplateLocation Locate(string encodedLocator)
 		{
 			string locator = Util.DecryptString(encodedLocator);
@@ -170,7 +170,7 @@ namespace HotDocs.Sdk
 		/// be registered before use in order for Template.Locate and TemplateLocation.Locate reconstitute
 		/// template location information. This method should only be called at application start-up.
 		/// </summary>
-		/// <param name="type"></param>
+		/// <param name="type">The type derived from <c>TemplateLocation</c> to register.</param>
 		public static void RegisterLocation(Type type)
 		{
 			//Validate the type.

@@ -144,8 +144,8 @@ namespace HotDocs.Sdk
 		/// <summary>
 		/// Write this answer collection to a file. Store the answer file name in the FilePath property.
 		/// </summary>
-		/// <param name="path"></param>
-		/// <param name="writeDontSave"></param>
+		/// <param name="path">The path of the answer file to write.</param>
+		/// <param name="writeDontSave">Indicates whether or not answers that are marked as "do not save" should be written to the answer file.</param>
 		public void WriteFile(string path, bool writeDontSave)
 		{
 			using (System.IO.FileStream fs = new System.IO.FileStream(path, System.IO.FileMode.Create))
@@ -158,7 +158,7 @@ namespace HotDocs.Sdk
 		/// <summary>
 		/// Write this answer collection to the file designated by the FilePath property.
 		/// </summary>
-		/// <param name="writeDontSave"></param>
+		/// <param name="writeDontSave">Indicates whether or not answers that are marked as "do not save" should be written to the answer file.</param>
 		public void WriteFile(bool writeDontSave)
 		{
 			WriteFile(_filePath, writeDontSave);
@@ -450,7 +450,7 @@ namespace HotDocs.Sdk
 		/// Writes the answer collection as a HotDocs XML answer file to the output stream.
 		/// </summary>
 		/// <param name="output">The stream to which to write the XML answer file.</param>
-		/// <param name="writeDontSave"></param>
+		/// <param name="writeDontSave">Indicates whether or not answers that are marked as "do not save" should be written to the answer file.</param>
 		public void WriteXml(System.IO.Stream output, bool writeDontSave)
 		{
 			using (var writer = new System.IO.StreamWriter(output, Encoding.UTF8))
@@ -463,7 +463,7 @@ namespace HotDocs.Sdk
 		/// Writes the answer collection as a HotDocs XML answer file to the TextWriter.
 		/// </summary>
 		/// <param name="output">The TextWriter to which to write the XML answer file.</param>
-		/// <param name="writeDontSave"></param>
+		/// <param name="writeDontSave">Indicates whether or not answers that are marked as "do not save" should be written to the answer file.</param>
 		public void WriteXml(System.IO.TextWriter output, bool writeDontSave)
 		{
 			output.Write("<?xml version=\"1.0\" encoding=\"");

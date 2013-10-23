@@ -164,7 +164,7 @@ namespace HotDocs.Sdk.Server
 		/// <summary>
 		/// Calls IDisposable.Dispose
 		/// </summary>
-		/// <param name="disposing"></param>
+		/// <param name="disposing">Indicates whether or not managed resources should be disposed.</param>
 		protected virtual void Dispose(bool disposing)
 		{
 			if (!disposed)

@@ -18,17 +18,17 @@ namespace HotDocs.Sdk.Cloud
 		#region Public methods
 
 		/// <summary>
-		/// 
+		/// Creates a new session for assembling documents using the HotDocs Cloud Services Rest API.
 		/// </summary>
-		/// <param name="template"></param>
-		/// <param name="billingRef"></param>
-		/// <param name="answers"></param>
-		/// <param name="markedVariables"></param>
-		/// <param name="interviewFormat"></param>
-		/// <param name="outputFormat"></param>
-		/// <param name="settings"></param>
-		/// <param name="theme"></param>
-		/// <param name="showDownloadLinks"></param>
+		/// <param name="template">The template to use with the session.</param>
+		/// <param name="billingRef">This parameter lets you specify information that will be included in usage logs for this call. For example, you can use a string to uniquely identify the end user that initiated the request and/or the context in which the call was made. When you review usage logs, you can then see which end users initiated each request. That information could then be used to pass costs on to those end users if desired.</param>
+		/// <param name="answers">The answers to use.</param>
+		/// <param name="markedVariables">An array of variable names, whose prompts should be "marked" when displayed in an interview.</param>
+		/// <param name="interviewFormat">The format to use when displaying an interview.</param>
+		/// <param name="outputFormat">The format to use when assembling a document.</param>
+		/// <param name="settings">The settings to use with the session.</param>
+		/// <param name="theme">The interview theme.</param>
+		/// <param name="showDownloadLinks">Indicates whether or not links for downloading the assembled document(s) should appear at the end of the interview.</param>
 		/// <returns></returns>
 		public string CreateSession(
 			Template template,
@@ -74,11 +74,11 @@ namespace HotDocs.Sdk.Cloud
 		}
 
 		/// <summary>
-		/// 
+		/// Saves the specified session file to a locaiton on the local disk.
 		/// </summary>
-		/// <param name="sessionId"></param>
-		/// <param name="fileName"></param>
-		/// <param name="localPath"></param>
+		/// <param name="sessionId">The session ID.</param>
+		/// <param name="fileName">The name of the session document to return.</param>
+		/// <param name="localPath">The local path where the session document will be saved.</param>
 		public void GetSessionDoc(string sessionId, string fileName, string localPath)
 		{
 			string url = string.Format("{0}/embed/session/{1}/docs/{2}", EndpointAddress, sessionId, fileName);
@@ -89,10 +89,10 @@ namespace HotDocs.Sdk.Cloud
 		}
 
 		/// <summary>
-		/// 
+		/// Returns an array of assembled documents associated with the session.
 		/// </summary>
-		/// <param name="sessionId"></param>
-		/// <returns></returns>
+		/// <param name="sessionId">The session ID.</param>
+		/// <returns>An array of session documents.</returns>
 		public string[] GetSessionDocList(string sessionId)
 		{
 			string url = string.Format("{0}/embed/session/{1}/docs", EndpointAddress, sessionId);
@@ -105,10 +105,10 @@ namespace HotDocs.Sdk.Cloud
 		}
 
 		/// <summary>
-		/// 
+		/// Returns the session state.
 		/// </summary>
-		/// <param name="sessionId"></param>
-		/// <returns></returns>
+		/// <param name="sessionId">The session ID.</param>
+		/// <returns>A string containing the session state.</returns>
 		public string GetSessionState(string sessionId)
 		{
 			string url = string.Format("{0}/embed/session/{1}/state", EndpointAddress, sessionId);

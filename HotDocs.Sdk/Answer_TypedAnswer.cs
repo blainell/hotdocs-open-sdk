@@ -463,7 +463,7 @@ namespace HotDocs.Sdk
 			/// Writes the answer to an XML writer.
 			/// </summary>
 			/// <param name="writer">XML writer.</param>
-			/// <param name="writeDontSave"></param>
+			/// <param name="writeDontSave">Indicates if the answer should be written even if it is not supposed to be saved.</param>
 			public override void WriteXml(System.Xml.XmlWriter writer, bool writeDontSave)
 			{
 				if (!writeDontSave && !Save)
