@@ -29,9 +29,6 @@ namespace HotDocs.Sdk.Cloud
 		/// <param name="settings"></param>
 		/// <param name="theme"></param>
 		/// <param name="showDownloadLinks"></param>
-		/// <param name="docUrl"></param>
-		/// <param name="altDocUrl"></param>
-		/// <param name="postUrl"></param>
 		/// <returns></returns>
 		public string CreateSession(
 			Template template,
@@ -42,10 +39,7 @@ namespace HotDocs.Sdk.Cloud
 			OutputFormat outputFormat = OutputFormat.Native,
 			Dictionary<string, string> settings = null,
 			string theme = null,
-			bool showDownloadLinks = true,
-			string docUrl = null,
-			string altDocUrl = null,
-			string postUrl = null
+			bool showDownloadLinks = true
 		)
 		{
 			return (string)TryWithoutAndWithPackage(
@@ -59,9 +53,6 @@ namespace HotDocs.Sdk.Cloud
 					settings,
 					theme,
 					showDownloadLinks,
-					docUrl,
-					altDocUrl,
-					postUrl,
 					uploadPackage)
 			);
 		}
@@ -139,9 +130,6 @@ namespace HotDocs.Sdk.Cloud
 			Dictionary<string, string> settings,
 			string theme,
 			bool showDownloadLinks,
-			string docUrl,
-			string altDocUrl,
-			string postUrl,
 			bool uploadPackage)
 		{
 			if (!(template.Location is PackageTemplateLocation))
@@ -175,11 +163,6 @@ namespace HotDocs.Sdk.Cloud
 				urlBuilder.AppendFormat("&markedvariables={0}", string.Join(",", markedVariables));
 			}
 
-			if (!string.IsNullOrEmpty(postUrl))
-			{
-				urlBuilder.AppendFormat("&posturl={0}", postUrl);
-			}
-
 			if (!string.IsNullOrEmpty(theme))
 			{
 				urlBuilder.AppendFormat("&theme={0}", theme);
@@ -193,16 +176,6 @@ namespace HotDocs.Sdk.Cloud
 			if (showDownloadLinks)
 			{
 				urlBuilder.Append("&showdownloadlinks=true");
-			}
-
-			if (!string.IsNullOrEmpty(altDocUrl))
-			{
-				urlBuilder.AppendFormat("&altdocurl={0}", altDocUrl);
-			}
-
-			if (!string.IsNullOrEmpty(docUrl))
-			{
-				urlBuilder.AppendFormat("&docurl={0}" + docUrl);
 			}
 
 			HttpWebRequest request = (HttpWebRequest)WebRequest.Create(urlBuilder.ToString());
