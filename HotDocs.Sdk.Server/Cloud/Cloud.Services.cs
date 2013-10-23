@@ -109,11 +109,11 @@ namespace HotDocs.Sdk.Server.Cloud
 		/// <summary>
 		/// Assembles a document from the given template, answers and settings.
 		/// </summary>
-		/// <param name="template"></param>
-		/// <param name="answers"></param>
-		/// <param name="settings"></param>
+		/// <param name="template">The template to assemble.</param>
+		/// <param name="answers">The answers to use during the assembly.</param>
+		/// <param name="settings">The settings for the assembly.</param>
 		/// <include file="../../Shared/Help.xml" path="Help/string/param[@name='logRef']"/>
-		/// <returns></returns>
+		/// <returns>An <c>AssembleDocumentResult</c> that contains the results of the assembly.</returns>
 		public AssembleDocumentResult AssembleDocument(Template template, System.IO.TextReader answers, AssembleDocumentSettings settings, string logRef)
 		{
 			// Validate input parameters, creating defaults as appropriate.
@@ -150,9 +150,9 @@ namespace HotDocs.Sdk.Server.Cloud
 		/// Returns metadata about the variables/types (and optionally dialogs &amp; mapping info)
 		/// for the indicated template's interview.
 		/// </summary>
-		/// <param name="template"></param>
-		/// <param name="includeDialogs"></param>
-		/// <param name="logRef"></param>
+		/// <param name="template">The template for which to retrieve component information.</param>
+		/// <param name="includeDialogs">Indicates whether or not information about dialogs should be included.</param>
+		/// <param name="logRef">This parameter lets you specify information that will be included in usage logs for this call. For example, you can use a string to uniquely identify the end user that initiated the request and/or the context in which the call was made. When you review usage logs, you can then see which end users initiated each request. That information could then be used to pass costs on to those end users if desired.</param>
 		/// <returns></returns>
 		public ComponentInfo GetComponentInfo(Template template, bool includeDialogs, string logRef)
 		{
@@ -173,7 +173,7 @@ namespace HotDocs.Sdk.Server.Cloud
 		/// This method overlays any answer collections passed into it, into a single XML answer collection.
 		/// </summary>
 		/// <param name="answers"></param>
-		/// <param name="logRef"></param>
+		/// <param name="logRef">This parameter lets you specify information that will be included in usage logs for this call. For example, you can use a string to uniquely identify the end user that initiated the request and/or the context in which the call was made. When you review usage logs, you can then see which end users initiated each request. That information could then be used to pass costs on to those end users if desired.</param>
 		/// <returns>The consolidated XML answer collection.</returns>
 		public string GetAnswers(IEnumerable<System.IO.TextReader> answers, string logRef)
 		{

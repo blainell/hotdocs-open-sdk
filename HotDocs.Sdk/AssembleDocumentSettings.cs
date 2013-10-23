@@ -92,7 +92,7 @@ namespace HotDocs.Sdk
 		/// Copy constructor -- this constructor is invoked to make a new copy of the (static) Default AssembleDocumentSettings
 		/// (as originally read from web.config).
 		/// </summary>
-		/// <param name="source"></param>
+		/// <param name="source">The source settings to be copied.</param>
 		public AssembleDocumentSettings(AssembleDocumentSettings source)
 		{
 			Format = source.Format;
@@ -111,7 +111,7 @@ namespace HotDocs.Sdk
 		/// Private constructor for reading defaults from web.config.
 		/// This constructor should only be invoked the first time the defaults are required.
 		/// </summary>
-		/// <param name="readDefaults"></param>
+		/// <param name="readDefaults">Indicates if the default settings should be read or not.</param>
 		private AssembleDocumentSettings(bool readDefaults)
 		{
 			_settings = new Dictionary<string, string>();

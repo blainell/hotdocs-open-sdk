@@ -112,6 +112,10 @@ namespace HotDocs.Sdk.DataServices
 			s_context = new DSPContext(s_readerWriterLock);
 		}
 
+		/// <summary>
+		/// Initializes an answer file data service.
+		/// </summary>
+		/// <param name="config">The configuration of the answer file data service.</param>
 		public static void InitializeService(DataServiceConfiguration config)
 		{
 			config.SetEntitySetAccessRule("*", EntitySetRights.AllRead);
@@ -121,16 +125,28 @@ namespace HotDocs.Sdk.DataServices
 			//config.DataServiceBehavior.AcceptProjectionRequests = true;
 		}
 
+		/// <summary>
+		/// Returns the service meta data.
+		/// </summary>
+		/// <returns>Service meta data.</returns>
 		protected override DSPMetadata CreateDSPMetadata()
 		{
 			return s_metadata;
 		}
 
+		/// <summary>
+		/// Returns the service query provider.
+		/// </summary>
+		/// <returns>Service query provider.</returns>
 		protected override DSPResourceQueryProvider CreateDSPQueryProvider()
 		{
 			return s_queryProvider;
 		}
 
+		/// <summary>
+		/// Returns the service data source.
+		/// </summary>
+		/// <returns>Service data source.</returns>
 		protected override DSPContext CreateDataSource()
 		{
 			return s_context;
@@ -425,6 +441,10 @@ namespace HotDocs.Sdk.DataServices
 			}
 		}
 
+		/// <summary>
+		/// Handles exceptions thrown by the data service.
+		/// </summary>
+		/// <param name="args">The exception arguments.</param>
 		protected override void HandleException(HandleExceptionArgs args)
 		{
 			// TODO: Consider logging exceptions to a log file on the server.

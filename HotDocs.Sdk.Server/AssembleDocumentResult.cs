@@ -18,10 +18,10 @@ namespace HotDocs.Sdk.Server
 		/// <summary>
 		/// <c>AssembleDocumentResult</c> constructor stores the result of calling IServices.AssembleDocument
 		/// </summary>
-		/// <param name="document"></param>
-		/// <param name="answers"></param>
-		/// <param name="pendingAssemblies"></param>
-		/// <param name="unansweredVariables"></param>
+		/// <param name="document">The assembled document.</param>
+		/// <param name="answers">The answers after the assembly has finished. (Depending on template scripting, the answers may be different at the end of the assembly than at the start.)</param>
+		/// <param name="pendingAssemblies">A list of assemblies to complete as a result of finishing this assembly.</param>
+		/// <param name="unansweredVariables">A list of variables that were unanswered during the assembly.</param>
 		internal AssembleDocumentResult(Document document, string answers, IEnumerable<Template> pendingAssemblies, IEnumerable<string> unansweredVariables)
 		{
 			Document = document;
@@ -92,7 +92,7 @@ namespace HotDocs.Sdk.Server
 		/// <c>Dispose</c> Frees up and deallocates everything associated with the current object. 
 		/// This is called by Dispose (from IDisposable) of this class.
 		/// </summary>
-		/// <param name="disposing"></param>
+		/// <param name="disposing">Indicates whether or not managed resources should be disposed.</param>
 		protected virtual void Dispose(bool disposing)
 		{
 			if (!disposed)

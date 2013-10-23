@@ -325,7 +325,7 @@ namespace HotDocs.Sdk
 		/// <c>Add</c> adds <c>dataServiceElement</c> to the collection of 
 		/// data sources in this class
 		/// </summary>
-		/// <param name="dataServiceElement">the <c>DataSourceElement</c> being added to the
+		/// <param name="dataServiceElement">The <c>DataSourceElement</c> being added to the
 		/// data sources in this class</param>
 		public void Add(DataSourceElement dataServiceElement)
 		{
@@ -335,7 +335,7 @@ namespace HotDocs.Sdk
 		/// <summary>
 		/// <c>BaseAdd</c> overrides ConfigurationElementCollection.BaseAdd
 		/// </summary>
-		/// <param name="element"></param>
+		/// <param name="element">The <c>ConfigurationElement</c> to add to the collection.</param>
 		protected override void BaseAdd(ConfigurationElement element)
 		{
 			BaseAdd(element, false);
@@ -345,7 +345,7 @@ namespace HotDocs.Sdk
 		/// <c>Remove</c> removes <c>dataServiceElement</c> from the collection
 		/// of data sources in this class.
 		/// </summary>
-		/// <param name="dataServiceElement">the <c>DataSourceElement</c> being removed from the
+		/// <param name="dataServiceElement">The <c>DataSourceElement</c> being removed from the
 		/// data sources in this class instance</param>
 		public void Remove(DataSourceElement dataServiceElement)
 		{

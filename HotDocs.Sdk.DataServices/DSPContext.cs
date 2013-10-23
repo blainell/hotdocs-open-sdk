@@ -64,6 +64,10 @@ namespace HotDocs.Sdk.DataServices
             return entities;
         }
 
+		/// <summary>
+		/// Removes the specified resource set entity.
+		/// </summary>
+		/// <param name="resourceSetName">The name of the resource set to remove.</param>
 		public void RemoveResourceSetEntities(string resourceSetName)
 		{
 			readerWriterLock.EnterWriteLock();

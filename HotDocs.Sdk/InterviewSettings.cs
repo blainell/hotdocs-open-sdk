@@ -73,7 +73,7 @@ namespace HotDocs.Sdk
 		/// Copy constructor -- this constructor is invoked to make a new copy of the (static) Default GetInterviewOptions
 		/// (as originally read from web.config).
 		/// </summary>
-		/// <param name="source"></param>
+		/// <param name="source">The source settings to copy.</param>
 		private InterviewSettings(InterviewSettings source)
 		{
 			// Copy the four required settings.
@@ -112,7 +112,7 @@ namespace HotDocs.Sdk
 		/// Private constructor for reading defaults from web.config.
 		/// This constructor should only be invoked the first time the defaults are required.
 		/// </summary>
-		/// <param name="readDefaults"></param>
+		/// <param name="readDefaults">Indicates if defaults should be read or not.</param>
 		private InterviewSettings(bool readDefaults)
 		{
 			// Read each of the four required settings.

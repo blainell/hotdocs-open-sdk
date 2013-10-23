@@ -75,7 +75,7 @@ namespace HotDocs.Sdk
 		/// Copy constructor -- this constructor is invoked to make a new copy of the (static) Default AnswerSummaryOptions
 		/// (as originally read from web.config).
 		/// </summary>
-		/// <param name="source"></param>
+		/// <param name="source">The source options to be copied.</param>
 		internal AnswerSummaryOptions(AnswerSummaryOptions source)
 		{
 			Format = source.Format;
@@ -91,7 +91,7 @@ namespace HotDocs.Sdk
 		/// Private constructor for reading defaults from web.config.
 		/// This constructor should only be invoked the first time the defaults are required.
 		/// </summary>
-		/// <param name="readDefaults"></param>
+		/// <param name="readDefaults">Determines if default values should be read (from a config file if one exists) or not.</param>
 		private AnswerSummaryOptions(bool readDefaults)
 		{
 			if (readDefaults)

@@ -22,8 +22,8 @@ namespace HotDocs.Sdk
 		/// <summary>
 		/// Convert a Tristate value to a string value.
 		/// </summary>
-		/// <param name="triValue"></param>
-		/// <returns></returns>
+		/// <param name="triValue">A value that can be either true, false, or unanswered.</param>
+		/// <returns>A string if the value is true or false, or null if it is neither.</returns>
 		protected string TristateToString(Tristate triValue)
 		{
 			switch (triValue)
@@ -39,8 +39,8 @@ namespace HotDocs.Sdk
 		/// <summary>
 		/// Convert a string value to a Tristate value.
 		/// </summary>
-		/// <param name="str"></param>
-		/// <returns></returns>
+		/// <param name="str">A string representation of a Tristate value ("true", "false", or null).</param>
+		/// <returns>The <c>Tristate</c> value represented by the given string.</returns>
 		protected Tristate StringToTristate(string str)
 		{
 			if (!string.IsNullOrEmpty(str))

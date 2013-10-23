@@ -84,11 +84,11 @@ namespace HotDocs.Sdk.Cloud
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="template"></param>
-		/// <param name="answers"></param>
-		/// <param name="settings"></param>
-		/// <param name="billingRef"></param>
-		/// <param name="uploadPackage"></param>
+		/// <param name="template">The template to assemble.</param>
+		/// <param name="answers">The answers to use when assembling the document.</param>
+		/// <param name="settings">The settings to use when assembling the document.</param>
+		/// <param name="billingRef">This parameter lets you specify information that will be included in usage logs for this call. For example, you can use a string to uniquely identify the end user that initiated the request and/or the context in which the call was made. When you review usage logs, you can then see which end users initiated each request. That information could then be used to pass costs on to those end users if desired.</param>
+		/// <param name="uploadPackage">Indicates if the package should be uploaded (forcefully) or not. This should only be true if the package does not already exist in the Cloud Services cache.</param>
 		/// <returns></returns>
 		protected internal override AssemblyResult AssembleDocumentImpl(
 			Template template,
@@ -177,11 +177,11 @@ namespace HotDocs.Sdk.Cloud
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="template"></param>
-		/// <param name="answers"></param>
-		/// <param name="settings"></param>
-		/// <param name="billingRef"></param>
-		/// <param name="uploadPackage"></param>
+		/// <param name="template">The template for which the interview is being requested.</param>
+		/// <param name="answers">The answers to use with the interview.</param>
+		/// <param name="settings">The settings to use when requesting the interview.</param>
+		/// <param name="billingRef">This parameter lets you specify information that will be included in usage logs for this call. For example, you can use a string to uniquely identify the end user that initiated the request and/or the context in which the call was made. When you review usage logs, you can then see which end users initiated each request. That information could then be used to pass costs on to those end users if desired.</param>
+		/// <param name="uploadPackage">Indicates if the package should be uploaded (forcefully) or not. This should only be true if the package does not already exist in the Cloud Services cache.</param>
 		/// <returns></returns>
 		protected internal override BinaryObject[] GetInterviewImpl(
 			Template template,
@@ -238,10 +238,10 @@ namespace HotDocs.Sdk.Cloud
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="template"></param>
-		/// <param name="includeDialogs"></param>
-		/// <param name="billingRef"></param>
-		/// <param name="uploadPackage"></param>
+		/// <param name="template">The template for which component information is being requested.</param>
+		/// <param name="includeDialogs">Indicates whether or not information about dialogs should be included.</param>
+		/// <param name="billingRef">This parameter lets you specify information that will be included in usage logs for this call. For example, you can use a string to uniquely identify the end user that initiated the request and/or the context in which the call was made. When you review usage logs, you can then see which end users initiated each request. That information could then be used to pass costs on to those end users if desired.</param>
+		/// <param name="uploadPackage">Indicates if the package should be uploaded (forcefully) or not. This should only be true if the package does not already exist in the Cloud Services cache.</param>
 		/// <returns></returns>
 		protected internal override ComponentInfo GetComponentInfoImpl(
 			Template template,
@@ -278,8 +278,8 @@ namespace HotDocs.Sdk.Cloud
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="answers"></param>
-		/// <param name="billingRef"></param>
+		/// <param name="answers">An array of answers as binary objects, which will be overlayed successively to produce a single <c>BinaryObject</c>.</param>
+		/// <param name="billingRef">This parameter lets you specify information that will be included in usage logs for this call. For example, you can use a string to uniquely identify the end user that initiated the request and/or the context in which the call was made. When you review usage logs, you can then see which end users initiated each request. That information could then be used to pass costs on to those end users if desired.</param>
 		/// <returns></returns>
 		protected internal override BinaryObject GetAnswersImpl(BinaryObject[] answers, string billingRef)
 		{
@@ -302,7 +302,7 @@ namespace HotDocs.Sdk.Cloud
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="func"></param>
+		/// <param name="func">The delegate to call with and without the package (as needed).</param>
 		/// <returns></returns>
 		protected internal override object TryWithoutAndWithPackage(Func<bool, object> func)
 		{
@@ -357,7 +357,7 @@ namespace HotDocs.Sdk.Cloud
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="str"></param>
+		/// <param name="str">The string from which to return a binary object array.</param>
 		/// <returns></returns>
 		private BinaryObject[] GetBinaryObjectArrayFromString(string str)
 		{
@@ -393,7 +393,7 @@ namespace HotDocs.Sdk.Cloud
 		/// <summary>
 		/// Disposes the client.
 		/// </summary>
-		/// <param name="disposing"></param>
+		/// <param name="disposing">Indicates whether or not managed resources should be disposed.</param>
 		protected virtual void Dispose(bool disposing)
 		{
 			if (_proxy != null)
