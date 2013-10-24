@@ -40,7 +40,7 @@ namespace SamplePortal
 		/// <summary>
 		/// Delete a folder. This method does some validation on the folder name.
 		/// </summary>
-		/// <param name="folder"></param>
+		/// <param name="folder">The path of the folder to delete.</param>
 		public static void SafeDeleteFolder(string folder)
 		{
 			if (folder != null && folder != "" && folder[0] != '\\')
@@ -103,8 +103,8 @@ namespace SamplePortal
 		/// delete all files that were created more than timeoutMinutes ago.
 		/// USE WITH CARE! THIS CAN DELETE ANY FILE THE USER HAS RIGHTS TO!
 		/// </summary>
-		/// <param name="dirName"></param>
-		/// <param name="timeoutMinutes"></param>
+		/// <param name="dirName">The path to the folder that will be swept.</param>
+		/// <param name="timeoutMinutes">The minimum number of minutes that must pass since a file was created before it can be deleted during a sweep.</param>
 		public static void SweepDirectory(string dirName, int timeoutMinutes)
 		{
 			DirectoryInfo dInfo = new DirectoryInfo(dirName);
@@ -211,8 +211,8 @@ namespace SamplePortal
 		/// <summary>
 		/// Returns a string identifying the browser.
 		/// </summary>
-		/// <param name="request"></param>
-		/// <returns></returns>
+		/// <param name="request">An HttpRequest that will be used to determine the name of the browser that made the request.</param>
+		/// <returns>The name of the browser.</returns>
 		public static string GetBrowserName(System.Web.HttpRequest request)
 		{
 			//Determine what browser is being used
@@ -235,13 +235,11 @@ namespace SamplePortal
 		/// <summary>
 		/// Returns non-zero if the browser supports HTML with inline images.
 		/// </summary>
-		/// <param name="req"></param>
+		/// <param name="req">An HttpRequest that will be used to determine whether or not the user's browser supports inline images.</param>
 		/// <returns></returns>
 		public static bool BrowserSupportsInlineImages(System.Web.HttpRequest req)
 		{
 			string inlineImages = req.Form["InlineImages"];
-			string browser = req.Browser.Browser.ToUpper();
-			string type = req.Browser.Type.ToUpper();
 
 			bool supportsInlineImages;
 			if (inlineImages != null)
@@ -259,7 +257,7 @@ namespace SamplePortal
 		/// </summary>
 		/// <param name="req">The browser request.</param>
 		/// <param name="version">Returns the IE version number if it's IE. Otherwise undefined.</param>
-		/// <returns></returns>
+		/// <returns>Indicates whether or not the browser is Internet Explorer (IE).</returns>
 		public static bool IsIE(System.Web.HttpRequest req, out int version)
 		{
 			version = -1;
@@ -286,10 +284,10 @@ namespace SamplePortal
 			return true;
 		}
 		/// <summary>
-		/// Wrap a directory path in this call in order to make sure that the directory exists.
+		/// Wrap a directory path in this call in order to make sure that the directory exists. (It will create the directory if it does not yet exist.)
 		/// </summary>
-		/// <param name="dirPath"></param>
-		/// <returns></returns>
+		/// <param name="dirPath">The path of the folder</param>
+		/// <returns>The same folder path specified in the dirPath parameter.</returns>
 		public static string SafeDir(string dirPath)
 		{
 			Directory.CreateDirectory(dirPath);
@@ -298,8 +296,8 @@ namespace SamplePortal
 		/// <summary>
 		/// Get the users answers sent up from the browser.
 		/// </summary>
-		/// <param name="request"></param>
-		/// <returns></returns>
+		/// <param name="request">The HttpRequest when the user posted answers from the interview.</param>
+		/// <returns>A string containing the encoded answers that were posted from the interview.</returns>
 		public static string GetInterviewAnswers(System.Web.HttpRequest request)
 		{
 			string ansdata = String.Join(String.Empty, request.Form.GetValues("HDInfo"));

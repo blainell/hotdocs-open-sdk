@@ -172,7 +172,7 @@ namespace HotDocs.Sdk.Server.Cloud
 		/// <summary>
 		/// This method overlays any answer collections passed into it, into a single XML answer collection.
 		/// </summary>
-		/// <param name="answers"></param>
+		/// <param name="answers">The answers to be overlayed.</param>
 		/// <param name="logRef">This parameter lets you specify information that will be included in usage logs for this call. For example, you can use a string to uniquely identify the end user that initiated the request and/or the context in which the call was made. When you review usage logs, you can then see which end users initiated each request. That information could then be used to pass costs on to those end users if desired.</param>
 		/// <returns>The consolidated XML answer collection.</returns>
 		public string GetAnswers(IEnumerable<System.IO.TextReader> answers, string logRef)
@@ -196,8 +196,8 @@ namespace HotDocs.Sdk.Server.Cloud
 		/// of the interview runtime ("support") files required to display an interview for the template. These files are built
 		/// by HotDocs Developer at the time the package is created, and Cloud Services does not have the ability to re-create them.
 		/// </summary>
-		/// <param name="template"></param>
-		/// <param name="flags"></param>
+		/// <param name="template">The template for which support files will be built.</param>
+		/// <param name="flags">Indicates what types of support files to build.</param>
 		public void BuildSupportFiles(Template template, HDSupportFilesBuildFlags flags)
 		{
 			if (template == null)
@@ -211,7 +211,7 @@ namespace HotDocs.Sdk.Server.Cloud
 		/// by HotDocs Developer at the time the package is created, and Cloud Services simply uses the files from the package
 		/// rather than building and caching them separately.
 		/// </summary>
-		/// <param name="template"></param>
+		/// <param name="template">The template for which support files will be removed.</param>
 		public void RemoveSupportFiles(Template template)
 		{
 			if (template == null)

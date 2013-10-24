@@ -124,7 +124,7 @@ namespace HotDocs.Sdk.Server
 		/* methods */
 
 		/// <summary>
-		/// Called by the host appliction when it needs to deliver an interview down to the end user in a web page.
+		/// Called by the host application when it needs to deliver an interview down to the end user in a web page.
 		/// Wraps the underlying IServices.GetInterview call (for convenience).
 		/// </summary>
 		/// <param name="options">The InterviewOptions to use for this interview.  This parameter makes the WorkSession's
@@ -138,7 +138,7 @@ namespace HotDocs.Sdk.Server
 		/// <summary>
 		/// Called by the host application when answers have been posted back from a browser interview.
 		/// </summary>
-		/// <param name="interviewAnswers"></param>
+		/// <param name="interviewAnswers">The answers that were posted back from the interview.</param>
 		public void FinishInterview(string interviewAnswers)
 		{
 			// pseudocode:

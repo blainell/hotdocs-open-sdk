@@ -421,8 +421,8 @@ namespace HotDocs.Sdk.Server.Local
 		/// <summary>
 		/// Build the server files for the specified template.
 		/// </summary>
-		/// <param name="template"></param>
-		/// <param name="flags"></param>
+		/// <param name="template">The template for which support files will be built.</param>
+		/// <param name="flags">Indicates what types of support files to build.</param>
 		public void BuildSupportFiles(Template template, HDSupportFilesBuildFlags flags)
 		{
 			if (template == null)
@@ -445,7 +445,7 @@ namespace HotDocs.Sdk.Server.Local
 		/// <summary>
 		/// Remove the server files for the specified template.
 		/// </summary>
-		/// <param name="template"></param>
+		/// <param name="template">The template for which support files will be removed.</param>
 		public void RemoveSupportFiles(Template template)
 		{
 			if (template == null)
@@ -462,9 +462,9 @@ namespace HotDocs.Sdk.Server.Local
 		/// Create a new directory and a new temporary file in that directory.
 		/// Use this method in conjunction with FreeTempDocDir to free the folder and its contents.
 		/// </summary>
-		/// <param name="template"></param>
-		/// <param name="docType"></param>
-		/// <returns></returns>
+		/// <param name="template">The template for which to create a temporary document directory.</param>
+		/// <param name="docType">The type of document for which to create the temporary directory (and file).</param>
+		/// <returns>The file name and path of the temporary file.</returns>
 		private string CreateTempDocDirAndPath(Template template, DocumentType docType)
 		{
 			string dirPath;

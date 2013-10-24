@@ -316,9 +316,9 @@ namespace SamplePortal
 		/// <summary>
 		/// Reads a configuration setting and returns its value as a string (or the default value if it is not found)
 		/// </summary>
-		/// <param name="settingName"></param>
-		/// <param name="defaultValue"></param>
-		/// <returns></returns>
+		/// <param name="settingName">The name of the setting.</param>
+		/// <param name="defaultValue">The default value to use if the setting is not yet defined.</param>
+		/// <returns>The value of the setting (or the default as applicable).</returns>
 		private static string GetSettingOrDefault(string settingName, string defaultValue)
 		{
 			string val = ConfigurationManager.AppSettings[settingName];
@@ -328,9 +328,9 @@ namespace SamplePortal
 		/// <summary>
 		/// Reads a configuration setting and returns its value as a boolean (or the default value if it is not found)
 		/// </summary>
-		/// <param name="settingName"></param>
-		/// <param name="defaultValue"></param>
-		/// <returns></returns>
+		/// <param name="settingName">The name of the setting.</param>
+		/// <param name="defaultValue">The default value to use if the setting is not yet defined.</param>
+		/// <returns>The value of the setting (or the default as applicable).</returns>
 		private static bool GetSettingOrDefault(string settingName, bool defaultValue)
 		{
 			string val = GetSettingOrDefault(settingName, defaultValue.ToString());
@@ -340,9 +340,9 @@ namespace SamplePortal
 		/// <summary>
 		/// Reads a configuration setting and returns its value as an integer (or the default value if it is not found)
 		/// </summary>
-		/// <param name="settingName"></param>
-		/// <param name="defaultValue"></param>
-		/// <returns></returns>
+		/// <param name="settingName">The name of the setting.</param>
+		/// <param name="defaultValue">The default value to use if the setting is not yet defined.</param>
+		/// <returns>The value of the setting (or the default as applicable).</returns>
 		private static int GetSettingOrDefault(string settingName, int defaultValue)
 		{
 			int val;

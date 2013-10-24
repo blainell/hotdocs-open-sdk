@@ -256,8 +256,8 @@ namespace HotDocs.Sdk.Server
 		/// application can detect whether or not the user's browser has Silverlight installed, and if not, it can choose
 		/// to fall back to JavaScript interviews even if its normal preference is Silverlight.
 		/// </summary>
-		/// <param name="format"></param>
-		/// <returns></returns>
+		/// <param name="format">The format (Silverlight or JavaScript) of interview being requested.</param>
+		/// <returns>An <c>InterviewResult</c>, containing the HTML fragment and any other supporting files required by the interview.</returns>
 		public InterviewResult GetCurrentInterview(Contracts.InterviewFormat format)
 		{
 			InterviewSettings s = DefaultInterviewSettings;
@@ -281,10 +281,10 @@ namespace HotDocs.Sdk.Server
 		/// <summary>
 		/// Returns the current interview with the given settings
 		/// </summary>
-		/// <param name="settings"></param>
-		/// <param name="markedVariables"></param>
-		/// <param name="logRef"></param>
-		/// <returns></returns>
+		/// <param name="settings">Settings to use with the interview.</param>
+		/// <param name="markedVariables">A list of variable names whose prompts should be "marked" in the interview.</param>
+		/// <include file="../Shared/Help.xml" path="Help/string/param[@name='logRef']"/>
+		/// <returns>An <c>InterviewResult</c> containing the HTML fragment and other supporting files for the interview.</returns>
 		public InterviewResult GetCurrentInterview(InterviewSettings settings, IEnumerable<string> markedVariables, string logRef = "")
 		{
 			WorkItem currentWorkItem = CurrentWorkItem;
@@ -299,7 +299,7 @@ namespace HotDocs.Sdk.Server
 		/// <summary>
 		/// Called by the host application when answers have been posted back from a browser interview.
 		/// </summary>
-		/// <param name="interviewAnswers"></param>
+		/// <param name="interviewAnswers">The answers that were posted back from the interview.</param>
 		public void FinishInterview(TextReader interviewAnswers)
 		{
 			// pseudocode:

@@ -271,10 +271,10 @@ namespace HotDocs.Sdk.Server
 			return sb.ToString();
 		}
 		/// <summary>
-		/// 
+		/// Converts an HTML file into a multi-part MIME string.
 		/// </summary>
-		/// <param name="htmlFileName"></param>
-		/// <returns></returns>
+		/// <param name="htmlFileName">The name of the html file that will be converted to a multi-part MIME string.</param>
+		/// <returns>A multi-part MIME string.</returns>
 		internal static string HtmlToMultiPartMime(string htmlFileName)
 		{
 			/*
@@ -369,11 +369,11 @@ namespace HotDocs.Sdk.Server
 		/// This method returns the requested runtime file from the ServerFiles cache. If the file can be found in either the cache or the
 		/// source URL, it is returned in the response. Otherwise, nothing is done with the response and the method returns false to indicate failure.
 		/// </summary>
-		/// <param name="fileName"></param>
-		/// <param name="cacheFolder"></param>
-		/// <param name="sourceUrl"></param>
+		/// <param name="fileName">The name of the file.</param>
+		/// <param name="cacheFolder">The folder where the file is cached.</param>
+		/// <param name="sourceUrl">The URL where the file can be found if it does not exist in the cache.</param>
 		/// <param name="contentType">Output parameter containing the MIME type of requested runtime file.</param>
-		/// <returns></returns>
+		/// <returns>A <c>Stream</c> containing the runtime file.</returns>
 		public static Stream GetInterviewRuntimeFile(string fileName, string cacheFolder, string sourceUrl, out string contentType)
 		{
 			// Validate and normalize input parameters.
@@ -472,10 +472,10 @@ namespace HotDocs.Sdk.Server
 		/// <summary>
 		/// This method is used by both WS and Cloud implementations of AssembleDocument to convert an AssemblyResult to an AssembleDocumentResult.
 		/// </summary>
-		/// <param name="template"></param>
-		/// <param name="asmResult"></param>
-		/// <param name="docType"></param>
-		/// <returns></returns>
+		/// <param name="template">The template associated with the <c>AssemblyResult</c>.</param>
+		/// <param name="asmResult">The <c>AssemblyResult</c> to convert.</param>
+		/// <param name="docType">The type of document contained in the result.</param>
+		/// <returns>An <c>AssembleDocumentResult</c>, which contains the same document as the <c>asmResult</c>.</returns>
 		internal static AssembleDocumentResult ConvertAssemblyResult(Template template, AssemblyResult asmResult, DocumentType docType)
 		{
 			AssembleDocumentResult result = null;
