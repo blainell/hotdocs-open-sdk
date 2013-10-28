@@ -119,13 +119,15 @@ namespace HotDocs.Sdk.Server.Local
 							}
 
 							// Add the mapping information to the dialog
-							//TODO: Note that i < variableNames.Length, but i indexes mappingNames. Do the lengths of the two lists match?
+							// Note that variableNames.Length is always equal to mappingNames.Length if mappingNames.Length is not null.
 							for (int i = 0; i < variableNames.Length; i++)
 							{
 								string variableName = variableNames[i].ToString();
 								if (cmpInfo.IsDefinedVariable(variableName))
 								{
-									string mappingName = (mappingNames != null) ? mappingNames[i].ToString() : null;
+									//The i < mappingNames.Length test here is strictly defensive.
+									string mappingName = (mappingNames != null && i < mappingNames.Length) ? mappingNames[i].ToString() : null;
+
 									dlgInfo.Items.Add(new DialogItemInfo
 									{
 										Name = variableName,
