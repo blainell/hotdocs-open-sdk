@@ -314,9 +314,21 @@ namespace HotDocs.Sdk
 		/// <para>If not specified, this property defaults to null (which omits the document preview feature).</para>
 		/// </summary>
 		/// <remarks>
-		/// TODO: Document the query string and content that the browser interview POSTs to this URL.
 		/// <para>This property is equivalent to the DocumentPreviewUrl property in the HotDocs Server API
 		/// and the DocPreviewUrl setting in Core Services.</para>
+		/// <para>The following are field values that may be posted to this URL:</para>
+		///    <list type="numbered">
+		///       <item><para>Answers are sent from the browser in a set of "HDInfo" field values. Usually, all answer content
+		///       will be contained in a single HDInfo value, but if the answer content is large, it may be broken
+		///       up across several HDInfo values which need to be concatenated back together before use. You can use the
+		///       static InterviewResponse.GetAnswers method to read and join these values from the request automatically.
+		///       These answers may be overlayed on any answers maintained on the server with a call to
+		///       HotDocs.Sdk.AnswerCollection.OverlayXml, for example.
+		///       The resulting combined answer collection may then used to assemble a document for a preview.</para>
+		///       </item>
+		///       <item>The "InlineImages" field's value is "true" if the requesting browser supports HTML with images
+		///       included as embedded URIs.</item>
+		///    </list>
 		/// </remarks>
 		public string DocumentPreviewUrl
 		{
@@ -336,9 +348,12 @@ namespace HotDocs.Sdk
 		/// <para>If no value is specified, this property defaults to null (which omits the Save Answers feature).</para>
 		/// </summary>
 		/// <remarks>
-		/// TODO: Document the query string and content that the browser interview POSTs to this URL.
 		/// <para>This property is equivalent to the SaveAnswersPageUrl property in the HotDocs Server API
 		/// and the SaveAnswersPageUrl setting in Core Services.</para>
+		/// <para>Answers are sent from the browser in a set of "HDInfo" field values. Usually, all answer content
+		/// will be contained in a single HDInfo value, but if the answer content is large, it may be broken
+		/// up across several HDInfo values which need to be concatenated back together before use. You can use the
+		/// static InterviewResponse.GetAnswers method to read and join these values from the request automatically.</para>
 		/// </remarks>
 		public string SaveAnswersUrl
 		{
