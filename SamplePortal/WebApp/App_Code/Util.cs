@@ -94,7 +94,6 @@ namespace SamplePortal
 		public static void SweepTempDirectories()
 		{
 			SweepDirectory(Settings.DocPath, 60);
-			SweepDirectory(Path.Combine(Settings.AnswerPath, Settings.TempRelPath), 60);
 		}
 
 		/// <summary>
