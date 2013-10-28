@@ -307,9 +307,6 @@ namespace HotDocs.Sdk.Server.Local
 			ansColl.OverlayXMLAnswers(answers == null ? "" : answers.ReadToEnd());
 			HotDocs.Server.OutputOptions outputOptions = ConvertOutputOptions(settings.OutputOptions);
 
-			//TODO: Review this.
-			int savePendingAssembliesCount = _app.PendingAssemblyCmdLineStrings.Count;
-
 			string docPath = CreateTempDocDirAndPath(template, settings.Format);
 			_app.AssembleDocument(
 				template.GetFullPath(),//Template path
@@ -337,7 +334,7 @@ namespace HotDocs.Sdk.Server.Local
 
 			//Build the list of pending assemblies.
 			List<Template> pendingAssemblies = new List<Template>();
-			for (int i = 0; i < _app.PendingAssemblyCmdLineStrings.Count - savePendingAssembliesCount; i++)
+			for (int i = 0; i < _app.PendingAssemblyCmdLineStrings.Count; i++)
 			{
 				string cmdLine = _app.PendingAssemblyCmdLineStrings[i];
 				string path, switches;
