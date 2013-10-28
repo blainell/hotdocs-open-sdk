@@ -293,16 +293,6 @@ namespace SamplePortal
 			Directory.CreateDirectory(dirPath);
 			return dirPath;
 		}
-		/// <summary>
-		/// Get the users answers sent up from the browser.
-		/// </summary>
-		/// <param name="request">The HttpRequest when the user posted answers from the interview.</param>
-		/// <returns>A string containing the encoded answers that were posted from the interview.</returns>
-		public static string GetInterviewAnswers(System.Web.HttpRequest request)
-		{
-			string ansdata = String.Join(String.Empty, request.Form.GetValues("HDInfo"));
-			return ansdata;
-		}
 
 		#region Debugging aids
 		/// <summary>

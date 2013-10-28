@@ -37,7 +37,7 @@ public class GetDocPreview : IHttpHandler, IRequiresSessionState
 				// assembled document preview.
 
 				// Merge the posted answers with those stored in the session.
-				System.IO.StringReader sr = new StringReader(Util.GetInterviewAnswers(req));
+				System.IO.StringReader sr = new StringReader(HotDocs.Sdk.Server.InterviewResponse.GetAnswers(req.Form));
 				session.AnswerCollection.OverlayXml(HotDocs.Sdk.Server.InterviewAnswerSet.GetDecodedInterviewAnswers(sr));
 
 				// Determine what kind of file to assemble.

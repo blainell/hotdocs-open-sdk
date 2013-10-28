@@ -40,7 +40,7 @@ public partial class SaveAnswers : System.Web.UI.Page
 			txtTitle.Attributes.Add("maxlength", Settings.MaxTitleLength.ToString());
 			txtDescription.Attributes.Add("maxlength", Settings.MaxDescriptionLength.ToString());
 
-			ViewState["answers"] = Util.GetInterviewAnswers(Request); // get the answers from the browser
+			ViewState["answers"] = HotDocs.Sdk.Server.InterviewResponse.GetAnswers(Request.Form); // get the answers from the browser
 
 			if (_session.AnswerCollection.FilePath.Length > 0)
 			{

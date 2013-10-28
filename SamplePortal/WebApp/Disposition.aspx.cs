@@ -38,7 +38,7 @@ public partial class Disposition : System.Web.UI.Page
 				txtDescription.Attributes.Add("maxlength", Settings.MaxDescriptionLength.ToString());
 
 				//Get the user-modified interview answers from the HTTP request.
-				System.IO.StringReader sr = new StringReader(Util.GetInterviewAnswers(Request));
+				System.IO.StringReader sr = new StringReader(HotDocs.Sdk.Server.InterviewResponse.GetAnswers(Request.Form));
 
 				//Merge (overlay) the user-modified interview answers back into the assembly's answer collection.
 				_session.FinishInterview(HotDocs.Sdk.Server.InterviewAnswerSet.GetDecodedInterviewAnswers(sr));
