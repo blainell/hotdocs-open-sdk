@@ -78,9 +78,9 @@ namespace HotDocs.Sdk.Server
 			// add the work items
 			_workItems = new List<WorkItem>();
 			if (template.HasInterview)
-				_workItems.Add(new InterviewWorkItem(template.Title, template));
+				_workItems.Add(new InterviewWorkItem(template));
 			if (template.GeneratesDocument)
-				_workItems.Add(new DocumentWorkItem(template.Title, template));
+				_workItems.Add(new DocumentWorkItem(template));
 		}
 
 		/* properties/state */
@@ -229,6 +229,7 @@ namespace HotDocs.Sdk.Server
 				// assemble the item
 				using (var asmResult = _service.AssembleDocument(docWorkItem.Template, new StringReader(AnswerCollection.XmlAnswers), asmOpts, logRef))
 				{
+					result.Add(asmResult.ExtractDocument());
 					if (postAssembleDocument != null)
 						postAssembleDocument(docWorkItem.Template, asmResult, userState);
 
@@ -239,8 +240,6 @@ namespace HotDocs.Sdk.Server
 					// store UnansweredVariables in the DocumentWorkItem
 					docWorkItem.UnansweredVariables = asmResult.UnansweredVariables;
 					// add an appropriate Document to a list being compiled for the return value of this method
-					result.Add(asmResult.ExtractDocument()); // TODO: should this be moved above the call to postAssembleDocument,
-					// so the delegate is prevented from accessing or disturbing the document at this point?
 				}
 				// mark the current workitem as complete
 				docWorkItem.IsCompleted = true;
@@ -324,9 +323,9 @@ namespace HotDocs.Sdk.Server
 			foreach (var template in templates)
 			{
 				if (template.HasInterview)
-					_workItems.Insert(insertPosition++, new InterviewWorkItem(template.FileName, template));
+					_workItems.Insert(insertPosition++, new InterviewWorkItem(template));
 				if (template.GeneratesDocument)
-					_workItems.Insert(insertPosition++, new DocumentWorkItem(template.FileName, template));
+					_workItems.Insert(insertPosition++, new DocumentWorkItem(template));
 			}
 		}
 
