@@ -289,18 +289,6 @@ namespace SamplePortal
 		}
 		#endregion
 
-		#region Hard-coded Settings
-		public static string TempRelPath
-		{
-			get { return "tmp" + System.IO.Path.DirectorySeparatorChar; }
-		}
-
-		public static int TempLen
-		{
-			get { return 4; }
-		}
-		#endregion
-
 		#region Private methods
 		private static string GetRootedPath(string path)
 		{

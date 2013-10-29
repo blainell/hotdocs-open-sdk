@@ -107,7 +107,7 @@ public partial class SelAns : System.Web.UI.Page
 		{
 			int delimpos = answerfile.LastIndexOfAny(new char[] { '/', '\\' });
 			// answer filename must either contain no slashes, or else only slash must be "tmp\"
-			if (delimpos >= 0 && (delimpos != Settings.TempLen - 1 || !answerfile.StartsWith(Settings.TempRelPath)))
+			if (delimpos >= 0)
 				answerfile = null; // invalid answer file -- ignore it
 		}
 

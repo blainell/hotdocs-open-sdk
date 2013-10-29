@@ -2,9 +2,6 @@
    Use, modification and redistribution of this source is subject
    to the New BSD License as set out in LICENSE.TXT. */
 
-//TODO: Add method parameter validation.
-//TODO: Add appropriate unit tests.
-
 using System;
 using System.IO;
 
@@ -51,6 +48,9 @@ namespace HotDocs.Sdk
 		/// <returns></returns>
 		public override Stream GetFile(string fileName)
 		{
+			if (fileName == null)
+				throw new ArgumentNullException();
+
 			string filePath = Path.Combine(GetTemplateDirectory(), fileName);
 			return new FileStream(filePath, FileMode.Open, FileAccess.Read);
 		}
@@ -95,6 +95,9 @@ namespace HotDocs.Sdk
 		/// <returns></returns>
 		protected override void DeserializeContent(string content)
 		{
+			if (content == null)
+				throw new ArgumentNullException();
+
 			string[] tokens = content.Split(new char[] {'|'});
 			if (tokens.Length != 3)
 				throw new Exception("Invalid template location.");
