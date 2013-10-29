@@ -196,6 +196,7 @@ namespace HotDocs.Sdk.Cloud
 			PackageTemplateLocation packageTemplateLocation = (PackageTemplateLocation)template.Location;
 
 			Dictionary<string, string> settingsDict = new Dictionary<string, string>(settings.Settings);
+
 			// Workaround for bug in server that does not honor the Disable settings, so we have to just clear the url instead.
 			// To do this, we make a copy of the settings that were given to us, modify them, and then use the modified version
 			// in the call to Cloud Services.
