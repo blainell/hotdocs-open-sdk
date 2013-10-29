@@ -233,11 +233,16 @@ namespace HotDocs.Sdk.Server
 			return GetInterviewDefinitionUrl(settings, template) + "&type=img&template=";
 		}
 
+		internal static string ReadAllTextWithoutBOM(string fileName)
+		{
+
+		}
+
 		internal static string EmbedImagesInURIs(string fileName)
 		{
 			string html = null;
 			// Loads the html file content from a byte[]
-			html = File.ReadAllText(fileName); // TODO: Do we need to worry about BOM?    BOMEncoding.GetString(sec.GetFile(fileName), Encoding.Default);
+			html = File.ReadAllText(fileName);
 			string targetFilenameNoExtention = Path.GetFileName(fileName).Replace(Path.GetExtension(fileName), "");
 			// Iterates looking for images associated with the html file requested.
 			foreach (string img in Directory.EnumerateFiles(Path.GetDirectoryName(fileName)))
