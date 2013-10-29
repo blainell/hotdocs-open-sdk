@@ -28,8 +28,9 @@ public partial class Disposition : System.Web.UI.Page
 			{
 				//Advance past the interview.
 
-				//TODO: Make sure we're cleaning up the right stuff in the right places.
-				Util.SweepTempDirectories(); // first some housekeeping
+				//First some housekeeping. The AssembledDocsCache should clean up after itself when it gets disposed.
+				// This attempts to remove old documents in case a disposal fails for some reason.
+				Util.SweepTempDirectories();
 
 				// Set the max length on the title and description fields.
 				// These were previously set in the ASPX page, but ASP.NET drops them for multi-line fields when rendering the page.

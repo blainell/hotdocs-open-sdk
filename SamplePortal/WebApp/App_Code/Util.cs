@@ -93,6 +93,7 @@ namespace SamplePortal
 		/// </summary>
 		public static void SweepTempDirectories()
 		{
+			//TODO: Are there other folders to clean up?
 			SweepDirectory(Settings.DocPath, 60);
 		}
 
