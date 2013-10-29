@@ -485,8 +485,11 @@ namespace HotDocs.Sdk.Server
 
 			// Create the list of pending assemblies.
 			IEnumerable<Template> pendingAssemblies =
-				asmResult.PendingAssemblies == null ? new List<Template>() :
-				from pa in asmResult.PendingAssemblies select new Template(Path.GetFileName(pa.TemplateName) /* TODO: or should this just be pa.TemplateName? */, template.Location.Duplicate(), pa.Switches);
+				asmResult.PendingAssemblies == null 
+				? new List<Template>()
+				: from pa in asmResult.PendingAssemblies 
+					select new Template(
+						Path.GetFileName(pa.TemplateName), template.Location.Duplicate(), pa.Switches);
 
 			for (int i = 0; i < asmResult.Documents.Length; i++)
 			{
