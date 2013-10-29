@@ -233,11 +233,6 @@ namespace HotDocs.Sdk.Server
 			return GetInterviewDefinitionUrl(settings, template) + "&type=img&template=";
 		}
 
-		internal static string ReadAllTextWithoutBOM(string fileName)
-		{
-
-		}
-
 		internal static string EmbedImagesInURIs(string fileName)
 		{
 			string html = null;
