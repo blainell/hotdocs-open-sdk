@@ -2,8 +2,6 @@
    Use, modification and redistribution of this source is subject
    to the New BSD License as set out in LICENSE.TXT. */
 
-//TODO: Add XML comments.
-//TODO: Remove the Metadata table from TemplateData.xsd.
 
 using System;
 using System.Collections.Generic;
@@ -101,97 +99,22 @@ namespace SamplePortal.Data
 			return dv;
 		}
 
-		//TODO: Remove. Metadata table is not used.
-		private DataRowView LoadMetaDataRow(string name)
-		{
-			DataView dv = new DataView(tplData.Metadata);
-			if (dv != null)
-			{
-				try
-				{
-					dv.RowFilter = "[Name] = '" + EncodeString(name) + "'";
-				}
-				catch (Exception)
-				{
-					dv.Dispose();
-					return null;
-				}
-			}
-			return dv.Count > 0 ? dv[0] : null;
-		}
-
-		//TODO: Remove. Metadata table is not used.
-		public bool HasMetadataValue(string name)
-		{
-			DataRowView drv = LoadMetaDataRow(name);
-			return drv != null;
-		}
-
-		//TODO: Remove. Metadata table is not used.
-		public string GetMetadataValue(string name)
-		{
-			DataRowView drv = LoadMetaDataRow(name);
-			string val = "";
-			if (drv != null)
-			{
-				try
-				{
-					val = (string)drv["Value"];
-				}
-				catch (Exception)
-				{
-					val = "";
-				}
-			}
-			return val;
-		}
-
-		//TODO: Remove. Metadata table is not used.
-		public void SetMetadataValue(string name, string value)
-		{
-			DataRowView drv = LoadMetaDataRow(name);
-			if (drv != null)
-			{
-				drv["Value"] = value;
-			}
-			else
-			{
-				DataRow newRow = tplData.Metadata.NewRow();
-				newRow["Name"] = name;
-				newRow["Value"] = value;
-				tplData.Metadata.Rows.Add(newRow);
-			}
-			FlushUpdates();
-		}
-
-		//TODO: Remove. Metadata table is not used.
-		public string GetVersion()
-		{
-			return GetMetadataValue("Version");
-		}
-
-		//TODO: Remove. Metadata table is not used.
-		public void SetVersion(string version)
-		{
-			SetMetadataValue("Version", version);
-		}
-
-		//TODO: Not used. Remove?
-		public System.Collections.Generic.IEnumerable<string> GetTemplateFiles()
-		{
-			List<string> items = new List<string>();
-			foreach (DataRow row in tplData.Templates.Rows)
-				items.Add(row["Filename"].ToString());
-			return items;
-		}
-
-
+		/// <summary>
+		/// Returns true if the filename exists in 'index.xml'
+		/// </summary>
+		/// <param name="filename"></param>
+		/// <param name="title"></param>
+		/// <returns></returns>
 		public bool TemplateExists(string filename, string title)
 		{
 			DataView dv = dv = SelectFile(filename);
 			return (dv.Count > 0);
 		}
 
+		/// <summary>
+		/// Inserts a new template using the parameter in 'index.xml'
+		/// </summary>
+		/// <param name="ui"></param>
 		public void InsertNewTemplate(UploadItem ui)
 		{
 			DataRow newRow = tplData.Templates.NewRow();
@@ -212,11 +135,22 @@ namespace SamplePortal.Data
 			FlushUpdates();
 		}
 
+		/// <summary>
+		/// Updates 'index.xml' with the new title, description, and package ID from the "ui" parameter.
+		/// </summary>
+		/// <param name="ui"></param>
 		public void UpdateTemplate(UploadItem ui)
 		{
 			UpdateTemplate(ui.MainTemplateFileName, ui.Title, ui.Description, ui.PackageID);
 		}
 
+		/// <summary>
+		/// Updates 'index.xml' the new title, description, and packageID passed in.
+		/// </summary>
+		/// <param name="filename"></param>
+		/// <param name="title"></param>
+		/// <param name="desc"></param>
+		/// <param name="packageID"></param>
 		public void UpdateTemplate(string filename, string title, string desc, string packageID)
 		{
 			DataView dv = null;
@@ -252,6 +186,10 @@ namespace SamplePortal.Data
 			FlushUpdates();
 		}
 
+		/// <summary>
+		/// Deletes the "filename" from index.xml.
+		/// </summary>
+		/// <param name="filename"></param>
 		public void DeleteTemplate(string filename)
 		{
 			DataView dv = SelectFile(filename);
@@ -262,6 +200,9 @@ namespace SamplePortal.Data
 			FlushUpdates();
 		}
 
+		/// <summary>
+		/// Flushes updates.
+		/// </summary>
 		private void FlushUpdates()
 		{
 			tplData.WriteXml(Path.Combine(Util.SafeDir(Settings.TemplatePath), "index.xml"));
