@@ -17,11 +17,8 @@ using System.Xml.Serialization;
 
 /// <remarks/>
 [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.1")]
-[System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
-[System.ComponentModel.DesignerCategoryAttribute("code")]
 [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://tempuri.org/TemplateData.xsd")]
-[System.Xml.Serialization.XmlRootAttribute(Namespace="http://tempuri.org/TemplateData.xsd", IsNullable=false)]
 public partial class TemplateData {
     
     private TemplateDataTemplates[] itemsField;
