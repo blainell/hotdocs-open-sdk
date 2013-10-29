@@ -195,11 +195,14 @@ namespace HotDocs.Sdk.Cloud
 				throw new Exception("HotDocs Cloud Services requires the use of template packages. Please use a PackageTemplateLocation derivative.");
 			PackageTemplateLocation packageTemplateLocation = (PackageTemplateLocation)template.Location;
 
+			Dictionary<string, string> settingsDict = new Dictionary<string, string>(settings.Settings);
 			// Workaround for bug in server that does not honor the Disable settings, so we have to just clear the url instead.
 			// To do this, we make a copy of the settings that were given to us, modify them, and then use the modified version
 			// in the call to Cloud Services.
 			// TODO: After TFS #5598 is fixed, we can remove this workaround.
-			Dictionary<string, string> settingsDict = new Dictionary<string, string>(settings.Settings);
+			// Note: TFS #5598 has been fixed, but the cloud implememntation does not pass those values through
+			// to the cloud implmementation of HotDocs Server, so for now we leave these next 4 lines here that provide
+			// equivalent functionality:
 			if (settings.DisableDocumentPreview)
 				settingsDict.Remove("DocPreviewUrl");
 			if (settings.DisableSaveAnswers)
