@@ -151,7 +151,7 @@ namespace HotDocs.Sdk.Cloud
 				billingRef,
 				interviewFormat,
 				outputFormat,
-				null); // Additional settings = null for this app
+				settings); // Additional settings = null for this app
 
 			StringBuilder urlBuilder = new StringBuilder(string.Format(
 				"{0}/embed/newsession/{1}/{2}?interviewformat={3}&outputformat={4}",
@@ -176,6 +176,14 @@ namespace HotDocs.Sdk.Cloud
 			if (showDownloadLinks)
 			{
 				urlBuilder.Append("&showdownloadlinks=true");
+			}
+
+			if (settings != null)
+			{
+				foreach (KeyValuePair<string, string> kv in settings)
+				{
+					urlBuilder.AppendFormat("&{0}={1}", kv.Key, kv.Value ?? "");
+				}
 			}
 
 			HttpWebRequest request = (HttpWebRequest)WebRequest.Create(urlBuilder.ToString());
