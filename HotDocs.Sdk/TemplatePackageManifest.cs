@@ -619,7 +619,7 @@ namespace HotDocs.Sdk
 			Match match = Regex.Match(manifestXml, @"hotdocsVersion\s*=\s*""(\d\d)");
 			if (match.Groups.Count < 2)
 			{
-				return null; // TODO: Throw an exception
+				throw new ArgumentException("TemplatePackageManifest.FromXml: invalid manifestXml parameter");
 			}
 
 			StringReader sr = new StringReader(manifestXml);

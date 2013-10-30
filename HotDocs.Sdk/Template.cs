@@ -173,7 +173,7 @@ namespace HotDocs.Sdk
 						TemplateManifest manifest = GetManifest(ManifestParseFlags.ParseTemplateInfo);
 						_title = manifest.Title;
 					}
-					catch (Exception ex)
+					catch (Exception)
 					{
 						_title = "";
 					}

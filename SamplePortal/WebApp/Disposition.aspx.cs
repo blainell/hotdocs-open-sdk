@@ -65,10 +65,6 @@ public partial class Disposition : System.Web.UI.Page
 				foreach (HotDocs.Sdk.Server.Document doc in docs)
 					cache.AddDoc(doc);
 
-				//TODO: Update this comment to reflect reality.
-				// numberOfAssemblies needs to take into account any assemblies that are going to be added because of 
-				// ASSEMBLE instructions in the template just finished. These assemblies are stored in Assembly.PendingAssemblies 
-				// until Assemby.Completed = true, at which time they are moved to Session.Assemblies.
 				IEnumerable<HotDocs.Sdk.Server.WorkItem> interviewItems = from n in _session.WorkItems where n is HotDocs.Sdk.Server.InterviewWorkItem select n;
 				int numberOfInterviews = interviewItems.Count();
 				if (numberOfInterviews > 1)

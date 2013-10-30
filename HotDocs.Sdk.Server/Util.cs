@@ -237,7 +237,7 @@ namespace HotDocs.Sdk.Server
 		{
 			string html = null;
 			// Loads the html file content from a byte[]
-			html = File.ReadAllText(fileName); // TODO: Do we need to worry about BOM?    BOMEncoding.GetString(sec.GetFile(fileName), Encoding.Default);
+			html = File.ReadAllText(fileName);
 			string targetFilenameNoExtention = Path.GetFileName(fileName).Replace(Path.GetExtension(fileName), "");
 			// Iterates looking for images associated with the html file requested.
 			foreach (string img in Directory.EnumerateFiles(Path.GetDirectoryName(fileName)))
@@ -485,8 +485,11 @@ namespace HotDocs.Sdk.Server
 
 			// Create the list of pending assemblies.
 			IEnumerable<Template> pendingAssemblies =
-				asmResult.PendingAssemblies == null ? new List<Template>() :
-				from pa in asmResult.PendingAssemblies select new Template(Path.GetFileName(pa.TemplateName) /* TODO: or should this just be pa.TemplateName? */, template.Location.Duplicate(), pa.Switches);
+				asmResult.PendingAssemblies == null 
+				? new List<Template>()
+				: from pa in asmResult.PendingAssemblies 
+					select new Template(
+						Path.GetFileName(pa.TemplateName), template.Location.Duplicate(), pa.Switches);
 
 			for (int i = 0; i < asmResult.Documents.Length; i++)
 			{

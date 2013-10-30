@@ -231,7 +231,6 @@ public partial class Upload : System.Web.UI.Page
 								/// that were used for the current template with the desktop HotDocs software. This 
 								/// Sample Portal application does not save this value, and it is included here 
 								/// as sample code because these command line parameters may be of use.
-								// TODO: Make use of this value in Sample Portal
 								CommandLineSwitches = Request.Form["HD_Template_CommandLineSwitches" + templateIndex],
 
 								/// ItemType can be an HD11+ template, a file, or a URL. HotDocs 11 (and later) 
@@ -240,27 +239,23 @@ public partial class Upload : System.Web.UI.Page
 								/// templates by examining this field to be non-empty for HotDocs 11 and empty 
 								/// for HotDocs 10. This Sample Portal application does not save this value, 
 								/// and it is included here as sample code.
-								// TODO: Make use of this value in Sample Portal
 								ItemType = Request.Form["HD_Template_UploadItemType" + templateIndex],
 
 								/// ExpirationDate is an optional field that gives publishers the option of specifying
 								/// a date when the current template will expire. This Sample Portal application 
 								/// does not save this value, and it is included here as sample code. 
-								// TODO: Make use of this value in Sample Portal
 								ExpirationDate = Request.Form["HD_Template_Expiration_Date" + templateIndex],
 
 								/// ExpirationWarningDays is an optional field used in conjunction with ExpirationDate 
 								/// that allows the user to be warned that the current template will expire the given 
 								/// number of days before the expireation date. This Sample Portal application 
 								/// does not save this value, and it is included here as sample code.
-								// TODO: Make use of this value in Sample Portal
 								ExpirationWarningDays = Request.Form["HD_Template_Warning_Days" + templateIndex],
 
 								/// ExpirationExtensionDays is an optional field used in conjunction with ExpirationDate 
 								/// that allows the user to continue using the current template after the given 
 								/// expiration date has passed. This Sample Portal application does not save this 
 								/// value, and it is included here as sample code.
-								// TODO: Make use of this value in Sample Portal
 								ExpirationExtensionDays = Request.Form["HD_Template_Extension_Days" + templateIndex],
 								PackageID = packageID,
 								FullFilePath = packagePath
