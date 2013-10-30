@@ -75,9 +75,6 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\HotDocs.Sdk.Cloud\HotDocs.Sdk.Cloud.csproj">
       <Project>{6fed07cd-d7af-4243-b442-865a413940dc}</Project>
       <Name>HotDocs.Sdk.Cloud</Name>
