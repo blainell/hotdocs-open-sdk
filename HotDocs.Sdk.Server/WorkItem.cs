@@ -18,7 +18,6 @@ namespace HotDocs.Sdk.Server
 		/// <summary>
 		/// The WorkItem constructor is protected; it is only called from derived WorkItem classes.
 		/// </summary>
-		/// <param name="title">The title of the work item.  If we add a Title property to a template, we would not need this.</param>
 		/// <param name="template">The template upon which the work item is based.</param>
 		protected WorkItem(Template template)
 		{
@@ -78,7 +77,6 @@ namespace HotDocs.Sdk.Server
 		/// The constructor is internal; it is only called from the WorkSession class.  The WorkSession
 		/// is in charge of adding work items to itself.
 		/// </summary>
-		/// <param name="title">The title of the work item.  If we add a Title property to a template, we would not need this.</param>
 		/// <param name="template">The template upon which the work item is based.</param>
 		internal InterviewWorkItem(Template template)
 			: base(template)
@@ -127,7 +125,6 @@ namespace HotDocs.Sdk.Server
 		/// <summary>
 		/// The constructor is internal; it is only called from the WorkSession class (and maybe the InterviewWorkItem class).
 		/// </summary>
-		/// <param name="title">The title of the work item.  If we add a Title property to a template, we would not need this.</param>
 		/// <param name="template">The template upon which the work item is based.</param>
 		internal DocumentWorkItem(Template template) : this(template, new string[0]) { }
 		internal DocumentWorkItem(Template template, string[] unansweredVariables)
