@@ -2,7 +2,6 @@
    Use, modification and redistribution of this source is subject
    to the New BSD License as set out in LICENSE.TXT. */
 
-//TODO: Add appropriate unit tests.
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -101,7 +100,6 @@ namespace HotDocs.Sdk.Server.WebService
 					// The Web Services do not have a way to set the title of the template--it always uses the title from the component file.
 					// So here we are replacing the title that was put in the html fragment with the template's title, which may have
 					// been set later and does not match its component file.
-					// TODO: It would be a good enhancement for the web service API to allow the caller to specify the template title.
 					result.HtmlFragment = Regex.Replace(result.HtmlFragment, "HDTemplateName=\\\".+?\"", "HDTemplateName=\"" + settings.Title + "\"");
 
 				}

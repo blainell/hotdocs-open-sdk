@@ -28,8 +28,9 @@ public partial class Disposition : System.Web.UI.Page
 			{
 				//Advance past the interview.
 
-				//TODO: Make sure we're cleaning up the right stuff in the right places.
-				Util.SweepTempDirectories(); // first some housekeeping
+				//First some housekeeping. The AssembledDocsCache should clean up after itself when it gets disposed.
+				// This attempts to remove old documents in case a disposal fails for some reason.
+				Util.SweepTempDirectories();
 
 				// Set the max length on the title and description fields.
 				// These were previously set in the ASPX page, but ASP.NET drops them for multi-line fields when rendering the page.
@@ -38,7 +39,7 @@ public partial class Disposition : System.Web.UI.Page
 				txtDescription.Attributes.Add("maxlength", Settings.MaxDescriptionLength.ToString());
 
 				//Get the user-modified interview answers from the HTTP request.
-				System.IO.StringReader sr = new StringReader(Util.GetInterviewAnswers(Request));
+				System.IO.StringReader sr = new StringReader(HotDocs.Sdk.Server.InterviewResponse.GetAnswers(Request.Form));
 
 				//Merge (overlay) the user-modified interview answers back into the assembly's answer collection.
 				_session.FinishInterview(HotDocs.Sdk.Server.InterviewAnswerSet.GetDecodedInterviewAnswers(sr));
@@ -64,10 +65,6 @@ public partial class Disposition : System.Web.UI.Page
 				foreach (HotDocs.Sdk.Server.Document doc in docs)
 					cache.AddDoc(doc);
 
-				//TODO: Update this comment to reflect reality.
-				// numberOfAssemblies needs to take into account any assemblies that are going to be added because of 
-				// ASSEMBLE instructions in the template just finished. These assemblies are stored in Assembly.PendingAssemblies 
-				// until Assemby.Completed = true, at which time they are moved to Session.Assemblies.
 				IEnumerable<HotDocs.Sdk.Server.WorkItem> interviewItems = from n in _session.WorkItems where n is HotDocs.Sdk.Server.InterviewWorkItem select n;
 				int numberOfInterviews = interviewItems.Count();
 				if (numberOfInterviews > 1)

@@ -35,7 +35,6 @@ namespace SamplePortal
 		/// This method deletes a template package and its corresponding manifest file from the Templates folder.
 		/// </summary>
 		/// <param name="packageID">The ID of the template package to delete.</param>
-		//TODO: Perhaps this should be moved to the PackageCache class.
 		public static void DeleteTemplatePackage(string packageID)
 		{
 			string packagePath = PackageCache.GetLocalPackagePath(packageID);

@@ -447,7 +447,6 @@ namespace HotDocs.Sdk.DataServices
 		/// <param name="args">The exception arguments.</param>
 		protected override void HandleException(HandleExceptionArgs args)
 		{
-			// TODO: Consider logging exceptions to a log file on the server.
 			base.HandleException(args);
 		}
 	}

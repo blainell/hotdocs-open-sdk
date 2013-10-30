@@ -32,15 +32,13 @@ public partial class SaveAnswers : System.Web.UI.Page
 		_ansFilename = Path.GetFileName(_ansPath);
 		if (!IsPostBack) // first arrival on this page
 		{
-			Util.SweepTempDirectories(); // first some housekeeping
-
 			// Set the max length on the title and description fields. These were previously set in the ASPX page,
 			// but ASP.NET drops them for multi-line fields when rendering the page.
 			// So we set them manually here using values configurable in the web.config.
 			txtTitle.Attributes.Add("maxlength", Settings.MaxTitleLength.ToString());
 			txtDescription.Attributes.Add("maxlength", Settings.MaxDescriptionLength.ToString());
 
-			ViewState["answers"] = Util.GetInterviewAnswers(Request); // get the answers from the browser
+			ViewState["answers"] = HotDocs.Sdk.Server.InterviewResponse.GetAnswers(Request.Form); // get the answers from the browser
 
 			if (_session.AnswerCollection.FilePath.Length > 0)
 			{

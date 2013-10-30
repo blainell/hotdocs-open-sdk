@@ -23,8 +23,8 @@ namespace HotDocs.Sdk.Server
 		/// <summary>
 		/// <c>NamedStream</c> constructor creates an instance with the <c>fileName</c> and <c>content</c> parameters.
 		/// </summary>
-		/// <param name="fileName"></param>
-		/// <param name="content"></param>
+		/// <param name="fileName">The name of the file.</param>
+		/// <param name="content">The file contents.</param>
 		public NamedStream(string fileName, System.IO.Stream content)
 		{
 			if (String.IsNullOrEmpty(fileName))

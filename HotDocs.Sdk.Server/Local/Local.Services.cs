@@ -119,13 +119,15 @@ namespace HotDocs.Sdk.Server.Local
 							}
 
 							// Add the mapping information to the dialog
-							//TODO: Note that i < variableNames.Length, but i indexes mappingNames. Do the lengths of the two lists match?
+							// Note that variableNames.Length is always equal to mappingNames.Length if mappingNames.Length is not null.
 							for (int i = 0; i < variableNames.Length; i++)
 							{
 								string variableName = variableNames[i].ToString();
 								if (cmpInfo.IsDefinedVariable(variableName))
 								{
-									string mappingName = (mappingNames != null) ? mappingNames[i].ToString() : null;
+									//The i < mappingNames.Length test here is strictly defensive.
+									string mappingName = (mappingNames != null && i < mappingNames.Length) ? mappingNames[i].ToString() : null;
+
 									dlgInfo.Items.Add(new DialogItemInfo
 									{
 										Name = variableName,
@@ -307,9 +309,6 @@ namespace HotDocs.Sdk.Server.Local
 			ansColl.OverlayXMLAnswers(answers == null ? "" : answers.ReadToEnd());
 			HotDocs.Server.OutputOptions outputOptions = ConvertOutputOptions(settings.OutputOptions);
 
-			//TODO: Review this.
-			int savePendingAssembliesCount = _app.PendingAssemblyCmdLineStrings.Count;
-
 			string docPath = CreateTempDocDirAndPath(template, settings.Format);
 			_app.AssembleDocument(
 				template.GetFullPath(),//Template path
@@ -337,7 +336,7 @@ namespace HotDocs.Sdk.Server.Local
 
 			//Build the list of pending assemblies.
 			List<Template> pendingAssemblies = new List<Template>();
-			for (int i = 0; i < _app.PendingAssemblyCmdLineStrings.Count - savePendingAssembliesCount; i++)
+			for (int i = 0; i < _app.PendingAssemblyCmdLineStrings.Count; i++)
 			{
 				string cmdLine = _app.PendingAssemblyCmdLineStrings[i];
 				string path, switches;
@@ -421,8 +420,8 @@ namespace HotDocs.Sdk.Server.Local
 		/// <summary>
 		/// Build the server files for the specified template.
 		/// </summary>
-		/// <param name="template"></param>
-		/// <param name="flags"></param>
+		/// <param name="template">The template for which support files will be built.</param>
+		/// <param name="flags">Indicates what types of support files to build.</param>
 		public void BuildSupportFiles(Template template, HDSupportFilesBuildFlags flags)
 		{
 			if (template == null)
@@ -445,7 +444,7 @@ namespace HotDocs.Sdk.Server.Local
 		/// <summary>
 		/// Remove the server files for the specified template.
 		/// </summary>
-		/// <param name="template"></param>
+		/// <param name="template">The template for which support files will be removed.</param>
 		public void RemoveSupportFiles(Template template)
 		{
 			if (template == null)
@@ -462,9 +461,9 @@ namespace HotDocs.Sdk.Server.Local
 		/// Create a new directory and a new temporary file in that directory.
 		/// Use this method in conjunction with FreeTempDocDir to free the folder and its contents.
 		/// </summary>
-		/// <param name="template"></param>
-		/// <param name="docType"></param>
-		/// <returns></returns>
+		/// <param name="template">The template for which to create a temporary document directory.</param>
+		/// <param name="docType">The type of document for which to create the temporary directory (and file).</param>
+		/// <returns>The file name and path of the temporary file.</returns>
 		private string CreateTempDocDirAndPath(Template template, DocumentType docType)
 		{
 			string dirPath;

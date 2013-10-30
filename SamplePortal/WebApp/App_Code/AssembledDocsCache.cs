@@ -19,8 +19,8 @@ namespace SamplePortal
 		/// <summary>
 		/// Construct a new Document object.
 		/// </summary>
-		/// <param name="documentFilePath"></param>
-		/// <param name="templateTitle"></param>
+		/// <param name="documentFilePath">The file name and path of the document.</param>
+		/// <param name="templateTitle">The title of the template associated with the document.</param>
 		public Document(string documentFilePath, string templateTitle)
 		{
 			TemplateTitle = templateTitle;

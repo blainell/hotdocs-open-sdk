@@ -162,8 +162,8 @@ namespace HotDocs.Sdk
 		/// <summary>
 		/// Overrides Object.Equals
 		/// </summary>
-		/// <param name="obj"></param>
-		/// <returns></returns>
+		/// <param name="obj">The object to compare with to test for equality.</param>
+		/// <returns>A value indicating whether or not the objects are equal.</returns>
 		public override bool Equals(object obj)
 		{
 			return (obj != null) && (obj is VariableInfo) && Equals((VariableInfo)obj);

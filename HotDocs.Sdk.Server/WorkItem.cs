@@ -10,24 +10,6 @@ using System.Text;
 namespace HotDocs.Sdk.Server
 {
 	/// <summary>
-	/// The type of work item -- either Interview or Document.  Each interview work items represent an interview to be presented
-	/// to the end user (for which InterviewWorkItem.GetInterview, and later InterviewWorkItem.FinishInterview, must be called);
-	/// each document work item represents a document to be generated (via a call to WorkSession.AssembleDocuments).
-	/// </summary>
-	public enum WorkItemType
-	{
-		/// <summary>
-		/// Indicates the current work item represents an interview to shown to the user.
-		/// </summary>
-		Interview,
-
-		/// <summary>
-		/// Indicates the current work item represents a document assembly to be processed.
-		/// </summary>
-		Document
-	}
-
-	/// <summary>
 	/// WorkItem is an abstract class representing either a browser interview OR an assembled document.
 	/// Work Sessions (also known as assembly queues) in the Open SDK are composed of one or more WorkItems.
 	/// </summary>
@@ -36,22 +18,13 @@ namespace HotDocs.Sdk.Server
 		/// <summary>
 		/// The WorkItem constructor is protected; it is only called from derived WorkItem classes.
 		/// </summary>
-		/// <param name="title">The title of the work item.  If we add a Title property to a template, we would not need this.</param>
 		/// <param name="template">The template upon which the work item is based.</param>
-		protected WorkItem(string title, Template template)
+		protected WorkItem(Template template)
 		{
-			Title = title;
 			Template = template;
 		}
 
 		/* properties/state */
-
-		// TODO: Decide if we will keep the WorkItemType enumeration, or just recommend that people use the "is" operator.
-		/// <summary>
-		/// The type of work item.  This enumerated property is one way to find out the type of an individual work item.
-		/// (The other way is using the "is" operator.)
-		/// </summary>
-		abstract public WorkItemType Type { get; }
 
 		/// <summary>
 		/// The title of the work item.  This is used by a host application when presenting user interface showing the
@@ -63,9 +36,7 @@ namespace HotDocs.Sdk.Server
 		{
 			get
 			{
-				if (_title == null)
-					_title = Template.Title;
-				return _title;
+				return Template.Title;
 			}
 			private set
 			{
@@ -102,29 +73,20 @@ namespace HotDocs.Sdk.Server
 	[Serializable]
 	public class InterviewWorkItem : WorkItem
 	{
-		// TODO: The template does now have a Title property--should we now remove the title parameter?
 		/// <summary>
 		/// The constructor is internal; it is only called from the WorkSession class.  The WorkSession
 		/// is in charge of adding work items to itself.
 		/// </summary>
-		/// <param name="title">The title of the work item.  If we add a Title property to a template, we would not need this.</param>
 		/// <param name="template">The template upon which the work item is based.</param>
-		internal InterviewWorkItem(string title, Template template)
-			: base(title, template)
+		internal InterviewWorkItem(Template template)
+			: base(template)
 		{
 		}
-
-		/* properties/state */
-
-		/// <summary>
-		/// Returns the work item type (document or interview) of the current object.
-		/// </summary>
-		override public WorkItemType Type { get { return WorkItemType.Interview; } }
 
 		/* methods */
 
 		/// <summary>
-		/// Called by the host appliction when it needs to deliver an interview down to the end user in a web page.
+		/// Called by the host application when it needs to deliver an interview down to the end user in a web page.
 		/// Wraps the underlying IServices.GetInterview call (for convenience).
 		/// </summary>
 		/// <param name="options">The InterviewOptions to use for this interview.  This parameter makes the WorkSession's
@@ -138,7 +100,7 @@ namespace HotDocs.Sdk.Server
 		/// <summary>
 		/// Called by the host application when answers have been posted back from a browser interview.
 		/// </summary>
-		/// <param name="interviewAnswers"></param>
+		/// <param name="interviewAnswers">The answers that were posted back from the interview.</param>
 		public void FinishInterview(string interviewAnswers)
 		{
 			// pseudocode:
@@ -163,20 +125,14 @@ namespace HotDocs.Sdk.Server
 		/// <summary>
 		/// The constructor is internal; it is only called from the WorkSession class (and maybe the InterviewWorkItem class).
 		/// </summary>
-		/// <param name="title">The title of the work item.  If we add a Title property to a template, we would not need this.</param>
 		/// <param name="template">The template upon which the work item is based.</param>
-		internal DocumentWorkItem(string title, Template template) : this(title, template, new string[0]) { }
-		internal DocumentWorkItem(string title, Template template, string[] unansweredVariables)
-			: base(title, template)
+		internal DocumentWorkItem(Template template) : this(template, new string[0]) { }
+		internal DocumentWorkItem(Template template, string[] unansweredVariables)
+			: base(template)
 		{
 			UnansweredVariables = unansweredVariables;
 		}
 		// properties/state
-
-		/// <summary>
-		/// Returns the type work item type of the current object, which is always Document in this instance.
-		/// </summary>
-		override public WorkItemType Type { get { return WorkItemType.Document; } }
 
 		/// <summary>
 		/// A list of variable names for which no answer was present during assembly of the document.

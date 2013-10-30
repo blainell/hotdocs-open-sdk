@@ -94,9 +94,11 @@ namespace HotDocs.Sdk
 		private static byte[] GetPersistentEncryptionKey()
 		{
 			string key = ReadConfigurationString("EncryptionKey");
-			// TODO: Remove this
+
+			//If key is null, then the encryption key is probably missing from the web.config file. Throw an exception in that case.
 			if (key == null)
-				key = "dummy";
+				throw new Exception("The web application is not configured properly.");
+
 			return GetFixedSizeByteArray(key, 16);
 		}
 

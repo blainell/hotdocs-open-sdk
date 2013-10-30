@@ -14,9 +14,6 @@ namespace HotDocs.Sdk.ServerTest
 	{
 		public ContractsTest()
 		{
-			//
-			// TODO: Add constructor logic here
-			//
 		}
 
 		private TestContext testContextInstance;

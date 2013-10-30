@@ -53,7 +53,6 @@ namespace HotDocs.SdkTest
 			Assert.AreEqual(key, template.Key);
 			Assert.AreEqual(switches, template.Switches);
 
-			//TODO: Update the package so that the template title and template type agree.
 			Assert.AreEqual("Employment Agreement (Word RTF version)", template.Title.Trim());
 
 			string filePath = template.GetFullPath();
