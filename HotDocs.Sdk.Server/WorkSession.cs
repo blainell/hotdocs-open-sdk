@@ -229,7 +229,6 @@ namespace HotDocs.Sdk.Server
 				// assemble the item
 				using (var asmResult = _service.AssembleDocument(docWorkItem.Template, new StringReader(AnswerCollection.XmlAnswers), asmOpts, logRef))
 				{
-					result.Add(asmResult.ExtractDocument());
 					if (postAssembleDocument != null)
 						postAssembleDocument(docWorkItem.Template, asmResult, userState);
 
@@ -240,6 +239,7 @@ namespace HotDocs.Sdk.Server
 					// store UnansweredVariables in the DocumentWorkItem
 					docWorkItem.UnansweredVariables = asmResult.UnansweredVariables;
 					// add an appropriate Document to a list being compiled for the return value of this method
+					result.Add(asmResult.ExtractDocument());
 				}
 				// mark the current workitem as complete
 				docWorkItem.IsCompleted = true;
