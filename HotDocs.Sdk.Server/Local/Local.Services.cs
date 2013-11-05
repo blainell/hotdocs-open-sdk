@@ -312,7 +312,7 @@ namespace HotDocs.Sdk.Server.Local
 			string docPath = CreateTempDocDirAndPath(template, settings.Format);
 			_app.AssembleDocument(
 				template.GetFullPath(),//Template path
-				hdsi.HDAssemblyOptions.asmOptMarkupView,
+				settings.UseMarkupSyntax ? hdsi.HDAssemblyOptions.asmOptMarkupView : hdsi.HDAssemblyOptions.asmOptNone,
 				ansColl,
 				docPath,
 				outputOptions);
