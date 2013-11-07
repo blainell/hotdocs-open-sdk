@@ -167,6 +167,7 @@ namespace HotDocs.Sdk.Cloud
 				template.FileName,
 				GetBinaryObjectArrayFromString(answers),
 				outputFormat,
+				settings.OutputOptions,
 				settings.Settings,
 				billingRef,
 				timestamp,

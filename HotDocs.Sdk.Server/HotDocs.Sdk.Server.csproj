@@ -35,11 +35,10 @@
     <DocumentationFile>bin\Release\HotDocs.Sdk.Server.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="HotDocs.Server, Version=11.0.0.0, Culture=neutral, PublicKeyToken=5c9e421a71201d26, processorArchitecture=MSIL">
+    <Reference Include="HotDocs.Server, Version=11.0.2.0, Culture=neutral, PublicKeyToken=5c9e421a71201d26, processorArchitecture=MSIL">
       <HintPath>Local\Bin\HotDocs.Server.dll</HintPath>
     </Reference>
-    <Reference Include="HotDocs.Server.Interop, Version=11.0.0.0, Culture=neutral, PublicKeyToken=ca70e7f08f398355, processorArchitecture=MSIL">
-      <EmbedInteropTypes>False</EmbedInteropTypes>
+    <Reference Include="HotDocs.Server.Interop, Version=11.0.2.0, Culture=neutral, PublicKeyToken=ca70e7f08f398355, processorArchitecture=MSIL">
       <HintPath>Local\Bin\HotDocs.Server.Interop.dll</HintPath>
     </Reference>
     <Reference Include="System" />

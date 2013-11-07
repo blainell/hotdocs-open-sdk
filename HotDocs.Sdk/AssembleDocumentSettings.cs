@@ -4,6 +4,7 @@
 
 using System.Collections.Generic;
 using System.Configuration;
+using HotDocs.Sdk.Server.Contracts;
 
 namespace HotDocs.Sdk
 {

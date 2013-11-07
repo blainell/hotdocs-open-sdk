@@ -428,15 +428,15 @@ namespace HotDocs.Sdk.Server.Local
 				throw new ArgumentNullException("template", @"Local.Services.BuildSupportFiles: the ""template"" parameter passed in was null");
 			using (HotDocs.Server.Application app = new HotDocs.Server.Application())
 			{
-				hdsi.HDServerBuildFlags hdBuildFlags = 0;
+				hdsi.HDSupportFilesBuildFlags hdBuildFlags = 0;
 				if ((flags & HDSupportFilesBuildFlags.BuildJavaScriptFiles) != 0)
-					hdBuildFlags |= hdsi.HDServerBuildFlags.BuildJavaScriptFiles;
+					hdBuildFlags |= hdsi.HDSupportFilesBuildFlags.BuildJavaScriptFiles;
 				if ((flags & HDSupportFilesBuildFlags.BuildSilverlightFiles) != 0)
-					hdBuildFlags |= hdsi.HDServerBuildFlags.BuildSilverlightFiles;
+					hdBuildFlags |= hdsi.HDSupportFilesBuildFlags.BuildSilverlightFiles;
 				if ((flags & HDSupportFilesBuildFlags.ForceRebuildAll) != 0)
-					hdBuildFlags |= hdsi.HDServerBuildFlags.ForceRebuildAll;
+					hdBuildFlags |= hdsi.HDSupportFilesBuildFlags.ForceRebuildAll;
 				if ((flags & HDSupportFilesBuildFlags.IncludeAssembleTemplates) != 0)
-					hdBuildFlags |= hdsi.HDServerBuildFlags.IncludeAssembleTemplates;
+					hdBuildFlags |= hdsi.HDSupportFilesBuildFlags.IncludeAssembleTemplates;
 
 				app.BuildSupportFiles(template.GetFullPath(), template.Key, hdBuildFlags);
 			}
