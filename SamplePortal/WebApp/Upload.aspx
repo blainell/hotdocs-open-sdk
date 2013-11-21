@@ -7,6 +7,7 @@
 <head id="Head1" runat="server">
 	<title>
 		<%= Header1.SiteName %></title>
+		<meta name="viewport" content="initial-scale=1.0" />
 	<link href="css/SamplePortal.css" type="text/css" rel="stylesheet" />
 </head>
 <body>
