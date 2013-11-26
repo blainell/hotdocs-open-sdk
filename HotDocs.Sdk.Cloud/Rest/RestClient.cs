@@ -13,6 +13,17 @@ using System.Xml.Serialization;
 
 namespace HotDocs.Sdk.Cloud
 {
+	public static class Extensions
+	{
+		public static void AddIfNotNull(this Dictionary<string, string> dict, string key, object value)
+		{
+			if (value != null)
+			{
+				dict.Add(key, value.ToString());
+			}
+		}
+	}
+
 	/// <summary>
 	/// The RESTful implementation of the Core Services client.
 	/// </summary>
@@ -139,6 +150,188 @@ namespace HotDocs.Sdk.Cloud
 				packageStream.Close();
 			}
 		}
+
+		public Stream GetThemeFile(string fileName, string billingRef)
+		{
+			var timestamp = DateTime.UtcNow;
+
+			string hmac = HMAC.CalculateHMAC(
+				SigningKey,
+				timestamp,
+				SubscriberId,
+				fileName,
+				billingRef);
+
+			StringBuilder urlBuilder = new StringBuilder(string.Format(
+				"{0}/RestfulSvc.svc/themefile/{1}/{2}", EndpointAddress, SubscriberId, fileName));
+
+			if (!string.IsNullOrEmpty(billingRef))
+			{
+				urlBuilder.AppendFormat("?billingref={0}", billingRef);
+			}
+
+			HttpWebRequest request = (HttpWebRequest)WebRequest.Create(urlBuilder.ToString());
+			request.Method = "GET";
+			request.Headers["x-hd-date"] = timestamp.ToString("r");
+			request.Headers[HttpRequestHeader.Authorization] = hmac;
+
+			if (!string.IsNullOrEmpty(ProxyServerAddress))
+			{
+				request.Proxy = new WebProxy(ProxyServerAddress);
+			}
+
+			HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+			return response.GetResponseStream();
+		}
+
+		public void PutThemeFile(Stream stream, string fileName, string billingRef)
+		{
+			var timestamp = DateTime.UtcNow;
+
+			string hmac = HMAC.CalculateHMAC(
+				SigningKey,
+				timestamp,
+				SubscriberId,
+				fileName,
+				billingRef);
+
+			StringBuilder urlBuilder = new StringBuilder(string.Format(
+				"{0}/RestfulSvc.svc/themefile/{1}/{2}", EndpointAddress, SubscriberId, fileName));
+
+			if (!string.IsNullOrEmpty(billingRef))
+			{
+				urlBuilder.AppendFormat("?billingref={0}", billingRef);
+			}
+
+			HttpWebRequest request = (HttpWebRequest)WebRequest.Create(urlBuilder.ToString());
+			request.Method = "PUT";
+			request.Headers["x-hd-date"] = timestamp.ToString("r");
+			request.Headers[HttpRequestHeader.Authorization] = hmac;
+			request.ContentLength = stream.Length; // Stream must support this.
+
+			if (!string.IsNullOrEmpty(ProxyServerAddress))
+			{
+				request.Proxy = new WebProxy(ProxyServerAddress);
+			}
+
+			stream.CopyTo(request.GetRequestStream());
+
+			using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+			{
+				// Throw away the response, which will be empty.
+			}
+		}
+
+		public void DeleteTheme(string themeName, string billingRef)
+		{
+			var timestamp = DateTime.UtcNow;
+
+			string hmac = HMAC.CalculateHMAC(
+				SigningKey,
+				timestamp,
+				SubscriberId,
+				themeName,
+				billingRef);
+
+			StringBuilder urlBuilder = new StringBuilder(string.Format(
+				"{0}/RestfulSvc.svc/theme/{1}/{2}", EndpointAddress, SubscriberId, themeName));
+
+			if (!string.IsNullOrEmpty(billingRef))
+			{
+				urlBuilder.AppendFormat("?billingref={0}", billingRef);
+			}
+
+			HttpWebRequest request = (HttpWebRequest)WebRequest.Create(urlBuilder.ToString());
+			request.Method = "DELETE";
+			request.Headers["x-hd-date"] = timestamp.ToString("r");
+			request.Headers[HttpRequestHeader.Authorization] = hmac;
+
+			if (!string.IsNullOrEmpty(ProxyServerAddress))
+			{
+				request.Proxy = new WebProxy(ProxyServerAddress);
+			}
+
+			using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+			{
+				// Throw away the response, which will be empty.
+			}
+		}
+
+		public void RenameTheme(string themeName, string newThemeName, string billingRef)
+		{
+			var timestamp = DateTime.UtcNow;
+
+			string hmac = HMAC.CalculateHMAC(
+				SigningKey,
+				timestamp,
+				SubscriberId,
+				themeName,
+				newThemeName,
+				billingRef);
+
+			StringBuilder urlBuilder = new StringBuilder(string.Format(
+				"{0}/RestfulSvc.svc/theme/{1}/{2}?rename={3}", EndpointAddress, SubscriberId, themeName, newThemeName));
+
+			if (!string.IsNullOrEmpty(billingRef))
+			{
+				urlBuilder.AppendFormat("&billingref={0}", billingRef);
+			}
+
+			HttpWebRequest request = (HttpWebRequest)WebRequest.Create(urlBuilder.ToString());
+			request.Method = "POST";
+			request.Headers["x-hd-date"] = timestamp.ToString("r");
+			request.Headers[HttpRequestHeader.Authorization] = hmac;
+			request.ContentLength = 0;
+
+			if (!string.IsNullOrEmpty(ProxyServerAddress))
+			{
+				request.Proxy = new WebProxy(ProxyServerAddress);
+			}
+
+			using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+			{
+				// Throw away the response, which will be empty.
+			}
+		}
+
+		#endregion
+
+		#region Public static methods
+		public static Dictionary<string, string> GetOutputOptionsPairs(OutputOptions outputOptions)
+		{
+			var pairs = new Dictionary<string, string>();
+
+			var basic = (BasicOutputOptions)outputOptions;
+			pairs.AddIfNotNull("Author", basic.Author);
+			pairs.AddIfNotNull("Comments", basic.Comments);
+			pairs.AddIfNotNull("Company", basic.Company);
+			pairs.AddIfNotNull("Keywords", basic.Keywords);
+			pairs.AddIfNotNull("Subject", basic.Subject);
+			pairs.AddIfNotNull("Title", basic.Title);
+
+			if (outputOptions is PdfOutputOptions)
+			{
+				var pdf = (PdfOutputOptions)outputOptions;
+				pairs.AddIfNotNull("EmbedFonts", pdf.EmbedFonts);
+				pairs.AddIfNotNull("PdfA", pdf.PdfA);
+				pairs.AddIfNotNull("TaggedPdf", pdf.TaggedPdf);
+				pairs.AddIfNotNull("KeepFillablePdf", pdf.KeepFillablePdf);
+				pairs.AddIfNotNull("TruncateFields", pdf.TruncateFields);
+				pairs.AddIfNotNull("Permissions", pdf.Permissions);
+				pairs.AddIfNotNull("OwnerPassword", pdf.OwnerPassword);
+				pairs.AddIfNotNull("UserPassword", pdf.UserPassword);
+			}
+			else if (outputOptions is HtmlOutputOptions)
+			{
+				pairs.AddIfNotNull("Encoding", ((HtmlOutputOptions)outputOptions).Encoding);
+			}
+			else if (outputOptions is TextOutputOptions)
+			{
+				pairs.AddIfNotNull("Encoding", ((TextOutputOptions)outputOptions).Encoding);
+			}
+
+			return pairs;
+		}
 		#endregion
 
 		#region Protected internal implementations of abstract methods from the base class
@@ -216,6 +409,12 @@ namespace HotDocs.Sdk.Cloud
 				{
 					urlBuilder.AppendFormat("&{0}={1}", kv.Key, kv.Value ?? "");
 				}
+			}
+
+			var outputOptionsPairs = GetOutputOptionsPairs(settings.OutputOptions);
+			foreach (KeyValuePair<string, string> kv in outputOptionsPairs)
+			{
+				urlBuilder.AppendFormat("&{0}={1}", kv.Key, kv.Value ?? "");
 			}
 
 			HttpWebRequest request = (HttpWebRequest)WebRequest.Create(urlBuilder.ToString());
