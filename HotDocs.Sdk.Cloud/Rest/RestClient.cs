@@ -151,6 +151,44 @@ namespace HotDocs.Sdk.Cloud
 			}
 		}
 
+		public IEnumerable<string> GetThemeList(string billingRef)
+		{
+			var timestamp = DateTime.UtcNow;
+
+			string hmac = HMAC.CalculateHMAC(
+				SigningKey,
+				timestamp,
+				SubscriberId,
+				billingRef);
+
+			StringBuilder urlBuilder = new StringBuilder(string.Format(
+				"{0}/RestfulSvc.svc/theme/{1}", EndpointAddress, SubscriberId));
+
+			if (!string.IsNullOrEmpty(billingRef))
+			{
+				urlBuilder.AppendFormat("?billingref={0}", billingRef);
+			}
+
+			HttpWebRequest request = (HttpWebRequest)WebRequest.Create(urlBuilder.ToString());
+			request.Method = "GET";
+			request.Headers["x-hd-date"] = timestamp.ToString("r");
+			request.Headers[HttpRequestHeader.Authorization] = hmac;
+
+			if (!string.IsNullOrEmpty(ProxyServerAddress))
+			{
+				request.Proxy = new WebProxy(ProxyServerAddress);
+			}
+
+			HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+			using (StreamReader reader = new StreamReader(response.GetResponseStream()))
+			{
+				while (!reader.EndOfStream)
+				{
+					yield return reader.ReadLine();
+				}
+			}
+		}
+
 		public Stream GetThemeFile(string fileName, string billingRef)
 		{
 			var timestamp = DateTime.UtcNow;
