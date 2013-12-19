@@ -8,7 +8,6 @@ using System.IO;
 using System.IO.Packaging; // Needs reference to WindowsBase
 using System.Security.Cryptography;
 using System.Xml;
-using System.Xml.XPath;
 
 /*
 A simple class to zip and extract files using the System.IO.Packaging.Package class.
