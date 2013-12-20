@@ -233,7 +233,7 @@ namespace HotDocs.Sdk.Cloud
 			return response.GetResponseStream();
 		}
 
-		public void GetThemeFile(string localFilePath, string themeFileName, string billingRef)
+		public void GetThemeFile(string themeFileName, string localFilePath, string billingRef)
 		{
 			using (Stream stream = GetThemeFile(themeFileName, billingRef))
 			using (FileStream fileStream = File.OpenWrite(localFilePath))
@@ -242,7 +242,7 @@ namespace HotDocs.Sdk.Cloud
 			}
 		}
 
-		public void PutThemeFile(Stream stream, string fileName, string billingRef)
+		public void PutThemeFile(string fileName, Stream stream, string billingRef)
 		{
 			var timestamp = DateTime.UtcNow;
 
@@ -280,11 +280,11 @@ namespace HotDocs.Sdk.Cloud
 			}
 		}
 
-		public void PutThemeFile(string localFilePath, string themeFileName, string billingRef)
+		public void PutThemeFile(string themeFileName, string localFilePath, string billingRef)
 		{
 			using (FileStream stream = File.Open(localFilePath, FileMode.Open))
 			{
-				PutThemeFile(stream, themeFileName, billingRef);
+				PutThemeFile(themeFileName, stream, billingRef);
 			}
 		}
 
