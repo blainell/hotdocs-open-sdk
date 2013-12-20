@@ -200,7 +200,7 @@ namespace HotDocs.Sdk.Cloud
 			return GetThemeList(null, billingRef);
 		}
 
-		public Stream GetThemeFile(string fileName, string billingRef)
+		public Stream GetThemeFile(string themeFileName, string billingRef)
 		{
 			var timestamp = DateTime.UtcNow;
 
@@ -208,11 +208,11 @@ namespace HotDocs.Sdk.Cloud
 				SigningKey,
 				timestamp,
 				SubscriberId,
-				fileName,
+				themeFileName,
 				billingRef);
 
 			StringBuilder urlBuilder = new StringBuilder(string.Format(
-				"{0}/RestfulSvc.svc/themefile/{1}/{2}", EndpointAddress, SubscriberId, fileName));
+				"{0}/RestfulSvc.svc/themefile/{1}/{2}", EndpointAddress, SubscriberId, themeFileName));
 
 			if (!string.IsNullOrEmpty(billingRef))
 			{
@@ -268,6 +268,14 @@ namespace HotDocs.Sdk.Cloud
 			using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
 			{
 				// Throw away the response, which will be empty.
+			}
+		}
+
+		public void PutThemeFile(string localFilePath, string themeFileName, string billingRef)
+		{
+			using (FileStream stream = File.Open(localFilePath, FileMode.Open))
+			{
+				PutThemeFile(stream, themeFileName, billingRef);
 			}
 		}
 
