@@ -151,7 +151,7 @@ namespace HotDocs.Sdk.Cloud
 			}
 		}
 
-		public IEnumerable<string> GetThemeList(string billingRef)
+		public IEnumerable<string> GetThemeList(string prefix, string billingRef)
 		{
 			var timestamp = DateTime.UtcNow;
 
@@ -159,10 +159,16 @@ namespace HotDocs.Sdk.Cloud
 				SigningKey,
 				timestamp,
 				SubscriberId,
+				prefix,
 				billingRef);
 
 			StringBuilder urlBuilder = new StringBuilder(string.Format(
 				"{0}/RestfulSvc.svc/theme/{1}", EndpointAddress, SubscriberId));
+
+			if (!string.IsNullOrEmpty(prefix))
+			{
+				urlBuilder.AppendFormat("/" + prefix);
+			}
 
 			if (!string.IsNullOrEmpty(billingRef))
 			{
@@ -187,6 +193,11 @@ namespace HotDocs.Sdk.Cloud
 					yield return reader.ReadLine();
 				}
 			}
+		}
+
+		public IEnumerable<string> GetThemeList(string billingRef)
+		{
+			return GetThemeList(null, billingRef);
 		}
 
 		public Stream GetThemeFile(string fileName, string billingRef)
