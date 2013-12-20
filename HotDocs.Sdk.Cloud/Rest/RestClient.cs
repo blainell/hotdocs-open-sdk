@@ -242,7 +242,7 @@ namespace HotDocs.Sdk.Cloud
 			}
 		}
 
-		public void PutThemeFile(string fileName, Stream stream, string billingRef)
+		public void PutThemeFile(string themeFileName, Stream stream, string billingRef)
 		{
 			var timestamp = DateTime.UtcNow;
 
@@ -250,11 +250,11 @@ namespace HotDocs.Sdk.Cloud
 				SigningKey,
 				timestamp,
 				SubscriberId,
-				fileName,
+				themeFileName,
 				billingRef);
 
 			StringBuilder urlBuilder = new StringBuilder(string.Format(
-				"{0}/RestfulSvc.svc/themefile/{1}/{2}", EndpointAddress, SubscriberId, fileName));
+				"{0}/RestfulSvc.svc/themefile/{1}/{2}", EndpointAddress, SubscriberId, themeFileName));
 
 			if (!string.IsNullOrEmpty(billingRef))
 			{
