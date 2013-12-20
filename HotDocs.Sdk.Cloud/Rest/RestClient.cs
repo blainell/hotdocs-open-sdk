@@ -233,6 +233,15 @@ namespace HotDocs.Sdk.Cloud
 			return response.GetResponseStream();
 		}
 
+		public void GetThemeFile(string localFilePath, string themeFileName, string billingRef)
+		{
+			using (Stream stream = GetThemeFile(themeFileName, billingRef))
+			using (FileStream fileStream = File.OpenWrite(localFilePath))
+			{
+				stream.CopyTo(fileStream);
+			}
+		}
+
 		public void PutThemeFile(Stream stream, string fileName, string billingRef)
 		{
 			var timestamp = DateTime.UtcNow;
