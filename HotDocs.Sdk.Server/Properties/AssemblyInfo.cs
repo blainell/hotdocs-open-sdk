@@ -14,7 +14,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("HotDocs Limited")]
 [assembly: AssemblyProduct("HotDocs.Sdk.Server")]
-[assembly: AssemblyCopyright("Copyright © HotDocs Limited 2013")]
+[assembly: AssemblyCopyright("Copyright © HotDocs Limited 2013 - 2014")]
 [assembly: AssemblyTrademark("HotDocs® is a registered trademark of HotDocs Limited.")]
 [assembly: AssemblyCulture("")]
 
