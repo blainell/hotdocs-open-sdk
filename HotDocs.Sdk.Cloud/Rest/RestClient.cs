@@ -13,8 +13,17 @@ using System.Xml.Serialization;
 
 namespace HotDocs.Sdk.Cloud
 {
+	/// <summary>
+	/// Extension methods
+	/// </summary>
 	public static class Extensions
 	{
+		/// <summary>
+		/// Adds a key-value pair to a dictionary unless the value is null.
+		/// </summary>
+		/// <param name="dict"></param>
+		/// <param name="key"></param>
+		/// <param name="value"></param>
 		public static void AddIfNotNull(this Dictionary<string, string> dict, string key, object value)
 		{
 			if (value != null)
@@ -68,12 +77,19 @@ namespace HotDocs.Sdk.Cloud
 		#region Public methods
 
 		/// <summary>
-		/// Uploads a package to HotDocs Cloud Services. Since this method throws an exception if the package already exists in the
-		/// HotDocs Cloud Services cache, only call it when necessary.
+		/// Uploads a package to HotDocs Cloud Services from the specified file path.
 		/// </summary>
 		/// <include file="../../Shared/Help.xml" path="Help/string/param[@name='packageID']"/>
 		/// <include file="../../Shared/Help.xml" path="Help/string/param[@name='billingRef']"/>
-		/// <param name="packageFile">The file name and path of the package file to be uploaded.</param>
+		/// <param name="packageFile">The file path of the package to be uploaded.</param>
+		/// <remarks>
+		/// This call throws an exception if the package is already cached in Cloud Services.
+		/// The point of the exception is to discourage consumers from constantly re-uploading the
+		/// same package.  Consumers should upload a package only if:
+		/// 1) They have already attempted their request and received a "package not found" error.
+		/// or
+		/// 2) They happen to know that the package is not already cached, e.g. the package is new.
+		/// </remarks>
 		public void UploadPackage(
 			string packageID,
 			string billingRef,
@@ -89,12 +105,19 @@ namespace HotDocs.Sdk.Cloud
 		}
 
 		/// <summary>
-		/// Uploads a package to HotDocs Cloud Services. Since this method throws an exception if the package already exists in the
-		/// HotDocs Cloud Services cache, only call it when necessary.
+		/// Uploads a package to HotDocs Cloud Services from a stream.
 		/// </summary>
 		/// <include file="../../Shared/Help.xml" path="Help/string/param[@name='packageID']"/>
 		/// <include file="../../Shared/Help.xml" path="Help/string/param[@name='billingRef']"/>
-		/// <param name="packageStream">A stream containing the package to upload.</param>
+		/// <param name="packageStream">A stream containing the package to be uploaded.</param>
+		/// <remarks>
+		/// This call throws an exception if the package is already cached in Cloud Services.
+		/// The point of the exception is to discourage consumers from constantly re-uploading the
+		/// same package.  Consumers should upload a package only if:
+		/// 1) They have already attempted their request and received a "package not found" error.
+		/// or
+		/// 2) They happen to know that the package is not already cached, e.g. the package is new.
+		/// </remarks>
 		public void UploadPackage(
 			string packageID,
 			string billingRef,
@@ -151,6 +174,13 @@ namespace HotDocs.Sdk.Cloud
 			}
 		}
 
+		/// <summary>
+		/// Returns a list of themes that belong to the current subscriber
+		/// and have the specified prefix.
+		/// </summary>
+		/// <param name="prefix"></param>
+		/// <param name="billingRef"></param>
+		/// <returns></returns>
 		public IEnumerable<string> GetThemeList(string prefix, string billingRef)
 		{
 			var timestamp = DateTime.UtcNow;
@@ -195,11 +225,22 @@ namespace HotDocs.Sdk.Cloud
 			}
 		}
 
+		/// <summary>
+		/// Returns a list of all themes that belong to the current subscriber.
+		/// </summary>
+		/// <param name="billingRef"></param>
+		/// <returns></returns>
 		public IEnumerable<string> GetThemeList(string billingRef)
 		{
 			return GetThemeList(null, billingRef);
 		}
 
+		/// <summary>
+		/// Returns the specified theme file as a stream.
+		/// </summary>
+		/// <param name="themeFileName"></param>
+		/// <param name="billingRef"></param>
+		/// <returns></returns>
 		public Stream GetThemeFile(string themeFileName, string billingRef)
 		{
 			var timestamp = DateTime.UtcNow;
@@ -233,6 +274,12 @@ namespace HotDocs.Sdk.Cloud
 			return response.GetResponseStream();
 		}
 
+		/// <summary>
+		/// Stores the specified theme file in the indicated file path.
+		/// </summary>
+		/// <param name="themeFileName"></param>
+		/// <param name="localFilePath"></param>
+		/// <param name="billingRef"></param>
 		public void GetThemeFile(string themeFileName, string localFilePath, string billingRef)
 		{
 			using (Stream stream = GetThemeFile(themeFileName, billingRef))
@@ -242,6 +289,12 @@ namespace HotDocs.Sdk.Cloud
 			}
 		}
 
+		/// <summary>
+		/// Uploads a theme file from a stream.
+		/// </summary>
+		/// <param name="themeFileName"></param>
+		/// <param name="stream"></param>
+		/// <param name="billingRef"></param>
 		public void PutThemeFile(string themeFileName, Stream stream, string billingRef)
 		{
 			var timestamp = DateTime.UtcNow;
@@ -280,6 +333,12 @@ namespace HotDocs.Sdk.Cloud
 			}
 		}
 
+		/// <summary>
+		/// Uploads a theme from from the specified file path.
+		/// </summary>
+		/// <param name="themeFileName"></param>
+		/// <param name="localFilePath"></param>
+		/// <param name="billingRef"></param>
 		public void PutThemeFile(string themeFileName, string localFilePath, string billingRef)
 		{
 			using (FileStream stream = File.Open(localFilePath, FileMode.Open))
@@ -288,6 +347,11 @@ namespace HotDocs.Sdk.Cloud
 			}
 		}
 
+		/// <summary>
+		/// Deletes a theme file.
+		/// </summary>
+		/// <param name="themeName"></param>
+		/// <param name="billingRef"></param>
 		public void DeleteTheme(string themeName, string billingRef)
 		{
 			var timestamp = DateTime.UtcNow;
@@ -323,6 +387,12 @@ namespace HotDocs.Sdk.Cloud
 			}
 		}
 
+		/// <summary>
+		/// Renames a theme file.
+		/// </summary>
+		/// <param name="themeName"></param>
+		/// <param name="newThemeName"></param>
+		/// <param name="billingRef"></param>
 		public void RenameTheme(string themeName, string newThemeName, string billingRef)
 		{
 			var timestamp = DateTime.UtcNow;
@@ -362,8 +432,8 @@ namespace HotDocs.Sdk.Cloud
 
 		#endregion
 
-		#region Public static methods
-		public static Dictionary<string, string> GetOutputOptionsPairs(OutputOptions outputOptions)
+		#region Private static methods
+		private static Dictionary<string, string> GetOutputOptionsPairs(OutputOptions outputOptions)
 		{
 			var pairs = new Dictionary<string, string>();
 
@@ -477,6 +547,10 @@ namespace HotDocs.Sdk.Cloud
 				}
 			}
 
+			// Note that the Comments and/or Keywords values, and therefore the resulting URL, could
+			// be extremely long.  Consumers should be aware that overly-long URLs could be rejected
+			// by Cloud Services.  If the Comments and/or Keywords values cannot be truncated, the
+			// consumer should use the SOAP version of the client.
 			var outputOptionsPairs = GetOutputOptionsPairs(settings.OutputOptions);
 			foreach (KeyValuePair<string, string> kv in outputOptionsPairs)
 			{
