@@ -639,7 +639,14 @@ namespace HotDocs.Sdk.Cloud
 			var timestamp = DateTime.UtcNow;
 
 			string interviewImageUrl = string.Empty;
-			settings.Settings.TryGetValue("TempInterviewUrl", out interviewImageUrl);
+			if (settings != null)
+			{
+				settings.Settings.TryGetValue("TempInterviewUrl", out interviewImageUrl);
+			}
+			else
+			{
+				settings = new InterviewSettings();
+			}
 
 			string hmac = HMAC.CalculateHMAC(
 				SigningKey,
