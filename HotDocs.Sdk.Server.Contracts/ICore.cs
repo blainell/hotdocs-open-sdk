@@ -25,12 +25,15 @@ namespace HotDocs.Sdk.Server.Contracts
 		/// <param name="templateName"></param>
 		/// <param name="answers"></param>
 		/// <param name="format"></param>
+		/// <param name="outputOptions"></param>
 		/// <param name="settings"></param>
 		/// <include file="../Shared/Help.xml" path="Help/string/param[@name='billingRef']"/>
 		/// <include file="../Shared/Help.xml" path="Help/DateTime/param[@name='timestamp']"/>
 		/// <param name="templatePackage"></param>
 		/// <include file="../Shared/Help.xml" path="Help/string/param[@name='hmac']"/>
 		/// <returns></returns>
+		[ServiceKnownType(typeof(BasicOutputOptions))]
+		[ServiceKnownType(typeof(PdfOutputOptions))]
 		[OperationContract]
 		AssemblyResult AssembleDocument(
 			string subscriberID,
@@ -38,6 +41,7 @@ namespace HotDocs.Sdk.Server.Contracts
 			string templateName,
 			BinaryObject[] answers,
 			OutputFormat format,
+			OutputOptions outputOptions,
 			Dictionary<string, string> settings,
 			string billingRef,
 			DateTime timestamp,

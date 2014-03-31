@@ -49,6 +49,7 @@
     <Compile Include="ICore.cs" />
     <Compile Include="IHDSvc.cs" />
     <Compile Include="NamespaceDoc.cs" />
+    <Compile Include="OutputOptions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

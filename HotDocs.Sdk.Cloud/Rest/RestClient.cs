@@ -14,6 +14,26 @@ using System.Xml.Serialization;
 namespace HotDocs.Sdk.Cloud
 {
 	/// <summary>
+	/// Extension methods
+	/// </summary>
+	public static class Extensions
+	{
+		/// <summary>
+		/// Adds a key-value pair to a dictionary unless the value is null.
+		/// </summary>
+		/// <param name="dict"></param>
+		/// <param name="key"></param>
+		/// <param name="value"></param>
+		public static void AddIfNotNull(this Dictionary<string, string> dict, string key, object value)
+		{
+			if (value != null)
+			{
+				dict.Add(key, value.ToString());
+			}
+		}
+	}
+
+	/// <summary>
 	/// The RESTful implementation of the Core Services client.
 	/// </summary>
 	public sealed partial class RestClient : ClientBase, IDisposable
@@ -57,12 +77,19 @@ namespace HotDocs.Sdk.Cloud
 		#region Public methods
 
 		/// <summary>
-		/// Uploads a package to HotDocs Cloud Services. Since this method throws an exception if the package already exists in the
-		/// HotDocs Cloud Services cache, only call it when necessary.
+		/// Uploads a package to HotDocs Cloud Services from the specified file path.
 		/// </summary>
 		/// <include file="../../Shared/Help.xml" path="Help/string/param[@name='packageID']"/>
 		/// <include file="../../Shared/Help.xml" path="Help/string/param[@name='billingRef']"/>
-		/// <param name="packageFile">The file name and path of the package file to be uploaded.</param>
+		/// <param name="packageFile">The file path of the package to be uploaded.</param>
+		/// <remarks>
+		/// This call throws an exception if the package is already cached in Cloud Services.
+		/// The point of the exception is to discourage consumers from constantly re-uploading the
+		/// same package.  Consumers should upload a package only if:
+		/// 1) They have already attempted their request and received a "package not found" error.
+		/// or
+		/// 2) They happen to know that the package is not already cached, e.g. the package is new.
+		/// </remarks>
 		public void UploadPackage(
 			string packageID,
 			string billingRef,
@@ -78,12 +105,19 @@ namespace HotDocs.Sdk.Cloud
 		}
 
 		/// <summary>
-		/// Uploads a package to HotDocs Cloud Services. Since this method throws an exception if the package already exists in the
-		/// HotDocs Cloud Services cache, only call it when necessary.
+		/// Uploads a package to HotDocs Cloud Services from a stream.
 		/// </summary>
 		/// <include file="../../Shared/Help.xml" path="Help/string/param[@name='packageID']"/>
 		/// <include file="../../Shared/Help.xml" path="Help/string/param[@name='billingRef']"/>
-		/// <param name="packageStream">A stream containing the package to upload.</param>
+		/// <param name="packageStream">A stream containing the package to be uploaded.</param>
+		/// <remarks>
+		/// This call throws an exception if the package is already cached in Cloud Services.
+		/// The point of the exception is to discourage consumers from constantly re-uploading the
+		/// same package.  Consumers should upload a package only if:
+		/// 1) They have already attempted their request and received a "package not found" error.
+		/// or
+		/// 2) They happen to know that the package is not already cached, e.g. the package is new.
+		/// </remarks>
 		public void UploadPackage(
 			string packageID,
 			string billingRef,
@@ -138,6 +172,301 @@ namespace HotDocs.Sdk.Cloud
 			{
 				packageStream.Close();
 			}
+		}
+
+		/// <summary>
+		/// Returns a list of themes that belong to the current subscriber
+		/// and have the specified prefix.
+		/// </summary>
+		/// <param name="prefix"></param>
+		/// <param name="billingRef"></param>
+		/// <returns></returns>
+		public IEnumerable<string> GetThemeList(string prefix, string billingRef)
+		{
+			var timestamp = DateTime.UtcNow;
+
+			string hmac = HMAC.CalculateHMAC(
+				SigningKey,
+				timestamp,
+				SubscriberId,
+				prefix,
+				billingRef);
+
+			StringBuilder urlBuilder = new StringBuilder(string.Format(
+				"{0}/RestfulSvc.svc/theme/{1}", EndpointAddress, SubscriberId));
+
+			if (!string.IsNullOrEmpty(prefix))
+			{
+				urlBuilder.AppendFormat("/" + prefix);
+			}
+
+			if (!string.IsNullOrEmpty(billingRef))
+			{
+				urlBuilder.AppendFormat("?billingref={0}", billingRef);
+			}
+
+			HttpWebRequest request = (HttpWebRequest)WebRequest.Create(urlBuilder.ToString());
+			request.Method = "GET";
+			request.Headers["x-hd-date"] = timestamp.ToString("r");
+			request.Headers[HttpRequestHeader.Authorization] = hmac;
+
+			if (!string.IsNullOrEmpty(ProxyServerAddress))
+			{
+				request.Proxy = new WebProxy(ProxyServerAddress);
+			}
+
+			HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+			using (StreamReader reader = new StreamReader(response.GetResponseStream()))
+			{
+				while (!reader.EndOfStream)
+				{
+					yield return reader.ReadLine();
+				}
+			}
+		}
+
+		/// <summary>
+		/// Returns a list of all themes that belong to the current subscriber.
+		/// </summary>
+		/// <param name="billingRef"></param>
+		/// <returns></returns>
+		public IEnumerable<string> GetThemeList(string billingRef)
+		{
+			return GetThemeList(null, billingRef);
+		}
+
+		/// <summary>
+		/// Returns the specified theme file as a stream.
+		/// </summary>
+		/// <param name="themeFileName"></param>
+		/// <param name="billingRef"></param>
+		/// <returns></returns>
+		public Stream GetThemeFile(string themeFileName, string billingRef)
+		{
+			var timestamp = DateTime.UtcNow;
+
+			string hmac = HMAC.CalculateHMAC(
+				SigningKey,
+				timestamp,
+				SubscriberId,
+				themeFileName,
+				billingRef);
+
+			StringBuilder urlBuilder = new StringBuilder(string.Format(
+				"{0}/RestfulSvc.svc/themefile/{1}/{2}", EndpointAddress, SubscriberId, themeFileName));
+
+			if (!string.IsNullOrEmpty(billingRef))
+			{
+				urlBuilder.AppendFormat("?billingref={0}", billingRef);
+			}
+
+			HttpWebRequest request = (HttpWebRequest)WebRequest.Create(urlBuilder.ToString());
+			request.Method = "GET";
+			request.Headers["x-hd-date"] = timestamp.ToString("r");
+			request.Headers[HttpRequestHeader.Authorization] = hmac;
+
+			if (!string.IsNullOrEmpty(ProxyServerAddress))
+			{
+				request.Proxy = new WebProxy(ProxyServerAddress);
+			}
+
+			HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+			return response.GetResponseStream();
+		}
+
+		/// <summary>
+		/// Stores the specified theme file in the indicated file path.
+		/// </summary>
+		/// <param name="themeFileName"></param>
+		/// <param name="localFilePath"></param>
+		/// <param name="billingRef"></param>
+		public void GetThemeFile(string themeFileName, string localFilePath, string billingRef)
+		{
+			using (Stream stream = GetThemeFile(themeFileName, billingRef))
+			using (FileStream fileStream = File.OpenWrite(localFilePath))
+			{
+				stream.CopyTo(fileStream);
+			}
+		}
+
+		/// <summary>
+		/// Uploads a theme file from a stream.
+		/// </summary>
+		/// <param name="themeFileName"></param>
+		/// <param name="stream"></param>
+		/// <param name="billingRef"></param>
+		public void PutThemeFile(string themeFileName, Stream stream, string billingRef)
+		{
+			var timestamp = DateTime.UtcNow;
+
+			string hmac = HMAC.CalculateHMAC(
+				SigningKey,
+				timestamp,
+				SubscriberId,
+				themeFileName,
+				billingRef);
+
+			StringBuilder urlBuilder = new StringBuilder(string.Format(
+				"{0}/RestfulSvc.svc/themefile/{1}/{2}", EndpointAddress, SubscriberId, themeFileName));
+
+			if (!string.IsNullOrEmpty(billingRef))
+			{
+				urlBuilder.AppendFormat("?billingref={0}", billingRef);
+			}
+
+			HttpWebRequest request = (HttpWebRequest)WebRequest.Create(urlBuilder.ToString());
+			request.Method = "PUT";
+			request.Headers["x-hd-date"] = timestamp.ToString("r");
+			request.Headers[HttpRequestHeader.Authorization] = hmac;
+			request.ContentLength = stream.Length; // Stream must support this.
+
+			if (!string.IsNullOrEmpty(ProxyServerAddress))
+			{
+				request.Proxy = new WebProxy(ProxyServerAddress);
+			}
+
+			stream.CopyTo(request.GetRequestStream());
+
+			using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+			{
+				// Throw away the response, which will be empty.
+			}
+		}
+
+		/// <summary>
+		/// Uploads a theme from from the specified file path.
+		/// </summary>
+		/// <param name="themeFileName"></param>
+		/// <param name="localFilePath"></param>
+		/// <param name="billingRef"></param>
+		public void PutThemeFile(string themeFileName, string localFilePath, string billingRef)
+		{
+			using (FileStream stream = File.Open(localFilePath, FileMode.Open))
+			{
+				PutThemeFile(themeFileName, stream, billingRef);
+			}
+		}
+
+		/// <summary>
+		/// Deletes a theme file.
+		/// </summary>
+		/// <param name="themeName"></param>
+		/// <param name="billingRef"></param>
+		public void DeleteTheme(string themeName, string billingRef)
+		{
+			var timestamp = DateTime.UtcNow;
+
+			string hmac = HMAC.CalculateHMAC(
+				SigningKey,
+				timestamp,
+				SubscriberId,
+				themeName,
+				billingRef);
+
+			StringBuilder urlBuilder = new StringBuilder(string.Format(
+				"{0}/RestfulSvc.svc/theme/{1}/{2}", EndpointAddress, SubscriberId, themeName));
+
+			if (!string.IsNullOrEmpty(billingRef))
+			{
+				urlBuilder.AppendFormat("?billingref={0}", billingRef);
+			}
+
+			HttpWebRequest request = (HttpWebRequest)WebRequest.Create(urlBuilder.ToString());
+			request.Method = "DELETE";
+			request.Headers["x-hd-date"] = timestamp.ToString("r");
+			request.Headers[HttpRequestHeader.Authorization] = hmac;
+
+			if (!string.IsNullOrEmpty(ProxyServerAddress))
+			{
+				request.Proxy = new WebProxy(ProxyServerAddress);
+			}
+
+			using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+			{
+				// Throw away the response, which will be empty.
+			}
+		}
+
+		/// <summary>
+		/// Renames a theme file.
+		/// </summary>
+		/// <param name="themeName"></param>
+		/// <param name="newThemeName"></param>
+		/// <param name="billingRef"></param>
+		public void RenameTheme(string themeName, string newThemeName, string billingRef)
+		{
+			var timestamp = DateTime.UtcNow;
+
+			string hmac = HMAC.CalculateHMAC(
+				SigningKey,
+				timestamp,
+				SubscriberId,
+				themeName,
+				newThemeName,
+				billingRef);
+
+			StringBuilder urlBuilder = new StringBuilder(string.Format(
+				"{0}/RestfulSvc.svc/theme/{1}/{2}?rename={3}", EndpointAddress, SubscriberId, themeName, newThemeName));
+
+			if (!string.IsNullOrEmpty(billingRef))
+			{
+				urlBuilder.AppendFormat("&billingref={0}", billingRef);
+			}
+
+			HttpWebRequest request = (HttpWebRequest)WebRequest.Create(urlBuilder.ToString());
+			request.Method = "POST";
+			request.Headers["x-hd-date"] = timestamp.ToString("r");
+			request.Headers[HttpRequestHeader.Authorization] = hmac;
+			request.ContentLength = 0;
+
+			if (!string.IsNullOrEmpty(ProxyServerAddress))
+			{
+				request.Proxy = new WebProxy(ProxyServerAddress);
+			}
+
+			using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+			{
+				// Throw away the response, which will be empty.
+			}
+		}
+
+		#endregion
+
+		#region Private static methods
+		private static Dictionary<string, string> GetOutputOptionsPairs(OutputOptions outputOptions)
+		{
+			var pairs = new Dictionary<string, string>();
+
+			var basic = (BasicOutputOptions)outputOptions;
+			pairs.AddIfNotNull("Author", basic.Author);
+			pairs.AddIfNotNull("Comments", basic.Comments);
+			pairs.AddIfNotNull("Company", basic.Company);
+			pairs.AddIfNotNull("Keywords", basic.Keywords);
+			pairs.AddIfNotNull("Subject", basic.Subject);
+			pairs.AddIfNotNull("Title", basic.Title);
+
+			if (outputOptions is PdfOutputOptions)
+			{
+				var pdf = (PdfOutputOptions)outputOptions;
+				pairs.AddIfNotNull("EmbedFonts", pdf.EmbedFonts);
+				pairs.AddIfNotNull("PdfA", pdf.PdfA);
+				pairs.AddIfNotNull("TaggedPdf", pdf.TaggedPdf);
+				pairs.AddIfNotNull("KeepFillablePdf", pdf.KeepFillablePdf);
+				pairs.AddIfNotNull("TruncateFields", pdf.TruncateFields);
+				pairs.AddIfNotNull("Permissions", pdf.Permissions);
+				pairs.AddIfNotNull("OwnerPassword", pdf.OwnerPassword);
+				pairs.AddIfNotNull("UserPassword", pdf.UserPassword);
+			}
+			else if (outputOptions is HtmlOutputOptions)
+			{
+				pairs.AddIfNotNull("Encoding", ((HtmlOutputOptions)outputOptions).Encoding);
+			}
+			else if (outputOptions is TextOutputOptions)
+			{
+				pairs.AddIfNotNull("Encoding", ((TextOutputOptions)outputOptions).Encoding);
+			}
+
+			return pairs;
 		}
 		#endregion
 
@@ -216,6 +545,16 @@ namespace HotDocs.Sdk.Cloud
 				{
 					urlBuilder.AppendFormat("&{0}={1}", kv.Key, kv.Value ?? "");
 				}
+			}
+
+			// Note that the Comments and/or Keywords values, and therefore the resulting URL, could
+			// be extremely long.  Consumers should be aware that overly-long URLs could be rejected
+			// by Cloud Services.  If the Comments and/or Keywords values cannot be truncated, the
+			// consumer should use the SOAP version of the client.
+			var outputOptionsPairs = GetOutputOptionsPairs(settings.OutputOptions);
+			foreach (KeyValuePair<string, string> kv in outputOptionsPairs)
+			{
+				urlBuilder.AppendFormat("&{0}={1}", kv.Key, kv.Value ?? "");
 			}
 
 			HttpWebRequest request = (HttpWebRequest)WebRequest.Create(urlBuilder.ToString());
@@ -300,7 +639,14 @@ namespace HotDocs.Sdk.Cloud
 			var timestamp = DateTime.UtcNow;
 
 			string interviewImageUrl = string.Empty;
-			settings.Settings.TryGetValue("TempInterviewUrl", out interviewImageUrl);
+			if (settings != null)
+			{
+				settings.Settings.TryGetValue("TempInterviewUrl", out interviewImageUrl);
+			}
+			else
+			{
+				settings = new InterviewSettings();
+			}
 
 			string hmac = HMAC.CalculateHMAC(
 				SigningKey,

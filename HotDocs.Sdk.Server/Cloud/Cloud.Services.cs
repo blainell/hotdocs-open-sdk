@@ -47,6 +47,18 @@ namespace HotDocs.Sdk.Server.Cloud
 
 		#endregion
 
+		#region Public Properties
+		/// <summary>
+		/// Specifies the Cloud Services host address.  Leave as null for the default address.
+		/// </summary>
+		public string HostAddress { get; set; } // null by default
+
+		/// <summary>
+		/// Specifies the proxy address.  Leave as null for no proxy.
+		/// </summary>
+		public string ProxyAddress { get; set; } // null by default
+		#endregion
+
 		#region Public IServices Members
 
 		/// <summary>
@@ -80,7 +92,7 @@ namespace HotDocs.Sdk.Server.Cloud
 			// Get the interview.
 			InterviewResult result = new InterviewResult();
 			BinaryObject[] interviewFiles = null;
-			using (var client = new SoapClient(_subscriberID, _signingKey))
+			using (var client = new SoapClient(_subscriberID, _signingKey, HostAddress, ProxyAddress))
 			{
 				interviewFiles = client.GetInterview(
 					template,
@@ -128,7 +140,7 @@ namespace HotDocs.Sdk.Server.Cloud
 			AssembleDocumentResult result = null;
 			AssemblyResult asmResult = null;
 
-			using (var client = new SoapClient(_subscriberID, _signingKey))
+			using (var client = new SoapClient(_subscriberID, _signingKey, HostAddress, ProxyAddress))
 			{
 				asmResult = client.AssembleDocument(
 					template,
@@ -162,7 +174,7 @@ namespace HotDocs.Sdk.Server.Cloud
 				throw new ArgumentNullException("template", @"Cloud.Services.GetComponentInfo: The ""template"" parameter must not be null, logRef: " + logStr);
 
 			ComponentInfo result;
-			using (var client = new SoapClient(_subscriberID, _signingKey))
+			using (var client = new SoapClient(_subscriberID, _signingKey, HostAddress, ProxyAddress))
 			{
 				result = client.GetComponentInfo(template, includeDialogs, logRef);
 			}
@@ -183,7 +195,7 @@ namespace HotDocs.Sdk.Server.Cloud
 				throw new ArgumentNullException("answers", "The answers collection must not be null, logRef: " + logStr);
 
 			BinaryObject combinedAnswers;
-			using (SoapClient client = new SoapClient(_subscriberID, _signingKey))
+			using (SoapClient client = new SoapClient(_subscriberID, _signingKey, HostAddress, ProxyAddress))
 			{
 				var answerObjects = (from answer in answers select Util.GetBinaryObjectFromTextReader(answer)).ToArray();
 				combinedAnswers = client.GetAnswers(answerObjects, logRef);

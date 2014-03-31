@@ -56,7 +56,6 @@
     <Compile Include="Dependency.cs" />
     <Compile Include="InterviewSettings.cs" />
     <Compile Include="NamespaceDoc.cs" />
-    <Compile Include="OutputOptions.cs" />
     <Compile Include="PackagePathTemplateLocation.cs" />
     <Compile Include="PackageTemplateLocation.cs" />
     <Compile Include="PathTemplateLocation.cs" />

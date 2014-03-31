@@ -4,6 +4,7 @@
 
 using System.Collections.Generic;
 using System.Configuration;
+using HotDocs.Sdk.Server.Contracts;
 
 namespace HotDocs.Sdk
 {
@@ -120,7 +121,7 @@ namespace HotDocs.Sdk
 			OutputOptions = null;
 
 			RetainTransientAnswers = Util.ReadConfigurationBoolean("RetainTransientAnswers", false);
-			UseMarkupSyntax = Util.ReadConfigurationTristate("UseMarkupSyntax", Tristate.Default);
+			UseMarkupSyntax = Util.ReadConfigurationBoolean("UseMarkupSyntax", false);
 
 			// "shared" or "common" properties (these are also InterviewSettings)
 			DefaultUnansweredFormat = Util.ReadConfigurationEnum<UnansweredFormat>("DefaultUnansweredFormat", UnansweredFormat.Default);
@@ -183,25 +184,11 @@ namespace HotDocs.Sdk
 		public bool RetainTransientAnswers { get; set; }
 		/// <summary>
 		/// Dictates whether this document will be assembled traditionally ("false") or using markup view ("true").
-		/// Traditional assembly treats unanswered variables according to the default unanswered format specified
-		/// in these settings or component file prefereneces;  Markup view creates model-style markup from all
-		/// unanswered variables or unresolved fields.  By default this property respects the default behavior
-		/// as configured on the server.
 		/// </summary>
 		/// <remarks>This property corresponds to the "Assemble marked-up documents" setting in the HotDocs
 		/// Server management console, the AssembleMarkupDocument property in the HotDocs Server .NET API,
 		/// and the AssembleMarkedDocuments setting in Cloud Services.</remarks>
-		public Tristate UseMarkupSyntax
-		{
-			get
-			{
-				return GetSettingTristate("AssembleMarkedDocuments");
-			}
-			set
-			{
-				SetSettingString("AssembleMarkedDocuments", TristateToString(value));
-			}
-		}
+		public bool UseMarkupSyntax { get; set; }
 		/// <summary>
 		/// Dictates what to merge (by default) when a value for which no answer is available is merged into document text.
 		/// By default this property respects the behavior configured on the server.  Also note that this property

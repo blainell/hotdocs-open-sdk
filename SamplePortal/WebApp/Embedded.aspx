@@ -7,6 +7,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
 	<title><%= Header1.SiteName %></title>
+	<meta name="viewport" content="initial-scale=1.0" />
 	<link href="css/SamplePortal.css" type="text/css" rel="stylesheet" />
 	<script type="text/javascript" src="http://files.hotdocs.ws/download/easyXDM.min.js"></script>
 	<script type="text/javascript" src="http://files.hotdocs.ws/download/hotdocs.js"></script>

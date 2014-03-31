@@ -275,11 +275,15 @@ namespace HotDocs.Sdk.ServerTest
 			result = svc.AssembleDocument(tmp, answers, settings, logRef);
 			Assert.AreEqual(1, result.Document.SupportingFiles.Count<NamedStream>()); // The HTML contains one external image file.
 
+			//Assemble a document with an answer file containing a transient answer.
+			string transAnsPath = Path.Combine(Util.GetTestAnswersDir(), "TransAns.anx");
+			TextReader transAns = new StreamReader(new FileStream(transAnsPath, FileMode.Open));
+			result = svc.AssembleDocument(tmp, transAns, null, logRef);
+
 			// Now try with another template, which contains an ASSEMBLE instruction.
 			tmp = Util.OpenTemplate("TemplateWithAssemble");
 			result = svc.AssembleDocument(tmp, null, null, logRef);
 			Assert.AreEqual(1, result.PendingAssembliesCount);
-
 		}
 
 		#endregion

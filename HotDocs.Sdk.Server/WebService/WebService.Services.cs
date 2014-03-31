@@ -392,7 +392,7 @@ namespace HotDocs.Sdk.Server.WebService
 		{
 			AssemblyOptions assemblyOptions = new AssemblyOptions();
 			assemblyOptions = AssemblyOptions.None;
-			if (settings.UseMarkupSyntax == Tristate.True)
+			if (settings.UseMarkupSyntax)
 				assemblyOptions |= AssemblyOptions.MarkupView;
 			return assemblyOptions;
 		}

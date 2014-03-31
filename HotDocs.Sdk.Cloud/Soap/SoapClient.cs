@@ -167,6 +167,7 @@ namespace HotDocs.Sdk.Cloud
 				template.FileName,
 				GetBinaryObjectArrayFromString(answers),
 				outputFormat,
+				settings.OutputOptions,
 				settings.Settings,
 				billingRef,
 				timestamp,
@@ -195,6 +196,16 @@ namespace HotDocs.Sdk.Cloud
 				throw new Exception("HotDocs Cloud Services requires the use of template packages. Please use a PackageTemplateLocation derivative.");
 			PackageTemplateLocation packageTemplateLocation = (PackageTemplateLocation)template.Location;
 
+			string interviewImageUrl = string.Empty;
+			if (settings != null)
+			{
+				settings.Settings.TryGetValue("TempInterviewUrl", out interviewImageUrl);
+			}
+			else
+			{
+				settings = new InterviewSettings();
+			}
+
 			Dictionary<string, string> settingsDict = new Dictionary<string, string>(settings.Settings);
 
 			// Workaround for bug in server that does not honor the Disable settings, so we have to just clear the url instead.
@@ -208,9 +219,6 @@ namespace HotDocs.Sdk.Cloud
 				settingsDict.Remove("DocPreviewUrl");
 			if (settings.DisableSaveAnswers)
 				settingsDict.Remove("SaveAnswersPageUrl");
-
-			string interviewImageUrl = string.Empty;
-			settings.Settings.TryGetValue("TempInterviewUrl", out interviewImageUrl);
 
 			string hmac = HMAC.CalculateHMAC(
 				SigningKey,

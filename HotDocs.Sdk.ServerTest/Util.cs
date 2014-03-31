@@ -107,6 +107,18 @@ namespace HotDocs.Sdk.ServerTest
 			return testProjectPath;
 		}
 
+		public static string GetSamplePortalAnswersDir()
+		{
+			string samplePortalRoot = GetSamplePortalRootedPath();
+			string filesDir = Path.Combine(samplePortalRoot, "Files");
+			return Path.Combine(filesDir, "Answers");
+		}
+
+		public static string GetTestAnswersDir()
+		{
+			return Path.Combine(GetSamplePortalAnswersDir(), "TestAnswers");
+		}
+
 		public static string GetSamplePortalTemplateDir()
 		{
 			string samplePortalRoot = GetSamplePortalRootedPath();

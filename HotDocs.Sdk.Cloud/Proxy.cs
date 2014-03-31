@@ -38,9 +38,9 @@ namespace HotDocs.Sdk.Cloud
 		{
 		}
 
-		public AssemblyResult AssembleDocument(string subscriberID, string packageID, string templateName, BinaryObject[] answers, OutputFormat format, System.Collections.Generic.Dictionary<string, string> settings, string billingRef, System.DateTime timestamp, BinaryObject templatePackage, string hmac)
+		public AssemblyResult AssembleDocument(string subscriberID, string packageID, string templateName, BinaryObject[] answers, OutputFormat format, OutputOptions outputOptions, System.Collections.Generic.Dictionary<string, string> settings, string billingRef, System.DateTime timestamp, BinaryObject templatePackage, string hmac)
 		{
-			return base.Channel.AssembleDocument(subscriberID, packageID, templateName, answers, format, settings, billingRef, timestamp, templatePackage, hmac);
+			return base.Channel.AssembleDocument(subscriberID, packageID, templateName, answers, format, outputOptions, settings, billingRef, timestamp, templatePackage, hmac);
 		}
 
 		public BinaryObject[] GetInterview(string subscriberID, string packageID, string templateName, BinaryObject[] answers, InterviewFormat format, string[] markedVariables, string tempImageUrl, System.Collections.Generic.Dictionary<string, string> settings, string billingRef, System.DateTime timestamp, BinaryObject templatePackage, string hmac)
