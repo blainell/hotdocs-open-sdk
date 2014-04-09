@@ -1,0 +1,15 @@
+﻿# HTML Cleanup Rules.txt
+#
+# syntax:  Every non-empty line of this file that does not begin with a hash symbol (#)
+# will be interpreted as a rule.  Each rule must conform to the following syntax:
+#     find_regex~~replace_string[~~options]
+# find_regex is a regular expression (potentially including groups) in .NET syntax.
+#     The Regex cannot include two sequential tildes (~~). Hope that's not too
+#     inconvenient.
+# replace_string is a replacement string, including group placeholders. Again no
+#     double-tildes allowed.
+# options (optional) is one or more regular expression options.  Currently the only
+#     supported options is "i", which means case-insensitive.
+
+# remove unwanted title on right-hand side of every page
+(<td\s+class="OH_tdRunningTitleColumn">).+?(</td>)~~$1$2

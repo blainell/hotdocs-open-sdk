@@ -17,7 +17,7 @@
     <!-- SHFB properties -->
     <FrameworkVersion>.NET Framework 4.0</FrameworkVersion>
     <OutputPath>.\Help\</OutputPath>
-    <HtmlHelpName>Help</HtmlHelpName>
+    <HtmlHelpName>api</HtmlHelpName>
     <Language>en-US</Language>
     <SccProjectName>SAK</SccProjectName>
     <SccProvider>SAK</SccProvider>
@@ -35,17 +35,21 @@
     <RootNamespaceContainer>False</RootNamespaceContainer>
     <PresentationStyle>VS2010</PresentationStyle>
     <Preliminary>False</Preliminary>
-    <NamingMethod>Guid</NamingMethod>
+    <NamingMethod>MemberName</NamingMethod>
     <HelpTitle>HotDocs Open SDK</HelpTitle>
     <ContentPlacement>AboveNamespaces</ContentPlacement>
     <VisibleItems>InheritedMembers, InheritedFrameworkMembers</VisibleItems>
     <BuildAssemblerVerbosity>OnlyWarningsAndErrors</BuildAssemblerVerbosity>
-    <HelpFileFormat>Website</HelpFileFormat>
+    <HelpFileFormat>HtmlHelp1</HelpFileFormat>
     <IndentHtml>True</IndentHtml>
-    <KeepLogFile>True</KeepLogFile>
+    <KeepLogFile>False</KeepLogFile>
     <DisableCodeBlockComponent>False</DisableCodeBlockComponent>
     <CppCommentsFixup>False</CppCommentsFixup>
-    <CleanIntermediates>True</CleanIntermediates>
+    <CleanIntermediates>False</CleanIntermediates>
+    <WebsiteSdkLinkType>Msdn</WebsiteSdkLinkType>
+    <HtmlSdkLinkType>Msdn</HtmlSdkLinkType>
+    <IncludeFavorites>False</IncludeFavorites>
+    <BinaryTOC>False</BinaryTOC>
   </PropertyGroup>
   <!-- There are no properties for these groups.  AnyCPU needs to appear in
        order for Visual Studio to perform the build.  The others are optional
