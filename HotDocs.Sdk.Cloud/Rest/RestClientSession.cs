@@ -74,7 +74,7 @@ namespace HotDocs.Sdk.Cloud
 		}
 
 		/// <summary>
-		/// Saves the specified session file to a locaiton on the local disk.
+		/// Saves the specified session file to a location on the local disk.
 		/// </summary>
 		/// <param name="sessionId">The session ID.</param>
 		/// <param name="fileName">The name of the session document to return.</param>
@@ -188,7 +188,7 @@ namespace HotDocs.Sdk.Cloud
 
 			HttpWebRequest request = (HttpWebRequest)WebRequest.Create(urlBuilder.ToString());
 			request.Method = "POST";
-			request.ContentType = "text/xml";
+			request.ContentType = "text/xml; charset=utf-8";
 			request.Headers["x-hd-date"] = timestamp.ToString("r");
 			request.Headers[HttpRequestHeader.Authorization] = hmac;
 			byte[] data = null;
@@ -219,6 +219,11 @@ namespace HotDocs.Sdk.Cloud
 
 		private string ResumeSessionImpl(string state, Func<string, PackageTemplateLocation> locationGetter, bool uploadPackage)
 		{
+			if (string.IsNullOrEmpty(state))
+			{
+				throw new Exception("A session state string must be provided in order to resume a session.");
+			}
+
 			if (uploadPackage)
 			{
 				string base64 = state.Split('#')[0];
@@ -243,10 +248,12 @@ namespace HotDocs.Sdk.Cloud
 
 			HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
 			request.Method = "POST";
-			request.ContentType = "text/xml";
+			request.ContentType = "text/xml; charset=utf-8";
 			request.Headers["x-hd-date"] = timestamp.ToString("r");
 			request.Headers[HttpRequestHeader.Authorization] = hmac;
-			request.ContentLength = state.Length;
+
+			byte[] data = Encoding.UTF8.GetBytes(state);
+			request.ContentLength = data.Length;
 
 			if (!string.IsNullOrEmpty(ProxyServerAddress))
 			{
@@ -258,7 +265,6 @@ namespace HotDocs.Sdk.Cloud
 			}
 
 			Stream stream = request.GetRequestStream();
-			byte[] data = Encoding.UTF8.GetBytes(state);
 			stream.Write(data, 0, data.Length);
 
 			HttpWebResponse response = (HttpWebResponse)request.GetResponse();
