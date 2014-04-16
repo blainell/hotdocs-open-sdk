@@ -191,7 +191,12 @@ namespace HotDocs.Sdk.Cloud
 			request.ContentType = "text/xml";
 			request.Headers["x-hd-date"] = timestamp.ToString("r");
 			request.Headers[HttpRequestHeader.Authorization] = hmac;
-			request.ContentLength = answers != null ? answers.Length : 0;
+			byte[] data = null;
+			if (answers != null)
+			{
+				data = Encoding.UTF8.GetBytes(answers);
+			}
+			request.ContentLength = data != null ? data.Length : 0;
 
 			if (!string.IsNullOrEmpty(ProxyServerAddress))
 			{
@@ -203,9 +208,8 @@ namespace HotDocs.Sdk.Cloud
 			}
 
 			Stream stream = request.GetRequestStream();
-			if (answers != null)
+			if (data != null)
 			{
-				byte[] data = Encoding.UTF8.GetBytes(answers);
 				stream.Write(data, 0, data.Length);
 			}
 			HttpWebResponse response = (HttpWebResponse)request.GetResponse();
