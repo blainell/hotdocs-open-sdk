@@ -53,7 +53,7 @@ namespace HotDocs.Sdk.Cloud
 			string outputDir = null,
 			string hostAddress = null,
 			string proxyServerAddress = null)
-			: base(subscriberId, signingKey, hostAddress, "", proxyServerAddress)
+			: base(subscriberId, signingKey, hostAddress, "RestfulSvc.svc", proxyServerAddress)
 		{
 			OutputDir = outputDir ?? _defaultOutputDir;
 			SetTcpKeepAlive();
@@ -137,7 +137,7 @@ namespace HotDocs.Sdk.Cloud
 					billingRef);
 
 				StringBuilder urlBuilder = new StringBuilder(string.Format(
-					"{0}/RestfulSvc.svc/{1}/{2}", EndpointAddress, SubscriberId, packageID));
+					"{0}/{1}/{2}", EndpointAddress, SubscriberId, packageID));
 
 				if (!string.IsNullOrEmpty(billingRef))
 				{
@@ -193,7 +193,7 @@ namespace HotDocs.Sdk.Cloud
 				billingRef);
 
 			StringBuilder urlBuilder = new StringBuilder(string.Format(
-				"{0}/RestfulSvc.svc/theme/{1}", EndpointAddress, SubscriberId));
+				"{0}/theme/{1}", EndpointAddress, SubscriberId));
 
 			if (!string.IsNullOrEmpty(prefix))
 			{
@@ -253,7 +253,7 @@ namespace HotDocs.Sdk.Cloud
 				billingRef);
 
 			StringBuilder urlBuilder = new StringBuilder(string.Format(
-				"{0}/RestfulSvc.svc/themefile/{1}/{2}", EndpointAddress, SubscriberId, themeFileName));
+				"{0}/themefile/{1}/{2}", EndpointAddress, SubscriberId, themeFileName));
 
 			if (!string.IsNullOrEmpty(billingRef))
 			{
@@ -307,7 +307,7 @@ namespace HotDocs.Sdk.Cloud
 				billingRef);
 
 			StringBuilder urlBuilder = new StringBuilder(string.Format(
-				"{0}/RestfulSvc.svc/themefile/{1}/{2}", EndpointAddress, SubscriberId, themeFileName));
+				"{0}/themefile/{1}/{2}", EndpointAddress, SubscriberId, themeFileName));
 
 			if (!string.IsNullOrEmpty(billingRef))
 			{
@@ -364,7 +364,7 @@ namespace HotDocs.Sdk.Cloud
 				billingRef);
 
 			StringBuilder urlBuilder = new StringBuilder(string.Format(
-				"{0}/RestfulSvc.svc/theme/{1}/{2}", EndpointAddress, SubscriberId, themeName));
+				"{0}/theme/{1}/{2}", EndpointAddress, SubscriberId, themeName));
 
 			if (!string.IsNullOrEmpty(billingRef))
 			{
@@ -406,7 +406,7 @@ namespace HotDocs.Sdk.Cloud
 				billingRef);
 
 			StringBuilder urlBuilder = new StringBuilder(string.Format(
-				"{0}/RestfulSvc.svc/theme/{1}/{2}?rename={3}", EndpointAddress, SubscriberId, themeName, newThemeName));
+				"{0}/theme/{1}/{2}?rename={3}", EndpointAddress, SubscriberId, themeName, newThemeName));
 
 			if (!string.IsNullOrEmpty(billingRef))
 			{
@@ -535,7 +535,7 @@ namespace HotDocs.Sdk.Cloud
 				settings.Settings);
 
 			StringBuilder urlBuilder = new StringBuilder(string.Format(
-				"{0}/RestfulSvc.svc/assemble/{1}/{2}/{3}?format={4}&billingref={5}",
+				"{0}/assemble/{1}/{2}/{3}?format={4}&billingref={5}",
 				EndpointAddress, SubscriberId, packageTemplateLocation.PackageID, template.FileName ?? "",
 				settings.Format.ToString(), billingRef));
 
@@ -661,7 +661,7 @@ namespace HotDocs.Sdk.Cloud
 				settings.Settings);
 
 			StringBuilder urlBuilder = new StringBuilder(string.Format(
-				"{0}/RestfulSvc.svc/interview/{1}/{2}/{3}?format={4}&markedvariables={5}&tempimageurl={6}&billingref={7}",
+				"{0}/interview/{1}/{2}/{3}?format={4}&markedvariables={5}&tempimageurl={6}&billingref={7}",
 				EndpointAddress, SubscriberId, packageTemplateLocation.PackageID, template.FileName, settings.Format.ToString(),
 				settings.MarkedVariables != null ? string.Join(",", settings.MarkedVariables) : null, interviewImageUrl, billingRef));
 
@@ -767,7 +767,7 @@ namespace HotDocs.Sdk.Cloud
 				includeDialogs);
 
 			StringBuilder urlBuilder = new StringBuilder(string.Format(
-				"{0}/RestfulSvc.svc/componentinfo/{1}/{2}/{3}?includedialogs={4}&billingref={5}",
+				"{0}/componentinfo/{1}/{2}/{3}?includedialogs={4}&billingref={5}",
 				EndpointAddress, SubscriberId, packageTemplateLocation.PackageID, template.FileName, includeDialogs.ToString(), billingRef));
 
 			HttpWebRequest request = (HttpWebRequest)WebRequest.Create(urlBuilder.ToString());

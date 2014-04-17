@@ -44,7 +44,7 @@ namespace HotDocs.Sdk.Cloud
 			}
 			SubscriberId = subscriberID;
 			SigningKey = signingKey;
-			EndpointAddress = hostAddress + servicePath;
+			EndpointAddress = hostAddress + (hostAddress.EndsWith("/") ? servicePath : "/" + servicePath);
 			ProxyServerAddress = proxyServerAddress;
 		}
 		#endregion
