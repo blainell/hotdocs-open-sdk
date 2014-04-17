@@ -55,7 +55,7 @@ namespace HotDocs.Sdk
 		/// <summary>
 		/// Protected constructor for Answer objects.
 		/// Answer objects need not be constructed directly by callers;
-		/// use AnswerCollection.Create() instead.
+		/// use AnswerCollection.CreateAnswer() instead.
 		/// </summary>
 		/// <param name="parent">The AnswerCollection the answer should be a part of.</param>
 		/// <param name="name">The answer name.</param>
