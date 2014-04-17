@@ -240,7 +240,11 @@ namespace HotDocs.Sdk.Cloud
 				}
 				else
 				{
-					// This is very inefficient, but what are you gonna do?
+					// Since we can't get the stream length for a non-seekable stream,
+					// we have to just let the buffer grow as needed.  After the streaming
+					// is done, we have to copy the data from the buffer to a correctly
+					// sized array.  This is very inefficient, but that's the price of
+					// using a non-seekable stream.
 					using (MemoryStream memStream = new MemoryStream())
 					{
 						stream.CopyTo(memStream);

@@ -15,6 +15,16 @@ namespace HotDocs.Sdk.Cloud
 {
 	public sealed partial class RestClient : ClientBase
 	{
+		#region Private properties
+		string EmbeddedEndpointAddress
+		{
+			get
+			{
+				return new Uri(EndpointAddress).GetLeftPart(UriPartial.Authority) + "/embed";
+			}
+		}
+		#endregion
+
 		#region Public methods
 
 		/// <summary>
@@ -81,7 +91,7 @@ namespace HotDocs.Sdk.Cloud
 		/// <param name="localPath">The local path where the session document will be saved.</param>
 		public void GetSessionDoc(string sessionId, string fileName, string localPath)
 		{
-			string url = string.Format("{0}/embed/session/{1}/docs/{2}", EndpointAddress, sessionId, fileName);
+			string url = string.Format("{0}/session/{1}/docs/{2}", EmbeddedEndpointAddress, sessionId, fileName);
 			using (var webClient = new WebClient())
 			{
 				webClient.DownloadFile(url, localPath);
@@ -95,7 +105,7 @@ namespace HotDocs.Sdk.Cloud
 		/// <returns>An array of session documents.</returns>
 		public string[] GetSessionDocList(string sessionId)
 		{
-			string url = string.Format("{0}/embed/session/{1}/docs", EndpointAddress, sessionId);
+			string url = string.Format("{0}/session/{1}/docs", EmbeddedEndpointAddress, sessionId);
 			string list;
 			using (var webClient = new WebClient())
 			{
@@ -111,7 +121,7 @@ namespace HotDocs.Sdk.Cloud
 		/// <returns>A string containing the session state.</returns>
 		public string GetSessionState(string sessionId)
 		{
-			string url = string.Format("{0}/embed/session/{1}/state", EndpointAddress, sessionId);
+			string url = string.Format("{0}/session/{1}/state", EmbeddedEndpointAddress, sessionId);
 			using (var webClient = new WebClient())
 			{
 				return webClient.DownloadString(url);
@@ -154,8 +164,8 @@ namespace HotDocs.Sdk.Cloud
 				settings); // Additional settings = null for this app
 
 			StringBuilder urlBuilder = new StringBuilder(string.Format(
-				"{0}/embed/newsession/{1}/{2}?interviewformat={3}&outputformat={4}",
-				EndpointAddress, SubscriberId, packageTemplateLocation.PackageID,
+				"{0}/newsession/{1}/{2}?interviewformat={3}&outputformat={4}",
+				EmbeddedEndpointAddress, SubscriberId, packageTemplateLocation.PackageID,
 				interviewFormat.ToString(), outputFormat.ToString()));
 
 			if (markedVariables != null && markedVariables.Length > 0)
@@ -244,7 +254,7 @@ namespace HotDocs.Sdk.Cloud
 				SubscriberId,
 				state);
 
-			string url = string.Format("{0}/embed/resumesession/{1}", EndpointAddress, SubscriberId);
+			string url = string.Format("{0}/resumesession/{1}", EmbeddedEndpointAddress, SubscriberId);
 
 			HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
 			request.Method = "POST";
