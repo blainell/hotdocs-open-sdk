@@ -38,7 +38,7 @@ namespace HotDocs.Sdk.Cloud
 			string signingKey,
 			string hostAddress = null,
 			string proxyServerAddress = null)
-			: base(subscriberId, signingKey, hostAddress, "/Core.svc", proxyServerAddress)
+			: base(subscriberId, signingKey, hostAddress, "Core.svc", proxyServerAddress)
 		{
 			try
 			{
