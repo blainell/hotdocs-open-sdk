@@ -419,8 +419,10 @@ namespace HotDocs.Sdk.Server
 						{
 							string lastMod = myResponse.Headers["Last-Modified"];
 							DateTime serverFileDate = DateTime.Parse(lastMod);
-							if (fInfo.LastWriteTimeUtc < serverFileDate.ToUniversalTime())
+							if (fInfo.CreationTimeUtc != serverFileDate.ToUniversalTime())
 							{
+								// The creation time of our local file is not the same as the last modification date
+								// of the server file, so we are out of sync. Delete the local file and get a new one.
 								File.SetAttributes(cachedFilePath, FileAttributes.Normal);
 								File.Delete(cachedFilePath);
 							}
@@ -440,10 +442,16 @@ namespace HotDocs.Sdk.Server
 					myRequest = System.Net.WebRequest.Create(sourceFileUrl);
 					myRequest.Method = "GET";
 					using (System.Net.WebResponse myResponse = myRequest.GetResponse())
-					using (FileStream writeStream = new FileStream(cachedFilePath, FileMode.Create, FileAccess.Write))
-					using (Stream readStream = myResponse.GetResponseStream())
 					{
-						readStream.CopyTo(writeStream);
+						using (FileStream writeStream = new FileStream(cachedFilePath, FileMode.Create, FileAccess.Write))
+						using (Stream readStream = myResponse.GetResponseStream())
+						{
+							readStream.CopyTo(writeStream);
+						}
+
+						// Set the creation time of the locally cached file to the last modification date from the server file.
+						// We use this time to compare with the server's file during future requests to see if it matches or not.
+						File.SetCreationTimeUtc(cachedFilePath, DateTime.Parse(myResponse.Headers["Last-Modified"]).ToUniversalTime());
 					}
 				}
 
@@ -485,11 +493,11 @@ namespace HotDocs.Sdk.Server
 
 			// Create the list of pending assemblies.
 			IEnumerable<Template> pendingAssemblies =
-				asmResult.PendingAssemblies == null 
+				asmResult.PendingAssemblies == null
 				? new List<Template>()
-				: from pa in asmResult.PendingAssemblies 
-					select new Template(
-						Path.GetFileName(pa.TemplateName), template.Location.Duplicate(), pa.Switches);
+				: from pa in asmResult.PendingAssemblies
+				  select new Template(
+					  Path.GetFileName(pa.TemplateName), template.Location.Duplicate(), pa.Switches);
 
 			for (int i = 0; i < asmResult.Documents.Length; i++)
 			{
