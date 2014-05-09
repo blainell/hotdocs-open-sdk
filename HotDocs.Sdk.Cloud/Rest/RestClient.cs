@@ -491,7 +491,24 @@ namespace HotDocs.Sdk.Cloud
 					{
 						return func(true);
 					}
-					throw;
+
+					using (Stream stream = httpResponse.GetResponseStream())
+					{
+						string message = new StreamReader(stream).ReadToEnd();
+						if (message == "")
+						{
+							// No error message, so rethrow.
+							throw;
+						}
+						else
+						{
+							// Create a new exception of the same type and include the error message.
+							// Also include the original exception as the inner exception.
+							Exception ex2 = (Exception)Activator.CreateInstance(ex.GetType(), message, ex);
+							throw ex2;
+						}
+					}
+
 				}
 			}
 		}
