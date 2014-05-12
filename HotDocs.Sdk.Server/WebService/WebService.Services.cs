@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.ServiceModel;
+using System.ServiceModel.Channels;
 
 using HotDocs.Sdk.Server.Contracts;
 using System.Text.RegularExpressions;
@@ -20,22 +22,45 @@ namespace HotDocs.Sdk.Server.WebService
 	public class Services : IServices
 	{
 		private string _endPointName;
+		private Binding _endPointBinding;
+		private string _endPointUrl;
 		private string _baseTemplateLocation;
 
 		/// <summary>
-		/// The <c>Services</c> constructor
+		/// <c>Services</c> constructor
 		/// </summary>
-		/// <param name="endPointName">The <c>endPointName</c> defines host to where web service calls will be made</param>
-		/// <param name="templatePath">The <c>templatePath</c> is the base folder location where templates are stored</param>
+		/// <param name="endPointName">The <c>endPointName</c> defines host to where web service calls will be made.</param>
+		/// <param name="templatePath">The <c>templatePath</c> is the base folder location where templates are stored.</param>
 		public Services(string endPointName, string templatePath)
 		{
 			if (string.IsNullOrWhiteSpace(endPointName))
-				throw new ArgumentNullException("WebServices.Services constructor: The parameter 'endPointName' is empty or null");
+				throw new ArgumentNullException("WebServices.Services constructor: The parameter 'endPointName' is empty or null.");
 			if (string.IsNullOrWhiteSpace(templatePath))
-				throw new ArgumentNullException("WebServices.Services constructor: the parameter 'templatePath' is empty or null");
+				throw new ArgumentNullException("WebServices.Services constructor: The parameter 'templatePath' is empty or null.");
 			if (Directory.Exists(templatePath) == false)
 				throw new DirectoryNotFoundException(string.Format(@"WebServices.Services constructor: The parameter 'templatePath' folder does not exist at: ""{0}"".", templatePath));
 			_endPointName = endPointName;
+			_baseTemplateLocation = templatePath.ToLower();
+		}
+
+		/// <summary>
+		/// <c>Services</c> constructor
+		/// </summary>
+		/// <param name="binding">The <c>binding</c> is the web service binding for this client.</param>
+		/// <param name="endPointUrl">The <c>endPointUrl</c> is the URL of the host to where web service calls will be made.</param>
+		/// <param name="templatePath">The <c>templatePath</c> is the base folder location where templates are stored.</param>
+		public Services(Binding binding, string endPointUrl, string templatePath)
+		{
+			if (binding == null)
+				throw new ArgumentNullException("WebServices.Services constructor: The parameter 'binding' is null.");
+			if (string.IsNullOrEmpty(endPointUrl))
+				throw new ArgumentNullException("WebServices.Services constructor: The parameter 'endPointUrl' is empty or null.");
+			if (string.IsNullOrWhiteSpace(templatePath))
+				throw new ArgumentNullException("WebServices.Services constructor: The parameter 'templatePath' is empty or null.");
+			if (Directory.Exists(templatePath) == false)
+				throw new DirectoryNotFoundException(string.Format(@"WebServices.Services constructor: The parameter 'templatePath' folder does not exist at: ""{0}"".", templatePath));
+			_endPointBinding = binding;
+			_endPointUrl = endPointUrl;
 			_baseTemplateLocation = templatePath.ToLower();
 		}
 
@@ -57,7 +82,7 @@ namespace HotDocs.Sdk.Server.WebService
 			string logStr = logRef == null ? string.Empty : logRef;
 
 			if (template == null)
-				throw new ArgumentNullException("template", string.Format(@"WebServices.Services.GetInterview: the ""template"" parameter passed in was null, logRef: {0}", logStr));
+				throw new ArgumentNullException("template", string.Format(@"WebServices.Services.GetInterview: The ""template"" parameter passed in was null, logRef: {0}.", logStr));
 
 			if (settings == null)
 				settings = new InterviewSettings();
@@ -75,7 +100,7 @@ namespace HotDocs.Sdk.Server.WebService
 			InterviewResult result = new InterviewResult();
 			BinaryObject[] interviewFiles = null;
 
-			using (Proxy client = new Proxy(_endPointName))
+			using (Proxy client = GetProxy())
 			{
 				string fileName = GetRelativePath(template.GetFullPath());
 				interviewFiles = client.GetInterview(
@@ -113,8 +138,8 @@ namespace HotDocs.Sdk.Server.WebService
 		/// <c>AssembleDocument</c> assembles (creates) a document from the given template, answers and settings.
 		/// </summary>
 		/// <param name="template">An instance of the Template class, from which the document will be assembled.</param>
-		/// <param name="answers">The set of answers that will be applied to the template to assemble the document</param>
-		/// <param name="settings">settings that will be used to assemble the document. 
+		/// <param name="answers">The set of answers that will be applied to the template to assemble the document.</param>
+		/// <param name="settings">Settings that will be used to assemble the document. 
 		/// These settings include the assembled document format (file extension), markup syntax, how to display fields with unanswered variables, etc</param>
 		/// <param name="logRef">A string to display in logs related to this request.</param>
 		/// <returns>returns information about the assembled document, the document type, the unanswered variables, the resulting answers, etc.</returns>
@@ -124,7 +149,7 @@ namespace HotDocs.Sdk.Server.WebService
 			string logStr = logRef == null ? string.Empty : logRef;
 
 			if (template == null)
-				throw new ArgumentNullException("template", string.Format(@"WebService.Services.AssembleDocument: the ""template"" parameter passed in was null, logRef: {0}", logStr));
+				throw new ArgumentNullException("template", string.Format(@"WebService.Services.AssembleDocument: The ""template"" parameter passed in was null, logRef: {0}.", logStr));
 			
 			if (settings == null)
 				settings = new AssembleDocumentSettings();
@@ -132,7 +157,7 @@ namespace HotDocs.Sdk.Server.WebService
 			AssembleDocumentResult result = null;
 			AssemblyResult asmResult = null;
 
-			using (Proxy client = new Proxy(_endPointName))
+			using (Proxy client = GetProxy())
 			{
 				OutputFormat outputFormat = ConvertFormat(settings.Format);
 				AssemblyOptions assemblyOptions = ConvertOptions(settings);
@@ -166,9 +191,9 @@ namespace HotDocs.Sdk.Server.WebService
 		{
 			string logStr = logRef == null ? string.Empty : logRef;
 			if (template == null)
-				throw new ArgumentNullException("template", string.Format(@"WebService.Services.GetComponentInfo: the ""template"" parameter passed in was null, logRef: {0}", logStr));
+				throw new ArgumentNullException("template", string.Format(@"WebService.Services.GetComponentInfo: The ""template"" parameter passed in was null, logRef: {0}.", logStr));
 			ComponentInfo result;
-			using (Proxy client = new Proxy(_endPointName))
+			using (Proxy client = GetProxy())
 			{
 				string fileName = GetRelativePath(template.GetFullPath());
 				result = client.GetComponentInfo(fileName, includeDialogs);
@@ -193,9 +218,9 @@ namespace HotDocs.Sdk.Server.WebService
 		{
 			string logStr = logRef == null ? string.Empty : logRef;
 			if (answers == null)
-				throw new ArgumentNullException("answers", string.Format(@"WebService.Services.GetAnswers: the ""answers"" parameter passed in was null, logRef: {0}", logStr));
+				throw new ArgumentNullException("answers", string.Format(@"WebService.Services.GetAnswers: The ""answers"" parameter passed in was null, logRef: {0}.", logStr));
 			BinaryObject combinedAnswers;
-			using (Proxy client = new Proxy(_endPointName))
+			using (Proxy client = GetProxy())
 			{
 				var answerObjects = (from answer in answers select Util.GetBinaryObjectFromTextReader(answer)).ToArray();
 				combinedAnswers = client.GetAnswers(answerObjects);
@@ -215,8 +240,8 @@ namespace HotDocs.Sdk.Server.WebService
 		public void BuildSupportFiles(Template template, HDSupportFilesBuildFlags flags)
 		{
 			if (template == null)
-				throw new ArgumentNullException("template", @"WebService.Services.BuildSupportFiles: the ""template"" parameter passed in was null");
-			using (Proxy client = new Proxy(_endPointName))
+				throw new ArgumentNullException("template", @"WebService.Services.BuildSupportFiles: The ""template"" parameter passed in was null.");
+			using (Proxy client = GetProxy())
 			{
 				string templateId = GetRelativePath(template.GetFullPath());
 				string templateKey = template.FileName;
@@ -234,8 +259,8 @@ namespace HotDocs.Sdk.Server.WebService
 		public void RemoveSupportFiles(Template template)
 		{
 			if (template == null)
-				throw new ArgumentNullException("template", @"WebService.Services.RemoveSupportFiles: the ""template"" parameter passed in was null");
-			using (Proxy client = new Proxy(_endPointName))
+				throw new ArgumentNullException("template", @"WebService.Services.RemoveSupportFiles: The ""template"" parameter passed in was null.");
+			using (Proxy client = GetProxy())
 			{
 				string templateId = GetRelativePath(template.GetFullPath());
 				string templateKey = template.FileName;
@@ -260,13 +285,13 @@ namespace HotDocs.Sdk.Server.WebService
 		{
 			// Validate input parameters, creating defaults as appropriate.
 			if (template == null)
-				throw new ArgumentNullException("template", @"WebService.Services.GetInterviewFile: the ""template"" parameter passed in was null");
+				throw new ArgumentNullException("template", @"WebService.Services.GetInterviewFile: The ""template"" parameter passed in was null.");
 
 			if (string.IsNullOrEmpty(fileName))
-				throw new ArgumentNullException("fileName", @"WebService.Services.GetInterviewFile: the ""fileName"" parameter passed in was null or empty");
+				throw new ArgumentNullException("fileName", @"WebService.Services.GetInterviewFile: The ""fileName"" parameter passed in was null or empty.");
 
 			if (string.IsNullOrEmpty(fileType))
-				throw new ArgumentNullException("fileType", @"WebService.Services.GetInterviewFile: the ""fileType"" parameter passed in was null or empty");
+				throw new ArgumentNullException("fileType", @"WebService.Services.GetInterviewFile: The ""fileType"" parameter passed in was null or empty.");
 
 			// Return an image or interview definition from the template.
 			InterviewFormat format = InterviewFormat.Unspecified;
@@ -287,7 +312,7 @@ namespace HotDocs.Sdk.Server.WebService
 
 			System.IO.Stream result = null;
 
-			using (Proxy client = new Proxy(_endPointName))
+			using (Proxy client = GetProxy())
 			{
 				string templateId = GetRelativePath(Path.Combine(Path.GetDirectoryName(template.GetFullPath()), fileName)); // The relative path to the template folder.
 				string templateName = fileName; // The name of the template file for which the interview is being requested (e.g., demoempl.rtf). 
@@ -303,6 +328,22 @@ namespace HotDocs.Sdk.Server.WebService
 
 		#region Private member methods:
 
+		private Proxy GetProxy()
+		{
+			if (_endPointName != null && _endPointBinding == null && _endPointUrl == null)
+			{
+				return new Proxy(_endPointName);
+			}
+			else if (_endPointName == null && _endPointBinding != null && _endPointUrl != null)
+			{
+				return new Proxy(_endPointBinding, new EndpointAddress(_endPointUrl));
+			}
+			else
+			{
+				throw new Exception("Invalid WebService.Services configuration."); // Should never happen.
+			}
+		}
+
 		private static void SafeCloseClient(Proxy client, string logRef)
 		{
 			// this approach modeled on http://msdn.microsoft.com/en-us/library/aa355056.aspx
@@ -315,19 +356,19 @@ namespace HotDocs.Sdk.Server.WebService
 			}
 			catch (System.ServiceModel.CommunicationException x1)
 			{
-				System.Diagnostics.Trace.WriteLine(string.Format("SafeCloseClient: a CommunicationException occured when closing the web service proxy client: {0}\r\n" +
+				System.Diagnostics.Trace.WriteLine(string.Format("SafeCloseClient: A CommunicationException occured when closing the web service proxy client: {0}.\r\n" +
 					"Stack Trace: {1}", x1.Message, x1.StackTrace));
 				client.Abort();
 			}
 			catch (TimeoutException x2)
 			{
-				System.Diagnostics.Trace.WriteLine(string.Format("SafeCloseClient: a TimeoutException occured when closing the web service proxy client: {0}\r\n" +
+				System.Diagnostics.Trace.WriteLine(string.Format("SafeCloseClient: A TimeoutException occured when closing the web service proxy client: {0}.\r\n" +
 					"Stack Trace: {1}", x2.Message, x2.StackTrace));
 				client.Abort();
 			}
 			catch (Exception x3)
 			{
-				System.Diagnostics.Trace.WriteLine(string.Format("SafeCloseClient: a general exception occured when closing the web service proxy client: {0}\r\n" +
+				System.Diagnostics.Trace.WriteLine(string.Format("SafeCloseClient: A general exception occured when closing the web service proxy client: {0}.\r\n" +
 					"Stack Trace: {1}", x3.Message, x3.StackTrace));
 				client.Abort();
 				throw;
@@ -405,7 +446,7 @@ namespace HotDocs.Sdk.Server.WebService
 				sRet = fullPath.Substring(_baseTemplateLocation.Length + 1);
 			else
 			{
-				throw new Exception(string.Format(@"Error: The configured TemplatePath location ""{0}"" does not match the location of the current template ""{1}""",
+				throw new Exception(string.Format(@"Error: The configured TemplatePath location ""{0}"" does not match the location of the current template ""{1}"".",
 					_baseTemplateLocation, fullPath));
 			}
 			return sRet;
