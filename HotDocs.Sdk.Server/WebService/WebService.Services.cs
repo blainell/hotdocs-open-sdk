@@ -40,7 +40,7 @@ namespace HotDocs.Sdk.Server.WebService
 			if (Directory.Exists(templatePath) == false)
 				throw new DirectoryNotFoundException(string.Format(@"WebServices.Services constructor: The parameter 'templatePath' folder does not exist at: ""{0}"".", templatePath));
 			_endPointName = endPointName;
-			_baseTemplateLocation = templatePath.ToLower();
+			_baseTemplateLocation = templatePath.ToLower().TrimEnd('\\');
 		}
 
 		/// <summary>
