@@ -106,14 +106,15 @@ namespace HotDocs.Sdk
 			return GetFixedSizeByteArray(s_PersistentEncryptionKey, 16);
 		}
 
-        /// <summary>
-        /// Allows setting the PersistentEncryptionKey in cases where it is not being set from web.config
-        /// </summary>
-        /// <param name="persistentEncryptionKey"></param>
-	    public static void SetPersistentEncryptionKey(string persistentEncryptionKey)
-	    {
-	        s_PersistentEncryptionKey = persistentEncryptionKey;
-	    }
+		/// <summary>
+		/// Allows setting the PersistentEncryptionKey in cases where it is not being set from web.config
+		/// </summary>
+		/// <param name="persistentEncryptionKey"></param>
+		public static void SetPersistentEncryptionKey(string persistentEncryptionKey)
+		{
+			s_PersistentEncryptionKey = persistentEncryptionKey;
+		}
+
 		private static byte[] GetInitializationVector()
 		{
 			return GetFixedSizeByteArray("This is the initialization vector.", 16);
