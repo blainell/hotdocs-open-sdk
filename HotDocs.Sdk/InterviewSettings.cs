@@ -194,6 +194,7 @@ namespace HotDocs.Sdk
 					s_default = new InterviewSettings(true);
 				return s_default;
 			}
+            set { s_default = value; }
 		}
 
 		#endregion
