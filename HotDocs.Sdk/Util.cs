@@ -91,15 +91,28 @@ namespace HotDocs.Sdk
 			throw new ApplicationException("Invalid configuration setting " + settingName);
 		}
 
+		private static string s_PersistentEncryptionKey = null;
+
 		private static byte[] GetPersistentEncryptionKey()
 		{
-			string key = ReadConfigurationString("EncryptionKey");
+			if (s_PersistentEncryptionKey == null)
+			{
+				s_PersistentEncryptionKey = ReadConfigurationString("EncryptionKey");
+				if (s_PersistentEncryptionKey == null)
+				{
+					throw new Exception("EncryptionKey not set in web.config or explicitly by code.");
+				}
+			}
+			return GetFixedSizeByteArray(s_PersistentEncryptionKey, 16);
+		}
 
-			//If key is null, then the encryption key is probably missing from the web.config file. Throw an exception in that case.
-			if (key == null)
-				throw new Exception("The web application is not configured properly.");
-
-			return GetFixedSizeByteArray(key, 16);
+		/// <summary>
+		/// Allows setting the PersistentEncryptionKey in cases where it is not being set from web.config
+		/// </summary>
+		/// <param name="persistentEncryptionKey"></param>
+		public static void SetPersistentEncryptionKey(string persistentEncryptionKey)
+		{
+			s_PersistentEncryptionKey = persistentEncryptionKey;
 		}
 
 		private static byte[] GetInitializationVector()
