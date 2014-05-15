@@ -10,9 +10,10 @@ using System.Diagnostics;
 namespace HotDocs.Sdk
 {
 	/// <summary>
-	/// A HotDocs Text value.
+	/// The TextValue struct is used to represent text or string values in HotDocs. Since it's a struct, TextValue is a value type
+	/// with value semantics. Instances of TextValue directly contain the relevant text, and therefore (unlike reference types) are immutable.
 	/// </summary>
-	public struct TextValue : IValue
+	public struct TextValue : IValue, IComparable
 	{
 		private string _value;
 		private bool _protect;
@@ -87,6 +88,11 @@ namespace HotDocs.Sdk
 			return _value.GetHashCode();
 		}
 
+		public static implicit operator TextValue(UnansweredValue v)
+		{
+			return Unanswered;
+		}
+
 		/// <summary>
 		/// User-defined implicit conversion from string to TextValue
 		/// </summary>
@@ -105,6 +111,52 @@ namespace HotDocs.Sdk
 		public static implicit operator TextValue(MultipleChoiceValue multipleChoiceValue)
 		{
 			return multipleChoiceValue.IsAnswered ? new TextValue(multipleChoiceValue.Value) : Unanswered;
+		}
+
+		public static TextValue operator +(TextValue leftOperand, TextValue rightOperand)
+		{
+			return (leftOperand.IsAnswered && rightOperand.IsAnswered) ?
+				new TextValue(leftOperand.Value + rightOperand.Value) : TextValue.Unanswered;
+		}
+
+		public static TrueFalseValue operator ==(TextValue leftOperand, TextValue rightOperand)
+		{
+			return (leftOperand.IsAnswered && rightOperand.IsAnswered) ?
+				new TrueFalseValue(leftOperand.Equals(rightOperand)) : TrueFalseValue.Unanswered;
+		}
+
+		public static TrueFalseValue operator !=(TextValue leftOperand, TextValue rightOperand)
+		{
+			return (leftOperand.IsAnswered && rightOperand.IsAnswered) ?
+				new TrueFalseValue(!leftOperand.Equals(rightOperand)) : TrueFalseValue.Unanswered;
+		}
+
+		public static TrueFalseValue operator <(TextValue leftOperand, TextValue rightOperand)
+		{
+			return (leftOperand.IsAnswered && rightOperand.IsAnswered) ?
+				new TrueFalseValue(String.Compare(leftOperand.Value, rightOperand.Value, StringComparison.OrdinalIgnoreCase) < 0) :
+				TrueFalseValue.Unanswered;
+		}
+
+		public static TrueFalseValue operator >(TextValue leftOperand, TextValue rightOperand)
+		{
+			return (leftOperand.IsAnswered && rightOperand.IsAnswered) ?
+				new TrueFalseValue(String.Compare(leftOperand.Value, rightOperand.Value, StringComparison.OrdinalIgnoreCase) > 0) :
+				TrueFalseValue.Unanswered;
+		}
+
+		public static TrueFalseValue operator <=(TextValue leftOperand, TextValue rightOperand)
+		{
+			return (leftOperand.IsAnswered && rightOperand.IsAnswered) ?
+				new TrueFalseValue(String.Compare(leftOperand.Value, rightOperand.Value, StringComparison.OrdinalIgnoreCase) <= 0) :
+				TrueFalseValue.Unanswered;
+		}
+
+		public static TrueFalseValue operator >=(TextValue leftOperand, TextValue rightOperand)
+		{
+			return (leftOperand.IsAnswered && rightOperand.IsAnswered) ?
+				new TrueFalseValue(String.Compare(leftOperand.Value, rightOperand.Value, StringComparison.OrdinalIgnoreCase) >= 0) :
+				TrueFalseValue.Unanswered;
 		}
 
 		/// <summary>
@@ -383,11 +435,11 @@ namespace HotDocs.Sdk
 				return this;
 			switch (conversionType.FullName)
 			{
-				case "HotDocs.TextValue": return IsAnswered ? new TextValue(ToString(provider)) : TextValue.Unanswered;
-				case "HotDocs.NumberValue": return IsAnswered ? new NumberValue(ToDouble(provider)) : NumberValue.Unanswered;
-				case "HotDocs.DateValue": return IsAnswered ? new DateValue(ToDateTime(provider)) : DateValue.Unanswered;
-				case "HotDocs.TrueFalseValue": return IsAnswered ? new TrueFalseValue(ToBoolean(provider)) : TrueFalseValue.Unanswered;
-				case "HotDocs.MultipleChoiceValue": return IsAnswered ? new MultipleChoiceValue(ToString(provider)) : MultipleChoiceValue.Unanswered;
+				case "HotDocs.Sdk.TextValue": return IsAnswered ? new TextValue(ToString(provider)) : TextValue.Unanswered;
+				case "HotDocs.Sdk.NumberValue": return IsAnswered ? new NumberValue(ToDouble(provider)) : NumberValue.Unanswered;
+				case "HotDocs.Sdk.DateValue": return IsAnswered ? new DateValue(ToDateTime(provider)) : DateValue.Unanswered;
+				case "HotDocs.Sdk.TrueFalseValue": return IsAnswered ? new TrueFalseValue(ToBoolean(provider)) : TrueFalseValue.Unanswered;
+				case "HotDocs.Sdk.MultipleChoiceValue": return IsAnswered ? new MultipleChoiceValue(ToString(provider)) : MultipleChoiceValue.Unanswered;
 			}
 			if (!IsAnswered)
 				throw new InvalidCastException();
@@ -431,5 +483,25 @@ namespace HotDocs.Sdk
 		}
 
 		#endregion
+
+        #region IComparable Members
+
+        public int CompareTo(object obj)
+        {
+            if (!(obj is TextValue))
+                return -1;
+
+            TextValue textValue = (TextValue) obj;
+            if (!IsAnswered && !textValue.IsAnswered)
+                return 0;
+            if (!IsAnswered)
+                return 1;
+            if (!textValue.IsAnswered)
+                return -1;
+
+            return String.Compare(Value, textValue.Value, StringComparison.OrdinalIgnoreCase);
+        }
+
+        #endregion
 	}
 }

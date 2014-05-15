@@ -10,9 +10,10 @@ using System.Diagnostics;
 namespace HotDocs.Sdk
 {
 	/// <summary>
-	/// A Date value.
+	/// The DateValue struct is used to represent date values in HotDocs. Since it's a struct, DateValue is a value type
+	/// with value semantics. Instances of DateValue directly contain the relevant date, and therefore (unlike reference types) are immutable.
 	/// </summary>
-	public struct DateValue : IValue
+	public struct DateValue : IValue, IComparable
 	{
 		private DateTime? _value;
 		private bool _protect;
@@ -22,7 +23,7 @@ namespace HotDocs.Sdk
 		/// </summary>
 		public readonly static DateValue Unanswered;
 		/// <summary>
-		/// Static (shared) instance of an unanswered DateValue that would be protected from unintentional modification in the interview UI.
+		/// Static (shared) instance of an unanswered DateValue that (if shown in the interview UI) should be protected from unintentional modification.
 		/// </summary>
 		public readonly static DateValue UnansweredLocked;
 
@@ -114,13 +115,99 @@ namespace HotDocs.Sdk
 		}
 
 		/// <summary>
-		/// DateValue summary
+		/// Allow instances of UnansweredValue to be implicitly converted to unanswered DateValues if necessary.
 		/// </summary>
-		/// <param name="d">d</param>
-		/// <returns>A DateValue.</returns>
+		/// <param name="v">An instance of UnansweredValue</param>
+		/// <returns>An equivalent unanswered HotDocs.Sdk.DateValue</returns>
+		public static implicit operator DateValue(UnansweredValue v)
+		{
+			return Unanswered;
+		}
+
+		/// <summary>
+		/// Allow instances of built-in .NET DateTime struct to be implicitly converted to HotDocs DateValues.
+		/// </summary>
+		/// <param name="d">An instance of the .NET DateTime struct</param>
+		/// <returns>An equivalent instance of HotDocs.Sdk.DateValue</returns>
 		public static implicit operator DateValue(DateTime d)
 		{
 			return new DateValue(d);
+		}
+
+		/// <summary>
+		/// Allow equality comparison of two DateValues using the == operator.
+		/// </summary>
+		/// <param name="leftOperand">The first DateValue to compare</param>
+		/// <param name="rightOperand">The second DateValue to compare</param>
+		/// <returns>A TrueFalseValue indicating whether HotDocs considers the DateValues equal.</returns>
+		public static TrueFalseValue operator ==(DateValue leftOperand, DateValue rightOperand)
+		{
+			return (leftOperand.IsAnswered && rightOperand.IsAnswered) ?
+				new TrueFalseValue(leftOperand.Equals(rightOperand)) : TrueFalseValue.Unanswered;
+		}
+
+		public static TrueFalseValue operator !=(DateValue leftOperand, DateValue rightOperand)
+		{
+			return (leftOperand.IsAnswered && rightOperand.IsAnswered) ?
+				new TrueFalseValue(!leftOperand.Equals(rightOperand)) : TrueFalseValue.Unanswered;
+		}
+
+		public static TrueFalseValue operator <(DateValue leftOperand, DateValue rightOperand)
+		{
+			return (leftOperand.IsAnswered && rightOperand.IsAnswered) ?
+				new TrueFalseValue(leftOperand.Value < rightOperand.Value) : TrueFalseValue.Unanswered;
+		}
+
+		public static TrueFalseValue operator >(DateValue leftOperand, DateValue rightOperand)
+		{
+			return (leftOperand.IsAnswered && rightOperand.IsAnswered) ?
+				new TrueFalseValue(leftOperand.Value > rightOperand.Value) : TrueFalseValue.Unanswered;
+		}
+
+		public static TrueFalseValue operator <=(DateValue leftOperand, DateValue rightOperand)
+		{
+			return (leftOperand.IsAnswered && rightOperand.IsAnswered) ?
+				new TrueFalseValue(leftOperand.Value <= rightOperand.Value) : TrueFalseValue.Unanswered;
+		}
+
+		public static TrueFalseValue operator >=(DateValue leftOperand, DateValue rightOperand)
+		{
+			return (leftOperand.IsAnswered && rightOperand.IsAnswered) ?
+				new TrueFalseValue(leftOperand.Value >= rightOperand.Value) : TrueFalseValue.Unanswered;
+		}
+
+		public static DateValue operator +(DateValue leftOperand, TimeSpanValue rightOperand)
+		{
+			if (!leftOperand.IsAnswered || !rightOperand.IsAnswered)
+				return DateValue.Unanswered;
+
+			switch (rightOperand.PeriodType)
+			{
+				case Period.Days:
+					return new DateValue(leftOperand.Value.AddDays(rightOperand.Value));
+				case Period.Months:
+					return new DateValue(leftOperand.Value.AddMonths(rightOperand.Value));
+				case Period.Years:
+					return new DateValue(leftOperand.Value.AddYears(rightOperand.Value));
+			}
+			return DateValue.Unanswered;
+		}
+
+		public static DateValue operator -(DateValue leftOperand, TimeSpanValue rightOperand)
+		{
+			if (!leftOperand.IsAnswered || !rightOperand.IsAnswered)
+				return DateValue.Unanswered;
+
+			switch (rightOperand.PeriodType)
+			{
+				case Period.Days:
+					return new DateValue(leftOperand.Value.AddDays(-rightOperand.Value));
+				case Period.Months:
+					return new DateValue(leftOperand.Value.AddMonths(-rightOperand.Value));
+				case Period.Years:
+					return new DateValue(leftOperand.Value.AddYears(-rightOperand.Value));
+			}
+			return DateValue.Unanswered;
 		}
 
 		/// <summary>
@@ -358,11 +445,11 @@ namespace HotDocs.Sdk
 				return this;
 			switch (conversionType.FullName)
 			{
-				case "HotDocs.TextValue": return IsAnswered ? new TextValue(ToString(provider)) : TextValue.Unanswered;
-				case "HotDocs.NumberValue": return IsAnswered ? new NumberValue(ToDouble(provider)) : NumberValue.Unanswered;
-				case "HotDocs.DateValue": return IsAnswered ? new DateValue(ToDateTime(provider)) : DateValue.Unanswered;
-				case "HotDocs.TrueFalseValue": return IsAnswered ? new TrueFalseValue(ToBoolean(provider)) : TrueFalseValue.Unanswered;
-				case "HotDocs.MultipleChoiceValue": return IsAnswered ? new MultipleChoiceValue(ToString(provider)) : MultipleChoiceValue.Unanswered;
+				case "HotDocs.Sdk.TextValue": return IsAnswered ? new TextValue(ToString(provider)) : TextValue.Unanswered;
+				case "HotDocs.Sdk.NumberValue": return IsAnswered ? new NumberValue(ToDouble(provider)) : NumberValue.Unanswered;
+				case "HotDocs.Sdk.DateValue": return IsAnswered ? new DateValue(ToDateTime(provider)) : DateValue.Unanswered;
+				case "HotDocs.Sdk.TrueFalseValue": return IsAnswered ? new TrueFalseValue(ToBoolean(provider)) : TrueFalseValue.Unanswered;
+				case "HotDocs.Sdk.MultipleChoiceValue": return IsAnswered ? new MultipleChoiceValue(ToString(provider)) : MultipleChoiceValue.Unanswered;
 			}
 			if (!IsAnswered)
 				throw new InvalidCastException();
@@ -406,6 +493,27 @@ namespace HotDocs.Sdk
 		}
 
 		#endregion
+
+        #region IComparable Members
+
+        public int CompareTo(object obj)
+        {
+            if (!(obj is DateValue))
+                return -1;
+
+            DateValue dateValue = (DateValue)obj;
+            if (!IsAnswered && !dateValue.IsAnswered)
+                return 0;
+            if (!IsAnswered)
+                return 1;
+            if (!dateValue.IsAnswered)
+                return -1;
+
+            return DateTime.Compare(Value, dateValue.Value);
+        }
+
+        #endregion
+
 	}
 }
 

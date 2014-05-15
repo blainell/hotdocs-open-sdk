@@ -8,9 +8,10 @@ using System.Diagnostics;
 namespace HotDocs.Sdk
 {
 	/// <summary>
-	/// TrueFalse value
+	/// The TrueFalseValue struct is used to represent boolean (true/false) values in HotDocs. Since it's a struct, TrueFalseValue is a value type
+	/// with value semantics. Instances of TrueFalseValue directly contain a boolean value, and therefore (unlike reference types) are immutable.
 	/// </summary>
-	public struct TrueFalseValue : IValue
+	public struct TrueFalseValue : IValue, IComparable
 	{
 		private bool? _value;
 		private bool _protect;
@@ -93,6 +94,11 @@ namespace HotDocs.Sdk
 			return _value.GetHashCode();
 		}
 
+		public static implicit operator TrueFalseValue(UnansweredValue v)
+		{
+			return Unanswered;
+		}
+
 		/// <summary>
 		/// TrueFalseValue operator
 		/// </summary>
@@ -101,6 +107,29 @@ namespace HotDocs.Sdk
 		public static implicit operator TrueFalseValue(bool b)
 		{
 			return new TrueFalseValue(b);
+		}
+
+		public static implicit operator bool(TrueFalseValue v)
+		{
+			return v.IsAnswered ? v.Value : false;
+		}
+
+		public static TrueFalseValue operator ==(TrueFalseValue leftOperand, TrueFalseValue rightOperand)
+		{
+			return (leftOperand.IsAnswered && rightOperand.IsAnswered) ?
+				new TrueFalseValue(leftOperand.Equals(rightOperand)) : TrueFalseValue.Unanswered;
+		}
+
+		public static TrueFalseValue operator !=(TrueFalseValue leftOperand, TrueFalseValue rightOperand)
+		{
+			return (leftOperand.IsAnswered && rightOperand.IsAnswered) ?
+				new TrueFalseValue(!leftOperand.Equals(rightOperand)) : TrueFalseValue.Unanswered;
+		}
+
+		public static TrueFalseValue operator !(TrueFalseValue operand)
+		{
+			return (operand.IsAnswered) ?
+				new TrueFalseValue(!operand.Value) : TrueFalseValue.Unanswered;
 		}
 
 		/// <summary>
@@ -338,11 +367,11 @@ namespace HotDocs.Sdk
 				return this;
 			switch (conversionType.FullName)
 			{
-				case "HotDocs.TextValue": return IsAnswered ? new TextValue(ToString(provider)) : TextValue.Unanswered;
-				case "HotDocs.NumberValue": return IsAnswered ? new NumberValue(ToDouble(provider)) : NumberValue.Unanswered;
-				case "HotDocs.DateValue": return IsAnswered ? new DateValue(ToDateTime(provider)) : DateValue.Unanswered;
-				case "HotDocs.TrueFalseValue": return IsAnswered ? new TrueFalseValue(ToBoolean(provider)) : TrueFalseValue.Unanswered;
-				case "HotDocs.MultipleChoiceValue": return IsAnswered ? new MultipleChoiceValue(ToString(provider)) : MultipleChoiceValue.Unanswered;
+				case "HotDocs.Sdk.TextValue": return IsAnswered ? new TextValue(ToString(provider)) : TextValue.Unanswered;
+				case "HotDocs.Sdk.NumberValue": return IsAnswered ? new NumberValue(ToDouble(provider)) : NumberValue.Unanswered;
+				case "HotDocs.Sdk.DateValue": return IsAnswered ? new DateValue(ToDateTime(provider)) : DateValue.Unanswered;
+				case "HotDocs.Sdk.TrueFalseValue": return IsAnswered ? new TrueFalseValue(ToBoolean(provider)) : TrueFalseValue.Unanswered;
+				case "HotDocs.Sdk.MultipleChoiceValue": return IsAnswered ? new MultipleChoiceValue(ToString(provider)) : MultipleChoiceValue.Unanswered;
 			}
 			if (!IsAnswered)
 				throw new InvalidCastException();
@@ -386,5 +415,28 @@ namespace HotDocs.Sdk
 		}
 
 		#endregion
+
+        #region IComparable Members
+
+        public int CompareTo(object obj)
+        {
+            if (!(obj is TrueFalseValue))
+                return -1;
+
+            TrueFalseValue trueFalseValue = (TrueFalseValue)obj;
+            if (!IsAnswered && !trueFalseValue.IsAnswered)
+                return 0;
+            if (!IsAnswered)
+                return 1;
+            if (!trueFalseValue.IsAnswered)
+                return -1;
+
+            if (Value == trueFalseValue.Value)
+                return 0;
+            return Value ? -1 : 1;
+        }
+
+        #endregion
+
 	}
 }

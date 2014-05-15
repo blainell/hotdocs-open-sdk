@@ -9,9 +9,10 @@ using System.Diagnostics;
 namespace HotDocs.Sdk
 {
 	/// <summary>
-	/// A Multiple Choice value.
+	/// The MultipleChoiceValue struct is used to represent multiple choice values in HotDocs. Since it's a struct, MultipleChoiceValue is a value type
+	/// with value semantics. Instances of MultipleChoiceValue directly contain a list of selected option strings, and therefore (unlike reference types) are immutable.
 	/// </summary>
-	public struct MultipleChoiceValue : IValue
+	public struct MultipleChoiceValue : IValue, IComparable
 	{
 		private string[] _value;
 		private bool _protect;
@@ -159,6 +160,11 @@ namespace HotDocs.Sdk
 			return _value.GetHashCode();
 		}
 
+		public static implicit operator MultipleChoiceValue(UnansweredValue v)
+		{
+			return Unanswered;
+		}
+
 		/// <summary>
 		/// MultipleChoiceValue summary
 		/// </summary>
@@ -167,6 +173,144 @@ namespace HotDocs.Sdk
 		public static implicit operator MultipleChoiceValue(TextValue textValue)
 		{
 			return textValue.IsAnswered ? new MultipleChoiceValue(textValue.Value) : Unanswered;
+		}
+
+		public static TextValue operator +(MultipleChoiceValue leftOperand, MultipleChoiceValue rightOperand)
+		{
+			return (leftOperand.IsAnswered && rightOperand.IsAnswered) ?
+				new TextValue(leftOperand.Value + rightOperand.Value) : TextValue.Unanswered;
+		}
+
+		public static TextValue operator +(MultipleChoiceValue leftOperand, TextValue rightOperand)
+		{
+			return (leftOperand.IsAnswered && rightOperand.IsAnswered) ?
+				new TextValue(leftOperand.Value + rightOperand.Value) : TextValue.Unanswered;
+		}
+
+		public static TextValue operator +(TextValue leftOperand, MultipleChoiceValue rightOperand)
+		{
+			return (leftOperand.IsAnswered && rightOperand.IsAnswered) ?
+				new TextValue(leftOperand.Value + rightOperand.Value) : TextValue.Unanswered;
+		}
+
+		public static TrueFalseValue operator ==(MultipleChoiceValue leftOperand, MultipleChoiceValue rightOperand)
+		{
+			return (leftOperand.IsAnswered && rightOperand.IsAnswered) ?
+				new TrueFalseValue(leftOperand.Equals(rightOperand)) : TrueFalseValue.Unanswered;
+		}
+
+		public static TrueFalseValue operator ==(MultipleChoiceValue leftOperand, TextValue rightOperand)
+		{
+			return (leftOperand.IsAnswered && rightOperand.IsAnswered) ?
+				new TrueFalseValue(leftOperand.Equals(rightOperand)) : TrueFalseValue.Unanswered;
+		}
+
+		public static TrueFalseValue operator ==(TextValue leftOperand, MultipleChoiceValue rightOperand)
+		{
+			return (leftOperand.IsAnswered && rightOperand.IsAnswered) ?
+				new TrueFalseValue(rightOperand.Equals(leftOperand)) : TrueFalseValue.Unanswered;
+		}
+
+		public static TrueFalseValue operator !=(MultipleChoiceValue leftOperand, MultipleChoiceValue rightOperand)
+		{
+			return (leftOperand.IsAnswered && rightOperand.IsAnswered) ?
+				new TrueFalseValue(!leftOperand.Equals(rightOperand)) : TrueFalseValue.Unanswered;
+		}
+
+		public static TrueFalseValue operator !=(MultipleChoiceValue leftOperand, TextValue rightOperand)
+		{
+			return (leftOperand.IsAnswered && rightOperand.IsAnswered) ?
+				new TrueFalseValue(!leftOperand.Equals(rightOperand)) : TrueFalseValue.Unanswered;
+		}
+
+		public static TrueFalseValue operator !=(TextValue leftOperand, MultipleChoiceValue rightOperand)
+		{
+			return (leftOperand.IsAnswered && rightOperand.IsAnswered) ?
+				new TrueFalseValue(!rightOperand.Equals(leftOperand)) : TrueFalseValue.Unanswered;
+		}
+
+		public static TrueFalseValue operator <(MultipleChoiceValue leftOperand, MultipleChoiceValue rightOperand)
+		{
+			return (leftOperand.IsAnswered && rightOperand.IsAnswered) ?
+				new TrueFalseValue(String.Compare(leftOperand.Value, rightOperand.Value, StringComparison.OrdinalIgnoreCase) < 0) :
+				TrueFalseValue.Unanswered;
+		}
+
+		public static TrueFalseValue operator <(MultipleChoiceValue leftOperand, TextValue rightOperand)
+		{
+			return (leftOperand.IsAnswered && rightOperand.IsAnswered) ?
+				new TrueFalseValue(String.Compare(leftOperand.Value, rightOperand.Value, StringComparison.OrdinalIgnoreCase) < 0) :
+				TrueFalseValue.Unanswered;
+		}
+
+		public static TrueFalseValue operator <(TextValue leftOperand, MultipleChoiceValue rightOperand)
+		{
+			return (leftOperand.IsAnswered && rightOperand.IsAnswered) ?
+				new TrueFalseValue(String.Compare(leftOperand.Value, rightOperand.Value, StringComparison.OrdinalIgnoreCase) < 0) :
+				TrueFalseValue.Unanswered;
+		}
+
+		public static TrueFalseValue operator >(MultipleChoiceValue leftOperand, MultipleChoiceValue rightOperand)
+		{
+			return (leftOperand.IsAnswered && rightOperand.IsAnswered) ?
+				new TrueFalseValue(String.Compare(leftOperand.Value, rightOperand.Value, StringComparison.OrdinalIgnoreCase) > 0) :
+				TrueFalseValue.Unanswered;
+		}
+
+		public static TrueFalseValue operator >(MultipleChoiceValue leftOperand, TextValue rightOperand)
+		{
+			return (leftOperand.IsAnswered && rightOperand.IsAnswered) ?
+				new TrueFalseValue(String.Compare(leftOperand.Value, rightOperand.Value, StringComparison.OrdinalIgnoreCase) > 0) :
+				TrueFalseValue.Unanswered;
+		}
+
+		public static TrueFalseValue operator >(TextValue leftOperand, MultipleChoiceValue rightOperand)
+		{
+			return (leftOperand.IsAnswered && rightOperand.IsAnswered) ?
+				new TrueFalseValue(String.Compare(leftOperand.Value, rightOperand.Value, StringComparison.OrdinalIgnoreCase) > 0) :
+				TrueFalseValue.Unanswered;
+		}
+
+		public static TrueFalseValue operator <=(MultipleChoiceValue leftOperand, MultipleChoiceValue rightOperand)
+		{
+			return (leftOperand.IsAnswered && rightOperand.IsAnswered) ?
+				new TrueFalseValue(String.Compare(leftOperand.Value, rightOperand.Value, StringComparison.OrdinalIgnoreCase) <= 0) :
+				TrueFalseValue.Unanswered;
+		}
+
+		public static TrueFalseValue operator <=(MultipleChoiceValue leftOperand, TextValue rightOperand)
+		{
+			return (leftOperand.IsAnswered && rightOperand.IsAnswered) ?
+				new TrueFalseValue(String.Compare(leftOperand.Value, rightOperand.Value, StringComparison.OrdinalIgnoreCase) <= 0) :
+				TrueFalseValue.Unanswered;
+		}
+
+		public static TrueFalseValue operator <=(TextValue leftOperand, MultipleChoiceValue rightOperand)
+		{
+			return (leftOperand.IsAnswered && rightOperand.IsAnswered) ?
+				new TrueFalseValue(String.Compare(leftOperand.Value, rightOperand.Value, StringComparison.OrdinalIgnoreCase) <= 0) :
+				TrueFalseValue.Unanswered;
+		}
+
+		public static TrueFalseValue operator >=(MultipleChoiceValue leftOperand, MultipleChoiceValue rightOperand)
+		{
+			return (leftOperand.IsAnswered && rightOperand.IsAnswered) ?
+				new TrueFalseValue(String.Compare(leftOperand.Value, rightOperand.Value, StringComparison.OrdinalIgnoreCase) >= 0) :
+				TrueFalseValue.Unanswered;
+		}
+
+		public static TrueFalseValue operator >=(MultipleChoiceValue leftOperand, TextValue rightOperand)
+		{
+			return (leftOperand.IsAnswered && rightOperand.IsAnswered) ?
+				new TrueFalseValue(String.Compare(leftOperand.Value, rightOperand.Value, StringComparison.OrdinalIgnoreCase) >= 0) :
+				TrueFalseValue.Unanswered;
+		}
+
+		public static TrueFalseValue operator >=(TextValue leftOperand, MultipleChoiceValue rightOperand)
+		{
+			return (leftOperand.IsAnswered && rightOperand.IsAnswered) ?
+				new TrueFalseValue(String.Compare(leftOperand.Value, rightOperand.Value, StringComparison.OrdinalIgnoreCase) >= 0) :
+				TrueFalseValue.Unanswered;
 		}
 
 		/// <summary>
@@ -207,6 +351,29 @@ namespace HotDocs.Sdk
 		public string[] Choices
 		{
 			get { return _value; }
+		}
+
+		public string ToString(string[] format)
+		{
+			if (!IsAnswered)
+				throw new InvalidOperationException();
+
+			// Input convention for format[]
+			// format[0] = group format text or empty text if no group format.
+			// format[1] - format[n] = merge text values.
+			StringBuilder strBuilder = new StringBuilder();
+			for (int i = 0; i < Choices.Length; i++)
+			{
+				if (i > 0)
+					strBuilder.Append(Environment.NewLine);
+
+				if ((format != null) && ((i + 1) < format.Length) && !String.IsNullOrEmpty(format[i + 1]))
+					strBuilder.Append(format[i + 1]);
+				else
+					strBuilder.Append(Choices[i]);
+			}
+
+			return strBuilder.ToString();
 		}
 
 		/// <summary>
@@ -415,11 +582,11 @@ namespace HotDocs.Sdk
 				return this;
 			switch (conversionType.FullName)
 			{
-				case "HotDocs.TextValue": return IsAnswered ? new TextValue(ToString(provider)) : TextValue.Unanswered;
-				case "HotDocs.NumberValue": return IsAnswered ? new NumberValue(ToDouble(provider)) : NumberValue.Unanswered;
-				case "HotDocs.DateValue": return IsAnswered ? new DateValue(ToDateTime(provider)) : DateValue.Unanswered;
-				case "HotDocs.TrueFalseValue": return IsAnswered ? new TrueFalseValue(ToBoolean(provider)) : TrueFalseValue.Unanswered;
-				case "HotDocs.MultipleChoiceValue": return IsAnswered ? new MultipleChoiceValue(ToString(provider)) : MultipleChoiceValue.Unanswered;
+				case "HotDocs.Sdk.TextValue": return IsAnswered ? new TextValue(ToString(provider)) : TextValue.Unanswered;
+				case "HotDocs.Sdk.NumberValue": return IsAnswered ? new NumberValue(ToDouble(provider)) : NumberValue.Unanswered;
+				case "HotDocs.Sdk.DateValue": return IsAnswered ? new DateValue(ToDateTime(provider)) : DateValue.Unanswered;
+				case "HotDocs.Sdk.TrueFalseValue": return IsAnswered ? new TrueFalseValue(ToBoolean(provider)) : TrueFalseValue.Unanswered;
+				case "HotDocs.Sdk.MultipleChoiceValue": return IsAnswered ? new MultipleChoiceValue(ToString(provider)) : MultipleChoiceValue.Unanswered;
 			}
 			if (!IsAnswered)
 				throw new InvalidCastException();
@@ -463,5 +630,29 @@ namespace HotDocs.Sdk
 		}
 
 		#endregion
+
+        #region IComparable Members
+
+        public int CompareTo(object obj)
+        {
+            if (!(obj is MultipleChoiceValue))
+                return -1;
+
+            MultipleChoiceValue multipleChoiceValue = (MultipleChoiceValue)obj;
+            if (!IsAnswered && !multipleChoiceValue.IsAnswered)
+                return 0;
+            if (!IsAnswered)
+                return 1;
+            if (!multipleChoiceValue.IsAnswered)
+                return -1;
+
+            if (Equals(multipleChoiceValue.Value))
+                return 0;
+
+            return String.Compare(Value, multipleChoiceValue.Value, StringComparison.OrdinalIgnoreCase);
+        }
+
+        #endregion
+
 	}
 }

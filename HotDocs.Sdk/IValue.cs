@@ -42,7 +42,7 @@ namespace HotDocs.Sdk
 	/// <summary>
 	/// An interface for a HotDocs value.
 	/// </summary>
-	public interface IValue : IConvertible
+	public interface IValue : IConvertible, IComparable
 	{
 		/// <summary>
 		/// Indicates the value type.
@@ -64,5 +64,18 @@ namespace HotDocs.Sdk
 		/// </summary>
 		/// <param name="writer">XmlWriter to which to write the value.</param>
 		void WriteXml(System.Xml.XmlWriter writer);
+	}
+
+	public static class ValueConverter
+	{
+		public static TOut Convert<TIn,TOut>(TIn value)
+			where TIn : IValue
+			where TOut : IValue
+		{
+			if (value is TOut)
+				return (TOut)(IValue)value; // boxing & unboxing facilitates relatively quick coersion/conversion from TIn to TOut
+
+			throw new InvalidCastException(String.Format("Invalid cast from {0} to {1}.", typeof(TIn).Name, typeof(TOut).Name));
+		}
 	}
 }
