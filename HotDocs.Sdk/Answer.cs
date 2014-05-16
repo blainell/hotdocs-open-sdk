@@ -180,6 +180,11 @@ namespace HotDocs.Sdk
 		/// <include file="../Shared/Help.xml" path="Help/intAry/param[@name='rptIdx']"/>
 		public void SetValue<T>(T value, params int[] rptIdx) where T : IValue
 		{
+			SetValue<T>(value, false, rptIdx);
+		}
+
+		protected void SetValue<T>(T value, bool suppressChangeNotification, params int[] rptIdx) where T : IValue
+		{
 			// The first parameter to GetValueNode (below) determines whether it will create nodes as necessary
 			// to get to the requested index.  We only bother to expand the tree if the value we're setting
 			// is answered.
@@ -199,16 +204,26 @@ namespace HotDocs.Sdk
 			Debug.Assert(node != null);
 			if (node != null)
 			{
-				bool same = ((!value.IsAnswered && !node.Value.IsAnswered)
-								|| (value.IsAnswered && node.Value.IsAnswered && value.Equals(node.Value)));
+				ValueChangeType changed;
+				if (value.IsAnswered && !node.Value.IsAnswered)
+					changed = ValueChangeType.BecameAnswered;
+				else if (!value.IsAnswered && node.Value.IsAnswered)
+					changed = ValueChangeType.BecameUnanswered;
+				else if (value.IsAnswered && node.Value.IsAnswered && !value.Equals(node.Value))
+					changed = ValueChangeType.Changed;
+				else
+					changed = ValueChangeType.None;
 
 				node.Value = value;
 
-				if (!same || nodeCreatedForUnansweredValue)
+				if (changed != ValueChangeType.None || nodeCreatedForUnansweredValue)
 				{
 					// if we have un-answered a repeated variable; perform any value tree cleanup that is needed
 					if (rptIdx != null && rptIdx.Length > 0 && !value.IsAnswered)
 						Recalculate(rptIdx);
+
+					if (changed != ValueChangeType.None && _coll != null && !suppressChangeNotification)
+						_coll.OnAnswerChanged(this, rptIdx, changed);
 				}
 			}
 		}
@@ -221,13 +236,47 @@ namespace HotDocs.Sdk
 		/// <include file="../Shared/Help.xml" path="Help/intAry/param[@name='rptIdx']"/>
 		public void InitValue<T>(T value, params int[] rptIdx) where T : IValue
 		{
-			SetValue<T>(value, rptIdx);
+			SetValue<T>(value, true, rptIdx);
 		}
 
 		/// <summary>
 		/// Clears the answer.
 		/// </summary>
-		public abstract void Clear();
+		public virtual void Clear()
+		{
+			EnumerateValues(this, ClearAnswerCallback);
+		}
+
+		protected static void ClearAnswerCallback(object state, int[] indices)
+		{
+			Answer answer = (Answer)state;
+			answer.ClearValue(indices);
+		}
+
+		public void ClearValue(params int[] rptIdx)
+		{
+			if (GetAnswered(rptIdx))
+			{
+				switch(Type)
+				{
+					case ValueType.Text:
+						SetValue<TextValue>(TextValue.Unanswered, rptIdx);
+						break;
+					case ValueType.Number:
+						SetValue<NumberValue>(NumberValue.Unanswered, rptIdx);
+						break;
+					case ValueType.Date:
+						SetValue<DateValue>(DateValue.Unanswered, rptIdx);
+						break;
+					case ValueType.TrueFalse:
+						SetValue<TrueFalseValue>(TrueFalseValue.Unanswered, rptIdx);
+						break;
+					case ValueType.MultipleChoice:
+						SetValue<MultipleChoiceValue>(MultipleChoiceValue.Unanswered, rptIdx);
+						break;
+				}
+			}
+		}
 
 		/// <summary>
 		/// Inserts an answer at the specified indexes.

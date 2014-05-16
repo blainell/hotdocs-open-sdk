@@ -317,22 +317,10 @@ namespace HotDocs.Sdk.Server.Local
 				docPath,
 				outputOptions);
 
-			//Prepare the post-assembly answer set.
+			//Prepare the post-assembly answer set (dropping transient ("don't save") answers when appropriate)
 			HotDocs.Sdk.AnswerCollection resultAnsColl = new AnswerCollection();
 			resultAnsColl.ReadXml(new StringReader(ansColl.XmlAnswers));
-			if (!settings.RetainTransientAnswers && _app.PendingAssemblyCmdLineStrings.Count == 0)
-			{
-				// Create a list of all "transient" answers to remove.
-				IEnumerable<Answer> transAnswers = from a in resultAnsColl where !a.Save select a;
-				List<string> answersToRemove = new List<string>();
-				foreach (Answer ans in transAnswers)
-					answersToRemove.Add(ans.Name);
-
-				// Iterate through the list of answers to remove and remove them from the result answer collection.
-				// This is done as a separate step so we are not modifying the collecion over which we are iterating.
-				foreach (string s in answersToRemove)
-					resultAnsColl.RemoveAnswer(s);
-			}
+			string resultAnsXml = resultAnsColl.GetXMLString(false, settings.RetainTransientAnswers || _app.PendingAssemblyCmdLineStrings.Count > 0);
 
 			//Build the list of pending assemblies.
 			List<Template> pendingAssemblies = new List<Template>();
@@ -386,7 +374,7 @@ namespace HotDocs.Sdk.Server.Local
 
 			//Return the results.
 			Document document = new Document(template, docStream, docType, supportingFiles.ToArray(), _app.UnansweredVariablesList.ToArray());
-			AssembleDocumentResult result = new AssembleDocumentResult(document, resultAnsColl.XmlAnswers, pendingAssemblies.ToArray(), _app.UnansweredVariablesList.ToArray());
+			AssembleDocumentResult result = new AssembleDocumentResult(document, resultAnsXml, pendingAssemblies.ToArray(), _app.UnansweredVariablesList.ToArray());
 			return result;
 		}
 		/// <summary>
