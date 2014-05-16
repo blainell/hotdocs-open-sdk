@@ -295,41 +295,45 @@ namespace HotDocs.Sdk.DataServices
 				Answer answer;
 				foreach (var property in resourceType.Properties)
 				{
-					if (((property.Kind & ResourcePropertyKind.Key) != ResourcePropertyKind.Key) &&
-						answerSet.TryGetAnswer(answerFileDataSource.PropertyNameToSourceNameMap[property.Name], out answer))
+					if ((property.Kind & ResourcePropertyKind.Key) != ResourcePropertyKind.Key)
 					{
-						// Sanity check to be sure the property type the metadata is expecting is the same as the values in the answer file.
-						Type type;
-						switch (answer.Type)
+						ValueType valueType = ValueType.Unknown;
+
+						// Infer from the CLR type what the ValueType is of the answer to be fetched.
+						if (property.ResourceType.InstanceType == typeof(string))
 						{
-							case ValueType.Text:
-							case ValueType.MultipleChoice:
-								type = typeof(string);
-								break;
-							case ValueType.Number:
-								type = typeof(double?);
-								break;
-							case ValueType.Date:
-								type = typeof(DateTime?);
-								break;
-							case ValueType.TrueFalse:
-								type = typeof(bool?);
-								break;
-							default:
-								throw new Exception(string.Format("The value type '{0}' is not supported.", answer.Type.ToString()));
+							valueType = ValueType.Text;
+						}
+						else if (property.ResourceType.InstanceType == typeof(double?))
+						{
+							valueType = ValueType.Number;
+						}
+						else if (property.ResourceType.InstanceType == typeof(DateTime?))
+						{
+							valueType = ValueType.Date;
+						}
+						else if (property.ResourceType.InstanceType == typeof(bool?))
+						{
+							valueType = ValueType.TrueFalse;
 						}
 
-						if (property.ResourceType.InstanceType != type)
+						if (valueType == ValueType.Unknown)
 						{
-							throw new Exception(string.Format("The type of the metadata property '{0}' does not match the type of the " +
-								"corresponding answer '{1}'.", answerFileDataSource.PropertyNameToSourceNameMap[property.Name], answer.Name));
+							throw new Exception(string.Format("The metadata property '{0}' with a CLR type of '{1}' does not correspond to a supported " +
+								"HotDocs ValueType.", answerFileDataSource.PropertyNameToSourceNameMap[property.Name],
+								property.ResourceType.InstanceType.FullName));
 						}
 
-						repeatCount = Math.Max(repeatCount, answer.GetChildCount());
-						answers.Add(answer);
+						if (answerSet.TryGetAnswer(answerFileDataSource.PropertyNameToSourceNameMap[property.Name], valueType, out answer) ||
+							((valueType == ValueType.Text) && 
+							answerSet.TryGetAnswer(answerFileDataSource.PropertyNameToSourceNameMap[property.Name], ValueType.MultipleChoice, out answer)))
+						{
+							repeatCount = Math.Max(repeatCount, answer.GetChildCount());
+							answers.Add(answer);
+						}
+						else
+							answers.Add(null);
 					}
-					else
-						answers.Add(null);
 				}
 
 				// Populate the data source with data.
