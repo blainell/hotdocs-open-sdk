@@ -890,6 +890,7 @@ namespace HotDocs.Sdk
 			catch (Exception ex)
 			{
 				Trace.WriteLine("TemplatePackage.InternalNameToPartUri: exception thrown: " + ex.Message);
+				throw;
 			}
 			return retUri;
 		}
