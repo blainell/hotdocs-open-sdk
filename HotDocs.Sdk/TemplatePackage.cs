@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Packaging; // Needs reference to WindowsBase
 using System.Security.Cryptography;
@@ -888,7 +889,18 @@ namespace HotDocs.Sdk
 
 		private static Uri InternalNameToPartUri(string internalName)
 		{
-			return PackUriHelper.CreatePartUri(new Uri(internalName, UriKind.Relative));
+			Uri retUri = null;
+			try
+			{
+				Uri paramUri = new Uri(Uri.EscapeDataString(internalName), UriKind.Relative);
+				retUri = PackUriHelper.CreatePartUri(paramUri);
+			}
+			catch (Exception ex)
+			{
+				Trace.WriteLine("TemplatePackage.InternalNameToPartUri: exception thrown: " + ex.Message);
+				throw;
+			}
+			return retUri;
 		}
 
 		private static string PartUriToInternalName(Uri partUri)

@@ -374,7 +374,9 @@ namespace HotDocs.Sdk
 			/// </summary>
 			public override void Clear()
 			{
-				// throw away all the previous value structures and reset the answer completely
+				base.Clear(); // this recursively clears out all existing values, firing appropriate change notifications along the way
+
+				// now (for good measure) throw away all the previous value structures and reset the answer completely
 				_value = new ValueNode<T>();
 				Depth = 0;
 			}
@@ -398,6 +400,8 @@ namespace HotDocs.Sdk
 					return;
 
 				parentNode.Children.Insert(iterationToInsert, new ValueNode<T>());
+				if (AnswerCollection != null)
+					AnswerCollection.OnAnswerChanged(this, rptIdx, ValueChangeType.IndexShift);
 			}
 
 			/// <summary>
@@ -419,6 +423,9 @@ namespace HotDocs.Sdk
 					return;
 
 				parentNode.Children.RemoveAt(iterationToDelete);
+
+				if (AnswerCollection != null)
+					AnswerCollection.OnAnswerChanged(this, rptIdx, ValueChangeType.IndexShift);
 			}
 
 			/// <summary>
@@ -457,6 +464,8 @@ namespace HotDocs.Sdk
 
 				ValueNode<T> movedNode = parentNode.Children.RemoveAt(iterationToMove);
 				parentNode.Children.Insert(newPosition, movedNode);
+				if (AnswerCollection != null)
+					AnswerCollection.OnAnswerChanged(this, rptIdx, ValueChangeType.IndexShift);
 			}
 
 			/// <summary>

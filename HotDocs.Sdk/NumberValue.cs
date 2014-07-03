@@ -10,9 +10,13 @@ using System.Diagnostics;
 namespace HotDocs.Sdk
 {
 	/// <summary>
-	/// A HotDocs Number value.
+	/// The NumberValue struct is used to represent numeric values in HotDocs. Since it's a struct, NumberValue is a value type
+	/// with value semantics. Instances of NumberValue directly contain a floating point value, and therefore (unlike reference types) are immutable.
 	/// </summary>
-	public struct NumberValue : IValue
+	/// <remarks>Also included as part of NumberValue is code that "fudges" numeric values to eliminate the rounding errors
+	/// typical of floating-point arithmetic on digital computers. This is possible because HotDocs supports only up to seven decimal
+	/// places of precision, and the relevant "fudging" takes place five decimal places beyond that necessary level of precision.</remarks>
+	public struct NumberValue : IValue, IComparable
 	{
 		private double? _value;
 		private bool _protect;
@@ -98,7 +102,7 @@ namespace HotDocs.Sdk
 			if (!IsAnswered || !operand.IsAnswered)
 				throw new InvalidOperationException();
 
-			return Value.Equals(operand.Value);
+			return FudgeDouble(Value, 7, true).Equals(FudgeDouble(operand.Value, 7, true));
 		}
 
 		/// <summary>
@@ -108,6 +112,11 @@ namespace HotDocs.Sdk
 		public override int GetHashCode()
 		{
 			return _value.GetHashCode();
+		}
+
+		public static implicit operator NumberValue(UnansweredValue v)
+		{
+			return Unanswered;
 		}
 
 		/// <summary>
@@ -128,6 +137,95 @@ namespace HotDocs.Sdk
 		public static implicit operator NumberValue(int i)
 		{
 			return new NumberValue((double)i);
+		}
+
+		public static implicit operator NumberValue(TextValue textValue)
+		{
+			if (!textValue.IsAnswered)
+				return Unanswered;
+
+			double num;
+			return double.TryParse(textValue.Value, out num) ? new NumberValue(num) : Unanswered;
+		}
+
+		public static implicit operator NumberValue(MultipleChoiceValue multipleChoiceValue)
+		{
+			if (!multipleChoiceValue.IsAnswered)
+				return Unanswered;
+
+			double num;
+			return double.TryParse(multipleChoiceValue.Value, out num) ? new NumberValue(num) : Unanswered;
+		}
+
+		// Unary negation
+		public static NumberValue operator -(NumberValue operand)
+		{
+			return (operand.IsAnswered) ?
+				new NumberValue(-operand.Value) : NumberValue.Unanswered;
+		}
+
+		public static NumberValue operator +(NumberValue leftOperand, NumberValue rightOperand)
+		{
+			return (leftOperand.IsAnswered && rightOperand.IsAnswered) ?
+				new NumberValue(leftOperand.Value + rightOperand.Value) : NumberValue.Unanswered;
+		}
+
+		public static NumberValue operator -(NumberValue leftOperand, NumberValue rightOperand)
+		{
+			return (leftOperand.IsAnswered && rightOperand.IsAnswered) ?
+				new NumberValue(leftOperand.Value - rightOperand.Value) : NumberValue.Unanswered;
+		}
+
+		public static NumberValue operator *(NumberValue leftOperand, NumberValue rightOperand)
+		{
+			return (leftOperand.IsAnswered && rightOperand.IsAnswered) ?
+				new NumberValue(leftOperand.Value * rightOperand.Value) : NumberValue.Unanswered;
+		}
+
+		public static NumberValue operator /(NumberValue leftOperand, NumberValue rightOperand)
+		{
+			return (leftOperand.IsAnswered && rightOperand.IsAnswered) ?
+				new NumberValue(leftOperand.Value / rightOperand.Value) : NumberValue.Unanswered;
+		}
+
+		public static TrueFalseValue operator ==(NumberValue leftOperand, NumberValue rightOperand)
+		{
+			return (leftOperand.IsAnswered && rightOperand.IsAnswered) ?
+				new TrueFalseValue(leftOperand.Equals(rightOperand)) : TrueFalseValue.Unanswered;
+		}
+
+		public static TrueFalseValue operator !=(NumberValue leftOperand, NumberValue rightOperand)
+		{
+			return (leftOperand.IsAnswered && rightOperand.IsAnswered) ?
+				new TrueFalseValue(!leftOperand.Equals(rightOperand)) : TrueFalseValue.Unanswered;
+		}
+
+		public static TrueFalseValue operator <(NumberValue leftOperand, NumberValue rightOperand)
+		{
+			return (leftOperand.IsAnswered && rightOperand.IsAnswered) ?
+				new TrueFalseValue(FudgeDouble(leftOperand.Value, 7, true) < FudgeDouble(rightOperand.Value, 7, true)) :
+				TrueFalseValue.Unanswered;
+		}
+
+		public static TrueFalseValue operator >(NumberValue leftOperand, NumberValue rightOperand)
+		{
+			return (leftOperand.IsAnswered && rightOperand.IsAnswered) ?
+				new TrueFalseValue(FudgeDouble(leftOperand.Value, 7, true) > FudgeDouble(rightOperand.Value, 7, true)) :
+				TrueFalseValue.Unanswered;
+		}
+
+		public static TrueFalseValue operator <=(NumberValue leftOperand, NumberValue rightOperand)
+		{
+			return (leftOperand.IsAnswered && rightOperand.IsAnswered) ?
+				new TrueFalseValue(FudgeDouble(leftOperand.Value, 7, true) <= FudgeDouble(rightOperand.Value, 7, true)) :
+				TrueFalseValue.Unanswered;
+		}
+
+		public static TrueFalseValue operator >=(NumberValue leftOperand, NumberValue rightOperand)
+		{
+			return (leftOperand.IsAnswered && rightOperand.IsAnswered) ?
+				new TrueFalseValue(FudgeDouble(leftOperand.Value, 7, true) >= FudgeDouble(rightOperand.Value, 7, true)) :
+				TrueFalseValue.Unanswered;
 		}
 
 		/// <summary>
@@ -174,11 +272,70 @@ namespace HotDocs.Sdk
 				writer.WriteAttributeString("userModifiable", System.Xml.XmlConvert.ToString(!_protect));
 
 			if (IsAnswered)
-				writer.WriteString(Value.ToString("F7", CultureInfo.InvariantCulture));
+				writer.WriteString(FudgeDouble(Value, 7, false).ToString(CultureInfo.InvariantCulture));
 			else
 				writer.WriteAttributeString("unans", System.Xml.XmlConvert.ToString(true));
 
 			writer.WriteEndElement();
+		}
+
+		private static double[] s_floatFudgeFactors =
+		{
+			1.0e-05,	//	1.0e-02,
+			1.0e-06,	//	1.0e-03,
+			1.0e-07,	//	1.0e-04,
+			1.0e-08,	//	1.0e-05,
+			1.0e-09,	//	1.0e-06,
+			1.0e-10,	//	1.0e-07,
+			1.0e-11,	//	1.0e-08,
+			1.0e-12,	//	1.0e-09,
+			1.0e-13,	//	1.0e-10
+		};
+
+		private static int[] s_powTenTable =
+		{
+			1,
+			10,
+			100,
+			1000,
+			10000,
+			100000,
+			1000000,
+			10000000,
+			100000000
+		};
+
+		// This is perhaps goofy but we need to replicate exactly what we do in desktop HotDocs.
+		public static double FudgeDouble(double number, int decimalPlaces, bool round)
+		{
+			Debug.Assert((decimalPlaces >= 0) && (decimalPlaces <= 7));
+
+			double fractionalPart = 0.0;
+			if (number < 0.0)
+				fractionalPart = (number - Math.Ceiling(number));
+			else
+				fractionalPart = (number - Math.Floor(number));
+
+			if (fractionalPart != 0.0)
+			{
+				// The double has a fractional part.
+				if (number < 0.0)
+					number -= s_floatFudgeFactors[decimalPlaces];
+				else
+					number += s_floatFudgeFactors[decimalPlaces];
+				int multiplier = s_powTenTable[decimalPlaces];
+				number *= multiplier;
+				if (round)
+				{
+					if (number < 0.0)
+						number -= 0.5;
+					else
+						number += 0.5;
+				}
+				number = (number < 0.0) ? Math.Ceiling(number) : Math.Floor(number);
+				number = number / multiplier;
+			}
+			return number;
 		}
 
 #if DEBUG
@@ -365,11 +522,11 @@ namespace HotDocs.Sdk
 				return this;
 			switch (conversionType.FullName)
 			{
-				case "HotDocs.TextValue": return IsAnswered ? new TextValue(ToString(provider)) : TextValue.Unanswered;
-				case "HotDocs.NumberValue": return IsAnswered ? new NumberValue(ToDouble(provider)) : NumberValue.Unanswered;
-				case "HotDocs.DateValue": return IsAnswered ? new DateValue(ToDateTime(provider)) : DateValue.Unanswered;
-				case "HotDocs.TrueFalseValue": return IsAnswered ? new TrueFalseValue(ToBoolean(provider)) : TrueFalseValue.Unanswered;
-				case "HotDocs.MultipleChoiceValue": return IsAnswered ? new MultipleChoiceValue(ToString(provider)) : MultipleChoiceValue.Unanswered;
+				case "HotDocs.Sdk.TextValue": return IsAnswered ? new TextValue(ToString(provider)) : TextValue.Unanswered;
+				case "HotDocs.Sdk.NumberValue": return IsAnswered ? new NumberValue(ToDouble(provider)) : NumberValue.Unanswered;
+				case "HotDocs.Sdk.DateValue": return IsAnswered ? new DateValue(ToDateTime(provider)) : DateValue.Unanswered;
+				case "HotDocs.Sdk.TrueFalseValue": return IsAnswered ? new TrueFalseValue(ToBoolean(provider)) : TrueFalseValue.Unanswered;
+				case "HotDocs.Sdk.MultipleChoiceValue": return IsAnswered ? new MultipleChoiceValue(ToString(provider)) : MultipleChoiceValue.Unanswered;
 			}
 			if (!IsAnswered)
 				throw new InvalidCastException();
@@ -414,5 +571,26 @@ namespace HotDocs.Sdk
 		}
 
 		#endregion
+
+        #region IComparable Members
+
+        public int CompareTo(object obj)
+        {
+            if (!(obj is NumberValue))
+                return -1;
+
+            NumberValue numberValue = (NumberValue)obj;
+            if (!IsAnswered && !numberValue.IsAnswered)
+                return 0;
+            if (!IsAnswered)
+                return 1;
+            if (!numberValue.IsAnswered)
+                return -1;
+
+            return FudgeDouble(Value, 7, true).CompareTo(FudgeDouble(numberValue.Value, 7, true));
+        }
+
+        #endregion
+
 	}
 }

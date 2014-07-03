@@ -17,10 +17,13 @@ namespace HotDocs.Sdk
 	/// </summary>
 	public class AnswerCollection : IEnumerable<Answer>
 	{
-		private Dictionary<string, Answer> _answers;
+		private Dictionary<string, Answer>[] _answers;
 		private string _title;
 		private float _version;
+		private string _dtd;
 		private string _filePath = "";
+		
+		public event EventHandler<AnswerChangedEventArgs> AnswerChanged;
 
 		/// <summary>
 		/// Default AnswerCollection constructor
@@ -30,14 +33,32 @@ namespace HotDocs.Sdk
 			Clear();
 		}
 
+		public Dictionary<string, Answer> GetAnswerBucket(ValueType T)
+		{
+			int valTypeInt = (int)T;
+
+			if (_answers[valTypeInt] == null)
+				_answers[valTypeInt] = new Dictionary<string, Answer>();
+
+			return _answers[valTypeInt];
+		}
+
 		/// <summary>
 		/// Resets the answer collection. All answers are deleted, and the title is set to an empty string.
 		/// </summary>
 		public virtual void Clear()
 		{
-			_answers = new Dictionary<string, Answer>();
+			int valueTypesCount = Enum.GetNames(typeof(ValueType)).Length;
+			_answers = new Dictionary<string, Answer>[valueTypesCount];
 			_title = String.Empty;
 			_version = 1.1F;
+			_dtd = null;
+		}
+
+		public void OnAnswerChanged(Answer ans, int[] indices, ValueChangeType changeType)
+		{
+			if (AnswerChanged != null)
+				AnswerChanged(ans, new AnswerChangedEventArgs(ans != null ? ans.Name : null, indices, changeType));
 		}
 
 		/// <summary>
@@ -57,12 +78,27 @@ namespace HotDocs.Sdk
 			get { return _version; }
 		}
 
+		public string DTD
+		{
+			get { return _dtd; }
+			set { _dtd = value; }
+		}
+
 		/// <summary>
 		/// The number of answers in the answer collection. Because HotDocs variables may be repeated, each of these answers may actually contain more than one value.
 		/// </summary>
 		public int AnswerCount
 		{
-			get { return _answers.Count; }
+			get
+			{
+				int result = 0;
+				foreach (Dictionary<string, Answer> answerBucket in _answers)
+				{
+					if (answerBucket != null)
+						result += answerBucket.Count;
+				}
+				return result;
+			}
 		}
 
 		/// <summary>
@@ -87,9 +123,9 @@ namespace HotDocs.Sdk
 		/// <param name="name">The name of the HotDocs variable whose answer you want to retrieve.</param>
 		/// <param name="answer">The Answer for the requested variable (if it exists).</param>
 		/// <returns>True if the answer collection contains an answer for the specified variable; otherwise, returns False.</returns>
-		public bool TryGetAnswer(string name, out Answer answer)
+		public bool TryGetAnswer(string name, ValueType T, out Answer answer)
 		{
-			return _answers.TryGetValue(name, out answer);
+			return GetAnswerBucket(T).TryGetValue(name, out answer);
 		}
 
 		/// <summary>
@@ -101,7 +137,7 @@ namespace HotDocs.Sdk
 		public Answer CreateAnswer<T>(string name) where T : IValue
 		{
 			Answer ans = Answer.Create<T>(this, name);
-			_answers[name] = ans;
+			GetAnswerBucket(ans.Type).Add(name, ans);
 			return ans;
 		}
 
@@ -112,9 +148,9 @@ namespace HotDocs.Sdk
 		/// <returns>True if the answer collection contained an answer for the specified variable and it was successfully removed;
 		/// otherwise, returns False.
 		/// </returns>
-		public bool RemoveAnswer(string name)
+		public bool RemoveAnswer(string name, ValueType T)
 		{
-			return _answers.Remove(name);
+			return GetAnswerBucket(T).Remove(name);
 		}
 
 		/// <summary>
@@ -446,6 +482,20 @@ namespace HotDocs.Sdk
 			}
 		}
 
+		public string GetXMLString(bool includeBOM, bool includeTransientAnswers)
+		{
+			StringBuilder result = new StringBuilder();
+
+			if (includeBOM)
+				result.Append('\xFEFF');
+
+			using (var writer = new System.IO.StringWriter(result))
+			{
+				WriteXml(writer, includeTransientAnswers);
+			}
+			return result.ToString();
+		}
+
 		/// <summary>
 		/// Writes the answer collection as a HotDocs XML answer file to the output stream.
 		/// </summary>
@@ -473,18 +523,19 @@ namespace HotDocs.Sdk
 			settings.Indent = true;
 			settings.IndentChars = "\t";
 			settings.OmitXmlDeclaration = true; // because we emitted it manually above
-			bool forInterview = true;
+			bool forInterview = true; // ensures the userModifiable and userExtendible attributes are output
 			using (XmlWriter writer = new AnswerXmlWriter(output, settings, forInterview))
 			{
 				writer.WriteStartDocument(true);
+				if (!String.IsNullOrEmpty(_dtd))
+					writer.WriteRaw(_dtd);
 				writer.WriteStartElement("AnswerSet");
 				writer.WriteAttributeString("title", _title);
 				writer.WriteAttributeString("version", XmlConvert.ToString(_version));
 				//writer.WriteAttributeString("useMangledNames", XmlConvert.ToString(false));
-				foreach (Answer ans in _answers.Values)
-				{
-					ans.WriteXml(writer, writeDontSave);
-				}
+				IEnumerator<Answer> answerEnumerator = GetEnumerator();
+				while (answerEnumerator.MoveNext())
+					answerEnumerator.Current.WriteXml(writer, writeDontSave);
 				writer.WriteEndElement();
 			}
 		}
@@ -497,8 +548,14 @@ namespace HotDocs.Sdk
 		/// <returns>An IEnumerator you can use to iterate the answers.</returns>
 		public IEnumerator<Answer> GetEnumerator()
 		{
-			foreach (Answer answer in _answers.Values)
-				yield return answer;
+			foreach (Dictionary<string, Answer> answerBucket in _answers)
+			{
+				if (answerBucket != null)
+				{
+					foreach (Answer answer in answerBucket.Values)
+						yield return answer;
+				}
+			}
 		}
 
 		#endregion
@@ -512,4 +569,25 @@ namespace HotDocs.Sdk
 
 		#endregion
 	}
+
+	public enum ValueChangeType { None, Changed, BecameAnswered, BecameUnanswered, IndexShift }
+
+	public class AnswerChangedEventArgs : EventArgs
+	{
+		private string _variableName;
+		private int[] _indices;
+		private ValueChangeType _changeType;
+
+		public string VariableName { get { return _variableName; } }
+		public int[] Indices { get { return _indices; } }
+		public ValueChangeType ChangeType { get { return _changeType; } }
+
+		public AnswerChangedEventArgs(string variableName, int[] indices, ValueChangeType changeType)
+		{
+			_variableName = variableName;
+			_indices = indices;
+			_changeType = changeType;
+		}
+	}
+
 }

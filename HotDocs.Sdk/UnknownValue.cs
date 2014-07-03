@@ -9,7 +9,11 @@ using System.Text;
 
 namespace HotDocs.Sdk
 {
-	internal struct UnknownValue : IValue
+	/// <summary>
+	/// The UnknownValue struct is used to represent unrecognized values in HotDocs. This would include values that have somehow found their
+	/// way into a HotDocs answer file, but which this version of HotDocs does not know how to parse or understand.
+	/// </summary>
+	internal struct UnknownValue : IValue, IComparable
 	{
 		private string _outerXml; // XML fragment for unknown value (typically either a DBValue, ClauseLibValue, or DocTextValue)
 
@@ -180,6 +184,19 @@ namespace HotDocs.Sdk
 		public ulong ToUInt64(IFormatProvider provider)
 		{
 			throw new InvalidCastException();
+		}
+
+		#endregion
+
+		#region IComparable Members
+
+		public int CompareTo(object obj)
+		{
+			if (!(obj is UnknownValue))
+				return -1;
+
+			UnknownValue unkValue = (UnknownValue)obj;
+			return String.Compare(_outerXml, unkValue._outerXml, StringComparison.OrdinalIgnoreCase);
 		}
 
 		#endregion

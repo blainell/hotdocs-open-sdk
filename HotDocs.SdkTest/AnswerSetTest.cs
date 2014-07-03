@@ -53,7 +53,10 @@ namespace HotDocs.SdkTest
 ");
 			Assert.IsTrue(anss.AnswerCount == 4);
 			Answer ans;
-			Assert.IsTrue(anss.TryGetAnswer("Editor Full Name", out ans));
+
+			Assert.IsFalse(anss.TryGetAnswer("Editor Full Name", Sdk.ValueType.Number, out ans));
+
+			Assert.IsTrue(anss.TryGetAnswer("Editor Full Name", Sdk.ValueType.Text, out ans));
 			Assert.IsFalse(ans.IsRepeated);
 			Assert.IsTrue(ans.Save);
 			Assert.IsTrue(ans.UserExtendible);
@@ -63,9 +66,9 @@ namespace HotDocs.SdkTest
 			Assert.IsTrue(ans.GetValue<TextValue>().Type == Sdk.ValueType.Text);
 			Assert.IsTrue(ans.GetValue<TextValue>().UserModifiable);
 
-			Assert.IsFalse(anss.TryGetAnswer("author full name", out ans));
+			Assert.IsFalse(anss.TryGetAnswer("author full name", Sdk.ValueType.Text, out ans));
 
-			Assert.IsTrue(anss.TryGetAnswer("Author Full Name", out ans));
+			Assert.IsTrue(anss.TryGetAnswer("Author Full Name", Sdk.ValueType.Text, out ans));
 			Assert.IsTrue(ans.IsRepeated);
 			Assert.IsTrue(ans.GetChildCount() == 1);
 			Assert.IsTrue(ans.GetChildCount(0) == 1);
@@ -82,8 +85,7 @@ namespace HotDocs.SdkTest
 			Assert.IsTrue(ans.GetValue<TextValue>(0, 0, 0).IsAnswered);
 			Assert.IsTrue(ans.GetValue<TextValue>(0, 0, 0).Value == "A");
 
-
-			Assert.IsFalse(anss.TryGetAnswer("does not exist", out ans));
+			Assert.IsFalse(anss.TryGetAnswer("does not exist", Sdk.ValueType.Text, out ans));
 		}
 	}
 }
