@@ -39,6 +39,8 @@ namespace HotDocs.Sdk
 		/// </summary>
 		public const string ManifestName = "manifest.xml";
 
+		public bool CheckForGeneratedFiles { get; set; }
+
 		private static readonly byte[] ZipSig = new byte[] { 0x50, 0x4b, 0x03, 0x04 }; // The first 4 bytes of a .zip file
 		private static readonly byte[] HDSig  = new byte[] { 0x48, 0x44, 0xae, 0x1a }; // The first 4 bytes of an encrypted HotDocs package file
 
@@ -53,6 +55,7 @@ namespace HotDocs.Sdk
 		/// </summary>
 		public TemplatePackage()
 		{
+			CheckForGeneratedFiles = true;
 		}
 
 		private static void CopyStream(Stream to, Stream from)
@@ -716,16 +719,21 @@ namespace HotDocs.Sdk
 					return false;
 				}
 			}
-			if (!hasJs && depType == DependencyType.Assemble)
+
+			if (CheckForGeneratedFiles)
 			{
-				errMsg = "GeneratedFiles doesn't contain a .js file";
-				return false;
+				if (!hasJs && depType == DependencyType.Assemble)
+				{
+					errMsg = "GeneratedFiles doesn't contain a .js file";
+					return false;
+				}
+				if (!hasHvc && depType == DependencyType.Assemble)
+				{
+					errMsg = "GeneratedFiles doesn't contain a .hvc file";
+					return false;
+				}
 			}
-			if (!hasHvc && depType == DependencyType.Assemble)
-			{
-				errMsg = "GeneratedFiles doesn't contain a .hvc file";
-				return false;
-			}
+
 			errMsg = string.Empty;
 			return true;
 		}
@@ -1096,9 +1104,10 @@ namespace HotDocs.Sdk
 		/// <param name="filePaths">A complete list of all file paths to be added to the package.</param>
 		/// <param name="rsaParamsXml">RSA key serialized to XML. It can be a public/private key pair or only a public key. If null, save an unencrypted package.</param>
 		/// <param name="compression">The compression level.</param>
-		public static void Create(string packagePath, TemplatePackageManifest manifest, IEnumerable<string> filePaths, string rsaParamsXml, CompressionOption compression)
+		public static void Create(string packagePath, TemplatePackageManifest manifest, IEnumerable<string> filePaths, string rsaParamsXml, CompressionOption compression, bool checkForGeneratedFiles = true)
 		{
 			TemplatePackage package = new TemplatePackage();
+			package.CheckForGeneratedFiles = checkForGeneratedFiles;
 			//
 			package.CurrentCompression = compression;
 			foreach (var s in filePaths)
@@ -1116,9 +1125,9 @@ namespace HotDocs.Sdk
 		/// <param name="manifest">The manifest of the package. Passing null creates a package without a manifest.</param>
 		/// <param name="filePaths">A complete list of all file paths to be added to the package.</param>
 		/// <param name="rsaParamsXml">RSA key serialized to XML. It can be a public/private key pair or only a public key. If null, save an unencrypted package.</param>
-		public static void Create(string packagePath, TemplatePackageManifest manifest, IEnumerable<string> filePaths, string rsaParamsXml)
+		public static void Create(string packagePath, TemplatePackageManifest manifest, IEnumerable<string> filePaths, string rsaParamsXml, bool checkForGeneratedFiles = true)
 		{
-			Create(packagePath, manifest, filePaths, rsaParamsXml, CompressionOption.Maximum);
+			Create(packagePath, manifest, filePaths, rsaParamsXml, CompressionOption.Maximum, checkForGeneratedFiles);
 		}
 
 		/// <summary>
@@ -1127,9 +1136,9 @@ namespace HotDocs.Sdk
 		/// <param name="packagePath">The full file path were the package should be written to. Any existing file will be overwritten.</param>
 		/// <param name="manifest">The manifest of the package. Passing null creates a package without a manifest.</param>
 		/// <param name="filePaths">A complete list of all file paths to be added to the package.</param>
-		public static void Create(string packagePath, TemplatePackageManifest manifest, IEnumerable<string> filePaths)
+		public static void Create(string packagePath, TemplatePackageManifest manifest, IEnumerable<string> filePaths, bool checkForGeneratedFiles=true)
 		{
-			Create(packagePath, manifest, filePaths, null);
+			Create(packagePath, manifest, filePaths, null, checkForGeneratedFiles);
 		}
 
 		/// <summary>
