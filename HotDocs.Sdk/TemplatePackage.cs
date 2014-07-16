@@ -884,7 +884,8 @@ namespace HotDocs.Sdk
 			Uri retUri = null;
 			try
 			{
-				Uri paramUri = new Uri(Uri.EscapeDataString(internalName), UriKind.Relative);
+				//Uri paramUri = new Uri(Uri.EscapeDataString(internalName), UriKind.Relative);
+				Uri paramUri = new Uri(internalName, UriKind.Relative);
 				retUri = PackUriHelper.CreatePartUri(paramUri);
 			}
 			catch (Exception ex)
