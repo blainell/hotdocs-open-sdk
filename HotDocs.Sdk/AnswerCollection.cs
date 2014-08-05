@@ -22,7 +22,7 @@ namespace HotDocs.Sdk
 		private float _version;
 		private string _dtd;
 		private string _filePath = "";
-		
+
 		public event EventHandler<AnswerChangedEventArgs> AnswerChanged;
 
 		/// <summary>
@@ -137,7 +137,14 @@ namespace HotDocs.Sdk
 		public Answer CreateAnswer<T>(string name) where T : IValue
 		{
 			Answer ans = Answer.Create<T>(this, name);
-			GetAnswerBucket(ans.Type).Add(name, ans);
+			Dictionary<string, Answer> bucket = GetAnswerBucket(ans.Type);
+
+			// If there is already an answer in this bucket, remove it.
+			// The answer name must be unique within each bucket.
+			if (bucket.ContainsKey(name))
+				bucket.Remove(name);
+
+			bucket.Add(name, ans);
 			return ans;
 		}
 
