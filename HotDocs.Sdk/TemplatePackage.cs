@@ -1117,7 +1117,7 @@ namespace HotDocs.Sdk
 		/// <param name="filePaths">A complete list of all file paths to be added to the package.</param>
 		/// <param name="rsaParamsXml">RSA key serialized to XML. It can be a public/private key pair or only a public key. If null, save an unencrypted package.</param>
 		/// <param name="compression">The compression level.</param>
-		public static void Create(string packagePath, TemplatePackageManifest manifest, IEnumerable<string> filePaths, string rsaParamsXml, CompressionOption compression, bool checkForGeneratedFiles = true)
+		public static void Create(string packagePath, TemplatePackageManifest manifest, IEnumerable<string> filePaths, string rsaParamsXml, CompressionOption compression, bool checkForGeneratedFiles)
 		{
 			TemplatePackage package = new TemplatePackage();
 			package.CheckForGeneratedFiles = checkForGeneratedFiles;
@@ -1131,6 +1131,11 @@ namespace HotDocs.Sdk
 			package.SaveAs(packagePath, rsaParamsXml);
 		}
 
+		public static void Create(string packagePath, TemplatePackageManifest manifest, IEnumerable<string> filePaths, string rsaParamsXml, CompressionOption compression)
+		{
+			Create(packagePath, manifest, filePaths, rsaParamsXml, compression, true);
+		}
+
 		/// <summary>
 		/// Create a package in one step using the default compression option (=Maximum).
 		/// </summary>
@@ -1138,9 +1143,14 @@ namespace HotDocs.Sdk
 		/// <param name="manifest">The manifest of the package. Passing null creates a package without a manifest.</param>
 		/// <param name="filePaths">A complete list of all file paths to be added to the package.</param>
 		/// <param name="rsaParamsXml">RSA key serialized to XML. It can be a public/private key pair or only a public key. If null, save an unencrypted package.</param>
-		public static void Create(string packagePath, TemplatePackageManifest manifest, IEnumerable<string> filePaths, string rsaParamsXml, bool checkForGeneratedFiles = true)
+		public static void Create(string packagePath, TemplatePackageManifest manifest, IEnumerable<string> filePaths, string rsaParamsXml, bool checkForGeneratedFiles)
 		{
 			Create(packagePath, manifest, filePaths, rsaParamsXml, CompressionOption.Maximum, checkForGeneratedFiles);
+		}
+
+		public static void Create(string packagePath, TemplatePackageManifest manifest, IEnumerable<string> filePaths, string rsaParamsXml)
+		{
+			Create(packagePath, manifest, filePaths, rsaParamsXml, true);
 		}
 
 		/// <summary>
@@ -1149,9 +1159,14 @@ namespace HotDocs.Sdk
 		/// <param name="packagePath">The full file path were the package should be written to. Any existing file will be overwritten.</param>
 		/// <param name="manifest">The manifest of the package. Passing null creates a package without a manifest.</param>
 		/// <param name="filePaths">A complete list of all file paths to be added to the package.</param>
-		public static void Create(string packagePath, TemplatePackageManifest manifest, IEnumerable<string> filePaths, bool checkForGeneratedFiles=true)
+		public static void Create(string packagePath, TemplatePackageManifest manifest, IEnumerable<string> filePaths, bool checkForGeneratedFiles)
 		{
 			Create(packagePath, manifest, filePaths, null, checkForGeneratedFiles);
+		}
+
+		public static void Create(string packagePath, TemplatePackageManifest manifest, IEnumerable<string> filePaths)
+		{
+			Create(packagePath, manifest, filePaths, true);
 		}
 
 		/// <summary>
