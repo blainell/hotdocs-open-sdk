@@ -510,9 +510,32 @@ namespace HotDocs.Sdk
 		/// <param name="writeDontSave">Indicates whether or not answers that are marked as "do not save" should be written to the answer file.</param>
 		public void WriteXml(System.IO.Stream output, bool writeDontSave)
 		{
-			using (var writer = new System.IO.StreamWriter(output, Encoding.UTF8))
+			WriteXml(output, writeDontSave, true);
+		}
+
+		/// <summary>
+		/// Writes the answer collection as a HotDocs XML answer file to the output stream.
+		/// </summary>
+		/// <param name="output">The stream to which to write the XML answer file.></param>
+		/// <param name="writeDontSave">Indicates whether or not answers that are marked as "do not save" should be written to the answer file.</param>
+		/// <param name="closeStream">Indicates whether the stream should be closed upon completion.</param>
+		public void WriteXml(System.IO.Stream output, bool writeDontSave, bool closeStream)
+		{
+			var writer = new System.IO.StreamWriter(output, Encoding.UTF8);
+			try
 			{
 				WriteXml(writer, writeDontSave);
+			}
+			finally
+			{
+				if (closeStream)
+				{
+					writer.Close();
+				}
+				else
+				{
+					writer.Flush();
+				}
 			}
 		}
 
