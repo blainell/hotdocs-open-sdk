@@ -485,6 +485,12 @@ namespace HotDocs.Sdk.Cloud
 			}
 			catch (WebException ex)
 			{
+				if (ex.Response == null)
+				{
+					// No response, so rethrow.
+					throw;
+				}
+
 				using (HttpWebResponse httpResponse = (HttpWebResponse)ex.Response)
 				{
 					if (httpResponse.StatusCode == HttpStatusCode.NotFound)
