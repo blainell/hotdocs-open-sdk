@@ -38,7 +38,11 @@
 		var cookies = document.cookie.split(';');
 		for (var i = 0; i < cookies.length; i++)
 		{
-			var cookie = cookies[i].trim();
+			var cookie = cookies[i];
+
+			// Use string.trim for modern browsers; string.replace for ancient (e.g., IE8) browsers.
+			cookie = (typeof cookie.trim == "function") ? cookie.trim() : cookie.replace(/^\s+|\s+$/g, '');
+
 			var cookieName = cookie.substr(0, cookie.indexOf('='));
 
 			if (cookieName == name)
