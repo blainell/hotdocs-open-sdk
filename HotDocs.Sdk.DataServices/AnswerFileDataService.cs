@@ -220,6 +220,11 @@ namespace HotDocs.Sdk.DataServices
 				TemplateManifest templateManifest = template.GetManifest(ManifestParseFlags.ParseDataSources);
 
 				DataSource dataSource = templateManifest.DataSources.Single(ds => string.CompareOrdinal(ds.Id, dataSourceId) == 0);
+				if (dataSource.Type != DataSourceType.AnswerFile)
+				{
+					throw new Exception(string.Format("Attempt to use a data source with the name '{0}' as an answer file data source but its " +
+						"data source type is '{1}'", dataSource.Name, dataSource.Type));
+				}
 
 				string dataSourcePath = Path.Combine(template.Location.GetTemplateDirectory(), dataSource.Name);
 				AnswerFileDataSource answerFileDataSource = new AnswerFileDataSource(dataSourceId, dataSource.Name, dataSourcePath);
@@ -343,7 +348,7 @@ namespace HotDocs.Sdk.DataServices
 				for (int repeatIndex = 0; repeatIndex < repeatCount; repeatIndex++)
 				{
 					var resource = new DSPResource(resourceSet.ResourceType, s_readerWriterLock);
-
+					int answerIndex = 0;
 					for (int propertyIndex = 0; propertyIndex < resourceType.Properties.Count; propertyIndex++)
 					{
 						ResourceProperty property = resourceType.Properties[propertyIndex];
@@ -355,7 +360,7 @@ namespace HotDocs.Sdk.DataServices
 						else
 						{
 							IValue iValue = null;
-							answer = answers[propertyIndex];
+							answer = answers[answerIndex++];
 							if ((answer != null) && (repeatIndex <= answer.GetChildCount()))
 							{
 								iValue = answer.GetValue(repeatIndex);
