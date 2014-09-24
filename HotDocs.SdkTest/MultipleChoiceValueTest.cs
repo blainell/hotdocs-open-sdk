@@ -5,6 +5,7 @@
 using HotDocs.Sdk;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Collections.Generic;
 
 namespace HotDocs.SdkTest
 {
@@ -22,6 +23,7 @@ namespace HotDocs.SdkTest
 		public void Constructors()
 		{
 			string[] options = { "One", "Two", "Three" };
+			List<string> optionsList = new List<string>(options);
 
 			string s = null;
 			MultipleChoiceValue v = new MultipleChoiceValue(s);
@@ -46,6 +48,14 @@ namespace HotDocs.SdkTest
 			Assert.AreEqual("One", v.Choices[0]);
 			Assert.AreEqual("Two", v.Choices[1]);
 			Assert.AreEqual("Three", v.Choices[2]);
+
+			// Test implicit conversion of string[] to MultipleChoiceValue
+			Assert.AreEqual(((MultipleChoiceValue)options).Choices.Length, 3);
+			Assert.AreEqual(((MultipleChoiceValue)options).Choices[0], "One");
+
+			// Test implicit conversion of List<string> to MultipleChoiceValue
+			Assert.AreEqual(((MultipleChoiceValue)optionsList).Choices.Length, 3);
+			Assert.AreEqual(((MultipleChoiceValue)optionsList).Choices[1], "Two");
 		}
 
 		[TestMethod]

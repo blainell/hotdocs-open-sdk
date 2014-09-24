@@ -5,6 +5,7 @@
 using System;
 using System.Text;
 using System.Diagnostics;
+using System.Collections.Generic;
 
 namespace HotDocs.Sdk
 {
@@ -173,6 +174,26 @@ namespace HotDocs.Sdk
 		public static implicit operator MultipleChoiceValue(TextValue textValue)
 		{
 			return textValue.IsAnswered ? new MultipleChoiceValue(textValue.Value) : Unanswered;
+		}
+
+		/// <summary>
+		/// Implicit operator for converting string[] to MultipleChoiceValue.
+		/// </summary>
+		/// <param name="value"></param>
+		/// <returns>operator</returns>
+		static public implicit operator MultipleChoiceValue(string[] value)
+		{
+			return new MultipleChoiceValue(value);
+		}
+
+		/// <summary>
+		/// Implicit operator for converting List<string> to MultipleChoiceValue.
+		/// </summary>
+		/// <param name="value"></param>
+		/// <returns>operator</returns>
+		static public implicit operator MultipleChoiceValue(List<string> value)
+		{
+			return new MultipleChoiceValue(value.ToArray());
 		}
 
 		public static TextValue operator +(MultipleChoiceValue leftOperand, MultipleChoiceValue rightOperand)
@@ -631,28 +652,28 @@ namespace HotDocs.Sdk
 
 		#endregion
 
-        #region IComparable Members
+		#region IComparable Members
 
-        public int CompareTo(object obj)
-        {
-            if (!(obj is MultipleChoiceValue))
-                return -1;
+		public int CompareTo(object obj)
+		{
+			if (!(obj is MultipleChoiceValue))
+				return -1;
 
-            MultipleChoiceValue multipleChoiceValue = (MultipleChoiceValue)obj;
-            if (!IsAnswered && !multipleChoiceValue.IsAnswered)
-                return 0;
-            if (!IsAnswered)
-                return 1;
-            if (!multipleChoiceValue.IsAnswered)
-                return -1;
+			MultipleChoiceValue multipleChoiceValue = (MultipleChoiceValue)obj;
+			if (!IsAnswered && !multipleChoiceValue.IsAnswered)
+				return 0;
+			if (!IsAnswered)
+				return 1;
+			if (!multipleChoiceValue.IsAnswered)
+				return -1;
 
-            if (Equals(multipleChoiceValue.Value))
-                return 0;
+			if (Equals(multipleChoiceValue.Value))
+				return 0;
 
-            return String.Compare(Value, multipleChoiceValue.Value, StringComparison.OrdinalIgnoreCase);
-        }
+			return String.Compare(Value, multipleChoiceValue.Value, StringComparison.OrdinalIgnoreCase);
+		}
 
-        #endregion
+		#endregion
 
 	}
 }
