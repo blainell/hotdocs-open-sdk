@@ -114,7 +114,7 @@ namespace HotDocs.Sdk.ServerTest
 			GetInterview(svc, logRef);
 		}
 
-		[TestMethod]
+        [TestCategory("WebServiceIntegration"), TestMethod]
 		public void GetInterview_WebService()
 		{
 			IServices svc = Util.GetWebServiceServicesInterface();
@@ -122,7 +122,7 @@ namespace HotDocs.Sdk.ServerTest
 			GetInterview(svc, logRef);
 		}
 
-		[TestMethod]
+        [TestCategory("CloudIntegration"), TestMethod]
 		public void GetInterview_Cloud()
 		{
 			IServices svc = Util.GetCloudServicesInterface();
@@ -219,7 +219,7 @@ namespace HotDocs.Sdk.ServerTest
 			AssembleDocument(svc, logRef);
 		}
 
-		[TestMethod]
+        [TestCategory("WebServiceIntegration"), TestMethod]
 		public void AssembleDocument_WebService()
 		{
 			IServices svc = Util.GetWebServiceServicesInterface();
@@ -227,7 +227,7 @@ namespace HotDocs.Sdk.ServerTest
 			AssembleDocument(svc, logRef);
 		}
 
-		[TestMethod]
+		[TestCategory("CloudIntegration"), TestMethod]
 		public void AssembleDocument_Cloud()
 		{
 			IServices svc = Util.GetCloudServicesInterface();
@@ -298,7 +298,7 @@ namespace HotDocs.Sdk.ServerTest
 			GetComponentInfo(services, logRef);
 		}
 
-		[TestMethod]
+        [TestCategory("WebServiceIntegration"), TestMethod]
 		public void GetComponentInfo_WebService()
 		{
 			IServices services = Util.GetWebServiceServicesInterface();
@@ -306,7 +306,7 @@ namespace HotDocs.Sdk.ServerTest
 			GetComponentInfo(services, logRef);
 		}
 
-		[TestMethod]
+        [TestCategory("CloudIntegration"), TestMethod]
 		public void GetComponentInfo_Cloud()
 		{
 			IServices services = Util.GetCloudServicesInterface();
@@ -357,7 +357,7 @@ namespace HotDocs.Sdk.ServerTest
 			GetAnswers(services, logRef);
 		}
 
-		[TestMethod]
+        [TestCategory("WebServiceIntegration"), TestMethod]
 		public void GetAnswers_WebService()
 		{
 			IServices services = Util.GetWebServiceServicesInterface();
@@ -365,7 +365,7 @@ namespace HotDocs.Sdk.ServerTest
 			GetAnswers(services, logRef);
 		}
 
-		[TestMethod]
+        [TestCategory("CloudIntegration"), TestMethod]
 		public void GetAnswers_Cloud()
 		{
 			IServices services = Util.GetCloudServicesInterface();
@@ -462,12 +462,12 @@ namespace HotDocs.Sdk.ServerTest
 			BuildSupportFiles(Util.GetLocalServicesInterface());
 		}
 
-		[TestMethod]
+        [TestCategory("WebServiceIntegration"), TestMethod]
 		public void BuildSupportFiles_WebService() {
 			BuildSupportFiles(Util.GetWebServiceServicesInterface());
 		}
 
-		[TestMethod]
+        [TestCategory("CloudIntegration"), TestMethod]
 		public void BuildSupportFiles_Cloud()
 		{
 			BuildSupportFiles(Util.GetCloudServicesInterface());
@@ -516,12 +516,12 @@ namespace HotDocs.Sdk.ServerTest
 			RemoveSupportFiles(Util.GetLocalServicesInterface());
 		}
 
-		[TestMethod]
+        [TestCategory("WebServiceIntegration"), TestMethod]
 		public void RemoveSupportFiles_WebService() {
 			RemoveSupportFiles(Util.GetWebServiceServicesInterface());
 		}
 
-		[TestMethod]
+        [TestCategory("CloudIntegration"), TestMethod]
 		public void RemoveSupportFiles_Cloud()
 		{
 			RemoveSupportFiles(Util.GetCloudServicesInterface());
@@ -565,13 +565,13 @@ namespace HotDocs.Sdk.ServerTest
 			GetInterviewFile(Util.GetLocalServicesInterface());
 		}
 
-		[TestMethod]
+        [TestCategory("WebServiceIntegration"), TestMethod]
 		public void GetInterviewFile_WebService()
 		{
 			GetInterviewFile(Util.GetWebServiceServicesInterface());
 		}
 
-		[TestMethod]
+        [TestCategory("CloudIntegration"), TestMethod]
 		public void GetInterviewFile_Cloud()
 		{
 			GetInterviewFile(Util.GetCloudServicesInterface());
