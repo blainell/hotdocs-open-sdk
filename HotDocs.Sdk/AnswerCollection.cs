@@ -1,4 +1,4 @@
-﻿/* Copyright (c) 2013, HotDocs Limited
+/* Copyright (c) 2013, HotDocs Limited
    Use, modification and redistribution of this source is subject
    to the New BSD License as set out in LICENSE.TXT. */
 
@@ -464,17 +464,41 @@ namespace HotDocs.Sdk
 						else
 						{
 							List<String> mcVals = new List<string>();
+							bool selValueUnans = false; // The fact that SelValue can have an unans attribute is against the official schema, but
+							                            // core HotDocs code apparently wasn't aware of that. :-)
 							reader.ReadStartElement("MCValue");
 							reader.MoveToContent();
 							while (reader.Name == "SelValue")
 							{
-								reader.ReadStartElement("SelValue");
-								mcVals.Add(reader.Value);
-								reader.Read(); // skip past value
-								reader.ReadEndElement();
+								if (reader.HasAttributes)
+								{
+									while (reader.MoveToNextAttribute())
+									{
+										if (reader.Name == "unans")
+										{
+											selValueUnans = XmlConvert.ToBoolean(reader.Value);
+											break;
+										}
+									}
+									reader.MoveToElement();
+								}
+								if (selValueUnans)
+								{
+									reader.Read(); // read past SelValue element
+								}
+								else
+								{
+									reader.ReadStartElement("SelValue");
+									mcVals.Add(reader.Value);
+									reader.Read(); // skip past value
+									reader.ReadEndElement();
+								}
 								reader.MoveToContent();
 							}
-							ans.InitValue<MultipleChoiceValue>(new MultipleChoiceValue(mcVals.ToArray(), userModifiable), repeatStack);
+							if (mcVals.Count == 0)
+								ans.InitValue<MultipleChoiceValue>(userModifiable ? MultipleChoiceValue.Unanswered : MultipleChoiceValue.UnansweredLocked, repeatStack);
+							else
+								ans.InitValue<MultipleChoiceValue>(new MultipleChoiceValue(mcVals.ToArray(), userModifiable), repeatStack);
 						}
 						reader.Read(); // read past MCValue element
 						reader.MoveToContent();
