@@ -1,7 +1,8 @@
-﻿/* Copyright (c) 2013, HotDocs Limited
+/* Copyright (c) 2013, HotDocs Limited
    Use, modification and redistribution of this source is subject
    to the New BSD License as set out in LICENSE.TXT. */
 
+using HotDocs.Sdk;
 using HotDocs.Sdk.Server.Contracts;
 using HotDocs.Server;
 using System;
@@ -522,15 +523,12 @@ namespace HotDocs.Sdk.Server
 				}
 			}
 
-			if (document != null)
-			{
-				result = new AssembleDocumentResult(
-					new Document(template, document, docType, supportingFiles.ToArray(), asmResult.UnansweredVariables),
-					ansRdr == null ? null : ansRdr.ReadToEnd(),
-					pendingAssemblies.ToArray(),
-					asmResult.UnansweredVariables
-				);
-			}
+			result = new AssembleDocumentResult( document == null ? null :
+				new Document(template, document, docType, supportingFiles.ToArray(), asmResult.UnansweredVariables),
+				ansRdr == null ? null : ansRdr.ReadToEnd(),
+				pendingAssemblies.ToArray(),
+				asmResult.UnansweredVariables
+			);
 
 			return result;
 		}
