@@ -1,10 +1,11 @@
-﻿/* Copyright (c) 2013, HotDocs Limited
+/* Copyright (c) 2013, HotDocs Limited
    Use, modification and redistribution of this source is subject
    to the New BSD License as set out in LICENSE.TXT. */
 
 using System;
 using System.Collections.Generic;
 using System.IO;
+using HotDocs.Sdk;
 
 namespace HotDocs.Sdk.Server
 {
@@ -68,38 +69,38 @@ namespace HotDocs.Sdk.Server
 		/// The initial interview (if any) will be pre-populated with these answers, and the subsequent generation
 		/// of documents will have access to these answers as well.</param>
 		public WorkSession(IServices service, Template template, TextReader answers) : this(service, template, answers, null) {}
-        /// <summary>
-        /// Creates a WorkSession object that a host application can use to step through the process of presenting
-        /// all the interviews and assembling all the documents that may result from the given template.
-        /// 
-        /// Allows the default interview settings to be specified instead of being read from config file
-        /// </summary>
-        /// <param name="service">An object implementing the IServices interface, encapsulating the instance of
-        /// HotDocs Server with which the host app is communicating.</param>
-        /// <param name="template">The template upon which this WorkSession is based. The initial interview and/or
-        /// document work items in the WorkSession will be based on this template (including its Switches property).</param>
-        /// <param name="answers">A collection of XML answers to use as a starting point for the work session.
-        /// The initial interview (if any) will be pre-populated with these answers, and the subsequent generation
-        /// of documents will have access to these answers as well.</param>
-        /// <param name="defaultInterviewSettings">The default interview settings to be used throughout the session</param>
-        public WorkSession(IServices service, Template template, TextReader answers, InterviewSettings defaultInterviewSettings)
-        {
-            _service = service;
-            AnswerCollection = new AnswerCollection();
-            if (answers != null)
-                AnswerCollection.ReadXml(answers);
-            DefaultAssemblySettings = new AssembleDocumentSettings();
+		/// <summary>
+		/// Creates a WorkSession object that a host application can use to step through the process of presenting
+		/// all the interviews and assembling all the documents that may result from the given template.
+		/// 
+		/// Allows the default interview settings to be specified instead of being read from config file
+		/// </summary>
+		/// <param name="service">An object implementing the IServices interface, encapsulating the instance of
+		/// HotDocs Server with which the host app is communicating.</param>
+		/// <param name="template">The template upon which this WorkSession is based. The initial interview and/or
+		/// document work items in the WorkSession will be based on this template (including its Switches property).</param>
+		/// <param name="answers">A collection of XML answers to use as a starting point for the work session.
+		/// The initial interview (if any) will be pre-populated with these answers, and the subsequent generation
+		/// of documents will have access to these answers as well.</param>
+		/// <param name="defaultInterviewSettings">The default interview settings to be used throughout the session</param>
+		public WorkSession(IServices service, Template template, TextReader answers, InterviewSettings defaultInterviewSettings)
+		{
+			_service = service;
+			AnswerCollection = new AnswerCollection();
+			if (answers != null)
+				AnswerCollection.ReadXml(answers);
+			DefaultAssemblySettings = new AssembleDocumentSettings();
 				if (defaultInterviewSettings != null)
 					DefaultInterviewSettings = defaultInterviewSettings;
 				else
 					DefaultInterviewSettings = new InterviewSettings();
 				// add the work items
-            _workItems = new List<WorkItem>();
-            if (template.HasInterview)
-                _workItems.Add(new InterviewWorkItem(template));
-            if (template.GeneratesDocument)
-                _workItems.Add(new DocumentWorkItem(template));
-        }
+			_workItems = new List<WorkItem>();
+			if (template.HasInterview)
+				_workItems.Add(new InterviewWorkItem(template));
+			if (template.GeneratesDocument)
+				_workItems.Add(new DocumentWorkItem(template));
+		}
 
 		/* properties/state */
 
@@ -319,18 +320,40 @@ namespace HotDocs.Sdk.Server
 		/// <param name="interviewAnswers">The answers that were posted back from the interview.</param>
 		public void FinishInterview(TextReader interviewAnswers)
 		{
-			// pseudocode:
 			// overlay interviewAnswers over the session answer set,
-			// if the current template is an interview template
-			//     "assemble" it
-			//     add pending assemblies to the queue as necessary
-			// mark this interview workitem as complete.  (This will cause the WorkSession to advance to the next workItem.)
-
 			AnswerCollection.OverlayXml(interviewAnswers);
-			if (CurrentWorkItem is InterviewWorkItem)
-			{
-				InterviewResult interviewResult = _service.GetInterview(CurrentWorkItem.Template, new StringReader(AnswerCollection.XmlAnswers), InterviewSettings.Default, null, "");
 
+			// skip past completed work items to get the current workItem
+			WorkItem workItem = null;
+			int itemIndex = 0;
+			for (; itemIndex < _workItems.Count; itemIndex++)
+			{
+				workItem = _workItems[itemIndex];
+				if (!workItem.IsCompleted)
+					break;
+				workItem = null;
+			}
+			if (workItem != null && workItem is InterviewWorkItem)
+			{
+				// if the current template is an interview template
+				if (workItem.Template.TemplateType == TemplateType.InterviewOnly)
+				{
+					//     "assemble" it...
+					AssembleDocumentSettings asmOpts = new AssembleDocumentSettings(DefaultAssemblySettings);
+					asmOpts.Format = DocumentType.Native;
+					// if this is not the last work item in the queue, force retention of transient answers
+					asmOpts.RetainTransientAnswers |= (itemIndex < _workItems.Count - 1);
+
+					// assemble the item
+					using (var asmResult = _service.AssembleDocument(workItem.Template, new StringReader(AnswerCollection.XmlAnswers), asmOpts, ""))
+					{
+						// replace the session answers with the post-assembly answers
+						AnswerCollection.ReadXml(asmResult.Answers);
+						// add pendingAssemblies to the queue as necessary
+						InsertNewWorkItems(asmResult.PendingAssemblies, itemIndex);
+					}
+				}
+				// mark this interview workitem as complete.  (This will cause the WorkSession to advance to the next workItem.)
 				CurrentWorkItem.IsCompleted = true;
 			}
 		}
