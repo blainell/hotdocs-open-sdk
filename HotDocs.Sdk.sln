@@ -1,6 +1,14 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{18479F0C-BB4B-4FDF-80A5-1BBD7BE64C13}"
+	ProjectSection(SolutionItems) = preProject
+		Shared\Help.xml = Shared\Help.xml
+		HotDocs.Sdk.vsmdi = HotDocs.Sdk.vsmdi
+		Local.testsettings = Local.testsettings
+		TraceAndTestImpact.testsettings = TraceAndTestImpact.testsettings
+	EndProjectSection
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HotDocs.Sdk", "HotDocs.Sdk\HotDocs.Sdk.csproj", "{ACCCCF7A-E7C7-4730-90E8-1122AB01C4BD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HotDocs.Sdk.Server", "HotDocs.Sdk.Server\HotDocs.Sdk.Server.csproj", "{27B46F42-8009-4084-BE76-781FA4242FD2}"
@@ -9,12 +17,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HotDocs.Sdk.Server.Contract
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HotDocs.SdkTest", "HotDocs.SdkTest\HotDocs.SdkTest.csproj", "{2C9CDF25-697D-4324-85D8-C09F67E99C67}"
 EndProject
-Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "WebApp", "SamplePortal\WebApp", "{02D79128-FB75-408F-8464-3DCE42A500DE}"
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "WebApp", "SamplePortal\WebApp\", "{02D79128-FB75-408F-8464-3DCE42A500DE}"
 	ProjectSection(WebsiteProperties) = preProject
 		SccProjectName = ""
 		SccAuxPath = ""
 		SccLocalPath = ""
 		SccProvider = ""
+		Frontpage = "false"
 		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
 		ProjectReferences = "{27B46F42-8009-4084-BE76-781FA4242FD2}|HotDocs.Sdk.Server.dll;{ACCCCF7A-E7C7-4730-90E8-1122AB01C4BD}|HotDocs.Sdk.dll;{4E902DF4-0F10-49CB-ADEF-04E3D27BAC73}|HotDocs.Sdk.DataServices.dll;{674CC9E2-6C1A-4506-89C6-A541B1920AE5}|HotDocs.Sdk.Server.Contracts.dll;{6FED07CD-D7AF-4243-B442-865A413940DC}|HotDocs.Sdk.Cloud.dll;"
 		Debug.AspNetCompiler.VirtualPath = "/WebApp"
@@ -37,14 +46,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HotDocs.Sdk.DataServices", "HotDocs.Sdk.DataServices\HotDocs.Sdk.DataServices.csproj", "{4E902DF4-0F10-49CB-ADEF-04E3D27BAC73}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HotDocs.Sdk.ServerTest", "HotDocs.Sdk.ServerTest\HotDocs.Sdk.ServerTest.csproj", "{B0B66E17-8ECF-44E4-9A56-9A03FB2AB178}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{18479F0C-BB4B-4FDF-80A5-1BBD7BE64C13}"
-	ProjectSection(SolutionItems) = preProject
-		Shared\Help.xml = Shared\Help.xml
-		HotDocs.Sdk.vsmdi = HotDocs.Sdk.vsmdi
-		Local.testsettings = Local.testsettings
-		TraceAndTestImpact.testsettings = TraceAndTestImpact.testsettings
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HotDocs.Sdk.Cloud", "HotDocs.Sdk.Cloud\HotDocs.Sdk.Cloud.csproj", "{6FED07CD-D7AF-4243-B442-865A413940DC}"
 EndProject
