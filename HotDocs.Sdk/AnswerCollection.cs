@@ -267,8 +267,8 @@ namespace HotDocs.Sdk
 			settings.ValidationType = ValidationType.None;
 			//settings.ProhibitDtd = false; // obsolete in .NET 4.0, replaced with:
 			settings.DtdProcessing = DtdProcessing.Ignore; // .NET 4.0 only
-			try
-			{
+			//try
+			//{
 				using (XmlReader reader = XmlReader.Create(input, settings))
 				{
 					// then read the XML and create the answers...
@@ -340,11 +340,11 @@ namespace HotDocs.Sdk
 						}
 					}
 				}
-			}
-			catch
-			{
-				// Just eat any exceptions that are thrown for now. 
-			}
+			//}
+			//catch
+			//{
+			//	// Just eat any exceptions that are thrown for now. 
+			//}
 		}
 
 		private void ReadValue(XmlReader reader, ref Answer ans, string answerName, int[] repeatStack)
@@ -374,6 +374,7 @@ namespace HotDocs.Sdk
 			{
 				// check for unanswered/user modifiable attributes
 				bool unans = false;
+				bool collapsed = false;
 				bool userModifiable = true;
 				if (reader.HasAttributes)
 				{
@@ -389,6 +390,10 @@ namespace HotDocs.Sdk
 						}
 					}
 					reader.MoveToElement();
+				}
+				if (unans)
+				{
+					collapsed = reader.IsEmptyElement;
 				}
 				// get value
 				switch (reader.Name)
@@ -502,6 +507,15 @@ namespace HotDocs.Sdk
 						}
 						reader.Read(); // read past MCValue element
 						reader.MoveToContent();
+						if (unans && reader.Name == "SelValue")
+						{
+							// invalid answer file, but fine, we'll read past the garbage
+							while (reader.Name == "SelValue" || reader.NodeType == XmlNodeType.Text)
+							{
+								reader.Read();
+								reader.MoveToContent();
+							}
+						}
 						break;
 					default: // anything else -- database values, clause library values, document text (span) values
 						if (ans == null)
@@ -510,6 +524,12 @@ namespace HotDocs.Sdk
 						break;
 				}
 				reader.MoveToContent(); // skip any white space to move to the next element
+				if (unans && !collapsed)
+				{
+					// Fix 1/6/2015: Fix a problem where an unanswered value that is not collapsed causes the answer collection to abort reading.
+					reader.ReadEndElement();
+					reader.MoveToContent();
+				}
 			}
 		}
 
