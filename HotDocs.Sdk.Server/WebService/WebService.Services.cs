@@ -159,7 +159,11 @@ namespace HotDocs.Sdk.Server.WebService
 
 			using (Proxy client = GetProxy())
 			{
-				OutputFormat outputFormat = ConvertFormat(settings.Format);
+				OutputFormat outputFormat;
+				if (template.GeneratesDocument)
+					outputFormat = ConvertFormat(settings.Format);
+				else // avoid requesting any output other than answers from interview templates! (for the HDS web service)
+					outputFormat = OutputFormat.Answers;
 				AssemblyOptions assemblyOptions = ConvertOptions(settings);
 				string fileName = GetRelativePath(template.GetFullPath());
 				asmResult = client.AssembleDocument(
