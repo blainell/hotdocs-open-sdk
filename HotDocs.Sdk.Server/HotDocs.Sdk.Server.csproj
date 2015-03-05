@@ -44,6 +44,7 @@
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Net.Http, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Web" />
@@ -56,6 +57,7 @@
   <ItemGroup>
     <Compile Include="Cloud\Cloud.Services.cs" />
     <Compile Include="NamespaceDoc.cs" />
+    <Compile Include="OnPremise\OnPremiseServices.cs" />
     <Compile Include="WebService\WebService.Services.cs" />
     <Compile Include="WorkSession.cs" />
     <Compile Include="AssembleDocumentResult.cs" />
@@ -87,6 +89,7 @@
       <Name>HotDocs.Sdk</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
