@@ -12,7 +12,7 @@ namespace HotDocs.Sdk.Cloud
 	/// <summary>
 	/// This class parses a multipart MIME stream.
 	/// </summary>
-	internal sealed class MultipartMimeParser : IDisposable
+	public sealed class MultipartMimeParser : IDisposable
 	{
 		#region Delegates
 		public delegate Stream StreamGetter(Dictionary<string, string> headers);

@@ -37,6 +37,7 @@
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Net.Http, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data" />
@@ -55,11 +56,13 @@
     <Compile Include="DateValue.cs" />
     <Compile Include="Dependency.cs" />
     <Compile Include="InterviewSettings.cs" />
+    <Compile Include="MultipartMimeParser.cs" />
     <Compile Include="NamespaceDoc.cs" />
     <Compile Include="PackagePathTemplateLocation.cs" />
     <Compile Include="PackageTemplateLocation.cs" />
     <Compile Include="PathTemplateLocation.cs" />
     <Compile Include="Settings.cs" />
+    <Compile Include="StreamSplitter.cs" />
     <Compile Include="Template.cs" />
     <Compile Include="TemplateLocation.cs" />
     <Compile Include="TemplatePackage.cs" />
@@ -80,6 +83,7 @@
     <Compile Include="UnknownValue.cs" />
     <Compile Include="Util.cs" />
     <Compile Include="Util_Aes.cs" />
+    <Compile Include="WebServiceTemplateLocation.cs" />
     <Compile Include="XmlWrappingWriter.cs" />
   </ItemGroup>
   <ItemGroup>
