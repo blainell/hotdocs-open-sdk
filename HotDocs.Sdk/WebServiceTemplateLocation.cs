@@ -46,7 +46,7 @@ namespace HotDocs.Sdk
         {
             using (var client = new HttpClient())
             {
-                HttpResponseMessage result = client.GetAsync(string.Format(HostAddress + "/?packageid={0}&filename={1}", PackageID, fileName)).Result;
+                HttpResponseMessage result = client.GetAsync(string.Format(HostAddress + "/0/{0}?filename={1}", PackageID, fileName)).Result;
 
                 if (result.IsSuccessStatusCode)
                 {
@@ -56,30 +56,6 @@ namespace HotDocs.Sdk
                 using (var sr = new StreamReader(result.Content.ReadAsStreamAsync().Result))
                 {
                     throw new Exception(String.Format("The file '{0}' could not be retrieved: {1}", fileName,sr.ReadToEnd()));
-                }
-            }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="fileName"></param>
-        /// <param name="templatename"></param>
-        /// <returns></returns>
-        /// <exception cref="Exception"></exception>
-        public Stream GetFile(string fileName, string templatename)
-        {
-            using (var client = new HttpClient())
-            {
-                HttpResponseMessage result = client.GetAsync(string.Format(HostAddress + "/?packageid={0}&templatename={1}&filename={2}", PackageID,templatename, fileName)).Result;
-
-                if (result.IsSuccessStatusCode)
-                {
-                    return result.Content.ReadAsStreamAsync().Result;
-                }
-                using (var sr = new StreamReader(result.Content.ReadAsStreamAsync().Result))
-                {
-                    throw new Exception(String.Format("The file '{0}' could not be retrieved: {1}", fileName, sr.ReadToEnd()));
                 }
             }
         }
