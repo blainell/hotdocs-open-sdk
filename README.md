@@ -1,7 +1,5 @@
 HotDocs Open SDK
 ================
-v0.10.0 - 2015/03/05
-
 The HotDocs Open SDK is a toolkit designed to ease integration between 3rd party applications and HotDocs.
 It is implemented in C# and can be utilized by any managed (.NET) application to simplify communication
 with HotDocs Cloud Services and/or HotDocs Server. The SDK is comprised of several components that can be
