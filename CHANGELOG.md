@@ -3,6 +3,13 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 This file will follow the approach suggested at http://keepachangelog.com/
 
+## 0.10.1 - 2015-03-12
+## Fixed
+- Corrected URL used for retrieving a single file from new On Premise API
+
+## Removed
+- Removed an unused method related to retrieving a single file from On Premise API
+
 ## 0.10.0 - 2015-03-05
 ### Added
 - Support for new On Premise API
