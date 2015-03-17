@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 This file will follow the approach suggested at http://keepachangelog.com/
 
+## 0.10.2 - 2015-03-12
+## Fixed
+- Updated HotDocs.Server dlls included in NuGet package to latest version
+
 ## 0.10.1 - 2015-03-12
 ## Fixed
 - Corrected URL used for retrieving a single file from new On Premise API
