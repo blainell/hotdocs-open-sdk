@@ -142,6 +142,26 @@ namespace HotDocs.Sdk.Server
 		private IServices _service;
 		private List<WorkItem> _workItems;
 
+		public static string GetSessionDebugSummary(HotDocs.Sdk.Server.WorkSession session)
+		{
+			var result = new System.Text.StringBuilder();
+			result.Append("Service type=");
+			if (session.Service is HotDocs.Sdk.Server.Cloud.Services)
+				result.Append("C");
+			else if (session.Service is HotDocs.Sdk.Server.Local.Services)
+				result.Append("L");
+			else if (session.Service is HotDocs.Sdk.Server.WebService.Services)
+				result.Append("W");
+			else
+				result.Append("O");
+			result.AppendFormat("; Answers={0}", session.AnswerCollection == null ? "null" : session.AnswerCollection.AnswerCount.ToString());
+			result.AppendFormat("; WorkItems={0}", (session.WorkItems as List<WorkItem>).Count);
+			var item = session.CurrentWorkItem;
+			result.AppendFormat("; Current={0} ({1})", item == null ? "null" : item.Template.FileName,
+				item == null ? "Complete" : ((item is HotDocs.Sdk.Server.InterviewWorkItem) ? "Interview" : "Document"));
+			return result.ToString();
+		}
+
 		/// <summary>
 		/// Exposees a list of interview and document work items, both already completed and pending, as suitable for
 		/// presentation in a host application (for example, to show progress through the work session).
