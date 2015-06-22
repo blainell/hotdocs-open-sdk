@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Configuration;
 using System.IO;
+using System.Net;
 using System.Net.Http;
+using System.Reflection;
 
 namespace HotDocs.Sdk
 {
@@ -15,7 +17,7 @@ namespace HotDocs.Sdk
         public WebServiceTemplateLocation(string packageID, string hostAddress)
             : base(packageID)
         {
-             HostAddress = hostAddress;
+            HostAddress = hostAddress;
             _templateDir = GetTemplateDirectory();
         }
 
@@ -53,10 +55,12 @@ namespace HotDocs.Sdk
                     return result.Content.ReadAsStreamAsync().Result;
                 }
 
-                using (var sr = new StreamReader(result.Content.ReadAsStreamAsync().Result))
+                if (result.StatusCode == HttpStatusCode.NotFound)
                 {
-                    throw new Exception(String.Format("The file '{0}' could not be retrieved: {1}", fileName,sr.ReadToEnd()));
+                    throw new Exception("Not Found");
                 }
+
+                throw new Exception(String.Format("The server returned a '{0}' when searching for the file '{1}'",result.StatusCode.ToString(),fileName));
             }
         }
 
@@ -80,7 +84,7 @@ namespace HotDocs.Sdk
                 throw new ArgumentNullException();
 
             string[] tokens = content.Split(new char[] { '|' });
-            if (tokens.Length != 2)
+            if (tokens.Length != 
                 throw new Exception("Invalid template location.");
 
             PackageID = tokens[0];
