@@ -57,7 +57,7 @@ namespace HotDocs.Sdk
 
                 if (result.StatusCode == HttpStatusCode.NotFound)
                 {
-                    throw new Exception("Not Found");
+                    throw new Exception(result.ReasonPhrase);
                 }
 
                 throw new Exception(String.Format("The server returned a '{0}' when searching for the file '{1}'",result.StatusCode.ToString(),fileName));
