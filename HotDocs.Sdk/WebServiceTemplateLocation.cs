@@ -84,7 +84,7 @@ namespace HotDocs.Sdk
                 throw new ArgumentNullException();
 
             string[] tokens = content.Split(new char[] { '|' });
-            if (tokens.Length != 
+            if (tokens.Length != 2)
                 throw new Exception("Invalid template location.");
 
             PackageID = tokens[0];
