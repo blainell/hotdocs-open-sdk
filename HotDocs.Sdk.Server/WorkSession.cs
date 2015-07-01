@@ -258,7 +258,7 @@ namespace HotDocs.Sdk.Server
 				var docWorkItem = workItem as DocumentWorkItem;
 				// make a copy of the default assembly settings and pass it to the BeforeAssembleDocumentDelegate (if provided)
 				AssembleDocumentSettings asmOpts = new AssembleDocumentSettings(DefaultAssemblySettings);
-				asmOpts.Format = workItem.Template.NativeDocumentType;
+                		asmOpts.Format = workItem.Template.NativeDocumentType;
 				// if this is not the last work item in the queue, force retention of transient answers
 				asmOpts.RetainTransientAnswers |= (workItem != _workItems[_workItems.Count - 1]);
 

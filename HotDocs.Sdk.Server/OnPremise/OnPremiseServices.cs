@@ -35,7 +35,7 @@ namespace HotDocs.Sdk.Server.OnPremise
 
                 OutputFormat of = ConvertFormat(settings.Format);
 
-                var urlBuilder = new StringBuilder(string.Format(HostAddress + "/assemble/0/{0}/?templatename={1}&format={2}", packageId, HttpUtility.UrlEncode(template.FileName), of));
+                var urlBuilder = new StringBuilder(string.Format(HostAddress + "/assemble/0/{0}/{1}?format={2}", packageId, HttpUtility.UrlEncode(template.FileName), of));
 
                 if (settings.Settings != null)
                 {
@@ -99,9 +99,9 @@ namespace HotDocs.Sdk.Server.OnPremise
 
                 var urlBuilder = new StringBuilder(string.Format(
                     HostAddress +
-                    "/interview/0/{0}/?templatename={1}&format={2}&markedvariables{3}&tempimageurl={4}",
+                    "/interview/0/{0}/{1}?format={2}&markedvariables{3}&tempimageurl={4}",
                     packageId, HttpUtility.UrlEncode(template.FileName), settings.Format,
-                    markedVariables != null ? "=" + string.Join(",", settings.MarkedVariables) : null, settings.InterviewFilesUrl));
+                    markedVariables != null ? "=" + HttpUtility.UrlEncode(string.Join(",", settings.MarkedVariables)) : null, HttpUtility.UrlEncode(settings.InterviewFilesUrl)));
 
                 foreach (KeyValuePair<string, string> kv in settings.Settings)
                 {
@@ -173,7 +173,7 @@ namespace HotDocs.Sdk.Server.OnPremise
 
                 var result =
                     client.GetAsync(
-                        string.Format(HostAddress + "/componentinfo/0/{0}/?templatename={1}&includedialogs={2}",
+                        string.Format(HostAddress + "/componentinfo/0/{0}/{1}?includedialogs={2}",
                             packageId, HttpUtility.UrlEncode(template.FileName), includeDialogs))
                         .Result;
 
