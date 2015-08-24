@@ -5,7 +5,6 @@ using System.Net.Http;
 using System.Net.Mime;
 using System.Text;
 using System.Web;
-using System.Web.Caching;
 using System.Xml.Serialization;
 using HotDocs.Sdk.Cloud;
 using HotDocs.Sdk.Server.Contracts;
@@ -14,8 +13,6 @@ namespace HotDocs.Sdk.Server.OnPremise
 {
     public class OnPremiseServices : IServices
     {
-        private string HostAddress { get; set; }
-
         public OnPremiseServices(string hostAddress)
         {
             if (string.IsNullOrEmpty(hostAddress))
@@ -24,35 +21,40 @@ namespace HotDocs.Sdk.Server.OnPremise
             HostAddress = hostAddress;
         }
 
-        public AssembleDocumentResult AssembleDocument(Template template, TextReader answers, AssembleDocumentSettings settings, string logRef)
+        private string HostAddress { get; set; }
+
+        public AssembleDocumentResult AssembleDocument(Template template, TextReader answers,
+            AssembleDocumentSettings settings, string logRef)
         {
             using (var client = new HttpClient())
             {
                 AssembleDocumentResult adr = null;
                 var stringContent = new StringContent(answers.ReadToEnd());
-                var packageTemplateLocation = (PackageTemplateLocation)template.Location;
-                var packageId = packageTemplateLocation.PackageID;
+                var packageTemplateLocation = (PackageTemplateLocation) template.Location;
+                string packageId = packageTemplateLocation.PackageID;
 
                 OutputFormat of = ConvertFormat(settings.Format);
 
-                var urlBuilder = new StringBuilder(string.Format(HostAddress + "/assemble/0/{0}/{1}?format={2}", packageId, HttpUtility.UrlEncode(template.FileName), of));
+                var urlBuilder =
+                    new StringBuilder(string.Format(HostAddress + "/assemble/0/{0}/{1}?format={2}", packageId,
+                        HttpUtility.UrlEncode(template.FileName), of));
 
                 if (settings.Settings != null)
                 {
-                    foreach (KeyValuePair<string, string> kv in settings.Settings)
+                    foreach (var kv in settings.Settings)
                     {
                         urlBuilder.AppendFormat("&{0}={1}", kv.Key, kv.Value ?? "");
                     }
                 }
 
-                var result = client.PostAsync(urlBuilder.ToString(), stringContent).Result;
+                HttpResponseMessage result = client.PostAsync(urlBuilder.ToString(), stringContent).Result;
 
                 var _parser = new MultipartMimeParser();
 
                 HandleErrorStream(result, result.IsSuccessStatusCode);
-                var streamResult = result.Content.ReadAsStreamAsync().Result;
+                Stream streamResult = result.Content.ReadAsStreamAsync().Result;
 
-                var outputDir = Path.GetTempPath();
+                string outputDir = Path.GetTempPath();
                 Directory.CreateDirectory(outputDir);
                 using (var resultsStream = new MemoryStream())
                 {
@@ -80,8 +82,8 @@ namespace HotDocs.Sdk.Server.OnPremise
                     if (resultsStream.Position > 0)
                     {
                         resultsStream.Position = 0;
-                        var serializer = new XmlSerializer(typeof(AssemblyResult));
-                        var asmResult = (AssemblyResult)serializer.Deserialize(resultsStream);
+                        var serializer = new XmlSerializer(typeof (AssemblyResult));
+                        var asmResult = (AssemblyResult) serializer.Deserialize(resultsStream);
                         if (asmResult != null)
                             adr = Util.ConvertAssemblyResult(template, asmResult, settings.Format);
                     }
@@ -90,30 +92,86 @@ namespace HotDocs.Sdk.Server.OnPremise
             }
         }
 
-        public InterviewResult GetInterview(Template template, TextReader answers, InterviewSettings settings, IEnumerable<string> markedVariables, string logRef)
+        public ComponentInfo GetComponentInfo(Template template, bool includeDialogs, string logRef)
         {
             using (var client = new HttpClient())
             {
-                var packageTemplateLocation = (PackageTemplateLocation)template.Location;
-                var packageId = packageTemplateLocation.PackageID;
+                var packageTemplateLocation = (PackageTemplateLocation) template.Location;
+                string packageId = packageTemplateLocation.PackageID;
+
+                HttpResponseMessage result =
+                    client.GetAsync(
+                        string.Format(HostAddress + "/componentinfo/0/{0}/{1}?includedialogs={2}",
+                            packageId, HttpUtility.UrlEncode(template.FileName), includeDialogs))
+                        .Result;
+
+
+                HandleErrorStream(result, result.IsSuccessStatusCode);
+                Stream streamResult = result.Content.ReadAsStreamAsync().Result;
+
+
+                using (var stream = (MemoryStream) streamResult)
+                {
+                    stream.Position = 0;
+                    var serializer = new XmlSerializer(typeof (ComponentInfo));
+                    return (ComponentInfo) serializer.Deserialize(stream);
+                }
+            }
+        }
+
+        public string GetAnswers(IEnumerable<TextReader> answers, string logRef)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void BuildSupportFiles(Template template, HDSupportFilesBuildFlags flags)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void RemoveSupportFiles(Template template)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Stream GetInterviewFile(Template template, string fileName, string fileType)
+        {
+            var packageTemplateLocation = (WebServiceTemplateLocation) template.Location;
+            return
+                packageTemplateLocation.GetFile(!Path.HasExtension(fileName)
+                    ? HttpUtility.UrlEncode(fileName + fileType)
+                    : HttpUtility.UrlEncode(fileName));
+        }
+
+        public InterviewResult GetInterview(Template template, TextReader answers, InterviewSettings settings,
+            IEnumerable<string> markedVariables, string logRef)
+        {
+            using (var client = new HttpClient())
+            {
+                var packageTemplateLocation = (PackageTemplateLocation) template.Location;
+                string packageId = packageTemplateLocation.PackageID;
 
                 var urlBuilder = new StringBuilder(string.Format(
                     HostAddress +
-                    "/interview/0/{0}/{1}?format={2}&markedvariables{3}&tempimageurl={4}",
+                    "/interview/0/{0}/{1}?format={2}&markedvariables{3}&tempimageurl={4}&encodeFileNames={5}",
                     packageId, HttpUtility.UrlEncode(template.FileName), settings.Format,
-                    markedVariables != null ? "=" + HttpUtility.UrlEncode(string.Join(",", settings.MarkedVariables)) : null, HttpUtility.UrlEncode(settings.InterviewFilesUrl)));
+                    markedVariables != null
+                        ? "=" + HttpUtility.UrlEncode(string.Join(",", settings.MarkedVariables))
+                        : null, HttpUtility.UrlEncode(settings.InterviewFilesUrl), true));
 
-                foreach (KeyValuePair<string, string> kv in settings.Settings)
+                foreach (var kv in settings.Settings)
                 {
                     urlBuilder.AppendFormat("&{0}={1}", kv.Key, kv.Value ?? "");
                 }
 
-                StringContent stringContent = answers == null ? new StringContent(String.Empty) : new StringContent(answers.ReadToEnd());
+                StringContent stringContent = answers == null
+                    ? new StringContent(String.Empty)
+                    : new StringContent(answers.ReadToEnd());
 
                 HttpResponseMessage result = client.PostAsync(urlBuilder.ToString(), stringContent).Result;
 
                 HandleErrorStream(result, result.IsSuccessStatusCode);
-                var streamResult = result.Content.ReadAsStreamAsync().Result;
+                Stream streamResult = result.Content.ReadAsStreamAsync().Result;
                 if (!result.IsSuccessStatusCode)
                 {
                     using (var streamReader = new StreamReader(streamResult))
@@ -124,7 +182,7 @@ namespace HotDocs.Sdk.Server.OnPremise
                 }
 
                 var parser = new MultipartMimeParser();
-                var outputDir = Path.GetTempPath();
+                string outputDir = Path.GetTempPath();
                 Directory.CreateDirectory(outputDir);
 
                 using (var resultsStream = new MemoryStream())
@@ -154,93 +212,48 @@ namespace HotDocs.Sdk.Server.OnPremise
                     if (resultsStream.Position > 0)
                     {
                         resultsStream.Position = 0;
-                        var serializer = new XmlSerializer(typeof(BinaryObject[]));
-                        var binObjects = (BinaryObject[])serializer.Deserialize(resultsStream);
-                        var interviewContent = Util.ExtractString(binObjects[0]);
-                        return new InterviewResult { HtmlFragment = interviewContent };
+                        var serializer = new XmlSerializer(typeof (BinaryObject[]));
+                        var binObjects = (BinaryObject[]) serializer.Deserialize(resultsStream);
+                        string interviewContent = Util.ExtractString(binObjects[0]);
+                        return new InterviewResult {HtmlFragment = interviewContent};
                     }
                     return null;
                 }
             }
         }
 
-        public ComponentInfo GetComponentInfo(Template template, bool includeDialogs, string logRef)
-        {
-            using (var client = new HttpClient())
-            {
-                var packageTemplateLocation = (PackageTemplateLocation)template.Location;
-                var packageId = packageTemplateLocation.PackageID;
-
-                var result =
-                    client.GetAsync(
-                        string.Format(HostAddress + "/componentinfo/0/{0}/{1}?includedialogs={2}",
-                            packageId, HttpUtility.UrlEncode(template.FileName), includeDialogs))
-                        .Result;
-
-
-                HandleErrorStream(result, result.IsSuccessStatusCode);
-                var streamResult = result.Content.ReadAsStreamAsync().Result;
-
-
-                using (var stream = (MemoryStream)streamResult)
-                {
-                    stream.Position = 0;
-                    var serializer = new XmlSerializer(typeof(ComponentInfo));
-                    return (ComponentInfo)serializer.Deserialize(stream);
-                }
-            }
-        }
-
-        public string GetAnswers(IEnumerable<TextReader> answers, string logRef)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void BuildSupportFiles(Template template, HDSupportFilesBuildFlags flags)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void RemoveSupportFiles(Template template)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Stream GetInterviewFile(Template template, string fileName, string fileType)
-        {
-            var packageTemplateLocation = (WebServiceTemplateLocation)template.Location;
-            return packageTemplateLocation.GetFile(!Path.HasExtension(fileName) ? HttpUtility.UrlEncode(fileName + fileType) : HttpUtility.UrlEncode(fileName));
-        }
-
         private static void HandleErrorStream(HttpResponseMessage response, bool isSuccessStatusCode)
         {
             if (!isSuccessStatusCode)
             {
-                throw new Exception("An Error Has Occured: "+response.ReasonPhrase);
+                throw new Exception("An Error Has Occured: " + response.ReasonPhrase);
             }
         }
 
         private static string GetFileNameFromHeaders(Dictionary<string, string> headers)
         {
             string disp;
-            if (headers.TryGetValue("Content-Disposition", out disp))
+
+            if (!headers.TryGetValue("Content-Disposition", out disp)) return null;
+
+            string[] pairs = disp.Split(';');
+
+            foreach (string pair in pairs)
             {
-                string[] pairs = disp.Split(';');
-                foreach (string pair in pairs)
-                {
-                    string trimmed = pair.Trim();
-                    if (trimmed.StartsWith("filename="))
-                    {
-                        return trimmed.Substring("filename=".Length);
-                    }
-                }
+                string trimmed = pair.Trim();
+
+                if (!trimmed.StartsWith("filename*=")) continue;
+
+                int endPos = trimmed.IndexOf("'", StringComparison.Ordinal);
+
+                return trimmed.Substring(endPos + 2);
             }
             return null;
         }
 
         private OutputFormat ConvertFormat(DocumentType docType)
         {
-            OutputFormat format = OutputFormat.None;
+            var format = OutputFormat.None;
             switch (docType)
             {
                 case DocumentType.HFD:

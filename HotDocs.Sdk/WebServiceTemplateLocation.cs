@@ -60,7 +60,7 @@ namespace HotDocs.Sdk
                     throw new Exception(result.ReasonPhrase);
                 }
 
-                throw new Exception(String.Format("The server returned a '{0}' when searching for the file '{1}'",result.StatusCode.ToString(),fileName));
+                throw new Exception(String.Format("The server returned a '{0}' when searching for the file '{1}'", result.StatusCode.ToString(), fileName));
             }
         }
 
