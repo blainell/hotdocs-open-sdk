@@ -83,8 +83,8 @@ namespace HotDocs.Sdk.Server.Cloud
 				settings = new InterviewSettings();
 
 			// Configure interview settings
-			settings.Settings["OmitImages"] = "true"; // Instructs HDS not to return images used by the interview; we'll get them ourselves from the template folder.
-			settings.Settings["OmitDefinitions"] = "true"; // Instructs HDS not to return interview definitions; we'll get them ourselves from the template folder.
+			settings.Settings["OmitImages"] = "true"; // Instructs HDS not to return images used by the interview; we'll get them ourselves from the template location. (See GetInterviewFile below.)
+			settings.Settings["OmitDefinitions"] = "true"; // Instructs HDS not to return interview definitions; we'll get them ourselves from the template location. (See GetInterviewFile below.)
 			settings.Settings["TempInterviewUrl"] = Util.GetInterviewImageUrl(settings, template);
 			settings.Settings["InterviewDefUrl"] = Util.GetInterviewDefinitionUrl(settings, template);
 			settings.MarkedVariables = (string[])(markedVariables ?? new string[0]);

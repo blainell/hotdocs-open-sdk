@@ -86,6 +86,8 @@ namespace HotDocs.Sdk.Server
 			return result;
 		}
 
+		#region IDisposable implementation
+
 		private bool disposed = false; // to detect redundant calls
 
 		/// <summary>
@@ -116,6 +118,8 @@ namespace HotDocs.Sdk.Server
 		{
 			Dispose(true);
 		}
+
+		#endregion
 	}
 
 }

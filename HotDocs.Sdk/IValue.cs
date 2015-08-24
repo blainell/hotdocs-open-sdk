@@ -11,33 +11,35 @@ namespace HotDocs.Sdk
 	/// </summary>
 	public enum ValueType {
 		/// <summary>
-		/// An answer for an unknown variable type.
-		/// </summary>
+		/// A value of some type that is not directly understood by the Open SDK.
+        /// </summary>
 		Unknown = 0,
+        /// <summary>
+        /// A value of some type that is not directly understood by the Open SDK.
+        /// This is a synonym for Unknown, and is included only for backwards compatibility.
+        /// </summary>
+        Other = 0,
 		/// <summary>
-		/// An answer for a Text variable.
+		/// A text value. HotDocs Text variables have answers of this type.
 		/// </summary>
-		Text,
+		Text = 1,
 		/// <summary>
-		/// An answer for a Number variable.
+		/// A numeric value. HotDocs Number variables have answers of this type.
 		/// </summary>
 		Number,
 		/// <summary>
-		/// An answer for a Date variable.
+		/// A date value. HotDocs Date variables have answers of this type.
 		/// </summary>
 		Date,
 		/// <summary>
-		/// An answer for a True/False variable or grouped child dialog.
+		/// A true/false (Boolean) value. HotDocs True/False variables and grouped child dialogs have answers of this type.
 		/// </summary>
 		TrueFalse,
 		/// <summary>
-		/// An answer for a Multiple Choice variable.
+		/// A multiple choice value, which is represented by an array of one or more text strings.
+        /// HotDocs Multiple Choice variables have answers of this type.
 		/// </summary>
-		MultipleChoice,
-		/// <summary>
-		/// An answer for an other variable.
-		/// </summary>
-		Other };
+		MultipleChoice };
 
 	/// <summary>
 	/// An interface for a HotDocs value.

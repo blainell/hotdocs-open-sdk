@@ -158,6 +158,8 @@ namespace HotDocs.Sdk.Server
 			return DocumentType.Unknown;
 		}
 
+		#region IDisposable implementation
+
 		private bool disposed = false; // to detect redundant calls
 		private Template _source = null;
 
@@ -194,5 +196,7 @@ namespace HotDocs.Sdk.Server
 		{
 			Dispose(true);
 		}
+
+		#endregion
 	}
 }

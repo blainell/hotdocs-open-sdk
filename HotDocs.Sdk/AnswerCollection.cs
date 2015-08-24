@@ -391,90 +391,81 @@ namespace HotDocs.Sdk
 					}
 					reader.MoveToElement();
 				}
-				if (unans)
-				{
-					collapsed = reader.IsEmptyElement;
-				}
+				collapsed = reader.IsEmptyElement;
 				// get value
+                string s;
 				switch (reader.Name)
 				{
 					case "TextValue":
 						if (ans == null)
 							ans = CreateAnswer<TextValue>(answerName);
-						if (unans)
+                        s = reader.ReadElementContentAsString(reader.Name, "");
+                        if (unans || string.IsNullOrEmpty(s))
 							ans.InitValue<TextValue>(userModifiable ? TextValue.Unanswered : TextValue.UnansweredLocked, repeatStack);
-						else
-						{
-							reader.ReadStartElement("TextValue");
-							ans.InitValue<TextValue>(new TextValue(reader.Value, userModifiable), repeatStack);
-							reader.Read(); // move past text element
-						}
-						reader.Read(); // read past TextValue element
-						reader.MoveToContent();
+                        else
+                            ans.InitValue<TextValue>(new TextValue(s, userModifiable), repeatStack);
 						break;
 					case "NumValue":
 						if (ans == null)
 							ans = CreateAnswer<NumberValue>(answerName);
-						if (unans)
-							ans.InitValue<NumberValue>(userModifiable ? NumberValue.Unanswered : NumberValue.UnansweredLocked, repeatStack);
-						else
-						{
-							reader.ReadStartElement("NumValue");
-							ans.InitValue<NumberValue>(new NumberValue(XmlConvert.ToDouble(reader.Value), userModifiable), repeatStack);
-							reader.Read(); // move past text element
-						}
-						reader.Read(); // read past NumValue element
-						reader.MoveToContent();
+                        s = reader.ReadElementContentAsString(reader.Name, "");
+                        if (unans || string.IsNullOrEmpty(s))
+                            ans.InitValue<NumberValue>(userModifiable ? NumberValue.Unanswered : NumberValue.UnansweredLocked, repeatStack);
+                        else
+                            ans.InitValue<NumberValue>(new NumberValue(XmlConvert.ToDouble(s), userModifiable), repeatStack);
 						break;
 					case "DateValue":
 						if (ans == null)
 							ans = CreateAnswer<DateValue>(answerName);
-						if (unans)
-							ans.InitValue<DateValue>(userModifiable ? DateValue.Unanswered : DateValue.UnansweredLocked, repeatStack);
-						else
-						{
-							reader.ReadStartElement("DateValue");
-							string[] dateParts = reader.Value.Split('/', ' ', '-', '.');
-							ans.InitValue<DateValue>(new DateValue(
-								Convert.ToInt32(dateParts[2]), Convert.ToInt32(dateParts[1]), Convert.ToInt32(dateParts[0]), userModifiable
-								), repeatStack);
-							reader.Read(); // move past text element
-						}
-						reader.Read(); // read past DateValue element
-						reader.MoveToContent();
+                        s = reader.ReadElementContentAsString(reader.Name, "");
+                        if (unans || string.IsNullOrEmpty(s))
+                            ans.InitValue<DateValue>(userModifiable ? DateValue.Unanswered : DateValue.UnansweredLocked, repeatStack);
+                        else
+                        {
+                            string[] dateParts = s.Split('/', ' ', '-', '.');
+                            ans.InitValue<DateValue>(
+                                new DateValue(
+                                    Convert.ToInt32(dateParts[2]),
+                                    Convert.ToInt32(dateParts[1]),
+                                    Convert.ToInt32(dateParts[0]),
+                                    userModifiable
+                                ), repeatStack);
+                        }
 						break;
 					case "TFValue":
 						if (ans == null)
 							ans = CreateAnswer<TrueFalseValue>(answerName);
-						if (unans)
+                        s = reader.ReadElementContentAsString(reader.Name, "");
+                        if (unans || string.IsNullOrEmpty(s))
 							ans.InitValue<TrueFalseValue>(userModifiable ? TrueFalseValue.Unanswered : TrueFalseValue.UnansweredLocked, repeatStack);
 						else
 						{
-							reader.ReadStartElement("TFValue");
 							// LRS: although the value for a TFValue element should be lower case,
 							// The following line forces the conversion to lower case explicitly
 							// because JavaScript and Silverlight have historically (and incorrectly) set these
-							// values using upper case instead.  (TFS 4429)
-							ans.InitValue<TrueFalseValue>(new TrueFalseValue(XmlConvert.ToBoolean(reader.Value.ToLowerInvariant()), userModifiable), repeatStack);
-							reader.Read(); // move past text element
+							// values using upper case instead.  (Bug 4429)
+							ans.InitValue<TrueFalseValue>(new TrueFalseValue(XmlConvert.ToBoolean(s.ToLowerInvariant()), userModifiable), repeatStack);
 						}
-						reader.Read(); // read past TFValue element
-						reader.MoveToContent();
 						break;
 					case "MCValue":
 						if (ans == null)
 							ans = CreateAnswer<MultipleChoiceValue>(answerName);
-						if (unans)
-							ans.InitValue<MultipleChoiceValue>(userModifiable ? MultipleChoiceValue.Unanswered : MultipleChoiceValue.UnansweredLocked, repeatStack);
+						if (unans || reader.IsEmptyElement)
+                        {
+                            ans.InitValue<MultipleChoiceValue>(userModifiable ? MultipleChoiceValue.Unanswered : MultipleChoiceValue.UnansweredLocked, repeatStack);
+                            reader.ReadInnerXml(); // read past the element and ignore it
+                        }
 						else
 						{
+                            // the MCValue claims to contain one or more SelValues
 							List<String> mcVals = new List<string>();
-							bool selValueUnans = false; // The fact that SelValue can have an unans attribute is against the official schema, but
-							                            // core HotDocs code apparently wasn't aware of that. :-)
+							bool selValueUnans; // The fact that SelValue can have an unans attribute is against the official schema, but
+							                    // some HotDocs code apparently wasn't aware of that. :-)
 							reader.ReadStartElement("MCValue");
 							reader.MoveToContent();
 							while (reader.Name == "SelValue")
 							{
+                                selValueUnans = false;
 								if (reader.HasAttributes)
 								{
 									while (reader.MoveToNextAttribute())
@@ -487,34 +478,22 @@ namespace HotDocs.Sdk
 									}
 									reader.MoveToElement();
 								}
-								if (selValueUnans)
-								{
-									reader.Read(); // read past SelValue element
-								}
-								else
-								{
-									reader.ReadStartElement("SelValue");
-									mcVals.Add(reader.Value);
-									reader.Read(); // skip past value
-									reader.ReadEndElement();
-								}
-								reader.MoveToContent();
+                                s = reader.ReadElementContentAsString(reader.Name, "");
+                                if (!selValueUnans
+                                    && (!string.IsNullOrEmpty(s)
+                                        || (s != null && mcVals.Count == 0)  // allow at most a single empty SelValue
+                                        )
+                                    )
+                                {
+                                    mcVals.Add(s);
+                                }
+								reader.MoveToContent(); // skip whitespace before next element
 							}
-							if (mcVals.Count == 0)
+							if (mcVals.Count == 0) // as good as unanswered
 								ans.InitValue<MultipleChoiceValue>(userModifiable ? MultipleChoiceValue.Unanswered : MultipleChoiceValue.UnansweredLocked, repeatStack);
 							else
 								ans.InitValue<MultipleChoiceValue>(new MultipleChoiceValue(mcVals.ToArray(), userModifiable), repeatStack);
-						}
-						reader.Read(); // read past MCValue element
-						reader.MoveToContent();
-						if (unans && reader.Name == "SelValue")
-						{
-							// invalid answer file, but fine, we'll read past the garbage
-							while (reader.Name == "SelValue" || reader.NodeType == XmlNodeType.Text)
-							{
-								reader.Read();
-								reader.MoveToContent();
-							}
+                            reader.ReadEndElement(); // read past MCValue end element
 						}
 						break;
 					default: // anything else -- database values, clause library values, document text (span) values
@@ -524,12 +503,6 @@ namespace HotDocs.Sdk
 						break;
 				}
 				reader.MoveToContent(); // skip any white space to move to the next element
-				if (unans && !collapsed)
-				{
-					// Fix 1/6/2015: Fix a problem where an unanswered value that is not collapsed causes the answer collection to abort reading.
-					reader.ReadEndElement();
-					reader.MoveToContent();
-				}
 			}
 		}
 

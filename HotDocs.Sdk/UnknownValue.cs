@@ -26,7 +26,7 @@ namespace HotDocs.Sdk
 
 		public ValueType Type
 		{
-			get { return ValueType.Other; }
+			get { return ValueType.Unknown; }
 		}
 
 		public bool IsAnswered

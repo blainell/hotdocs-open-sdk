@@ -100,24 +100,18 @@ namespace SamplePortal
 		/// <param name="document">The document to be stored.</param>
 		public void AddDoc(HotDocs.Sdk.Server.Document document)
 		{
-			try
-			{
-				string docPath = Path.Combine(_folder, Path.GetRandomFileName() + document.FileExtension);
+			string docPath = Path.Combine(_folder, Path.GetRandomFileName() + document.FileExtension);
 
-				//Write the document to a file.
-				using (FileStream outputStream = File.Create(docPath))
-				{
-					// Make sure we copy from the start of the memory stream.
-					document.Content.Position = 0;
-					document.Content.CopyTo(outputStream);
-				}
-
-				SamplePortal.Document doc = new Document(docPath, document.Source.Title);
-				_docs.Add(doc);
-			}
-			catch (Exception)
+			//Write the document to a file.
+			using (FileStream outputStream = File.Create(docPath))
 			{
+				// Make sure we copy from the start of the memory stream.
+				document.Content.Position = 0;
+				document.Content.CopyTo(outputStream);
 			}
+
+			SamplePortal.Document doc = new Document(docPath, document.Source.Title);
+			_docs.Add(doc);
 		}
 
 		/// <summary>
