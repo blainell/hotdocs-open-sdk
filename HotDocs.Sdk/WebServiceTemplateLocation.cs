@@ -60,7 +60,7 @@ namespace HotDocs.Sdk
                     throw new Exception(result.ReasonPhrase);
                 }
 
-                throw new Exception(String.Format("The server returned a '{0}' when searching for the file '{1}'",result.StatusCode.ToString(),fileName));
+                throw new Exception(String.Format("The server returned a '{0}' when searching for the file '{1}'", result.StatusCode.ToString(), fileName));
             }
         }
 
@@ -84,7 +84,7 @@ namespace HotDocs.Sdk
                 throw new ArgumentNullException();
 
             string[] tokens = content.Split(new char[] { '|' });
-            if (tokens.Length != 
+            if (tokens.Length != 2)
                 throw new Exception("Invalid template location.");
 
             PackageID = tokens[0];
