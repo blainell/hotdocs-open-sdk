@@ -36,8 +36,8 @@ namespace HotDocs.Sdk.Server.OnPremise
                 OutputFormat of = ConvertFormat(settings.Format);
 
                 var urlBuilder =
-                    new StringBuilder(string.Format(HostAddress + "/assemble/0/{0}/{1}?format={2}", packageId,
-                        HttpUtility.UrlEncode(template.FileName), of));
+                    new StringBuilder(string.Format(HostAddress + "/assemble/0/{0}/{1}?format={2}&encodefilenames={3}", packageId,
+                        HttpUtility.UrlEncode(template.FileName), of,true));
 
                 if (settings.Settings != null)
                 {
