@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{18479F0C-BB4B-4FDF-80A5-1BBD7BE64C13}"
 	ProjectSection(SolutionItems) = preProject
 		Shared\Help.xml = Shared\Help.xml
@@ -23,7 +25,6 @@ Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "WebApp", "SamplePortal\WebA
 		SccAuxPath = ""
 		SccLocalPath = ""
 		SccProvider = ""
-		Frontpage = "false"
 		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
 		ProjectReferences = "{27B46F42-8009-4084-BE76-781FA4242FD2}|HotDocs.Sdk.Server.dll;{ACCCCF7A-E7C7-4730-90E8-1122AB01C4BD}|HotDocs.Sdk.dll;{4E902DF4-0F10-49CB-ADEF-04E3D27BAC73}|HotDocs.Sdk.DataServices.dll;{674CC9E2-6C1A-4506-89C6-A541B1920AE5}|HotDocs.Sdk.Server.Contracts.dll;{6FED07CD-D7AF-4243-B442-865A413940DC}|HotDocs.Sdk.Cloud.dll;"
 		Debug.AspNetCompiler.VirtualPath = "/WebApp"
@@ -41,6 +42,7 @@ Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "WebApp", "SamplePortal\WebA
 		Release.AspNetCompiler.FixedNames = "false"
 		Release.AspNetCompiler.Debug = "False"
 		VWDPort = "62265"
+		SlnRelativePath = "SamplePortal\WebApp\"
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HotDocs.Sdk.DataServices", "HotDocs.Sdk.DataServices\HotDocs.Sdk.DataServices.csproj", "{4E902DF4-0F10-49CB-ADEF-04E3D27BAC73}"
@@ -59,9 +61,6 @@ Project("{7CF6DF6D-3B04-46F8-A40B-537D21BCA0B4}") = "Help", "Help\Help.shfbproj"
 	EndProjectSection
 EndProject
 Global
-	GlobalSection(TestCaseManagementSettings) = postSolution
-		CategoryFile = HotDocs.Sdk.vsmdi
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
@@ -105,5 +104,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(TestCaseManagementSettings) = postSolution
+		CategoryFile = HotDocs.Sdk.vsmdi
 	EndGlobalSection
 EndGlobal
