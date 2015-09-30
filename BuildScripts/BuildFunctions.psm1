@@ -85,7 +85,7 @@ function Publish-NugetPackage
         #Create the .nupkg from the nuspec file
         $ps = new-object System.Diagnostics.Process
         $ps.StartInfo.Filename = "$NugetPath\nuget.exe"
-        $ps.StartInfo.Arguments = "push $ApiKey `"$file`""
+        $ps.StartInfo.Arguments = "push `"$file`" $ApiKey"
         $ps.StartInfo.WorkingDirectory = $file.Directory.FullName
         $ps.StartInfo.RedirectStandardOutput = $True
         $ps.StartInfo.RedirectStandardError = $True
@@ -101,8 +101,8 @@ function Publish-NugetPackage
         Write-Host $Out
         if ($ErrOut -ne "")
         {
-            Write-Error "Nuget push Errors"
             Write-Error $ErrOut
+            Throw "Nuget push Errors" 
         }
 
     }
