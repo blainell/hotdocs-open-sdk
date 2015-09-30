@@ -21,13 +21,14 @@ if (!(Test-Path Env:\NUGET_SERVER_PASSWORD)){
   throw "NUGET_SERVER_PASSWORD does not exist"
 }
 
-$BuildNumber = (Get-Item Env:\GO_PIPELINE_LABEL).Value
+
 $MajorVersion = (Get-Item Env:\MAJOR_VERSION).Value
 $MinorVersion = (Get-Item Env:\MINOR_VERSION).Value
+$PatchVersion= (Get-Item Env:\PATCH_VERSION).Value
 $NugetServer = (Get-Item Env:\NUGET_SERVER).Value
 $NugetServerPassword = (Get-Item Env:\NUGET_SERVER_PASSWORD).Value
 
-$packageVersion = "$MajorVersion.$MinorVersion.$BuildNumber.0"
+$packageVersion = "$MajorVersion.$MinorVersion.$PatchVersion-beta"
 
 $scriptRoot = Split-Path -Parent -Path $MyInvocation.MyCommand.Definition
 Write-Host "Script root is $scriptRoot"
