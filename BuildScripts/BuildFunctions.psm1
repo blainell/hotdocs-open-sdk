@@ -5,8 +5,7 @@ function Publish-NugetPackage
     [string]$SrcPath,
     [string]$NugetPath,
     [string]$PackageVersion,
-    [string]$NugetServer,
-    [string]$NugetServerPassword
+    [string]$ApiKey
   )
     if (!$SrcPath){
     throw "No source path specified"
@@ -17,16 +16,16 @@ function Publish-NugetPackage
     if (!$PackageVersion){
     throw "No PackageVersion specified"
     }
-    if (!$NugetServer){
-    throw "No NugetServer specified"
+    if (!$ApiKey){
+    throw "No ApiKey specified"
     }
-    if (!$NugetServerPassword){
-    throw "No NugetServerPassword specified"
-    }
-
     Write-Host "Executing Publish-NugetPackage in path $SrcPath, PackageVersion is $PackageVersion"
 
     $AllNuspecFiles = Get-ChildItem $SrcPath\*.nuspec
+    if ($AllNuspecFiles -eq $null){
+        Throw "No NuSpec files found"
+    }
+    
     Write-Host "all files is $AllNuspecFiles"
     #Remove all previous packed packages in the directory
     $AllNugetPackageFiles = Get-ChildItem $SrcPath\*.nupkg
@@ -34,7 +33,7 @@ function Publish-NugetPackage
     Write-Host "Removing old nupkg files"
     foreach ($file in $AllNugetPackageFiles)
     {
-	    Write-Host "Removing file $file"
+	  Write-Host "Removing file $file"
       Remove-Item $file
     }
 
@@ -50,7 +49,7 @@ function Publish-NugetPackage
 
         #now load all content of the original file and rewrite modified to the same file
         Get-Content $file.FullName |
-        %{$_ -replace '<version>[0-9]+(\.([0-9]+|\*)){1,3}</version>', "<version>$PackageVersion</version>" } > $tempFile
+        %{$_ -replace '<version>.*</version>', "<version>$PackageVersion</version>" } > $tempFile
         Move-Item $tempFile $file.FullName -force
 
         #Create the .nupkg from the nuspec file
@@ -80,12 +79,13 @@ function Publish-NugetPackage
     $AllNugetPackageFiles = Get-ChildItem $SrcPath\*.nupkg
 
     Write-Host "Uploading NuPkg files to server"
+    
     foreach ($file in $AllNugetPackageFiles)
     {
         #Create the .nupkg from the nuspec file
         $ps = new-object System.Diagnostics.Process
         $ps.StartInfo.Filename = "$NugetPath\nuget.exe"
-        $ps.StartInfo.Arguments = "push `"$file`" -s $NugetServer $NugetServerPassword"
+        $ps.StartInfo.Arguments = "push `"$file`" $ApiKey"
         $ps.StartInfo.WorkingDirectory = $file.Directory.FullName
         $ps.StartInfo.RedirectStandardOutput = $True
         $ps.StartInfo.RedirectStandardError = $True
@@ -101,9 +101,10 @@ function Publish-NugetPackage
         Write-Host $Out
         if ($ErrOut -ne "")
         {
-            Write-Error "Nuget push Errors"
             Write-Error $ErrOut
+            Throw "Nuget push Errors" 
         }
 
     }
+    
 }
