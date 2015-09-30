@@ -27,6 +27,10 @@ function Publish-NugetPackage
     Write-Host "Executing Publish-NugetPackage in path $SrcPath, PackageVersion is $PackageVersion"
 
     $AllNuspecFiles = Get-ChildItem $SrcPath\*.nuspec
+    if ($AllNuspecFiles -eq null){
+        Throw "No NuSpec files found"
+    }
+    
     Write-Host "all files is $AllNuspecFiles"
     #Remove all previous packed packages in the directory
     $AllNugetPackageFiles = Get-ChildItem $SrcPath\*.nupkg
@@ -34,7 +38,7 @@ function Publish-NugetPackage
     Write-Host "Removing old nupkg files"
     foreach ($file in $AllNugetPackageFiles)
     {
-	    Write-Host "Removing file $file"
+	  Write-Host "Removing file $file"
       Remove-Item $file
     }
 
