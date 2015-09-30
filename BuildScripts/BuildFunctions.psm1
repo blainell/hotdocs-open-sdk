@@ -54,7 +54,7 @@ function Publish-NugetPackage
 
         #now load all content of the original file and rewrite modified to the same file
         Get-Content $file.FullName |
-        %{$_ -replace '<version>[0-9]+(\.([0-9]+|\*)){1,3}</version>', "<version>$PackageVersion</version>" } > $tempFile
+        %{$_ -replace '<version>.*</version>', "<version>$PackageVersion</version>" } > $tempFile
         Move-Item $tempFile $file.FullName -force
 
         #Create the .nupkg from the nuspec file
