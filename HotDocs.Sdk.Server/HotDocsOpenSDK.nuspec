@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/10/nuspec.xsd">
+    <metadata>
+        <id>HotDocsOpenSDK</id>
+        <version>0.10.6-beta</version>
+        <title>HotDocs Open SDK</title>
+        <authors>HotDocs Ltd</authors>
+        <licenseUrl>https://github.com/HotDocsCorp/hotdocs-open-sdk/blob/master/LICENSE.TXT</licenseUrl>
+        <projectUrl>https://github.com/HotDocsCorp/hotdocs-open-sdk</projectUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>The HotDocs Open SDK is a toolkit designed to ease integration between 3rd party applications and HotDocs.</description>
+        <releaseNotes />
+        <copyright>HotDocs Ltd</copyright>
+    </metadata>
+    <files>
+        <file src="HotDocs.Sdk.Cloud.dll" target="lib\HotDocs.Sdk.Cloud.dll" />
+        <file src="HotDocs.Sdk.dll" target="lib\HotDocs.Sdk.dll" />
+        <file src="HotDocs.Sdk.Server.Contracts.dll" target="lib\HotDocs.Sdk.Server.Contracts.dll" />
+        <file src="HotDocs.Sdk.Server.dll" target="lib\HotDocs.Sdk.Server.dll" />
+        <file src="HotDocs.Server.dll" target="lib\HotDocs.Server.dll" />
+        <file src="HotDocs.Server.Interop.dll" target="lib\HotDocs.Server.Interop.dll" />
+        <file src="install.ps1" target="tools\install.ps1" />
+    </files>
+</package>
