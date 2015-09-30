@@ -3,7 +3,8 @@ Param
 [string] $NugetServer = "\\edv06nuget01\nuget\packages",
 [string] $NugetServerPassword = " "
 )
-
+$ErrorActionPreference = "Stop"
+  
 if (!(Test-Path Env:\GO_PIPELINE_LABEL)){
   throw "GO_PIPELINE_LABEL does not exist"
 }

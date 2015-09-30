@@ -27,7 +27,7 @@ function Publish-NugetPackage
     Write-Host "Executing Publish-NugetPackage in path $SrcPath, PackageVersion is $PackageVersion"
 
     $AllNuspecFiles = Get-ChildItem $SrcPath\*.nuspec
-    if ($AllNuspecFiles -eq null){
+    if ($AllNuspecFiles -eq $null){
         Throw "No NuSpec files found"
     }
     
@@ -84,6 +84,7 @@ function Publish-NugetPackage
     $AllNugetPackageFiles = Get-ChildItem $SrcPath\*.nupkg
 
     Write-Host "Uploading NuPkg files to server"
+    
         <#
     foreach ($file in $AllNugetPackageFiles)
     {
