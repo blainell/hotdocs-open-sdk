@@ -80,6 +80,7 @@ function Publish-NugetPackage
     $AllNugetPackageFiles = Get-ChildItem $SrcPath\*.nupkg
 
     Write-Host "Uploading NuPkg files to server"
+        <#
     foreach ($file in $AllNugetPackageFiles)
     {
         #Create the .nupkg from the nuspec file
@@ -106,4 +107,5 @@ function Publish-NugetPackage
         }
 
     }
+    #>
 }
