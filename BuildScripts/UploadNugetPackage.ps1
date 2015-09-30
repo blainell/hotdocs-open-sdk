@@ -30,4 +30,4 @@ Write-Host "binPath is $binPath"
 Write-Host "scriptRoot is $scriptRoot"
 Write-Host "PackageVersion is $PackageVersion"
 
-Publish-NugetPackage -SrcPath $binPath -NuGetPath $scriptRoot -PackageVersion $PackageVersion -NuGetServer $NugetServer -NugetServerPassword $NugetApiKey
+Publish-NugetPackage -SrcPath $binPath -NuGetPath $scriptRoot -PackageVersion $PackageVersion -NuGetServer $NugetServer -ApiKey $NugetApiKey
