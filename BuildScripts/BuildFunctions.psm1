@@ -5,8 +5,7 @@ function Publish-NugetPackage
     [string]$SrcPath,
     [string]$NugetPath,
     [string]$PackageVersion,
-    [string]$NugetServer,
-    [string]$NugetServerPassword
+    [string]$ApiKey
   )
     if (!$SrcPath){
     throw "No source path specified"
@@ -17,13 +16,9 @@ function Publish-NugetPackage
     if (!$PackageVersion){
     throw "No PackageVersion specified"
     }
-    if (!$NugetServer){
-    throw "No NugetServer specified"
+    if (!$ApiKey){
+    throw "No ApiKey specified"
     }
-    if (!$NugetServerPassword){
-    throw "No NugetServerPassword specified"
-    }
-
     Write-Host "Executing Publish-NugetPackage in path $SrcPath, PackageVersion is $PackageVersion"
 
     $AllNuspecFiles = Get-ChildItem $SrcPath\*.nuspec
@@ -90,7 +85,7 @@ function Publish-NugetPackage
         #Create the .nupkg from the nuspec file
         $ps = new-object System.Diagnostics.Process
         $ps.StartInfo.Filename = "$NugetPath\nuget.exe"
-        $ps.StartInfo.Arguments = "push `"$file`" -s $NugetServer $NugetServerPassword"
+        $ps.StartInfo.Arguments = "push $ApiKey `"$file`""
         $ps.StartInfo.WorkingDirectory = $file.Directory.FullName
         $ps.StartInfo.RedirectStandardOutput = $True
         $ps.StartInfo.RedirectStandardError = $True
