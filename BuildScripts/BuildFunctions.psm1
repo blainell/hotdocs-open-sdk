@@ -85,7 +85,6 @@ function Publish-NugetPackage
 
     Write-Host "Uploading NuPkg files to server"
     
-        <#
     foreach ($file in $AllNugetPackageFiles)
     {
         #Create the .nupkg from the nuspec file
@@ -112,5 +111,5 @@ function Publish-NugetPackage
         }
 
     }
-    #>
+    
 }
