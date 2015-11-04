@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Configuration;
 using System.IO;
 using System.Net;
 using System.Net.Http;
-using System.Reflection;
+using HotDocs.Sdk.Server.Contracts;
 
 namespace HotDocs.Sdk
 {
@@ -14,12 +13,29 @@ namespace HotDocs.Sdk
 
         public string HostAddress { get; protected set; }
 
+        private string SubscriberId { get; set; }
+
+        private string SigningKey { get; set; }
+
+        public RetrieveFromHub RetrieveFromHub { get; }
+
         public WebServiceTemplateLocation(string packageID, string hostAddress)
             : base(packageID)
         {
             HostAddress = hostAddress;
-            _templateDir = GetTemplateDirectory();
+            SubscriberId = "0";
+            SigningKey = "";
         }
+
+        public WebServiceTemplateLocation(string packageID, string hostAddress, string subscriberId, string signingKey, RetrieveFromHub retrieveFromHub = RetrieveFromHub.No)
+    : base(packageID)
+        {
+            HostAddress = hostAddress;
+            SubscriberId = subscriberId;
+            SigningKey = signingKey;
+            RetrieveFromHub = retrieveFromHub;
+        }
+
 
         public override TemplateLocation Duplicate()
         {
@@ -46,9 +62,38 @@ namespace HotDocs.Sdk
 
         public override Stream GetFile(string fileName)
         {
+            return GetFile(fileName, "");
+        }
+
+        public override string GetTemplateDirectory()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Stream GetFile(string fileName, string logRef)
+        {
             using (var client = new HttpClient())
             {
-                HttpResponseMessage result = client.GetAsync(string.Format(HostAddress + "/0/{0}?filename={1}", PackageID, fileName)).Result;
+                var request = new HttpRequestMessage
+                {
+                    Method = HttpMethod.Get,
+                    RequestUri = new Uri(string.Format("{0}/interviewfile/{1}/{2}?filename={3}&billingRef={4}&retrievefromhub={5}", HostAddress, SubscriberId, PackageID, fileName, logRef, RetrieveFromHub))
+                };
+
+                var timestamp = DateTime.UtcNow;
+
+                string hmac = HMAC.CalculateHMAC(
+                    SigningKey,
+                    timestamp,
+                    SubscriberId,
+                    PackageID,
+                    fileName,
+                    logRef);
+
+                request.Headers.TryAddWithoutValidation("Authorization", hmac);
+                request.Headers.Add("x-hd-date", timestamp.ToString("yyyy-MM-ddTHH:mm:ssZ"));
+
+                HttpResponseMessage result = client.SendAsync(request).Result;
 
                 if (result.IsSuccessStatusCode)
                 {
@@ -60,16 +105,8 @@ namespace HotDocs.Sdk
                     throw new Exception(result.ReasonPhrase);
                 }
 
-                throw new Exception(String.Format("The server returned a '{0}' when searching for the file '{1}'", result.StatusCode.ToString(), fileName));
-            }
-        }
-
-        public override sealed string GetTemplateDirectory()
-        {
-            using (var client = new HttpClient())
-            {
-                HttpResponseMessage result = client.GetAsync(HostAddress + "/GetDirectory").Result;
-                return result.Content.ReadAsStringAsync().Result;
+                throw new Exception(string.Format(
+                    "The server returned a '{0}' when searching for the file '{1}'", result.ReasonPhrase, fileName));
             }
         }
 

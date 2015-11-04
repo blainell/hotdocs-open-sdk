@@ -260,33 +260,45 @@ namespace HotDocs.Sdk
 		/// deliver them from the host application's own domain name.
 		/// <para>A value for this property is required by the SDK.</para>
 		/// </summary>
-		public string InterviewFilesUrl { get; set; }
+		public string InterviewFilesUrl {
+            get
+            {
+                return _interviewFilesUrl;
+            }
+            set // private?
+            {
+                _interviewFilesUrl = value;
 
-		/// <summary>
-		/// The base Url from which interview style sheets and graphics will be requested by the web browser.
-		/// <para>A value for this property is required by the SDK.</para>
-		/// </summary>
-		/// <remarks>
-		/// <para>TODO: document the syntax of the query string, including explanation of the %VERSION% macro.</para>
-		/// <para>JavaScript-based interviews require two style sheets and an image:</para>
-		/// <list type="bullet">
-		/// <item><description>The "User" CSS style sheet:  InterviewRuntimeUrl + ThemeName + ".css"</description></item>
-		/// <item><description>The interview sprite image:  InterviewRuntimeUrl + ThemeName + ".png"</description></item>
-		/// <item><description>The "System" CSS style sheet:  InterviewRuntimeUrl + "hdssystem.css"</description></item>
-		/// </list>
-		/// Silverlight-based interviews require the above items plus an additional third style sheet:
-		/// <list type="bullet">
-		/// <item><description>The XAML style sheet:  InterviewRuntimeUrl + ThemeName + ".xaml"</description></item>
-		/// </list>
-		/// <para>You can switch interviews to different "themes" or appearances by changing the ThemeName
-		/// property, but of course you must choose a ThemeName for which appropriate files exist.</para>
-		/// <para>As with all properties of GetInterviewOptions and AssemblyOptions, a default value for this property
-		/// can be specified in your web app's web.config file.</para>
-		/// <para>This is related (but not equivalent) to HotDocsCSSUrl in the HotDocs Server API and the HotDocsCssUrl
-		/// setting in Core Services.  These other settings defines the *full* URL to the CSS "User" style sheet.
-		/// In the HotDocs Open SDK, that same full URL would be defined as InterviewRuntimeUrl + ThemeName + ".css".</para>
-		/// </remarks>
-		public string StyleSheetUrl
+                SetSettingString("InterviewDefUrl", value);
+            }
+        }
+        private string _interviewFilesUrl;
+
+        /// <summary>
+        /// The base Url from which interview style sheets and graphics will be requested by the web browser.
+        /// <para>A value for this property is required by the SDK.</para>
+        /// </summary>
+        /// <remarks>
+        /// <para>TODO: document the syntax of the query string, including explanation of the %VERSION% macro.</para>
+        /// <para>JavaScript-based interviews require two style sheets and an image:</para>
+        /// <list type="bullet">
+        /// <item><description>The "User" CSS style sheet:  InterviewRuntimeUrl + ThemeName + ".css"</description></item>
+        /// <item><description>The interview sprite image:  InterviewRuntimeUrl + ThemeName + ".png"</description></item>
+        /// <item><description>The "System" CSS style sheet:  InterviewRuntimeUrl + "hdssystem.css"</description></item>
+        /// </list>
+        /// Silverlight-based interviews require the above items plus an additional third style sheet:
+        /// <list type="bullet">
+        /// <item><description>The XAML style sheet:  InterviewRuntimeUrl + ThemeName + ".xaml"</description></item>
+        /// </list>
+        /// <para>You can switch interviews to different "themes" or appearances by changing the ThemeName
+        /// property, but of course you must choose a ThemeName for which appropriate files exist.</para>
+        /// <para>As with all properties of GetInterviewOptions and AssemblyOptions, a default value for this property
+        /// can be specified in your web app's web.config file.</para>
+        /// <para>This is related (but not equivalent) to HotDocsCSSUrl in the HotDocs Server API and the HotDocsCssUrl
+        /// setting in Core Services.  These other settings defines the *full* URL to the CSS "User" style sheet.
+        /// In the HotDocs Open SDK, that same full URL would be defined as InterviewRuntimeUrl + ThemeName + ".css".</para>
+        /// </remarks>
+        public string StyleSheetUrl
 		{
 			get
 			{

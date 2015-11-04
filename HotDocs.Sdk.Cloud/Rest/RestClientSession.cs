@@ -27,20 +27,20 @@ namespace HotDocs.Sdk.Cloud
 
 		#region Public methods
 
-		/// <summary>
-		/// Creates a new session for assembling documents using the HotDocs Cloud Services Rest API.
-		/// </summary>
-		/// <param name="template">The template to use with the session.</param>
-		/// <param name="billingRef">This parameter lets you specify information that will be included in usage logs for this call. For example, you can use a string to uniquely identify the end user that initiated the request and/or the context in which the call was made. When you review usage logs, you can then see which end users initiated each request. That information could then be used to pass costs on to those end users if desired.</param>
-		/// <param name="answers">The answers to use.</param>
-		/// <param name="markedVariables">An array of variable names, whose prompts should be "marked" when displayed in an interview.</param>
-		/// <param name="interviewFormat">The format to use when displaying an interview.</param>
-		/// <param name="outputFormat">The format to use when assembling a document.</param>
-		/// <param name="settings">The settings to use with the session.</param>
-		/// <param name="theme">The interview theme.</param>
-		/// <param name="showDownloadLinks">Indicates whether or not links for downloading the assembled document(s) should appear at the end of the interview.</param>
-		/// <returns></returns>
-		public string CreateSession(
+	    /// <summary>
+	    /// Creates a new session for assembling documents using the HotDocs Cloud Services Rest API.
+	    /// </summary>
+	    /// <param name="template">The template to use with the session.</param>
+	    /// <param name="billingRef">This parameter lets you specify information that will be included in usage logs for this call. For example, you can use a string to uniquely identify the end user that initiated the request and/or the context in which the call was made. When you review usage logs, you can then see which end users initiated each request. That information could then be used to pass costs on to those end users if desired.</param>
+	    /// <param name="answers">The answers to use.</param>
+	    /// <param name="markedVariables">An array of variable names, whose prompts should be "marked" when displayed in an interview.</param>
+	    /// <param name="interviewFormat">The format to use when displaying an interview.</param>
+	    /// <param name="outputFormat">The format to use when assembling a document.</param>
+	    /// <param name="settings">The settings to use with the session.</param>
+	    /// <param name="theme">The interview theme.</param>
+	    /// <param name="showDownloadLinks">Indicates whether or not links for downloading the assembled document(s) should appear at the end of the interview.</param>
+	    /// <returns></returns>
+	    public string CreateSession(
 			Template template,
 			string billingRef = null,
 			string answers = null,
@@ -131,16 +131,16 @@ namespace HotDocs.Sdk.Cloud
 
 		#region Private methods
 		private string CreateSessionImpl(
-			Template template,
-			string billingRef,
-			string answers,
-			string[] markedVariables,
-			InterviewFormat interviewFormat,
-			OutputFormat outputFormat,
-			Dictionary<string, string> settings,
-			string theme,
-			bool showDownloadLinks,
-			bool uploadPackage)
+            Template template, 
+            string billingRef, 
+            string answers, 
+            string[] markedVariables,
+            InterviewFormat interviewFormat, 
+            OutputFormat outputFormat, 
+            Dictionary<string, string> settings, 
+            string theme, 
+            bool showDownloadLinks, 
+            bool uploadPackage)
 		{
 			if (!(template.Location is PackageTemplateLocation))
 				throw new Exception("HotDocs Cloud Services requires the use of template packages. Please use a PackageTemplateLocation derivative.");
@@ -164,9 +164,9 @@ namespace HotDocs.Sdk.Cloud
 				settings); // Additional settings = null for this app
 
 			StringBuilder urlBuilder = new StringBuilder(string.Format(
-				"{0}/newsession/{1}/{2}?interviewformat={3}&outputformat={4}",
+                "{0}/newsession/{1}/{2}?interviewformat={3}&outputformat={4}&retrieveFromHub={5}",
 				EmbeddedEndpointAddress, SubscriberId, packageTemplateLocation.PackageID,
-				interviewFormat.ToString(), outputFormat.ToString()));
+				interviewFormat, outputFormat,_retrieveFromHub));
 
 			if (markedVariables != null && markedVariables.Length > 0)
 			{

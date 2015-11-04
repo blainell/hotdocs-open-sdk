@@ -42,7 +42,7 @@ namespace HotDocs.Sdk.Cloud
 
         private readonly string _defaultOutputDir = Path.GetTempPath();
         private MultipartMimeParser _parser = new MultipartMimeParser();
-
+        private readonly RetrieveFromHub _retrieveFromHub;
         #endregion
 
         #region Constructors
@@ -55,11 +55,13 @@ namespace HotDocs.Sdk.Cloud
             string signingKey,
             string outputDir = null,
             string hostAddress = null,
-            string proxyServerAddress = null)
+            string proxyServerAddress = null,
+            RetrieveFromHub retrieveFromHub = RetrieveFromHub.No)
             : base(subscriberId, signingKey, hostAddress, "RestfulSvc.svc", proxyServerAddress)
         {
             OutputDir = outputDir ?? _defaultOutputDir;
             SetTcpKeepAlive();
+            _retrieveFromHub = retrieveFromHub;
 
 #if DEBUG
             // For debug builds, allow invalid server certificates.
@@ -567,9 +569,9 @@ namespace HotDocs.Sdk.Cloud
                 settings.Settings);
 
             var urlBuilder = new StringBuilder(string.Format(
-                "{0}/assemble/{1}/{2}/{3}?format={4}&billingref={5}&encodeFileNames={6}",
+                "{0}/assemble/{1}/{2}/{3}?format={4}&billingref={5}&encodeFileNames={6}&retrivefromhub={7}",
                 EndpointAddress, SubscriberId, packageTemplateLocation.PackageID, template.FileName ?? "",
-                settings.Format, billingRef,true));
+                settings.Format, billingRef,true,_retrieveFromHub));
 
             if (settings.Settings != null)
             {
@@ -702,10 +704,10 @@ namespace HotDocs.Sdk.Cloud
                 settings.Settings);
 
             var urlBuilder = new StringBuilder(string.Format(
-                "{0}/interview/{1}/{2}/{3}?format={4}&markedvariables={5}&tempimageurl={6}&billingref={7}&encodeFileNames={8}",
+                "{0}/interview/{1}/{2}/{3}?format={4}&markedvariables={5}&tempimageurl={6}&billingref={7}&encodeFileNames={8}&retrievefromhub={9}",
                 EndpointAddress, SubscriberId, packageTemplateLocation.PackageID, template.FileName, settings.Format,
                 settings.MarkedVariables != null ? string.Join(",", settings.MarkedVariables) : null, interviewImageUrl,
-                billingRef, true));
+                billingRef, true,_retrieveFromHub));
 
             if (settings.Settings != null)
             {
@@ -817,9 +819,9 @@ namespace HotDocs.Sdk.Cloud
                 includeDialogs);
 
             var urlBuilder = new StringBuilder(string.Format(
-                "{0}/componentinfo/{1}/{2}/{3}?includedialogs={4}&billingref={5}",
+                "{0}/componentinfo/{1}/{2}/{3}?includedialogs={4}&billingref={5}&retrievefromhub={6}",
                 EndpointAddress, SubscriberId, packageTemplateLocation.PackageID, template.FileName, includeDialogs,
-                billingRef));
+                billingRef, _retrieveFromHub));
 
             var request = (HttpWebRequest) WebRequest.Create(urlBuilder.ToString());
             request.Method = "GET";
