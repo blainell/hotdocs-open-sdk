@@ -63,6 +63,17 @@ namespace HotDocs.Sdk.Server
         private string SubscriberId { get; }
         private string SigningKey { get; }
 
+        /// <summary>
+        ///     Assemble a document from the given template, answers and settings.
+        /// </summary>
+        /// <param name="template">An instance of the Template class.</param>
+        /// <param name="answers">
+        ///     Either an XML answer string, or a string containing encoded
+        ///     interview answers as posted from a HotDocs browser interview.
+        /// </param>
+        /// <param name="settings">An instance of the AssembleDocumentResult class.</param>
+        /// <include file="../Shared/Help.xml" path="Help/string/param[@name='logRef']" />
+        /// <returns>An AssemblyResult object containing all the files and data resulting from the request.</returns>
         public AssembleDocumentResult AssembleDocument(Template template, TextReader answers,
             AssembleDocumentSettings settings, string logRef = "")
         {
@@ -179,6 +190,14 @@ namespace HotDocs.Sdk.Server
             }
         }
 
+        /// <summary>
+        ///     GetComponentInfo returns metadata about the variables/types (and optionally dialogs and mapping info)
+        ///     for the indicated template's interview.
+        /// </summary>
+        /// <param name="template">An instance of the Template class, for which you are requesting component information.</param>
+        /// <param name="includeDialogs">Whether to include dialog &amp; mapping information in the returned results.</param>
+        /// <include file="../Shared/Help.xml" path="Help/string/param[@name='logRef']" />
+        /// <returns>The requested component information.</returns>
         public ComponentInfo GetComponentInfo(Template template, bool includeDialogs, string logRef = "")
         {
             if (template == null)
@@ -231,26 +250,39 @@ namespace HotDocs.Sdk.Server
             }
         }
 
-        public string GetAnswers(IEnumerable<TextReader> answers, string logRef)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void BuildSupportFiles(Template template, HDSupportFilesBuildFlags flags)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void RemoveSupportFiles(Template template)
-        {
-            throw new NotImplementedException();
-        }
-
+        /// <summary>
+        ///     Retrieves a file required by the interview. This could be either an interview definition that contains the
+        ///     variables and logic required to display an interview (questionaire) for the main template or one of its
+        ///     inserted templates, or it could be an image file displayed on a dialog within the interview.
+        /// </summary>
+        /// <param name="template">The template related to the requested file.</param>
+        /// <param name="fileName">
+        ///     The file name of the image, or the file name of the template for which the interview
+        ///     definition is being requested. In either case, this value is passed as "template" on the query string by the
+        ///     browser interview.
+        /// </param>
+        /// <param name="fileType">The type of file being requested</param>
+        /// <returns>A stream containing the requested interview file</returns>
         public Stream GetInterviewFile(Template template, string fileName, string fileType = "")
         {
             return GetInterviewFile(template, fileName, fileType, "");
         }
 
+        /// <summary>
+        ///     GetInterview returns an HTML fragment suitable for inclusion in any standards-mode web page, which embeds a HotDocs
+        ///     interview
+        ///     directly in that web page.
+        /// </summary>
+        /// <param name="template">The template for which to return an interview.</param>
+        /// <param name="answers">The answers to use when building an interview.</param>
+        /// <param name="settings">The <see cref="InterviewSettings" /> to use when building an interview.</param>
+        /// <param name="markedVariables">
+        ///     The variables to highlight to the user as needing special attention.
+        ///     This is usually populated with <see cref="AssembleDocumentResult.UnansweredVariables" />
+        ///     from <see cref="AssembleDocument" />.
+        /// </param>
+        /// <include file="../Shared/Help.xml" path="Help/string/param[@name='logRef']" />
+        /// <returns>Returns the results of building the interview as an <see cref="InterviewResult" /> object.</returns>
         public InterviewResult GetInterview(Template template, TextReader answers, InterviewSettings settings,
             IEnumerable<string> markedVariables, string logRef = "")
         {
@@ -369,6 +401,35 @@ namespace HotDocs.Sdk.Server
             }
         }
 
+        public string GetAnswers(IEnumerable<TextReader> answers, string logRef)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void BuildSupportFiles(Template template, HDSupportFilesBuildFlags flags)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void RemoveSupportFiles(Template template)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        ///     Retrieves a file required by the interview. This could be either an interview definition that contains the
+        ///     variables and logic required to display an interview (questionaire) for the main template or one of its
+        ///     inserted templates, or it could be an image file displayed on a dialog within the interview.
+        /// </summary>
+        /// <param name="template">The template related to the requested file.</param>
+        /// <param name="fileName">
+        ///     The file name of the image, or the file name of the template for which the interview
+        ///     definition is being requested. In either case, this value is passed as "template" on the query string by the
+        ///     browser interview.
+        /// </param>
+        /// <param name="fileType">The type of file being requested</param>
+        /// <include file="../Shared/Help.xml" path="Help/string/param[@name='logRef']" />
+        /// <returns>A stream containing the requested interview file</returns>
         public Stream GetInterviewFile(Template template, string fileName, string fileType, string logRef)
         {
             if (template == null)
