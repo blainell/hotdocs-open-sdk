@@ -6,7 +6,6 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Mime;
 using System.Text;
-using System.Web;
 using System.Xml.Serialization;
 using HotDocs.Sdk.Cloud;
 using HotDocs.Sdk.Server.Contracts;
@@ -14,18 +13,17 @@ using HotDocs.Sdk.Server.Contracts;
 namespace HotDocs.Sdk.Server
 {
     /// <summary>
-    /// A Service that allows connection and use of features on a hotdocs web services address or a hotdocs cloud services address through REST calls.
+    ///     A Service that allows connection and use of features on a HotDocs web services address or a HotDocs Cloud Services
+    ///     address through REST calls.
     /// </summary>
     public class HotDocsService : IServices
     {
-
         private readonly RetrieveFromHub _retrieveFromHub;
 
         /// <summary>
-        /// Allows connection to a hotdocs web services API
+        ///     Allows connection to a HotDocs Web API
         /// </summary>
-        /// <param name="hostAddress">The address of the web services API</param>
-        /// <param name="retrieveFromHub"></param>
+        /// <param name="hostAddress">The address of the Web API</param>
         public HotDocsService(string hostAddress)
         {
             if (string.IsNullOrEmpty(hostAddress))
@@ -34,17 +32,17 @@ namespace HotDocs.Sdk.Server
             HostAddress = hostAddress;
             SigningKey = string.Empty;
             SubscriberId = "0";
-
         }
 
         /// <summary>
-        /// Allows connection to a hotdocs cloud services API
+        ///     Allows connection to a HotDocs Cloud Services API
         /// </summary>
         /// <param name="retrieveFromHub"></param>
-        /// <param name="hostAddress">The address of the cloud services API</param>
+        /// <param name="hostAddress">The address of the Cloud Services API</param>
         /// <param name="subscriberId">Your Unique SubscriberId</param>
         /// <param name="signingKey">Your Uniuqe Signing Key</param>
-        public HotDocsService(string subscriberId, string signingKey, RetrieveFromHub retrieveFromHub = RetrieveFromHub.No, string hostAddress = "https://cloud.hotdocs.ws/hdcs")
+        public HotDocsService(string subscriberId, string signingKey,
+            RetrieveFromHub retrieveFromHub = RetrieveFromHub.No, string hostAddress = "https://cloud.hotdocs.ws/hdcs")
         {
             if (string.IsNullOrWhiteSpace(hostAddress))
                 throw new ArgumentNullException(nameof(hostAddress));
@@ -74,12 +72,12 @@ namespace HotDocs.Sdk.Server
             using (var client = new HttpClient())
             {
                 AssembleDocumentResult adr = null;
-                var packageTemplateLocation = (PackageTemplateLocation)template.Location;
-                string packageId = packageTemplateLocation.PackageID;
-                OutputFormat of = ConvertFormat(settings.Format);
-                DateTime timestamp = DateTime.UtcNow;
+                var packageTemplateLocation = (PackageTemplateLocation) template.Location;
+                var packageId = packageTemplateLocation.PackageID;
+                var of = ConvertFormat(settings.Format);
+                var timestamp = DateTime.UtcNow;
 
-                string hmac = HMAC.CalculateHMAC(
+                var hmac = HMAC.CalculateHMAC(
                     SigningKey,
                     timestamp,
                     SubscriberId,
@@ -95,12 +93,12 @@ namespace HotDocs.Sdk.Server
                                                      "format={4}&" +
                                                      "encodefilenames={5}&" +
                                                      "billingref={6}&" +
-                                                     "retrievefromhub={7}", 
-                                                     HostAddress, SubscriberId, packageId, Uri.EscapeDataString(template.FileName), 
-                                                     of, 
-                                                     true, 
-                                                     Uri.EscapeDataString(logRef), 
-                                                     _retrieveFromHub);
+                                                     "retrievefromhub={7}",
+                        HostAddress, SubscriberId, packageId, Uri.EscapeDataString(template.FileName),
+                        of,
+                        true,
+                        Uri.EscapeDataString(logRef),
+                        _retrieveFromHub);
 
                 if (settings.Settings != null)
                 {
@@ -113,13 +111,13 @@ namespace HotDocs.Sdk.Server
                 var request = new HttpRequestMessage
                 {
                     RequestUri = new Uri(urlBuilder.ToString()),
-                    Method = HttpMethod.Post,
+                    Method = HttpMethod.Post
                 };
 
                 request.Headers.Add("x-hd-date", timestamp.ToString("yyyy-MM-ddTHH:mm:ssZ"));
                 request.Headers.Authorization = new AuthenticationHeaderValue("basic", hmac);
 
-                StringContent stringContent = answers == null
+                var stringContent = answers == null
                     ? new StringContent(string.Empty)
                     : new StringContent(answers.ReadToEnd());
 
@@ -127,15 +125,15 @@ namespace HotDocs.Sdk.Server
 
                 request.Content.Headers.TryAddWithoutValidation("Content-Type", "text/xml");
 
-                HttpResponseMessage result = client.SendAsync(request).Result;
+                var result = client.SendAsync(request).Result;
 
                 var parser = new MultipartMimeParser();
 
                 HandleStatusCode(result);
 
-                Stream streamResult = result.Content.ReadAsStreamAsync().Result;
+                var streamResult = result.Content.ReadAsStreamAsync().Result;
 
-                List<MemoryStream> streams = new List<MemoryStream>();
+                var streams = new List<MemoryStream>();
 
                 using (var resultsStream = new MemoryStream())
                 {
@@ -163,8 +161,8 @@ namespace HotDocs.Sdk.Server
                     if (resultsStream.Position <= 0) return null;
 
                     resultsStream.Position = 0;
-                    var serializer = new XmlSerializer(typeof(AssemblyResult));
-                    var asmResult = (AssemblyResult)serializer.Deserialize(resultsStream);
+                    var serializer = new XmlSerializer(typeof (AssemblyResult));
+                    var asmResult = (AssemblyResult) serializer.Deserialize(resultsStream);
 
                     if (asmResult == null) return adr;
 
@@ -188,11 +186,11 @@ namespace HotDocs.Sdk.Server
 
             using (var client = new HttpClient())
             {
-                var packageTemplateLocation = (PackageTemplateLocation)template.Location;
-                string packageId = packageTemplateLocation.PackageID;
-                DateTime timestamp = DateTime.UtcNow;
+                var packageTemplateLocation = (PackageTemplateLocation) template.Location;
+                var packageId = packageTemplateLocation.PackageID;
+                var timestamp = DateTime.UtcNow;
 
-                string hmac = HMAC.CalculateHMAC(
+                var hmac = HMAC.CalculateHMAC(
                     SigningKey,
                     timestamp,
                     SubscriberId,
@@ -204,8 +202,13 @@ namespace HotDocs.Sdk.Server
 
                 var request = new HttpRequestMessage
                 {
-                    RequestUri = new Uri(string.Format("{0}/componentinfo/{1}/{2}/{3}?includedialogs={4}&billingref={5}&retrieveFromHub={6}", HostAddress,
-                            SubscriberId, packageId, Uri.EscapeDataString(template.FileName), includeDialogs, Uri.EscapeDataString(logRef), _retrieveFromHub)),
+                    RequestUri =
+                        new Uri(
+                            string.Format(
+                                "{0}/componentinfo/{1}/{2}/{3}?includedialogs={4}&billingref={5}&retrieveFromHub={6}",
+                                HostAddress,
+                                SubscriberId, packageId, Uri.EscapeDataString(template.FileName), includeDialogs,
+                                Uri.EscapeDataString(logRef), _retrieveFromHub)),
                     Method = HttpMethod.Get
                 };
 
@@ -213,17 +216,17 @@ namespace HotDocs.Sdk.Server
                 request.Headers.Authorization = new AuthenticationHeaderValue("basic", hmac);
 
 
-                HttpResponseMessage result =
+                var result =
                     client.SendAsync(request).Result;
 
                 HandleStatusCode(result);
-                Stream streamResult = result.Content.ReadAsStreamAsync().Result;
+                var streamResult = result.Content.ReadAsStreamAsync().Result;
 
-                using (var stream = (MemoryStream)streamResult)
+                using (var stream = (MemoryStream) streamResult)
                 {
                     stream.Position = 0;
-                    var serializer = new XmlSerializer(typeof(ComponentInfo));
-                    return (ComponentInfo)serializer.Deserialize(stream);
+                    var serializer = new XmlSerializer(typeof (ComponentInfo));
+                    return (ComponentInfo) serializer.Deserialize(stream);
                 }
             }
         }
@@ -248,23 +251,6 @@ namespace HotDocs.Sdk.Server
             return GetInterviewFile(template, fileName, fileType, "");
         }
 
-        public Stream GetInterviewFile(Template template, string fileName, string fileType, string logRef)
-        {
-            if (template == null)
-                throw new ArgumentNullException("template");
-
-            if (!Path.HasExtension(fileName) && fileType == string.Empty)
-            {
-                throw new ArgumentException("File extension must be included in the filename or the filetype parameter");
-            }
-
-            var packageTemplateLocation = (WebServiceTemplateLocation)template.Location;
-            return
-                packageTemplateLocation.GetFile(!Path.HasExtension(fileName)
-                    ? Uri.EscapeDataString(fileName + (fileType.StartsWith(".") ? fileType : string.Format(".{0}", fileType)))
-                    : Uri.EscapeDataString(fileName), logRef);
-        }
-
         public InterviewResult GetInterview(Template template, TextReader answers, InterviewSettings settings,
             IEnumerable<string> markedVariables, string logRef = "")
         {
@@ -276,35 +262,37 @@ namespace HotDocs.Sdk.Server
 
             using (var client = new HttpClient())
             {
-                var packageTemplateLocation = (PackageTemplateLocation)template.Location;
-                string packageId = packageTemplateLocation.PackageID;
+                var packageTemplateLocation = (PackageTemplateLocation) template.Location;
+                var packageId = packageTemplateLocation.PackageID;
                 var timestamp = DateTime.UtcNow;
 
-                string hmac = HMAC.CalculateHMAC(
-                   SigningKey,
-                   timestamp,
-                   SubscriberId,
-                   packageId,
-                   template.FileName,
-                   false,
-                   logRef,
-                   settings.Format,
-                   settings.InterviewFilesUrl,
-                   settings.Settings);
+                var hmac = HMAC.CalculateHMAC(
+                    SigningKey,
+                    timestamp,
+                    SubscriberId,
+                    packageId,
+                    template.FileName,
+                    false,
+                    logRef,
+                    settings.Format,
+                    settings.InterviewFilesUrl,
+                    settings.Settings);
 
                 var urlBuilder = new StringBuilder().AppendFormat("{0}/interview/{1}/{2}/{3}?" +
-                    "format={4}&" +
-                    "markedvariables{5}&" +
-                    "tempimageurl={6}&" +
-                    "encodeFileNames={7}&" +
-                    "billingref={8}&" +
-                    "retrievefromhub={9}", 
-                    HostAddress,SubscriberId, packageId, Uri.EscapeDataString(template.FileName), 
+                                                                  "format={4}&" +
+                                                                  "markedvariables{5}&" +
+                                                                  "tempimageurl={6}&" +
+                                                                  "encodeFileNames={7}&" +
+                                                                  "billingref={8}&" +
+                                                                  "retrievefromhub={9}",
+                    HostAddress, SubscriberId, packageId, Uri.EscapeDataString(template.FileName),
                     settings.Format,
-                    markedVariables != null && markedVariables.Any() ? "=" + Uri.EscapeDataString(string.Join(",", settings.MarkedVariables)) : null,
-                    Uri.EscapeDataString(settings.InterviewFilesUrl), 
-                    true, 
-                    Uri.EscapeDataString(logRef), 
+                    markedVariables != null && markedVariables.Any()
+                        ? "=" + Uri.EscapeDataString(string.Join(",", settings.MarkedVariables))
+                        : null,
+                    Uri.EscapeDataString(settings.InterviewFilesUrl),
+                    true,
+                    Uri.EscapeDataString(logRef),
                     _retrieveFromHub);
 
                 foreach (var kv in settings.Settings)
@@ -315,28 +303,28 @@ namespace HotDocs.Sdk.Server
                 var request = new HttpRequestMessage
                 {
                     RequestUri = new Uri(urlBuilder.ToString()),
-                    Method = HttpMethod.Post,
+                    Method = HttpMethod.Post
                 };
 
                 request.Headers.Add("x-hd-date", timestamp.ToString("yyyy-MM-ddTHH:mm:ssZ"));
                 request.Headers.Authorization = new AuthenticationHeaderValue("basic", hmac);
 
-                StringContent stringContent = answers == null
+                var stringContent = answers == null
                     ? new StringContent(string.Empty)
                     : new StringContent(answers.ReadToEnd());
 
                 request.Content = stringContent;
 
-                HttpResponseMessage result = client.SendAsync(request).Result;
+                var result = client.SendAsync(request).Result;
 
                 HandleStatusCode(result);
 
-                Stream streamResult = result.Content.ReadAsStreamAsync().Result;
+                var streamResult = result.Content.ReadAsStreamAsync().Result;
 
                 var parser = new MultipartMimeParser();
-                string outputDir = Path.GetTempPath();
+                var outputDir = Path.GetTempPath();
                 Directory.CreateDirectory(outputDir);
-                List<MemoryStream> streams = new List<MemoryStream>();
+                var streams = new List<MemoryStream>();
 
                 using (var resultsStream = new MemoryStream())
                 {
@@ -347,7 +335,7 @@ namespace HotDocs.Sdk.Server
                         streamResult,
                         h =>
                         {
-                            string fileName = GetFileNameFromHeaders(h);
+                            var fileName = GetFileNameFromHeaders(h);
 
                             if (string.IsNullOrEmpty(fileName)) return Stream.Null;
 
@@ -355,6 +343,7 @@ namespace HotDocs.Sdk.Server
                             {
                                 return resultsStream;
                             }
+
                             // The following stream will be closed by the parser
                             var stream = new MemoryStream();
                             streams.Add(stream);
@@ -365,8 +354,8 @@ namespace HotDocs.Sdk.Server
                     if (resultsStream.Position <= 0) return null;
 
                     resultsStream.Position = 0;
-                    var serializer = new XmlSerializer(typeof(BinaryObject[]));
-                    var binObjects = (BinaryObject[])serializer.Deserialize(resultsStream);
+                    var serializer = new XmlSerializer(typeof (BinaryObject[]));
+                    var binObjects = (BinaryObject[]) serializer.Deserialize(resultsStream);
 
                     for (var i = 0; i < binObjects.Length; i++)
                     {
@@ -374,10 +363,28 @@ namespace HotDocs.Sdk.Server
                         streams[i].Dispose();
                     }
 
-                    string interviewContent = Util.ExtractString(binObjects[0]);
-                    return new InterviewResult { HtmlFragment = interviewContent };
+                    var interviewContent = Util.ExtractString(binObjects[0]);
+                    return new InterviewResult {HtmlFragment = interviewContent};
                 }
             }
+        }
+
+        public Stream GetInterviewFile(Template template, string fileName, string fileType, string logRef)
+        {
+            if (template == null)
+                throw new ArgumentNullException("template");
+
+            if (!Path.HasExtension(fileName) && fileType == string.Empty)
+            {
+                throw new ArgumentException("File extension must be included in the filename or the filetype parameter");
+            }
+
+            var packageTemplateLocation = (WebServiceTemplateLocation) template.Location;
+            return
+                packageTemplateLocation.GetFile(!Path.HasExtension(fileName)
+                    ? Uri.EscapeDataString(fileName +
+                                           (fileType.StartsWith(".") ? fileType : string.Format(".{0}", fileType)))
+                    : Uri.EscapeDataString(fileName), logRef);
         }
 
         private static void HandleStatusCode(HttpResponseMessage response)
@@ -398,15 +405,15 @@ namespace HotDocs.Sdk.Server
 
             if (!headers.TryGetValue("Content-Disposition", out disp)) return null;
 
-            string[] pairs = disp.Split(';');
+            var pairs = disp.Split(';');
 
-            foreach (string pair in pairs)
+            foreach (var pair in pairs)
             {
-                string trimmed = pair.Trim();
+                var trimmed = pair.Trim();
 
                 if (!trimmed.StartsWith("filename*=")) continue;
 
-                int endPos = trimmed.IndexOf("'", StringComparison.Ordinal);
+                var endPos = trimmed.IndexOf("'", StringComparison.Ordinal);
 
                 return trimmed.Substring(endPos + 2);
             }
