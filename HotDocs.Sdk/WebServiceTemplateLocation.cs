@@ -23,7 +23,7 @@ namespace HotDocs.Sdk
         public WebServiceTemplateLocation(string packageID, string hostAddress)
             : base(packageID)
         {
-            if (string.IsNullOrEmpty(HostAddress))
+            if (string.IsNullOrEmpty(hostAddress))
                 throw new ArgumentNullException("hostAddress");
 
             HostAddress = hostAddress;
