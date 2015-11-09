@@ -420,7 +420,7 @@ namespace HotDocs.Sdk
         /// <remarks>
         ///     TODO: Make sure custom data sources are better documented.
         /// </remarks>
-        public Dictionary<string, string> CustomDataSources { get; }
+        public Dictionary<string, string> CustomDataSources { get; set; }
 
         #endregion
 

@@ -40,18 +40,18 @@ namespace HotDocs.Sdk.Server
         /// <param name="retrieveFromHub"></param>
         /// <param name="hostAddress">The address of the Cloud Services API</param>
         /// <param name="subscriberId">Your Unique SubscriberId</param>
-        /// <param name="signingKey">Your Uniuqe Signing Key</param>
+        /// <param name="signingKey">Your Unique Signing Key</param>
         public HotDocsService(string subscriberId, string signingKey,
             RetrieveFromHub retrieveFromHub = RetrieveFromHub.No, string hostAddress = "https://cloud.hotdocs.ws/hdcs")
         {
             if (string.IsNullOrWhiteSpace(hostAddress))
-                throw new ArgumentNullException(nameof(hostAddress));
+                throw new ArgumentNullException("hostAddress");
 
             if (string.IsNullOrWhiteSpace(subscriberId))
-                throw new ArgumentNullException(nameof(subscriberId));
+                throw new ArgumentNullException("subscriberId");
 
             if (string.IsNullOrWhiteSpace(signingKey))
-                throw new ArgumentNullException(nameof(signingKey));
+                throw new ArgumentNullException("signingKey");
 
             HostAddress = hostAddress;
             SigningKey = signingKey;
@@ -59,9 +59,9 @@ namespace HotDocs.Sdk.Server
             SubscriberId = subscriberId;
         }
 
-        private string HostAddress { get; }
-        private string SubscriberId { get; }
-        private string SigningKey { get; }
+        private string HostAddress { get; set; }
+        private string SubscriberId { get; set; }
+        private string SigningKey { get; set; }
 
         /// <summary>
         ///     Assemble a document from the given template, answers and settings.
@@ -103,13 +103,12 @@ namespace HotDocs.Sdk.Server
                     new StringBuilder().AppendFormat("{0}/assemble/{1}/{2}/{3}?" +
                                                      "format={4}&" +
                                                      "encodefilenames={5}&" +
-                                                     "billingref={6}&" +
-                                                     "retrievefromhub={7}",
+                                                     "billingref={6}{7}",
                         HostAddress, SubscriberId, packageId, Uri.EscapeDataString(template.FileName),
                         of,
                         true,
                         Uri.EscapeDataString(logRef),
-                        _retrieveFromHub);
+                        GetRetrieveFromHubParam());
 
                 if (settings.Settings != null)
                 {
@@ -219,15 +218,16 @@ namespace HotDocs.Sdk.Server
                     logRef,
                     includeDialogs);
 
+
                 var request = new HttpRequestMessage
                 {
                     RequestUri =
                         new Uri(
                             string.Format(
-                                "{0}/componentinfo/{1}/{2}/{3}?includedialogs={4}&billingref={5}&retrieveFromHub={6}",
+                                "{0}/componentinfo/{1}/{2}/{3}?includedialogs={4}&billingref={5}{6}",
                                 HostAddress,
                                 SubscriberId, packageId, Uri.EscapeDataString(template.FileName), includeDialogs,
-                                Uri.EscapeDataString(logRef), _retrieveFromHub)),
+                                Uri.EscapeDataString(logRef),GetRetrieveFromHubParam())),
                     Method = HttpMethod.Get
                 };
 
@@ -315,8 +315,8 @@ namespace HotDocs.Sdk.Server
                                                                   "markedvariables{5}&" +
                                                                   "tempimageurl={6}&" +
                                                                   "encodeFileNames={7}&" +
-                                                                  "billingref={8}&" +
-                                                                  "retrievefromhub={9}",
+                                                                  "billingref={8}" +
+                                                                  "{9}",
                     HostAddress, SubscriberId, packageId, Uri.EscapeDataString(template.FileName),
                     settings.Format,
                     markedVariables != null && markedVariables.Any()
@@ -325,7 +325,7 @@ namespace HotDocs.Sdk.Server
                     Uri.EscapeDataString(settings.InterviewFilesUrl),
                     true,
                     Uri.EscapeDataString(logRef),
-                    _retrieveFromHub);
+                    GetRetrieveFromHubParam());
 
                 foreach (var kv in settings.Settings)
                 {
@@ -533,6 +533,11 @@ namespace HotDocs.Sdk.Server
             // Always include the Answers output
             format |= OutputFormat.Answers;
             return format;
+        }
+
+        private string GetRetrieveFromHubParam()
+        {
+            return _retrieveFromHub == RetrieveFromHub.No ? string.Empty : "&retrievefromhub=" + _retrieveFromHub;
         }
     }
 }
