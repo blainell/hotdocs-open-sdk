@@ -47,14 +47,14 @@ namespace HotDocs.Sdk
             RetrieveFromHub retrieveFromHub = RetrieveFromHub.No, string hostAddress = "https://cloud.hotdocs.ws")
             : base(packageID)
         {
-            if (string.IsNullOrEmpty(HostAddress))
+            if (string.IsNullOrEmpty(hostAddress))
                 throw new ArgumentNullException("hostAddress");
 
             if (string.IsNullOrEmpty(subscriberId))
                 throw new ArgumentNullException("subscriberId");
 
             if (string.IsNullOrEmpty(signingKey))
-                throw new ArgumentNullException(subscriberId);
+                throw new ArgumentNullException("signingKey");
 
             HostAddress = hostAddress;
             SubscriberId = subscriberId;
@@ -64,11 +64,11 @@ namespace HotDocs.Sdk
 
         public string HostAddress { get; protected set; }
 
-        private string SubscriberId { get; }
+        public string SubscriberId { get; set; }
 
-        private string SigningKey { get; }
+        public string SigningKey { get; set; }
 
-        public RetrieveFromHub RetrieveFromHub { get; }
+        public RetrieveFromHub RetrieveFromHub { get; set; }
 
 
         public override TemplateLocation Duplicate()
