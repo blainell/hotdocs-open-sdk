@@ -366,7 +366,6 @@ namespace HotDocs.Sdk
             {
                 // check for unanswered/user modifiable attributes
                 bool unans = false;
-                bool collapsed = false;
                 bool userModifiable = true;
                 if (reader.HasAttributes)
                 {
@@ -383,7 +382,6 @@ namespace HotDocs.Sdk
                     }
                     reader.MoveToElement();
                 }
-                collapsed = reader.IsEmptyElement;
                 // get value
                 string s;
                 switch (reader.Name)
