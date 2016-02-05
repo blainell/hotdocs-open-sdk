@@ -19,8 +19,8 @@ namespace HotDocs.Sdk.Server.Local
 	/// </summary>
 	public class Services : IServices
 	{
-		private HotDocs.Server.Application _app;
-		private string _tempPath = null;
+		private readonly HotDocs.Server.Application _app;
+		private readonly string _tempPath;
 
 		/// <summary>
 		/// Construct a new instance of <c>Local.Services</c>.

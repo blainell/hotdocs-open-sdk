@@ -19,8 +19,8 @@ namespace HotDocs.Sdk.Cloud
 		#endregion
 
 		#region Private fields
-		private StreamSplitter _splitter;
-		private byte[] _scratchPad;
+		private readonly StreamSplitter _splitter;
+		private readonly byte[] _scratchPad;
 		private MemoryStream _scratchPadStream;
 		private readonly char[] _headerDelimiters = new char[] { ':' };
 		private readonly byte[] _CRLF = new byte[] { 0x0d, 0x0a };

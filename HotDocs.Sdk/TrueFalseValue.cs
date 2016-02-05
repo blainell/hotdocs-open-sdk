@@ -13,8 +13,8 @@ namespace HotDocs.Sdk
 	/// </summary>
 	public struct TrueFalseValue : IValue, IComparable
 	{
-		private bool? _value;
-		private bool _protect;
+		private readonly bool? _value;
+		private readonly bool _protect;
 
 		/// <summary>
 		/// Static (shared) instance of an unanswered TrueFalseValue.

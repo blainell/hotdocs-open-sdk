@@ -54,7 +54,7 @@ namespace HotDocs.Sdk
 	/// </summary>
 	internal class FileNameSet
 	{
-		private Dictionary<string, string> dict = new Dictionary<string, string>();
+		private readonly Dictionary<string, string> dict = new Dictionary<string, string>();
 
 		/// <summary>
 		/// Include a filename to the set

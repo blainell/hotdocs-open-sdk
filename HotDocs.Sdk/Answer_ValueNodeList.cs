@@ -17,7 +17,7 @@ namespace HotDocs.Sdk
 		/// <typeparam name="T">Type</typeparam>
 		protected class ValueNodeList<T> : ICollection<ValueNode<T>> where T : IValue
 		{
-			private List<ValueNode<T>> _list;
+			private readonly List<ValueNode<T>> _list;
 			private int _maxSet;
 
 			#region Constructors

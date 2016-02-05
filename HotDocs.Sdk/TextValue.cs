@@ -15,8 +15,8 @@ namespace HotDocs.Sdk
 	/// </summary>
 	public struct TextValue : IValue, IComparable
 	{
-		private string _value;
-		private bool _protect;
+		private readonly string _value;
+		private readonly bool _protect;
 		private static Regex s_xmlEscaper = null;
 		private static Regex s_xmlUnescaper = null;
 

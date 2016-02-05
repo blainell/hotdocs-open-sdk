@@ -15,8 +15,8 @@ namespace HotDocs.Sdk
 	/// </summary>
 	public struct MultipleChoiceValue : IValue, IComparable
 	{
-		private string[] _value;
-		private bool _protect;
+		private readonly string[] _value;
+		private readonly bool _protect;
 		private const string s_separator = "|";
 
 		/// <summary>

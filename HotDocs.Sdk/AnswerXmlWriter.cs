@@ -13,7 +13,7 @@ namespace HotDocs.Sdk
 {
 	internal class AnswerXmlWriter : XmlWrappingWriter
 	{
-		private bool _forInterview;
+		private readonly bool _forInterview;
 		private bool _skipping;
 
 		public AnswerXmlWriter(System.IO.TextWriter output, XmlWriterSettings settings, bool forInterview)

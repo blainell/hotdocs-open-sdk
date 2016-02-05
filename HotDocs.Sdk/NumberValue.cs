@@ -18,8 +18,8 @@ namespace HotDocs.Sdk
 	/// places of precision, and the relevant "fudging" takes place five decimal places beyond that necessary level of precision.</remarks>
 	public struct NumberValue : IValue, IComparable
 	{
-		private double? _value;
-		private bool _protect;
+		private readonly double? _value;
+		private readonly bool _protect;
 
 		/// <summary>
 		/// Static (shared) instance of an unanswered NumberValue.

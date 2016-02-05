@@ -400,7 +400,7 @@ namespace HotDocs.Sdk.Server.Contracts
 		[DataMember(Order = 2, EmitDefaultValue = false)]
 		public List<DialogInfo> Dialogs = null;
 
-		private Dictionary<string, bool> _varIndex = new Dictionary<string, bool>();
+		private readonly Dictionary<string, bool> _varIndex = new Dictionary<string, bool>();
 
 		/// <summary>
 		/// This method indicates whether or not the variable is defined.

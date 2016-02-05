@@ -136,7 +136,7 @@ namespace HotDocs.Sdk
 	/// </summary>
 	public class VariableInfo : IEquatable<VariableInfo>, IComparable<VariableInfo>
 	{
-		private string _key;
+		private readonly string _key;
 
 		internal VariableInfo(string name, ValueType valueType)
 		{
@@ -445,8 +445,8 @@ namespace HotDocs.Sdk
 
 		private struct TemplateFileLocation : IEquatable<TemplateFileLocation>
 		{
-			private string _fileName;
-			private TemplateLocation _fileLocation;
+			private readonly string _fileName;
+			private readonly TemplateLocation _fileLocation;
 
 			internal TemplateFileLocation(string fileName, TemplateLocation location)
 			{

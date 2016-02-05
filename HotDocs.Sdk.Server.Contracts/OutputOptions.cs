@@ -109,7 +109,7 @@ namespace HotDocs.Sdk.Server.Contracts
 		public string Title { get; set; } // defaults to null
 
 		[DataMember]
-		private Dictionary<string, string> _customValues;
+		private readonly Dictionary<string, string> _customValues;
 
 
 		internal void SetValue(string name, string value)

@@ -21,10 +21,10 @@ namespace HotDocs.Sdk.Server.WebService
 	/// </summary>
 	public class Services : IServices
 	{
-		private string _endPointName;
-		private Binding _endPointBinding;
-		private string _endPointUrl;
-		private string _baseTemplateLocation;
+		private readonly string _endPointName;
+		private readonly Binding _endPointBinding;
+		private readonly string _endPointUrl;
+		private readonly string _baseTemplateLocation;
 
 		/// <summary>
 		/// <c>Services</c> constructor

@@ -10,7 +10,7 @@ namespace HotDocs.Sdk.ServerTest
 	[TestClass]
 	public class InterviewResponse
 	{
-		private System.Collections.Specialized.NameValueCollection form;
+		private readonly System.Collections.Specialized.NameValueCollection form;
 
 		public InterviewResponse()
 		{

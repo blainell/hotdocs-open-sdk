@@ -18,8 +18,8 @@ namespace HotDocs.Sdk
 	/// </summary>
 	public struct TimeSpanValue
 	{
-		private int? _value;
-		private Period _period;
+		private readonly int? _value;
+		private readonly Period _period;
 
 		/// <summary>
 		/// Static (shared) instance of an unanswered TimeSpanValue.

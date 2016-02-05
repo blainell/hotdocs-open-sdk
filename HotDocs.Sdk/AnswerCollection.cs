@@ -612,9 +612,9 @@ namespace HotDocs.Sdk
 
     public class AnswerChangedEventArgs : EventArgs
     {
-        private string _variableName;
-        private int[] _indices;
-        private ValueChangeType _changeType;
+        private readonly string _variableName;
+        private readonly int[] _indices;
+        private readonly ValueChangeType _changeType;
 
         public string VariableName { get { return _variableName; } }
         public int[] Indices { get { return _indices; } }

@@ -20,8 +20,8 @@ namespace HotDocs.Sdk.Server.Cloud
 	{
 		#region Private Members
 
-		private string _subscriberID;
-		private string _signingKey;
+		private readonly string _subscriberID;
+		private readonly string _signingKey;
 
 		#endregion
 

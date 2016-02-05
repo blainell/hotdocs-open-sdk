@@ -160,8 +160,8 @@ namespace HotDocs.Sdk.Server
 
 		#region IDisposable implementation
 
-		private bool disposed = false; // to detect redundant calls
-		private Template _source = null;
+		private bool disposed; // to detect redundant calls
+		private readonly Template _source;
 
 		/// <summary>
 		/// Calls IDisposable.Dispose

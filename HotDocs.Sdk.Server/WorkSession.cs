@@ -139,8 +139,8 @@ namespace HotDocs.Sdk.Server
 			get { return _service; }
 		}
 
-		private IServices _service;
-		private List<WorkItem> _workItems;
+		private readonly IServices _service;
+		private readonly List<WorkItem> _workItems;
 
 		public static string GetSessionDebugSummary(HotDocs.Sdk.Server.WorkSession session)
 		{

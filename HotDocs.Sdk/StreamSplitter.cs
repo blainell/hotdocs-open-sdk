@@ -18,10 +18,10 @@ namespace HotDocs.Sdk.Cloud
 		#endregion
 
 		#region Private fields
-		private byte[] _buffer;
+		private readonly byte[] _buffer;
 		private int _head;
 		private int _virtualSize;
-		private int _bufferSize;
+		private readonly int _bufferSize;
 		private Stream _streamIn;
 		#endregion
 

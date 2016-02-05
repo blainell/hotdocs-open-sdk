@@ -13,10 +13,10 @@ namespace HotDocs.Sdk
 	/// The DateValue struct is used to represent date values in HotDocs. Since it's a struct, DateValue is a value type
 	/// with value semantics. Instances of DateValue directly contain the relevant date, and therefore (unlike reference types) are immutable.
 	/// </summary>
-	public struct DateValue : IValue, IComparable
+	public struct DateValue : IValue
 	{
-		private DateTime? _value;
-		private bool _protect;
+		private readonly DateTime? _value;
+		private readonly bool _protect;
 
 		/// <summary>
 		/// Static (shared) instance of an unanswered DateValue.

@@ -23,8 +23,8 @@ namespace HotDocs.Sdk
 	/// </summary>
 	public abstract partial class Answer
 	{
-		private AnswerCollection _coll;
-		private string _name;
+		private readonly AnswerCollection _coll;
+		private readonly string _name;
 		private int _depth;
 		private bool _save; // whether this answer is savable/permanent or temporary
 		private bool _userExtendible; // whether users should be permitted (in the UI) to add/delete/move repeat iterations
