@@ -99,15 +99,12 @@ namespace HotDocs.Sdk.Server
 		{
 			if (!disposed)
 			{
-				if (disposing)
-				{
-					if (Document != null)
-					{
-						Document.Dispose();
-						Document = null;
-					}
-				}
-				disposed = true;
+			    if (disposing && Document != null)
+			    {
+			        Document.Dispose();
+			        Document = null;
+			    }
+			    disposed = true;
 			}
 		}
 

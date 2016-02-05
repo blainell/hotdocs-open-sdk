@@ -33,14 +33,11 @@ namespace HotDocs.Sdk.Server.Local
 		{
 			if (!disposed)
 			{
-				if (disposing)
-				{
-					if (Path != null)
-					{
-						Delete();
-					}
-				}
-				disposed = true;
+			    if (disposing && Path != null)
+			    {
+			        Delete();
+			    }
+			    disposed = true;
 			}
 		}
 

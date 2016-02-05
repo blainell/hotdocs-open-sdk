@@ -462,7 +462,7 @@ namespace HotDocs.Sdk.Server.Local
 			} while (Directory.Exists(dirPath));
 			Directory.CreateDirectory(dirPath);
 			string filePath = Path.Combine(dirPath, Path.GetRandomFileName() + ext);
-			using (File.Create(filePath)) { }
+			using (File.Create(filePath))
 			return filePath;
 		}
 		/// <summary>
