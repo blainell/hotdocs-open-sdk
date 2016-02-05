@@ -309,9 +309,6 @@ namespace HotDocs.Sdk.Server.Contracts
 		/// </summary>
 		[DataMember(Order = 3, EmitDefaultValue = false)]
 		public string Description;
-
-		//[DataMember(Order = 4, EmitDefaultValue = false)]
-		//public TemplateInfo[] Dependencies;
 	}
 
 	/// <summary>

@@ -70,20 +70,6 @@ namespace HotDocs.SdkTest
 			v = 47;
 			Assert.IsTrue(v.IsAnswered);
 			Assert.AreEqual(47.0, v.Value);
-
-			//v = new TextValue("Not a number");
-			//Assert.IsFalse(v.IsAnswered);
-
-			//v = new TextValue("47.65");
-			//Assert.IsTrue(v.IsAnswered);
-			//Assert.AreEqual(47.65, v.Value);
-
-			//v = new MultipleChoiceValue("Fred");
-			//Assert.IsFalse(v.IsAnswered);
-
-			//v = new MultipleChoiceValue("47.65");
-			//Assert.IsTrue(v.IsAnswered);
-			//Assert.AreEqual(47.65, v.Value);
 		}
 
 	}

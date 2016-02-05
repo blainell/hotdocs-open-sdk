@@ -14,12 +14,6 @@ namespace HotDocs.SdkTest
 	[TestClass]
 	public class AnswerTest
 	{
-		//public class IndexedValue<T> where T : IValue
-		//{
-		//	public T Value { get; set; }
-		//	public int[] RepeatIndices { get; }
-		//}
-
 		[TestMethod]
 		public void EnumerateValues()
 		{
