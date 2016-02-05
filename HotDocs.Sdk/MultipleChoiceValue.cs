@@ -187,7 +187,7 @@ namespace HotDocs.Sdk
 		}
 
 		/// <summary>
-		/// Implicit operator for converting List<string> to MultipleChoiceValue.
+		/// Implicit operator for converting List/<string/> to MultipleChoiceValue.
 		/// </summary>
 		/// <param name="value"></param>
 		/// <returns>operator</returns>

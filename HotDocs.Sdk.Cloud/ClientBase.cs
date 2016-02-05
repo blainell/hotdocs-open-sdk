@@ -52,7 +52,7 @@ namespace HotDocs.Sdk.Cloud
 		#region Public properties
 
 		/// <summary>
-		/// <include file="../Shared/Help.xml" path="Help/string/param[@name='subscriberID']/child::node()"/>
+		/// The subscriber's ID
 		/// </summary>
 		public string SubscriberId { get; set; }
 
