@@ -877,7 +877,6 @@ namespace HotDocs.Sdk.Cloud
             var response = (HttpWebResponse) request.GetResponse();
 
             var serializer = new XmlSerializer(typeof (ComponentInfo));
-            var stream = new MemoryStream();
             return (ComponentInfo) serializer.Deserialize(response.GetResponseStream());
         }
 
