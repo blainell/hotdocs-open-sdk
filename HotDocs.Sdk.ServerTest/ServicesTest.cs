@@ -122,7 +122,7 @@ namespace HotDocs.Sdk.ServerTest
 			}
 			catch (ArgumentNullException ex)
 			{
-				Assert.IsTrue(ex.Message.IndexOf(": template") > 0);
+				Assert.IsTrue(ex.Message.IndexOf(": template") >= 0);
 			}
 			catch (Exception)
 			{
@@ -361,7 +361,7 @@ namespace HotDocs.Sdk.ServerTest
 			}
 			catch (ArgumentNullException ex)
 			{
-				Assert.IsTrue(ex.Message.IndexOf("answers") > 0);
+				Assert.IsTrue(ex.Message.IndexOf("answers") >= 0);
 			}
 
 			// Perform all of these tests a number of times using different formats of the answers each time.
@@ -394,24 +394,24 @@ namespace HotDocs.Sdk.ServerTest
 				answersList.Clear();
 				answersList.Add(Util.GetTestFile(answerFile1));
 				xml = svc.GetAnswers(answersList.ToArray(), logRef);
-				Assert.IsTrue(xml.IndexOf("running the company") > 0);
-				Assert.IsTrue(xml.IndexOf("Freddy") > 0);
+				Assert.IsTrue(xml.IndexOf("running the company") >= 0);
+				Assert.IsTrue(xml.IndexOf("Freddy") >= 0);
 
 				// Get the Frederick answer file.
 				answersList.Clear();
 				answersList.Add(Util.GetTestFile(answerFile2));
 				xml = svc.GetAnswers(answersList.ToArray(), logRef);
-				Assert.IsTrue(xml.IndexOf("Here is your new car") > 0);
-				Assert.IsTrue(xml.IndexOf("Frederick") > 0);
+				Assert.IsTrue(xml.IndexOf("Here is your new car") >= 0);
+				Assert.IsTrue(xml.IndexOf("Frederick") >= 0);
 
 				// Get the combined answer file with Frederick answers overlayed on top of Freddy answers.
 				answersList.Clear();
 				answersList.Add(Util.GetTestFile(answerFile1));
 				answersList.Add(Util.GetTestFile(answerFile2));
 				xml = svc.GetAnswers(answersList.ToArray(), logRef);
-				Assert.IsTrue(xml.IndexOf("running the company") > 0);
-				Assert.IsTrue(xml.IndexOf("Here is your new car") > 0);
-				Assert.IsTrue(xml.IndexOf("Frederick") > 0);
+				Assert.IsTrue(xml.IndexOf("running the company") >= 0);
+				Assert.IsTrue(xml.IndexOf("Here is your new car") >= 0);
+				Assert.IsTrue(xml.IndexOf("Frederick") >= 0);
 				Assert.IsTrue(xml.IndexOf("Freddy") < 0);
 
 				// Get the combined answer file with Freddy answers overlayed on top of Frederick answers.
@@ -419,9 +419,9 @@ namespace HotDocs.Sdk.ServerTest
 				answersList.Add(Util.GetTestFile(answerFile2));
 				answersList.Add(Util.GetTestFile(answerFile1));
 				xml = svc.GetAnswers(answersList.ToArray(), logRef);
-				Assert.IsTrue(xml.IndexOf("running the company") > 0);
-				Assert.IsTrue(xml.IndexOf("Here is your new car") > 0);
-				Assert.IsTrue(xml.IndexOf("Freddy") > 0);
+				Assert.IsTrue(xml.IndexOf("running the company") >= 0);
+				Assert.IsTrue(xml.IndexOf("Here is your new car") >= 0);
+				Assert.IsTrue(xml.IndexOf("Freddy") >= 0);
 				Assert.IsTrue(xml.IndexOf("Frederick") < 0);
 			}
 

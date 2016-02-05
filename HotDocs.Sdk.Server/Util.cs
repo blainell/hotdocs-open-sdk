@@ -384,7 +384,7 @@ namespace HotDocs.Sdk.Server
 				// URL lowercase if we are getting it from there! We don't make everything lowercase because some files (e.g., Silverlight.js)
 				// contain capital letters.
 				string sourceFileUrl = sourceUrl.TrimEnd('/') + "/" + fileName;
-				if (sourceFileUrl.IndexOf("files.hotdocs.ws") > 0)
+				if (sourceFileUrl.IndexOf("files.hotdocs.ws") >= 0)
 				{
 					int lastForwardSlash = sourceFileUrl.LastIndexOf('/');
 					sourceFileUrl = sourceFileUrl.Substring(0, lastForwardSlash).ToLower() + sourceFileUrl.Substring(lastForwardSlash);
