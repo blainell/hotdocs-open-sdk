@@ -21,48 +21,6 @@ namespace HotDocs.Sdk
 		public override Encoding Encoding { get { return Encoding.UTF8; } }
 	}
 
-	/*
-	/// <summary>
-	/// The type of dependency.
-	/// NOTE: It needs to be kept in sync with the HotDocs desktop and server IDL files!
-	/// </summary>
-	public enum HDDependencyType
-	{
-		[XmlEnum("noDependency")]
-		NoDependency = 0,
-		[XmlEnum("baseCmpFile")]
-		BaseCmpFileDependency = 1,
-		[XmlEnum("pointedToCmpFile")]
-		PointedToCmpFileDependency = 2,
-		[XmlEnum("templateInsert")]
-		TemplateInsertDependency = 3,
-		[XmlEnum("clauseInsert")]
-		ClauseInsertDependency = 4,
-		[XmlEnum("clauseLibraryInsert")]
-		ClauseLibraryInsertDependency = 5,
-		[XmlEnum("imageInsert")]
-		ImageInsertDependency = 6,
-		[XmlEnum("interviewImage")]
-		InterviewImageDependency = 7,
-		[XmlEnum("variableTemplateInsert")]
-		VariableTemplateInsertDependency = 8,
-		[XmlEnum("variableImageInsert")]
-		VariableImageInsertDependency = 9,
-		[XmlEnum("missingVariable")]
-		MissingVariableDependency = 10,
-		[XmlEnum("missingFile")]
-		MissingFileDependency = 11,
-		[XmlEnum("assemble")]
-		AssembleDependency = 12,
-		[XmlEnum("publisherMapFile")]
-		PublisherMapFileDependency = 13,
-		[XmlEnum("userMapFile")]
-		UserMapFileDependency = 14,
-		[XmlEnum("additionalTemplate")]
-		AdditionalTemplateDependency = 15
-	}
-	*/
-
 	/// <summary>
 	/// A helper class to store a file name
 	/// </summary>
@@ -120,79 +78,9 @@ namespace HotDocs.Sdk
 		/// <returns>an array of all file names in the set</returns>
 		public string[] ToArray()
 		{
-			//return Enumerable.ToArray(dict.Values);
 			return dict.Values.ToArray<string>();
 		}
 	}
-
-	/*
-	/// <summary>
-	/// This class stores a dependency of a template with another file
-	/// </summary>
-	public class HDDependency : IEquatable<HDDependency>
-	{
-		/// <summary>
-		/// The target name. It must be an internal name for the package. E.g. "insert.rtf"
-		/// </summary>
-		[XmlAttribute("fileName")]
-		public string FileName { get; set; }
-		/// <summary>
-		/// The type of dependency.
-		/// </summary>
-		[XmlAttribute("type")]
-		public DependencyType DependencyType { get; set; }
-
-		/// <summary>
-		/// Create a new instance with an empty target and no dependency.
-		/// </summary>
-		public HDDependency()
-		{
-			FileName = string.Empty;
-			DependencyType = DependencyType.NoDependency;
-		}
-
-		/// <summary>
-		/// Create a new instance.
-		/// </summary>
-		/// <param name="fileName">The file name</param>
-		/// <param name="depType">The dependency type</param>
-		public HDDependency(string fileName, DependencyType depType)
-		{
-			FileName = fileName;
-			DependencyType = depType;
-		}
-
-		/// <summary>
-		/// Make a copy.
-		/// </summary>
-		/// <returns></returns>
-		public HDDependency Copy()
-		{
-			return new HDDependency(FileName, DependencyType);
-		}
-
-		/// <summary>
-		/// Check if a dependency refers to a template
-		/// </summary>
-		/// <param name="dt">The type of dependency.</param>
-		/// <returns>true if the dependency refers to a template.</returns>
-		public static bool IsTemplateDependency(DependencyType dt)
-		{
-			return dt == DependencyType.TemplateInsert || dt == DependencyType.Assemble;
-		}
-
-		/// <summary>
-		/// Equals() method for IEquatable interface.
-		/// </summary>
-		/// <param name="template">The HDDependency object to which this one is compared.</param>
-		/// <returns>true if they're equal</returns>
-		public bool Equals(HDDependency template)
-		{
-			return string.Equals(this.FileName, template.FileName, StringComparison.OrdinalIgnoreCase);
-		}
-	}
-	*/
-
 
 	/// <summary>
 	/// The manifest information of a package. All this information will be serialized as XML and stored in the package as another file with the name as defined at TemplatePackage.ManifestName
@@ -206,7 +94,6 @@ namespace HotDocs.Sdk
 
 		static XmlSerializer _xmlSerializer;
 		static XmlSerializer _xmlSerializer10;
-		//static XmlSerializerNamespaces _xmlSerializerNamespaces;
 
 		static TemplatePackageManifest()
 		{
@@ -244,22 +131,6 @@ namespace HotDocs.Sdk
 
 			_xmlSerializer = new XmlSerializer(typeof(TemplatePackageManifest), PackageNamespace);
 			_xmlSerializer10 = new XmlSerializer(typeof(TemplatePackageManifest), v10Overrides, null, null, PackageNamespace10);
-
-			//_xmlSerializerNamespaces = new XmlSerializerNamespaces();
-			//_xmlSerializerNamespaces.Add(string.Empty, string.Empty);
-
-			/*
-			TemplatePackageManifest manifest = new TemplatePackageManifest();
-			var main = manifest.MainTemplate = new TemplateInfo();
-			main.FileName = "myfilename.rtf";
-			main.EffectiveComponentFile = "mycomponentfile.cmp";
-			string xml;
-			using (var sw = new StringWriter())
-			{
-				_xmlSerializer10.Serialize(sw, manifest);
-				xml = sw.ToString();
-			}
-			*/
 		}
 
 		private static void IncludeTemplateFiles(FileNameSet fs, TemplateInfo templateInfo, bool includeGeneratedFiles = true)
@@ -580,33 +451,6 @@ namespace HotDocs.Sdk
 			sw.Write(ToXml());
 			sw.Flush();
 		}
-
-		/*
-		private static string GetCurrentAssemblyName()
-		{
-			string assemblyName = System.Reflection.Assembly.GetExecutingAssembly().FullName;
-			int i = assemblyName.IndexOf(',');
-			//
-			return i > 0 ? assemblyName.Substring(0, i) : assemblyName;
-		}
-
-		private static string ReplaceAssemblyName(string manifestXml, string newName)
-		{
-			const string Pat = "xmlns=\"clr-namespace:HotDocs.Packaging;assembly=";
-			int i = manifestXml.IndexOf(Pat), j;
-			//
-			if (i>0)
-			{
-				i += Pat.Length;
-				j = manifestXml.IndexOf('"', i);
-				if (i<j)
-				{
-					manifestXml = manifestXml.Substring(0, i) + newName + manifestXml.Substring(j);
-				}
-			}
-			return manifestXml;
-		}
-		*/
 
 		/// <summary>
 		/// Create a new manifest instance and initialize it by deserializing an XML string.

@@ -57,14 +57,6 @@ namespace HotDocs.SdkTest
 
 			string filePath = template.GetFullPath();
 			Assert.IsTrue(File.Exists(filePath));
-			//Directory.Delete(Path.GetDirectoryName(filePath));
-
-			//Check the second time since the folder has been deleted.
-			//filePath = template.GetFullPath();//The folder should come into existence here.
-			//Assert.IsTrue(File.Exists(filePath));
-			//Directory.Delete(Path.GetDirectoryName(filePath));//Clean up.
-
-
 
 			TestTemplate(template, new TemplateInfo()
 			{

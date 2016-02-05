@@ -458,7 +458,6 @@ namespace HotDocs.Sdk
 				if (maxIteration >= parentNode.Children.SetCount)
 				{
 					//[LRS] Need to be able to do the following! (Because other answers in same iteration may be moving.)
-					//throw new ArgumentException("Cannot move repeated data after the final repeat iteration.", "newPosition");
 					parentNode.Children.PrepareForIndex(maxIteration);
 				}
 

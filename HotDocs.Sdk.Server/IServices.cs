@@ -101,8 +101,6 @@ namespace HotDocs.Sdk.Server
 		/// <returns>A stream containing the requested interview file, to be returned to the caller.</returns>
 		Stream GetInterviewFile(Template template, string fileName, string fileType);
 
-		// Get the template manifest for the specified template. Can optionally parse an entire template manifest spanning tree.
-		//TemplateManifest GetManifest(string templateLocator, string templateFileName, ManifestParseFlags parseFlags);
-		// Q: should TemplateManifest be enhanced to have everything GetComponentInfo needs?  (in other words, dialogs?)
+		// TODO: should TemplateManifest be enhanced to have everything GetComponentInfo needs?  (in other words, dialogs?)
 	}
 }

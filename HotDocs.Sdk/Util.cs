@@ -181,7 +181,7 @@ namespace HotDocs.Sdk
 						return "application/xaml+xml";
 					case "htm":
 					case "html":
-						return System.Net.Mime.MediaTypeNames.Text.Html; //"text/html";
+						return System.Net.Mime.MediaTypeNames.Text.Html; //"text/html"
 					case "css":
 						return "text/css";
 					case "js":
@@ -192,7 +192,7 @@ namespace HotDocs.Sdk
 						return "application/x-silverlight-app";
 					case "tif":
 					case "tiff":
-						return System.Net.Mime.MediaTypeNames.Image.Tiff; //"image/tiff";
+						return System.Net.Mime.MediaTypeNames.Image.Tiff; //"image/tiff"
 					case "jfif":
 						return "image/pjpeg";
 					case "ico":
@@ -228,7 +228,7 @@ namespace HotDocs.Sdk
 					case "zip":
 						return "application/zip";
 				}
-			return System.Net.Mime.MediaTypeNames.Application.Octet; // "application/octet-stream";
+			return System.Net.Mime.MediaTypeNames.Application.Octet; // "application/octet-stream"
 		}
 
 

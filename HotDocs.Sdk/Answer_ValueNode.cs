@@ -127,7 +127,7 @@ namespace HotDocs.Sdk
 					Debug.Assert(!IsAnswered);
 				}
 
-				if (levels == 0) // we're done;
+				if (levels == 0) // we're done
 					return; // drop out of recursion
 
 				// recurse into child nodes

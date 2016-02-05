@@ -68,18 +68,6 @@ namespace HotDocs.Sdk.Server
 					}
 				}
 
-				////Remove any folder information from the path, just in case. It's not allowed.
-				//int lastBackSlash = path.LastIndexOf('\\');
-				//int lastFwdSlash = path.LastIndexOf('/');
-				//if (lastBackSlash > -1 || lastFwdSlash > -1)
-				//{
-				//	int lastSlash = lastBackSlash > lastFwdSlash ? lastBackSlash : lastFwdSlash;
-				//	if (lastSlash >= path.Length - 1)
-				//		path = "";
-				//	else
-				//		path = path.Substring(lastSlash + 1, path.Length - lastSlash - 1);
-				//}
-
 				//Remove any extra whitespace.
 				path = path.Trim();
 				switches = switches.Trim();
@@ -251,7 +239,6 @@ namespace HotDocs.Sdk.Server
 					byte[] data = File.ReadAllBytes(img);
 					// Replace the html src attribute that points to the image file to its base64 content
 					html = html.Replace(@"src=""" + Path.GetFileName(img), @"src=""data:" + HotDocs.Sdk.Util.GetMimeType(img) + ";base64," + Convert.ToBase64String(data));
-					//					html = html.Replace(@"src=""file://" + img, @"src=""data:" + getImageMimeType(ext) + ";base64," + Convert.ToBase64String(data));
 				}
 			}
 			return html;

@@ -47,27 +47,6 @@ namespace HotDocs.Sdk.ServerTest
 			}
 		}
 
-		#region Additional test attributes
-		//
-		// You can use the following additional attributes as you write your tests:
-		//
-		// Use ClassInitialize to run code before running the first test in the class
-		// [ClassInitialize()]
-		// public static void MyClassInitialize(TestContext testContext) { }
-		//
-		// Use ClassCleanup to run code after all tests in a class have run
-		// [ClassCleanup()]
-		// public static void MyClassCleanup() { }
-		//
-		// Use TestInitialize to run code before running each test 
-		// [TestInitialize()]
-		// public void MyTestInitialize() { }
-		//
-		// Use TestCleanup to run code after each test has run
-		// [TestCleanup()]
-		// public void MyTestCleanup() { }
-		//
-		#endregion
 
 		#region IServices Constructor Tests
 
@@ -138,11 +117,10 @@ namespace HotDocs.Sdk.ServerTest
 			string styleSheetUrl = "HDServerFiles/Stylesheets";
 			string runtimeUrl = "HDServerFiles/js";
 			string interviewDefUrl = "GetInterviewFile.ashx";
-			//string interviewImgUrl = "GetInterviewFile.ashx";
 			InterviewSettings settings = new InterviewSettings(postInterviewUrl, runtimeUrl, styleSheetUrl, interviewDefUrl);
 
 			// Set up the Marked Variables for the test.
-			string[] markedVars = null; // new string[] { };
+			string[] markedVars = null; 
 
 			InterviewResult result;
 
@@ -167,7 +145,6 @@ namespace HotDocs.Sdk.ServerTest
 			Assert.IsTrue(result.HtmlFragment.Contains(runtimeUrl));
 			Assert.IsTrue(result.HtmlFragment.Contains(styleSheetUrl));
 			Assert.IsTrue(result.HtmlFragment.Contains(interviewDefUrl));
-			//Assert.IsTrue(result.HtmlFragment.Contains(interviewImgUrl));
 			Assert.IsTrue(result.HtmlFragment.Contains("hdMainDiv"));
 			Assert.IsFalse(result.HtmlFragment.Contains("Employee Name\": { t: \"TX\", m:true")); // Employee Name should not be "marked"
 

@@ -14,14 +14,6 @@ namespace HotDocs.Sdk.ServerTest
 {
 	static class Util
 	{
-		//private static string GetLocalPackagePath(string packageId)
-		//{
-		//	Assembly _asm = Assembly.GetExecutingAssembly();
-
-		//	string templatePath = Path.GetDirectoryName(_asm.Location);
-		//	return Path.Combine(templatePath, packageId + ".pkg");
-		//}
-
 		public static StreamReader GetTestFile(string fileName)
 		{
 			Assembly _assembly = Assembly.GetExecutingAssembly();

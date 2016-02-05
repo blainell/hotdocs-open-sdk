@@ -221,22 +221,6 @@ namespace HotDocs.Sdk
 					CopyStream(s, temps);
 				}
 			}
-			/* --- Doesn't work. RSA Encrypt function can only encrypt up to 245 bytes!
-			 * See http://social.msdn.microsoft.com/forums/en-US/clr/thread/4e3ada0a-bcaf-4c67-bdef-a6b15f5bfdce/
-			byte[] encryptedData;
-			byte[] decryptedData;
-			int len = (int)ms.Length;
-			using (RSACryptoServiceProvider rsa = new RSACryptoServiceProvider())
-			{
-				rsa.FromXmlString(rsaParamsXml);
-				decryptedData = new byte[len];
-				ms.Position = 0;
-				ms.Read(decryptedData, 0, len);
-				encryptedData = rsa.Encrypt(decryptedData, false);
-				s.Write(HDSig, 0, 4);
-				s.Write(encryptedData, 0, encryptedData.Length);
-			}
-			*/
 			s.Position = 0;
 			return s;
 		}
@@ -304,19 +288,6 @@ namespace HotDocs.Sdk
 					CopyStream(s, temps);
 				}
 			}
-			/* --- Doesn't work. RSA Encrypt function can only encrypt up to 245 bytes!
-			 * See http://social.msdn.microsoft.com/forums/en-US/clr/thread/4e3ada0a-bcaf-4c67-bdef-a6b15f5bfdce/
-			byte[] encryptedData;
-			byte[] decryptedData;
-			using (RSACryptoServiceProvider rsa = new RSACryptoServiceProvider())
-			{
-				rsa.FromXmlString(rsaParamsXml);
-				encryptedData = new byte[len];
-				ms.Read(encryptedData, 0, len);
-				decryptedData = rsa.Decrypt(encryptedData, false);
-				s.Write(decryptedData, 0, decryptedData.Length);
-			}
-			*/
 			return s;
 		}
 
@@ -538,8 +509,6 @@ namespace HotDocs.Sdk
 		{
 			get
 			{
-				//if (_manifest == null)
-				//	_manifest = new TemplatePackageManifest();
 				return _manifest;
 			}
 			set
@@ -892,7 +861,6 @@ namespace HotDocs.Sdk
 			Uri retUri = null;
 			try
 			{ 
-				//Uri paramUri = new Uri(Uri.EscapeDataString(internalName), UriKind.Relative);
 				Uri paramUri = new Uri(internalName, UriKind.Relative);
 				retUri = PackUriHelper.CreatePartUri(paramUri);
 			}
@@ -1036,7 +1004,6 @@ namespace HotDocs.Sdk
 			if (packagePart == null)
 				throw new Exception("Failed to extract file. Package part doesn't exist");
 
-			//string filePath = Path.Combine(targetFolderPath, filepath);
 			path = targetFolderPath;
 			if (!IsDirSep(internalName[0]))
 				path += '\\';
