@@ -321,23 +321,6 @@ namespace HotDocs.Sdk.Server
 			return result.ToString();
 		}
 
-		private class DataSourceNameEqualityCompararer : IEqualityComparer<string>
-		{
-			#region IEqualityComparer<string> Members
-
-			public bool Equals(string x, string y)
-			{
-				return string.Equals(x, y, StringComparison.OrdinalIgnoreCase);
-			}
-
-			public int GetHashCode(string obj)
-			{
-				return obj.ToLower().GetHashCode();
-			}
-
-			#endregion
-		}
-
 		/// <summary>
 		/// Reads the bytes from a text reader and returns them in a BinaryObject.
 		/// </summary>
