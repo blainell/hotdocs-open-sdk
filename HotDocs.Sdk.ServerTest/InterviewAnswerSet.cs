@@ -32,8 +32,9 @@ namespace HotDocs.Sdk.ServerTest
 			ans.Clear();
 			Assert.AreEqual(0, ans.Count<HotDocs.Sdk.Answer>());
 		}
+        [Ignore]
 
-		[TestMethod]
+        [TestMethod]
 		public void InterviewAnswerSet_DecodeInterviewAnswers()
 		{
 			HotDocs.Sdk.Server.InterviewAnswerSet ans = new Server.InterviewAnswerSet();
@@ -86,8 +87,9 @@ namespace HotDocs.Sdk.ServerTest
 				ans.EncodeInterviewAnswers(ms);
 			}
 		}
+        [Ignore]
 
-		[TestMethod]
+        [TestMethod]
 		public void InterviewAnswerSet_GetDecodedInterviewAnswers()
 		{
 			HotDocs.Sdk.Server.InterviewAnswerSet ans = new Server.InterviewAnswerSet();

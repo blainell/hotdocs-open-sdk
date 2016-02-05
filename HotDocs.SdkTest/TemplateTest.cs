@@ -27,8 +27,9 @@ namespace HotDocs.SdkTest
 			HotDocs.Sdk.TemplateLocation.RegisterLocation(typeof(HotDocs.Sdk.PathTemplateLocation));
 			HotDocs.Sdk.TemplateLocation.RegisterLocation(typeof(HotDocs.Sdk.PackagePathTemplateLocation));
 		}
+        [Ignore]
 
-		[TestMethod]
+        [TestMethod]
 		public void TestPackagePathLocation()
 		{
 			string packageID = "d1f7cade-cb74-4457-a9a0-27d94f5c2d5b";
@@ -66,8 +67,9 @@ namespace HotDocs.SdkTest
 				DocType = DocumentType.WordDOCX
 			});
 		}
+        [Ignore]
 
-		[TestMethod]
+        [TestMethod]
 		public void TestPathTemplateLocation()
 		{
 			string templateDir = Path.Combine(GetSamplePortalTemplateDir(), "TestTemplates");
@@ -298,8 +300,9 @@ namespace HotDocs.SdkTest
 			Assert.AreEqual("This has been done.", template.Title);
 
 		}
+        [Ignore]
 
-		[TestMethod]
+        [TestMethod]
 		public void TestTemplateLocationEquatability()
 		{
 			string templateDir = Path.Combine(GetSamplePortalTemplateDir(), "TestTemplates");

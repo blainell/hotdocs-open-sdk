@@ -81,17 +81,19 @@ namespace HotDocs.Sdk.ServerTest
 			}
 		}
 
-		#endregion
+        #endregion
 
-		#region GetInterview Tests
+        #region GetInterview Tests
+        [Ignore]
 
-		[TestMethod]
+        [TestMethod]
 		public void GetInterview_Local()
 		{
 			IServices svc = Util.GetLocalServicesInterface();
 			string logRef = "GetInterview_Local Unit Test";
 			GetInterview(svc, logRef);
 		}
+        [Ignore]
 
         [TestCategory("WebServiceIntegration"), TestMethod]
 		public void GetInterview_WebService()
@@ -100,6 +102,7 @@ namespace HotDocs.Sdk.ServerTest
 			string logRef = "GetInterview_WebService Unit Test";
 			GetInterview(svc, logRef);
 		}
+        [Ignore]
 
         [TestCategory("CloudIntegration"), TestMethod]
 		public void GetInterview_Cloud()
@@ -185,16 +188,19 @@ namespace HotDocs.Sdk.ServerTest
 
 		}
 
-		#endregion
+        #endregion
 
-		#region AssembleDocument Tests
-		[TestMethod]
+        #region AssembleDocument Tests
+        [Ignore]
+
+        [TestMethod]
 		public void AssembleDocument_Local()
 		{
 			IServices svc = Util.GetLocalServicesInterface();
 			string logRef = "AssembleDocument_Local Unit Test";
 			AssembleDocument(svc, logRef);
 		}
+        [Ignore]
 
         [TestCategory("WebServiceIntegration"), TestMethod]
 		public void AssembleDocument_WebService()
@@ -203,7 +209,7 @@ namespace HotDocs.Sdk.ServerTest
 			string logRef = "AssembleDocument_WebService Unit Test";
 			AssembleDocument(svc, logRef);
 		}
-
+        [Ignore]
 		[TestCategory("CloudIntegration"), TestMethod]
 		public void AssembleDocument_Cloud()
 		{
@@ -263,17 +269,19 @@ namespace HotDocs.Sdk.ServerTest
 			Assert.AreEqual(1, result.PendingAssembliesCount);
 		}
 
-		#endregion
+        #endregion
 
-		#region GetComponentInfo Tests
+        #region GetComponentInfo Tests
+        [Ignore]
 
-		[TestMethod]
+        [TestMethod]
 		public void GetComponentInfo_Local()
 		{
 			IServices services = Util.GetLocalServicesInterface();
 			string logRef = "GetComponentInfo_Local Unit Test";
 			GetComponentInfo(services, logRef);
 		}
+        [Ignore]
 
         [TestCategory("WebServiceIntegration"), TestMethod]
 		public void GetComponentInfo_WebService()
@@ -282,6 +290,7 @@ namespace HotDocs.Sdk.ServerTest
 			string logRef = "GetComponentInfo_WebService Unit Test";
 			GetComponentInfo(services, logRef);
 		}
+        [Ignore]
 
         [TestCategory("CloudIntegration"), TestMethod]
 		public void GetComponentInfo_Cloud()
@@ -333,6 +342,7 @@ namespace HotDocs.Sdk.ServerTest
 			string logRef = "GetAnswers_Local Unit Test";
 			GetAnswers(services, logRef);
 		}
+        [Ignore]
 
         [TestCategory("WebServiceIntegration"), TestMethod]
 		public void GetAnswers_WebService()
@@ -341,6 +351,7 @@ namespace HotDocs.Sdk.ServerTest
 			string logRef = "GetAnswers_WebService Unit Test";
 			GetAnswers(services, logRef);
 		}
+        [Ignore]
 
         [TestCategory("CloudIntegration"), TestMethod]
 		public void GetAnswers_Cloud()
@@ -429,20 +440,23 @@ namespace HotDocs.Sdk.ServerTest
 
 		}
 
-		#endregion
+        #endregion
 
-		#region BuildSupportFiles
+        #region BuildSupportFiles
+        [Ignore]
 
-		[TestMethod]
+        [TestMethod]
 		public void BuildSupportFiles_Local()
 		{
 			BuildSupportFiles(Util.GetLocalServicesInterface());
 		}
+        [Ignore]
 
         [TestCategory("WebServiceIntegration"), TestMethod]
 		public void BuildSupportFiles_WebService() {
 			BuildSupportFiles(Util.GetWebServiceServicesInterface());
 		}
+        [Ignore]
 
         [TestCategory("CloudIntegration"), TestMethod]
 		public void BuildSupportFiles_Cloud()
@@ -483,20 +497,23 @@ namespace HotDocs.Sdk.ServerTest
 			}
 		}
 
-		#endregion
+        #endregion
 
-		#region RemoveSupportFiles
+        #region RemoveSupportFiles
+        [Ignore]
 
-		[TestMethod]
+        [TestMethod]
 		public void RemoveSupportFiles_Local()
 		{
 			RemoveSupportFiles(Util.GetLocalServicesInterface());
 		}
+        [Ignore]
 
         [TestCategory("WebServiceIntegration"), TestMethod]
 		public void RemoveSupportFiles_WebService() {
 			RemoveSupportFiles(Util.GetWebServiceServicesInterface());
 		}
+        [Ignore]
 
         [TestCategory("CloudIntegration"), TestMethod]
 		public void RemoveSupportFiles_Cloud()
@@ -532,21 +549,24 @@ namespace HotDocs.Sdk.ServerTest
 			}
 		}
 
-		#endregion
+        #endregion
 
-		#region GetInterviewFile Tests
+        #region GetInterviewFile Tests
+        [Ignore]
 
-		[TestMethod]
+        [TestMethod]
 		public void GetInterviewFile_Local()
 		{
 			GetInterviewFile(Util.GetLocalServicesInterface());
 		}
+        [Ignore]
 
         [TestCategory("WebServiceIntegration"), TestMethod]
 		public void GetInterviewFile_WebService()
 		{
 			GetInterviewFile(Util.GetWebServiceServicesInterface());
 		}
+        [Ignore]
 
         [TestCategory("CloudIntegration"), TestMethod]
 		public void GetInterviewFile_Cloud()
