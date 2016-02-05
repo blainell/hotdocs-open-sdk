@@ -16,16 +16,13 @@ namespace HotDocs.Sdk
 		/// <typeparam name="T">Type</typeparam>
 		protected class ValueNode<T> : IEquatable<ValueNode<T>> where T : IValue
 		{
-			private T _value;
-			private ValueNodeList<T> _children;
-
-			/// <summary>
+		    /// <summary>
 			/// ValueNode constructor
 			/// </summary>
 			public ValueNode()
 			{
-				_value = default(T);
-				_children = null;
+				Value = default(T);
+				Children = null;
 			}
 
 			/// <summary>
@@ -34,26 +31,22 @@ namespace HotDocs.Sdk
 			/// <param name="value">value</param>
 			public ValueNode(T value)
 			{
-				_value = value;
-				_children = null;
+				Value = value;
+				Children = null;
 			}
 
 			/// <summary>
 			/// Value
 			/// </summary>
 			[DebuggerHidden]
-			public T Value
-			{
-				get { return _value; }
-				set { _value = value; }
-			}
-			
-			/// <summary>
+			public T Value { get; set; }
+
+		    /// <summary>
 			/// Indicates the value type.
 			/// </summary>
 			public ValueType Type
 			{
-				get { return _value.Type; }
+				get { return Value.Type; }
 			}
 
 			/// <summary>
@@ -61,7 +54,7 @@ namespace HotDocs.Sdk
 			/// </summary>
 			public bool IsAnswered
 			{
-				get { return _value.IsAnswered; }
+				get { return Value.IsAnswered; }
 			}
 
 			/// <summary>
@@ -69,7 +62,7 @@ namespace HotDocs.Sdk
 			/// </summary>
 			public bool IsUserModifiable
 			{
-				get { return _value.UserModifiable; }
+				get { return Value.UserModifiable; }
 			}
 
 			/// <summary>
@@ -77,20 +70,16 @@ namespace HotDocs.Sdk
 			/// </summary>
 			public bool HasChildren
 			{
-				get { return (_children != null && _children.SetCount > 0); }
+				get { return (Children != null && Children.SetCount > 0); }
 			}
 
 			/// <summary>
 			/// Children of the value.
 			/// </summary>
 			[DebuggerHidden]
-			public ValueNodeList<T> Children
-			{
-				get { return _children; }
-				set { _children = value; }
-			}
+			public ValueNodeList<T> Children { get; set; }
 
-			/// <summary>
+		    /// <summary>
 			/// Expand description
 			/// </summary>
 			/// <param name="levels">levels</param>
@@ -103,21 +92,21 @@ namespace HotDocs.Sdk
 				if (!expandUnanswered && !IsAnswered && !HasChildren)
 					return; // don't waste memory by pushing down unanswered values to the next level unnecessarily
 
-				if (_children == null)
+				if (Children == null)
 				{
 					// we may be expanding an Answered node or an Unanswered node here
 					if (IsAnswered)
 					{
-						_children = new ValueNodeList<T>(1);
+						Children = new ValueNodeList<T>(1);
 						// push current value down to first child
-						_children.PrepareForIndex(0);
-						(_children[0] as ValueNode<T>).Value = _value;
-						_value = default(T); // this node becomes unanswered
+						Children.PrepareForIndex(0);
+						(Children[0] as ValueNode<T>).Value = Value;
+						Value = default(T); // this node becomes unanswered
 					}
 					else // not answered
 					{
 						Debug.Assert(expandUnanswered);
-						_children = new ValueNodeList<T>();
+						Children = new ValueNodeList<T>();
 					}
 					--levels;
 				}
@@ -131,7 +120,7 @@ namespace HotDocs.Sdk
 					return; // drop out of recursion
 
 				// recurse into child nodes
-				foreach (ValueNode<T> child in _children)
+				foreach (ValueNode<T> child in Children)
 					child.Expand(levels, expandUnanswered);
 			}
 
@@ -141,7 +130,7 @@ namespace HotDocs.Sdk
 			/// <returns>A string representation of the value.</returns>
 			public override string ToString()
 			{
-				return _value.ToString();
+				return Value.ToString();
 			}
 
 			/// <summary>
@@ -151,7 +140,7 @@ namespace HotDocs.Sdk
 			/// <returns>True or False</returns>
 			public bool Equals(ValueNode<T> other)
 			{
-				return _value.Equals(other._value);
+				return Value.Equals(other.Value);
 			}
 
 			/// <summary>
@@ -162,9 +151,9 @@ namespace HotDocs.Sdk
 			public void WriteXml(System.Xml.XmlWriter writer, int atDepth)
 			{
 				if (atDepth == 0)
-					_value.WriteXml(writer);
-				else if (_children != null)
-					_children.WriteXml(writer, --atDepth);
+					Value.WriteXml(writer);
+				else if (Children != null)
+					Children.WriteXml(writer, --atDepth);
 				else // no children but not yet at answer's full repeat depth, so
 					writer.WriteElementString("RptValue", null); // write a empty repeat value node (placeholder)
 			}

@@ -25,11 +25,9 @@ namespace HotDocs.Sdk
 	{
 		private readonly AnswerCollection _coll;
 		private readonly string _name;
-		private int _depth;
-		private bool _save; // whether this answer is savable/permanent or temporary
-		private bool _userExtendible; // whether users should be permitted (in the UI) to add/delete/move repeat iterations
+	    private bool _save; // whether this answer is savable/permanent or temporary
 
-		/// <summary>
+	    /// <summary>
 		/// A reference to the AnswerCollection this Answer belongs to.
 		/// </summary>
 		protected AnswerCollection AnswerCollection
@@ -40,13 +38,9 @@ namespace HotDocs.Sdk
 		/// <summary>
 		/// The current repeat depth of this answer.  Non-repeated answers have a Depth of 0.
 		/// </summary>
-		protected int Depth
-		{
-			get { return _depth; }
-			set { _depth = value; }
-		}
+		protected int Depth { get; set; }
 
-		// Factory method:
+	    // Factory method:
 		internal static Answer Create<T>(AnswerCollection parent, string name) where T : IValue
 		{
 			return new TypedAnswer<T>(parent, name);
@@ -64,7 +58,7 @@ namespace HotDocs.Sdk
 			_coll = parent;
 			_name = name;
 			_save = (!String.IsNullOrEmpty(name) && _name[0] != '(');
-			_userExtendible = true;
+			UserExtendible = true;
 		}
 
 		/// <summary>
@@ -102,13 +96,9 @@ namespace HotDocs.Sdk
 		/// For answers containing repeated values, indicates whether end users should be allowed to add/delete/move
 		/// repeat iterations in the interview UI (default is true).
 		/// </summary>
-		public bool UserExtendible
-		{
-			get { return _userExtendible; }
-			internal set { _userExtendible = value; }
-		}
+		public bool UserExtendible { get; internal set; }
 
-		/// <summary>
+	    /// <summary>
 		/// Indicates whether this answer is repeated or not.
 		/// </summary>
 		public abstract bool IsRepeated { get; }

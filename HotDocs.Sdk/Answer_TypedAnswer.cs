@@ -480,8 +480,8 @@ namespace HotDocs.Sdk
 				writer.WriteAttributeString("name", TextValue.XMLEscape(Name));
 				if (!Save)
 					writer.WriteAttributeString("save", System.Xml.XmlConvert.ToString(Save));
-				if (!_userExtendible)
-					writer.WriteAttributeString("userExtendible", System.Xml.XmlConvert.ToString(_userExtendible));
+				if (!UserExtendible)
+					writer.WriteAttributeString("userExtendible", System.Xml.XmlConvert.ToString(UserExtendible));
 				_value.WriteXml(writer, Depth);
 				writer.WriteEndElement();
 			}

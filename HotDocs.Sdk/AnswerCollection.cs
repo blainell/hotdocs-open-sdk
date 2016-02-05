@@ -18,9 +18,7 @@ namespace HotDocs.Sdk
     public class AnswerCollection : IEnumerable<Answer>
     {
         private Dictionary<string, Answer>[] _answers;
-        private string _title;
         private float _version;
-        private string _dtd;
         private string _filePath = "";
 
         public event EventHandler<AnswerChangedEventArgs> AnswerChanged;
@@ -50,9 +48,9 @@ namespace HotDocs.Sdk
         {
             int valueTypesCount = Enum.GetNames(typeof(ValueType)).Length;
             _answers = new Dictionary<string, Answer>[valueTypesCount];
-            _title = String.Empty;
+            Title = String.Empty;
             _version = 1.1F;
-            _dtd = null;
+            DTD = null;
         }
 
         public void OnAnswerChanged(Answer ans, int[] indices, ValueChangeType changeType)
@@ -64,11 +62,7 @@ namespace HotDocs.Sdk
         /// <summary>
         /// The title of the answer collection. When the answer collection is serialized as XML, the title appears as an attribute of the root AnswerSet node.
         /// </summary>
-        public string Title
-        {
-            get { return _title; }
-            set { _title = value; }
-        }
+        public string Title { get; set; }
 
         /// <summary>
         /// The version number of the answer collection. When the answer collection is serialized as XML, this version number appears as an attribute of the root AnswerSet node.
@@ -78,11 +72,7 @@ namespace HotDocs.Sdk
             get { return _version; }
         }
 
-        public string DTD
-        {
-            get { return _dtd; }
-            set { _dtd = value; }
-        }
+        public string DTD { get; set; }
 
         /// <summary>
         /// The number of answers in the answer collection. Because HotDocs variables may be repeated, each of these answers may actually contain more than one value.
@@ -277,7 +267,7 @@ namespace HotDocs.Sdk
                         while (reader.MoveToNextAttribute())
                         {
                             if (reader.Name == "title")
-                                _title = reader.Value;
+                                Title = reader.Value;
                             else if (reader.Name == "version")
                                 _version = XmlConvert.ToSingle(reader.Value);
                         }
@@ -564,10 +554,10 @@ namespace HotDocs.Sdk
             using (XmlWriter writer = new AnswerXmlWriter(output, settings, forInterview))
             {
                 writer.WriteStartDocument(true);
-                if (!String.IsNullOrEmpty(_dtd))
-                    writer.WriteRaw(_dtd);
+                if (!String.IsNullOrEmpty(DTD))
+                    writer.WriteRaw(DTD);
                 writer.WriteStartElement("AnswerSet");
-                writer.WriteAttributeString("title", _title);
+                writer.WriteAttributeString("title", Title);
                 writer.WriteAttributeString("version", XmlConvert.ToString(_version));
                 IEnumerator<Answer> answerEnumerator = GetEnumerator();
                 while (answerEnumerator.MoveNext())

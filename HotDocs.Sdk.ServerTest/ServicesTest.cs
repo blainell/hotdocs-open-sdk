@@ -29,26 +29,13 @@ namespace HotDocs.Sdk.ServerTest
 			HotDocs.Sdk.TemplateLocation.RegisterLocation(typeof(HotDocs.Sdk.PathTemplateLocation));
 		}
 
-		private TestContext testContextInstance;
-
-		/// <summary>
+	    /// <summary>
 		///Gets or sets the test context which provides
 		///information about and functionality for the current test run.
 		///</summary>
-		public TestContext TestContext
-		{
-			get
-			{
-				return testContextInstance;
-			}
-			set
-			{
-				testContextInstance = value;
-			}
-		}
+		public TestContext TestContext { get; set; }
 
-
-		#region IServices Constructor Tests
+	    #region IServices Constructor Tests
 
 		[TestMethod]
 		public void Services_Constructor_Cloud()

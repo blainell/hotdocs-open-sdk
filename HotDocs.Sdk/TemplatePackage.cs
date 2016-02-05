@@ -47,11 +47,8 @@ namespace HotDocs.Sdk
 
 		private MemoryStream _stream;
 		private Package _package;
-		private string _path;
-		private CompressionOption _compression = CompressionOption.Maximum;
-		private TemplatePackageManifest _manifest;
 
-		/// <summary>
+	    /// <summary>
 		/// Create a new (empty) package.
 		/// </summary>
 		public TemplatePackage()
@@ -90,7 +87,7 @@ namespace HotDocs.Sdk
 		{
 			get
 			{
-				return string.IsNullOrEmpty(_path);
+				return string.IsNullOrEmpty(CurrentPath);
 			}
 		}
 
@@ -296,13 +293,13 @@ namespace HotDocs.Sdk
 			Uri partUri = InternalNameToPartUri(ManifestName);
 			PackagePart packagePart;
 			//
-			_manifest = null;
+			Manifest = null;
 			if (_package.PartExists(partUri))
 			{
 				packagePart = _package.GetPart(partUri);
 				using (Stream ps = packagePart.GetStream(FileMode.Open, FileAccess.Read))
 				{
-					_manifest = TemplatePackageManifest.FromStream(ps);
+					Manifest = TemplatePackageManifest.FromStream(ps);
 				}
 			}
 			else
@@ -325,11 +322,11 @@ namespace HotDocs.Sdk
 			}
 			else
 			{
-				packagePart = _package.CreatePart(partUri, Util.GetMimeType(ManifestName), _compression);
+				packagePart = _package.CreatePart(partUri, Util.GetMimeType(ManifestName), CurrentCompression);
 			}
 			using (Stream ps = packagePart.GetStream(FileMode.Create, FileAccess.ReadWrite))
 			{
-				_manifest.ToStream(ps);
+				Manifest.ToStream(ps);
 			}
 		}
 
@@ -345,7 +342,7 @@ namespace HotDocs.Sdk
 			//
 			_stream = null;
 			_package = null;
-			_path = null;
+			CurrentPath = null;
 
 			stream.Position = 0;
 			CopyStream(ms, stream);
@@ -374,7 +371,7 @@ namespace HotDocs.Sdk
 			//
 			_stream = null;
 			_package = null;
-			_path = null;
+			CurrentPath = null;
 
 			using (FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read))
 			{
@@ -390,7 +387,7 @@ namespace HotDocs.Sdk
 
 			_stream = ms;
 			_package = package;
-			_path = path;
+			CurrentPath = path;
 
 			LoadManifest();
 		}
@@ -420,7 +417,7 @@ namespace HotDocs.Sdk
 
 			ms = Encrypt(_stream, rsaParamsXml);
 
-			using (FileStream fs = new FileStream(_path, FileMode.Create, FileAccess.ReadWrite))
+			using (FileStream fs = new FileStream(CurrentPath, FileMode.Create, FileAccess.ReadWrite))
 			{
 				ms.Position = 0;
 				CopyStream(fs, ms);
@@ -464,7 +461,7 @@ namespace HotDocs.Sdk
 				ms.Position = 0;
 				CopyStream(fs, ms);
 			}
-			_path = path;
+			CurrentPath = path;
 		}
 
 		/// <summary>
@@ -479,56 +476,30 @@ namespace HotDocs.Sdk
 		/// <summary>
 		/// Returns the current path, i.e. the file path used in the Open function. If Open hasn't been called, return null.
 		/// </summary>
-		public string CurrentPath
-		{
-			get
-			{
-				return _path;
-			}
-		}
+		public string CurrentPath { get; private set; }
 
-		/// <summary>
+	    /// <summary>
 		/// Set/get the current compression level. It will be used in the AddFile and Create functions. Default is 'Maximum'.
 		/// </summary>
-		public CompressionOption CurrentCompression
-		{
-			get
-			{
-				return _compression;
-			}
-			set
-			{
-				_compression = value;
-			}
-		}
+		public CompressionOption CurrentCompression { get; set; } = CompressionOption.Maximum;
 
-		/// <summary>
+	    /// <summary>
 		/// Get or set the current manifest for the package
 		/// </summary>
-		public TemplatePackageManifest Manifest
-		{
-			get
-			{
-				return _manifest;
-			}
-			set
-			{
-				_manifest = value;
-			}
-		}
+		public TemplatePackageManifest Manifest { get; set; }
 
-		/// <summary>
+	    /// <summary>
 		/// Get or set the current manifest from an XML string
 		/// </summary>
 		public string ManifestXml
 		{
 			get
 			{
-				return _manifest == null ? null : _manifest.ToXml();
+				return Manifest == null ? null : Manifest.ToXml();
 			}
 			set
 			{
-				_manifest = string.IsNullOrEmpty(value) ? null : TemplatePackageManifest.FromXml(value);
+				Manifest = string.IsNullOrEmpty(value) ? null : TemplatePackageManifest.FromXml(value);
 			}
 		}
 
@@ -715,7 +686,7 @@ namespace HotDocs.Sdk
 		/// <returns>true if the current manifest is valid, false otherwise.</returns>
 		public bool IsValidManifest(out string errMsg)
 		{
-			return IsValidManifest(_manifest, out errMsg);
+			return IsValidManifest(Manifest, out errMsg);
 		}
 
 		/// <summary>
@@ -912,7 +883,7 @@ namespace HotDocs.Sdk
 				using (FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read))
 				{
 					partUri = InternalNameToPartUri(internalName);
-					packagePart = _package.CreatePart(partUri, Util.GetMimeType(filePath), _compression);
+					packagePart = _package.CreatePart(partUri, Util.GetMimeType(filePath), CurrentCompression);
 					using (Stream ps = packagePart.GetStream(FileMode.Create, FileAccess.ReadWrite))
 					{
 						CopyStream(ps, fs);
