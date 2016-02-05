@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using HotDocs.Sdk;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -312,9 +313,9 @@ namespace HotDocs.SdkTest
 
 			// ensure PathTemplateLocation is case insensitive and not diacritic insensitive
 			var loc1a = new PathTemplateLocation(dir1);
-			var loc1b = new PathTemplateLocation(dir1.ToUpper());
+			var loc1b = new PathTemplateLocation(dir1.ToUpper(CultureInfo.InvariantCulture));
 			var loc2a = new PathTemplateLocation(dir2);
-			var loc2b = new PathTemplateLocation(dir2.ToUpper());
+			var loc2b = new PathTemplateLocation(dir2.ToUpper(CultureInfo.InvariantCulture));
 			var loc3 = new PathTemplateLocation(dir3);
 			PathTemplateLocation loc4 = null;
 			PathTemplateLocation loc5 = null;

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using HotDocs.Sdk.Server.Contracts;
@@ -92,8 +93,8 @@ namespace HotDocs.Sdk.ServerTest
 			Assert.AreEqual("Copy", HotDocs.Sdk.Server.Contracts.HMAC.Canonicalize(PdfPermissions.Copy));
 
 			// bool
-			Assert.AreEqual("true", HotDocs.Sdk.Server.Contracts.HMAC.Canonicalize(true).ToLower());
-			Assert.AreEqual("false", HotDocs.Sdk.Server.Contracts.HMAC.Canonicalize(false).ToLower());
+			Assert.AreEqual("true", HotDocs.Sdk.Server.Contracts.HMAC.Canonicalize(true).ToLower(CultureInfo.InvariantCulture));
+			Assert.AreEqual("false", HotDocs.Sdk.Server.Contracts.HMAC.Canonicalize(false).ToLower(CultureInfo.InvariantCulture));
 
 			// DateTime
 			DateTime d = DateTime.Now;
