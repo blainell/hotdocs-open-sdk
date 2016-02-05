@@ -116,11 +116,9 @@ namespace HotDocs.Sdk.ServerTest
 		public void ComponentInfoTest()
 		{
 			string TestVariableName = "MyVarName";
-			HotDocs.Sdk.Server.Contracts.DialogItemInfo dii = new Server.Contracts.DialogItemInfo();
 			HotDocs.Sdk.Server.Contracts.VariableInfo vi = new Server.Contracts.VariableInfo();
 			vi.Name = TestVariableName;
 
-			HotDocs.Sdk.Server.Contracts.TemplateInfo ti = new Server.Contracts.TemplateInfo();
 
 			HotDocs.Sdk.Server.Contracts.DialogInfo di = new Server.Contracts.DialogInfo();
 			Assert.AreEqual(0, di.Items.Count);

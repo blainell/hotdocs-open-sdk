@@ -94,7 +94,7 @@ namespace HotDocs.Sdk.Cloud
         {
             var pairs = new Dictionary<string, string>();
 
-            var basic = (BasicOutputOptions) outputOptions;
+            var basic = (BasicOutputOptions)outputOptions;
             pairs.AddIfNotNull("Author", basic.Author);
             pairs.AddIfNotNull("Comments", basic.Comments);
             pairs.AddIfNotNull("Company", basic.Company);
@@ -104,7 +104,7 @@ namespace HotDocs.Sdk.Cloud
 
             if (outputOptions is PdfOutputOptions)
             {
-                var pdf = (PdfOutputOptions) outputOptions;
+                var pdf = (PdfOutputOptions)outputOptions;
                 pairs.AddIfNotNull("EmbedFonts", pdf.EmbedFonts);
                 pairs.AddIfNotNull("PdfA", pdf.PdfA);
                 pairs.AddIfNotNull("TaggedPdf", pdf.TaggedPdf);
@@ -116,11 +116,11 @@ namespace HotDocs.Sdk.Cloud
             }
             else if (outputOptions is HtmlOutputOptions)
             {
-                pairs.AddIfNotNull("Encoding", ((HtmlOutputOptions) outputOptions).Encoding);
+                pairs.AddIfNotNull("Encoding", ((HtmlOutputOptions)outputOptions).Encoding);
             }
             else if (outputOptions is TextOutputOptions)
             {
-                pairs.AddIfNotNull("Encoding", ((TextOutputOptions) outputOptions).Encoding);
+                pairs.AddIfNotNull("Encoding", ((TextOutputOptions)outputOptions).Encoding);
             }
 
             return pairs;
@@ -231,7 +231,7 @@ namespace HotDocs.Sdk.Cloud
                     urlBuilder.AppendFormat("?billingRef={0}", billingRef);
                 }
 
-                var request = (HttpWebRequest) WebRequest.Create(urlBuilder.ToString());
+                var request = (HttpWebRequest)WebRequest.Create(urlBuilder.ToString());
                 request.Method = "PUT";
                 request.ContentType = "application/binary";
                 request.Headers["x-hd-date"] = timestamp.ToString("r");
@@ -250,7 +250,7 @@ namespace HotDocs.Sdk.Cloud
 
                 packageStream.CopyTo(request.GetRequestStream());
 
-                using (var response = (HttpWebResponse) request.GetResponse())
+                using (var response = (HttpWebResponse)request.GetResponse())
                 {
                     // Throw away the response, which will be empty.
                 }
@@ -292,7 +292,7 @@ namespace HotDocs.Sdk.Cloud
                 urlBuilder.AppendFormat("?billingref={0}", billingRef);
             }
 
-            var request = (HttpWebRequest) WebRequest.Create(urlBuilder.ToString());
+            var request = (HttpWebRequest)WebRequest.Create(urlBuilder.ToString());
             request.Method = "GET";
             request.Headers["x-hd-date"] = timestamp.ToString("r");
             request.Headers[HttpRequestHeader.Authorization] = hmac;
@@ -302,7 +302,7 @@ namespace HotDocs.Sdk.Cloud
                 request.Proxy = new WebProxy(ProxyServerAddress);
             }
 
-            var response = (HttpWebResponse) request.GetResponse();
+            var response = (HttpWebResponse)request.GetResponse();
             using (var reader = new StreamReader(response.GetResponseStream()))
             {
                 while (!reader.EndOfStream)
@@ -347,7 +347,7 @@ namespace HotDocs.Sdk.Cloud
                 urlBuilder.AppendFormat("?billingref={0}", billingRef);
             }
 
-            var request = (HttpWebRequest) WebRequest.Create(urlBuilder.ToString());
+            var request = (HttpWebRequest)WebRequest.Create(urlBuilder.ToString());
             request.Method = "GET";
             request.Headers["x-hd-date"] = timestamp.ToString("r");
             request.Headers[HttpRequestHeader.Authorization] = hmac;
@@ -357,7 +357,7 @@ namespace HotDocs.Sdk.Cloud
                 request.Proxy = new WebProxy(ProxyServerAddress);
             }
 
-            var response = (HttpWebResponse) request.GetResponse();
+            var response = (HttpWebResponse)request.GetResponse();
             return response.GetResponseStream();
         }
 
@@ -401,7 +401,7 @@ namespace HotDocs.Sdk.Cloud
                 urlBuilder.AppendFormat("?billingref={0}", billingRef);
             }
 
-            var request = (HttpWebRequest) WebRequest.Create(urlBuilder.ToString());
+            var request = (HttpWebRequest)WebRequest.Create(urlBuilder.ToString());
             request.Method = "PUT";
             request.Headers["x-hd-date"] = timestamp.ToString("r");
             request.Headers[HttpRequestHeader.Authorization] = hmac;
@@ -414,10 +414,7 @@ namespace HotDocs.Sdk.Cloud
 
             stream.CopyTo(request.GetRequestStream());
 
-            using (var response = (HttpWebResponse) request.GetResponse())
-            {
-                // Throw away the response, which will be empty.
-            }
+            request.GetResponse();
         }
 
         /// <summary>
@@ -458,7 +455,7 @@ namespace HotDocs.Sdk.Cloud
                 urlBuilder.AppendFormat("?billingref={0}", billingRef);
             }
 
-            var request = (HttpWebRequest) WebRequest.Create(urlBuilder.ToString());
+            var request = (HttpWebRequest)WebRequest.Create(urlBuilder.ToString());
             request.Method = "DELETE";
             request.Headers["x-hd-date"] = timestamp.ToString("r");
             request.Headers[HttpRequestHeader.Authorization] = hmac;
@@ -468,10 +465,7 @@ namespace HotDocs.Sdk.Cloud
                 request.Proxy = new WebProxy(ProxyServerAddress);
             }
 
-            using (var response = (HttpWebResponse) request.GetResponse())
-            {
-                // Throw away the response, which will be empty.
-            }
+            request.GetResponse();
         }
 
         /// <summary>
@@ -500,7 +494,7 @@ namespace HotDocs.Sdk.Cloud
                 urlBuilder.AppendFormat("&billingref={0}", billingRef);
             }
 
-            var request = (HttpWebRequest) WebRequest.Create(urlBuilder.ToString());
+            var request = (HttpWebRequest)WebRequest.Create(urlBuilder.ToString());
             request.Method = "POST";
             request.Headers["x-hd-date"] = timestamp.ToString("r");
             request.Headers[HttpRequestHeader.Authorization] = hmac;
@@ -510,11 +504,8 @@ namespace HotDocs.Sdk.Cloud
             {
                 request.Proxy = new WebProxy(ProxyServerAddress);
             }
+            request.GetResponse();
 
-            using (var response = (HttpWebResponse) request.GetResponse())
-            {
-                // Throw away the response, which will be empty.
-            }
         }
 
         #endregion
@@ -539,7 +530,7 @@ namespace HotDocs.Sdk.Cloud
                     throw;
                 }
 
-                using (var httpResponse = (HttpWebResponse) ex.Response)
+                using (var httpResponse = (HttpWebResponse)ex.Response)
                 {
                     if (httpResponse.StatusCode == HttpStatusCode.NotFound)
                     {
@@ -556,7 +547,7 @@ namespace HotDocs.Sdk.Cloud
                         }
                         // Create a new exception of the same type and include the error message.
                         // Also include the original exception as the inner exception.
-                        var ex2 = (Exception) Activator.CreateInstance(ex.GetType(), message, ex);
+                        var ex2 = (Exception)Activator.CreateInstance(ex.GetType(), message, ex);
                         throw ex2;
                     }
                 }
@@ -589,7 +580,7 @@ namespace HotDocs.Sdk.Cloud
             if (!(template.Location is PackageTemplateLocation))
                 throw new Exception(
                     "HotDocs Cloud Services requires the use of template packages. Please use a PackageTemplateLocation derivative.");
-            var packageTemplateLocation = (PackageTemplateLocation) template.Location;
+            var packageTemplateLocation = (PackageTemplateLocation)template.Location;
 
             if (uploadPackage)
             {
@@ -633,12 +624,12 @@ namespace HotDocs.Sdk.Cloud
                 urlBuilder.AppendFormat("&{0}={1}", kv.Key, kv.Value ?? "");
             }
 
-            var request = (HttpWebRequest) WebRequest.Create(urlBuilder.ToString());
+            var request = (HttpWebRequest)WebRequest.Create(urlBuilder.ToString());
             request.Method = "POST";
             request.ContentType = "text/xml";
             request.Headers["x-hd-date"] = timestamp.ToString("r");
             request.Headers[HttpRequestHeader.Authorization] = hmac;
-            request.Timeout = 10*60*1000; // Ten minute timeout
+            request.Timeout = 10 * 60 * 1000; // Ten minute timeout
             request.ContentLength = answers != null ? answers.Length : 0L;
 
             if (!string.IsNullOrEmpty(ProxyServerAddress))
@@ -651,7 +642,7 @@ namespace HotDocs.Sdk.Cloud
                 var data = Encoding.UTF8.GetBytes(answers);
                 request.GetRequestStream().Write(data, 0, data.Length);
             }
-            var response = (HttpWebResponse) request.GetResponse();
+            var response = (HttpWebResponse)request.GetResponse();
 
             Directory.CreateDirectory(OutputDir);
             using (var resultsStream = new MemoryStream())
@@ -680,8 +671,8 @@ namespace HotDocs.Sdk.Cloud
                 if (resultsStream.Position > 0)
                 {
                     resultsStream.Position = 0;
-                    var serializer = new XmlSerializer(typeof (AssemblyResult));
-                    return (AssemblyResult) serializer.Deserialize(resultsStream);
+                    var serializer = new XmlSerializer(typeof(AssemblyResult));
+                    return (AssemblyResult)serializer.Deserialize(resultsStream);
                 }
                 return null;
             }
@@ -713,7 +704,7 @@ namespace HotDocs.Sdk.Cloud
             if (!(template.Location is PackageTemplateLocation))
                 throw new Exception(
                     "HotDocs Cloud Services requires the use of template packages. Please use a PackageTemplateLocation derivative.");
-            var packageTemplateLocation = (PackageTemplateLocation) template.Location;
+            var packageTemplateLocation = (PackageTemplateLocation)template.Location;
 
             if (uploadPackage)
             {
@@ -758,7 +749,7 @@ namespace HotDocs.Sdk.Cloud
                 }
             }
 
-            var request = (HttpWebRequest) WebRequest.Create(urlBuilder.ToString());
+            var request = (HttpWebRequest)WebRequest.Create(urlBuilder.ToString());
             request.Method = "POST";
             request.ContentType = "text/xml";
             request.Headers["x-hd-date"] = timestamp.ToString("r");
@@ -779,7 +770,7 @@ namespace HotDocs.Sdk.Cloud
                 }
             }
 
-            using (var response = (HttpWebResponse) request.GetResponse())
+            using (var response = (HttpWebResponse)request.GetResponse())
             {
                 Directory.CreateDirectory(OutputDir);
                 using (var resultsStream = new MemoryStream())
@@ -809,8 +800,8 @@ namespace HotDocs.Sdk.Cloud
                     if (resultsStream.Position > 0)
                     {
                         resultsStream.Position = 0;
-                        var serializer = new XmlSerializer(typeof (BinaryObject[]));
-                        return (BinaryObject[]) serializer.Deserialize(resultsStream);
+                        var serializer = new XmlSerializer(typeof(BinaryObject[]));
+                        return (BinaryObject[])serializer.Deserialize(resultsStream);
                     }
                     return null;
                 }
@@ -841,7 +832,7 @@ namespace HotDocs.Sdk.Cloud
             if (!(template.Location is PackageTemplateLocation))
                 throw new Exception(
                     "HotDocs Cloud Services requires the use of template packages. Please use a PackageTemplateLocation derivative.");
-            var packageTemplateLocation = (PackageTemplateLocation) template.Location;
+            var packageTemplateLocation = (PackageTemplateLocation)template.Location;
 
             if (uploadPackage)
             {
@@ -864,7 +855,7 @@ namespace HotDocs.Sdk.Cloud
                 EndpointAddress, SubscriberId, packageTemplateLocation.PackageID, template.FileName, includeDialogs,
                 billingRef, _retrieveFromHub));
 
-            var request = (HttpWebRequest) WebRequest.Create(urlBuilder.ToString());
+            var request = (HttpWebRequest)WebRequest.Create(urlBuilder.ToString());
             request.Method = "GET";
             request.Headers["x-hd-date"] = timestamp.ToString("r");
             request.Headers[HttpRequestHeader.Authorization] = hmac;
@@ -874,10 +865,10 @@ namespace HotDocs.Sdk.Cloud
                 request.Proxy = new WebProxy(ProxyServerAddress);
             }
 
-            var response = (HttpWebResponse) request.GetResponse();
+            var response = (HttpWebResponse)request.GetResponse();
 
-            var serializer = new XmlSerializer(typeof (ComponentInfo));
-            return (ComponentInfo) serializer.Deserialize(response.GetResponseStream());
+            var serializer = new XmlSerializer(typeof(ComponentInfo));
+            return (ComponentInfo)serializer.Deserialize(response.GetResponseStream());
         }
 
         /// <summary>

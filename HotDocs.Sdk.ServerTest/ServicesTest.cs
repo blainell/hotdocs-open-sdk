@@ -261,7 +261,7 @@ namespace HotDocs.Sdk.ServerTest
 			//Assemble a document with an answer file containing a transient answer.
 			string transAnsPath = Path.Combine(Util.GetTestAnswersDir(), "TransAns.anx");
 			TextReader transAns = new StreamReader(new FileStream(transAnsPath, FileMode.Open));
-			result = svc.AssembleDocument(tmp, transAns, null, logRef);
+			svc.AssembleDocument(tmp, transAns, null, logRef);
 
 			// Now try with another template, which contains an ASSEMBLE instruction.
 			tmp = Util.OpenTemplate("TemplateWithAssemble");

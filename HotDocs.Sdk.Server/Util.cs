@@ -224,7 +224,7 @@ namespace HotDocs.Sdk.Server
 
 		internal static string EmbedImagesInURIs(string fileName)
 		{
-			string html = null;
+			string html;
 			// Loads the html file content from a byte[]
 			html = File.ReadAllText(fileName);
 			string targetFilenameNoExtention = Path.GetFileName(fileName).Replace(Path.GetExtension(fileName), "");
@@ -474,7 +474,7 @@ namespace HotDocs.Sdk.Server
 		/// <returns>An <c>AssembleDocumentResult</c>, which contains the same document as the <c>asmResult</c>.</returns>
 		internal static AssembleDocumentResult ConvertAssemblyResult(Template template, AssemblyResult asmResult, DocumentType docType)
 		{
-			AssembleDocumentResult result = null;
+			AssembleDocumentResult result;
 			MemoryStream document = null;
 			StreamReader ansRdr = null;
 			List<NamedStream> supportingFiles = new List<NamedStream>();

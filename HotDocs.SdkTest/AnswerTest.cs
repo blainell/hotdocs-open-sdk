@@ -17,8 +17,6 @@ namespace HotDocs.SdkTest
 		[TestMethod]
 		public void EnumerateValues()
 		{
-			var filterItems = new List<string>();
-
 			AnswerCollection anss = new AnswerCollection();
 			Answer ta = anss.CreateAnswer<TextValue>("my answer");
 			ta.UserExtendible = false; // user should not be able to add/remove/reorder iterations in the interview

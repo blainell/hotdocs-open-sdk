@@ -435,7 +435,7 @@ namespace HotDocs.Sdk.Server.WebService
 
 		AssemblyOptions ConvertOptions(AssembleDocumentSettings settings)
 		{
-			AssemblyOptions assemblyOptions = new AssemblyOptions();
+		    AssemblyOptions assemblyOptions;
 			assemblyOptions = AssemblyOptions.None;
 			if (settings.UseMarkupSyntax)
 				assemblyOptions |= AssemblyOptions.MarkupView;

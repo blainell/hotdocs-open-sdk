@@ -66,7 +66,6 @@ namespace HotDocs.Sdk.ServerTest
 		{
 			string endPointName = ConfigurationManager.AppSettings["WebServiceEndPoint"];
 
-			Assembly _asm = Assembly.GetExecutingAssembly();
 			string templatePath = Path.Combine(GetSamplePortalTemplateDir());
 
 			return new HotDocs.Sdk.Server.WebService.Services(endPointName, templatePath);
