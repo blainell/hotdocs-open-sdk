@@ -17,7 +17,7 @@ using System.Security.Cryptography;
 
 namespace HotDocs.Sdk
 {
-    public class UtilAes
+    public static class UtilAes
     {
         //From MSDN example code for the Aes class at http://msdn.microsoft.com/en-us/library/system.security.cryptography.aes.aspx.
         public static byte[] EncryptStringToBytes_Aes(string plainText, byte[] Key, byte[] IV)

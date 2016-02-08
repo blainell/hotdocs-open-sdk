@@ -64,7 +64,7 @@ namespace HotDocs.Sdk
             do
             {
                 // Note that if streamOut is Stream.Null, it doesn't hurt anything to dispose it.
-                var streamOut = outputStreamGetter(GetHeaders(streamIn));
+                var streamOut = outputStreamGetter(GetHeaders());
                 _splitter.WriteUntilPattern(streamOut, boundaryBytes);
 
                 // Grab the 2 bytes that follow the boundary.
@@ -87,9 +87,8 @@ namespace HotDocs.Sdk
         /// <summary>
         ///     Gets the MIME part headers and returns them in a dictionary.
         /// </summary>
-        /// <param name="streamIn"></param>
         /// <returns></returns>
-        private Dictionary<string, string> GetHeaders(Stream streamIn)
+        private Dictionary<string, string> GetHeaders()
         {
             var headers = new Dictionary<string, string>();
             string line;

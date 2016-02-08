@@ -154,7 +154,7 @@ namespace HotDocs.Sdk.Server.WebService
                     result.HtmlFragment = Regex.Replace(result.HtmlFragment, "HDTemplateName=\\\".+?\"",
                         "HDTemplateName=\"" + settings.Title + "\"");
                 }
-                SafeCloseClient(client, logRef);
+                SafeCloseClient(client);
             }
             return result;
         }
@@ -208,7 +208,7 @@ namespace HotDocs.Sdk.Server.WebService
                     outputFormat,
                     assemblyOptions,
                     null);
-                SafeCloseClient(client, logRef);
+                SafeCloseClient(client);
             }
 
             if (asmResult != null)
@@ -243,7 +243,7 @@ namespace HotDocs.Sdk.Server.WebService
             {
                 var fileName = GetRelativePath(template.GetFullPath());
                 result = client.GetComponentInfo(fileName, includeDialogs);
-                SafeCloseClient(client, logRef);
+                SafeCloseClient(client);
             }
             return result;
         }
@@ -275,7 +275,7 @@ namespace HotDocs.Sdk.Server.WebService
             {
                 var answerObjects = (from answer in answers select Util.GetBinaryObjectFromTextReader(answer)).ToArray();
                 combinedAnswers = client.GetAnswers(answerObjects);
-                SafeCloseClient(client, logRef);
+                SafeCloseClient(client);
             }
             return Util.ExtractString(combinedAnswers);
         }
@@ -303,7 +303,7 @@ namespace HotDocs.Sdk.Server.WebService
                 var templateKey = template.FileName;
                 string templateState = null;
                 client.BuildSupportFiles(templateId, templateKey, flags, templateState);
-                SafeCloseClient(client, null);
+                SafeCloseClient(client);
             }
         }
 
@@ -325,7 +325,7 @@ namespace HotDocs.Sdk.Server.WebService
                 var templateKey = template.FileName;
                 string templateState = null;
                 client.RemoveSupportFiles(templateId, templateKey, templateState);
-                SafeCloseClient(client, null);
+                SafeCloseClient(client);
             }
         }
 
@@ -388,7 +388,7 @@ namespace HotDocs.Sdk.Server.WebService
                 var templateState = string.Empty;
                 // We are using the templateId rather than template state since all we have to work with is a template locator.
                 var binaryObject = client.GetInterviewDefinition(templateId, templateName, format, templateState);
-                SafeCloseClient(client, null);
+                SafeCloseClient(client);
                 result = new MemoryStream(binaryObject.Data);
             }
             return result;
@@ -411,7 +411,7 @@ namespace HotDocs.Sdk.Server.WebService
             throw new Exception("Invalid WebService.Services configuration."); // Should never happen.
         }
 
-        private static void SafeCloseClient(Proxy client, string logRef)
+        private static void SafeCloseClient(Proxy client)
         {
             // this approach modeled on http://msdn.microsoft.com/en-us/library/aa355056.aspx
             // Bottom line is that calling Dispose() on a client causes Close() to be called,
