@@ -381,7 +381,7 @@ namespace HotDocs.Sdk.Server.WebService
 
 		private OutputFormat ConvertFormat(DocumentType docType)
 		{
-			OutputFormat format = OutputFormat.None;
+			OutputFormat format;
 			switch (docType)
 			{
 				case DocumentType.HFD:
@@ -418,11 +418,7 @@ namespace HotDocs.Sdk.Server.WebService
 				case DocumentType.WordRTF:
 					format = OutputFormat.RTF;
 					break;
-				case DocumentType.XML:
-					// Note: Contracts.OutputFormat does not have an XML document type.
-					format = OutputFormat.None;
-					break;
-				default:
+			    default:
 					format = OutputFormat.None;
 					break;
 			}

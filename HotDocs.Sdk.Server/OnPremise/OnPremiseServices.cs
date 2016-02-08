@@ -292,9 +292,6 @@ namespace HotDocs.Sdk.Server.OnPremise
                     format = OutputFormat.RTF;
                     break;
                 case DocumentType.XML:
-                    // Note: Contracts.OutputFormat does not have an XML document type.
-                    format = OutputFormat.None;
-                    break;
                 default:
                     format = OutputFormat.None;
                     break;

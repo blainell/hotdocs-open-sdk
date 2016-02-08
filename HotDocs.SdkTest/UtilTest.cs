@@ -27,7 +27,7 @@ namespace HotDocs.SdkTest
 		public void GetMimeType_ArgumentNullException()
 		{
 			// If the file name has no extension (as is the case when it does not contain a period), an exception is thrown.
-			string m = HotDocs.Sdk.Util.GetMimeType("bmp", true);
+			HotDocs.Sdk.Util.GetMimeType("bmp", true);
 		}
 
 		[TestMethod]
@@ -35,7 +35,7 @@ namespace HotDocs.SdkTest
 		public void GetMimeType_ArgumentException()
 		{
 			// If we say that we only want an image mime type and the file name is something else, an exception is thrown.
-			string m = HotDocs.Sdk.Util.GetMimeType(".cmp", true);
+			HotDocs.Sdk.Util.GetMimeType(".cmp", true);
 		}
 	}
 }

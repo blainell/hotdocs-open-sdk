@@ -280,7 +280,7 @@ namespace HotDocs.SdkTest
 			// Native doc type.
 			try
 			{
-				string extension = HotDocs.Sdk.Template.GetDocExtension(DocumentType.Native, null);
+				Template.GetDocExtension(DocumentType.Native, null);
 				Assert.Fail(); // We should have had an exception.
 			}
 			catch (ArgumentNullException ex)

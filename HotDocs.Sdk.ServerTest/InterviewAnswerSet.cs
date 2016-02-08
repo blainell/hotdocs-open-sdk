@@ -111,7 +111,7 @@ namespace HotDocs.Sdk.ServerTest
 			{
 				try
 				{
-					TextReader tr2 = HotDocs.Sdk.Server.InterviewAnswerSet.GetDecodedInterviewAnswers(tr);
+					HotDocs.Sdk.Server.InterviewAnswerSet.GetDecodedInterviewAnswers(tr);
 					Assert.Fail(); // This should have thrown an exception since the answers are bad.
 				}
 				catch (ArgumentException ex)
@@ -126,7 +126,7 @@ namespace HotDocs.Sdk.ServerTest
 			{
 				try
 				{
-					TextReader tr2 = HotDocs.Sdk.Server.InterviewAnswerSet.GetDecodedInterviewAnswers(tr);
+					Server.InterviewAnswerSet.GetDecodedInterviewAnswers(tr);
 					//Assert.Fail(); // This should have thrown an exception since the answers are bad.
 				}
 				catch (ArgumentException ex)
@@ -139,7 +139,7 @@ namespace HotDocs.Sdk.ServerTest
 			{
 				try
 				{
-					TextReader tr2 = HotDocs.Sdk.Server.InterviewAnswerSet.GetDecodedInterviewAnswers(tr);
+					Server.InterviewAnswerSet.GetDecodedInterviewAnswers(tr);
 					//Assert.Fail(); // This should have thrown an exception since the answers are bad.
 				}
 				catch (ArgumentException ex)
@@ -152,7 +152,7 @@ namespace HotDocs.Sdk.ServerTest
 			{
 				try
 				{
-					TextReader tr2 = HotDocs.Sdk.Server.InterviewAnswerSet.GetDecodedInterviewAnswers(tr);
+					Server.InterviewAnswerSet.GetDecodedInterviewAnswers(tr);
 					//Assert.Fail(); // This should have thrown an exception since the answers are bad.
 				}
 				catch (ArgumentException ex)

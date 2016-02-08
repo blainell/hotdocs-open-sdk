@@ -45,8 +45,7 @@ namespace HotDocs.SdkTest
 			{
 				if (v.Answer.Type == Sdk.ValueType.Text)
 				{
-					TextValue t = v.GetValue<TextValue>();
-					string s = t.Value;
+					v.GetValue<TextValue>();
 				}
 				// or something like
 				IValue val = v.Value;
@@ -55,10 +54,10 @@ namespace HotDocs.SdkTest
 					switch (val.Type)
 					{
 						case Sdk.ValueType.Text:
-							string s = Convert.ToString(val);
+							Convert.ToString(val);
 							break;
 						case Sdk.ValueType.Number:
-							double d = Convert.ToDouble(val);
+							Convert.ToDouble(val);
 							break;
 						case Sdk.ValueType.Date:
 						case Sdk.ValueType.TrueFalse:
