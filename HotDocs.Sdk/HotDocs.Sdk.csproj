@@ -55,6 +55,7 @@
     <Compile Include="AnswerSummaryFormat.cs" />
     <Compile Include="AnswerSummaryOptions.cs" />
     <Compile Include="AnswerXmlWriter.cs" />
+    <Compile Include="IAnswer.cs" />
     <Compile Include="TypedAnswer.cs" />
     <Compile Include="ValueNode.cs" />
     <Compile Include="ValueNodeList.cs" />

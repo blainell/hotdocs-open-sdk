@@ -105,16 +105,16 @@ namespace HotDocs.Sdk.Server.WebService
 
             // Configure interview options
             var itvOpts = InterviewOptions.OmitImages;
-                // Instructs HDS not to return images used by the interview; we'll get them ourselves from the template folder.
+            // Instructs HDS not to return images used by the interview; we'll get them ourselves from the template folder.
             if (settings.DisableDocumentPreview)
                 itvOpts |= InterviewOptions.NoPreview;
-                    // Disables (omits) the Document Preview button on the interview toolbar.
+            // Disables (omits) the Document Preview button on the interview toolbar.
             if (settings.DisableSaveAnswers)
                 itvOpts |= InterviewOptions.NoSave;
-                    // Disables (omits) the Save Answers button on the interview toolbar.
+            // Disables (omits) the Save Answers button on the interview toolbar.
             if (!settings.RoundTripUnusedAnswers)
                 itvOpts |= InterviewOptions.ExcludeStateFromOutput;
-                    // Prevents original answer file from being encrypted and sent to the interview and then posted back at the end.
+            // Prevents original answer file from being encrypted and sent to the interview and then posted back at the end.
 
             // Get the interview.
             var result = new InterviewResult();
@@ -141,7 +141,7 @@ namespace HotDocs.Sdk.Server.WebService
                     !settings.DisableDocumentPreview ? settings.DocumentPreviewUrl : "",
                     // document previews will be requested from here; if null the "Document Preview" button does not appear
                     Util.GetInterviewDefinitionUrl(settings, template));
-                    // Interview definitions (Silverlight or JavaScript) will be requested from here -- careful with relative URLs!!
+                // Interview definitions (Silverlight or JavaScript) will be requested from here -- careful with relative URLs!!
                 if (interviewFiles != null)
                 {
                     var interview = new StringBuilder(Util.ExtractString(interviewFiles[0]));
@@ -382,11 +382,11 @@ namespace HotDocs.Sdk.Server.WebService
             using (var client = GetProxy())
             {
                 var templateId = GetRelativePath(Path.Combine(Path.GetDirectoryName(template.GetFullPath()), fileName));
-                    // The relative path to the template folder.
+                // The relative path to the template folder.
                 var templateName = fileName;
-                    // The name of the template file for which the interview is being requested (e.g., demoempl.rtf). 
+                // The name of the template file for which the interview is being requested (e.g., demoempl.rtf). 
                 var templateState = string.Empty;
-                    // We are using the templateId rather than template state since all we have to work with is a template locator.
+                // We are using the templateId rather than template state since all we have to work with is a template locator.
                 var binaryObject = client.GetInterviewDefinition(templateId, templateName, format, templateState);
                 SafeCloseClient(client, null);
                 result = new MemoryStream(binaryObject.Data);

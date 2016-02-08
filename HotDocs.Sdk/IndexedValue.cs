@@ -13,7 +13,7 @@ namespace HotDocs.Sdk
     /// </summary>
     public struct IndexedValue
     {
-        internal IndexedValue(Answer answer, int[] repeatIndices)
+        internal IndexedValue(IAnswer answer, int[] repeatIndices)
         {
             Answer = answer;
             RepeatIndices = repeatIndices;
@@ -85,6 +85,6 @@ namespace HotDocs.Sdk
         /// <summary>
         ///     The Answer object of which this Value is a part.
         /// </summary>
-        public Answer Answer { get; }
+        public IAnswer Answer { get; }
     }
 }

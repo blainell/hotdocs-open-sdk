@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.Packaging;
 using System.Security.Cryptography;
+
 // Needs reference to WindowsBase
 
 /*
@@ -45,7 +46,7 @@ namespace HotDocs.Sdk
         private static readonly byte[] ZipSig = {0x50, 0x4b, 0x03, 0x04}; // The first 4 bytes of a .zip file
 
         private static readonly byte[] HDSig = {0x48, 0x44, 0xae, 0x1a};
-            // The first 4 bytes of an encrypted HotDocs package file
+        // The first 4 bytes of an encrypted HotDocs package file
 
         private Package _package;
 

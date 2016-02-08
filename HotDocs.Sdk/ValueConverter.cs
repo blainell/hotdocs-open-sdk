@@ -10,7 +10,7 @@ namespace HotDocs.Sdk
         {
             if (value is TOut)
                 return (TOut) (IValue) value;
-                    // boxing & unboxing facilitates relatively quick coersion/conversion from TIn to TOut
+            // boxing & unboxing facilitates relatively quick coersion/conversion from TIn to TOut
 
             throw new InvalidCastException(string.Format("Invalid cast from {0} to {1}.", typeof (TIn).Name,
                 typeof (TOut).Name));

@@ -37,7 +37,7 @@ namespace HotDocs.SdkTest
             AnswerValueEnumerator(td);
         }
 
-        private void AnswerValueEnumerator(Answer a)
+        private void AnswerValueEnumerator(IAnswer a)
         {
             foreach (var v in a.IndexedValues)
             {

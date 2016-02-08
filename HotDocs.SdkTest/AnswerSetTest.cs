@@ -258,7 +258,7 @@ Test Answer
 </AnswerSet>
 ");
             Assert.IsTrue(anss.AnswerCount == 52);
-            Answer ans;
+            IAnswer ans;
 
             // ensure that lookup of incorrect typed answer fails
             Assert.IsFalse(anss.TryGetAnswer("Editor Full Name", ValueType.Number, out ans));

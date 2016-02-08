@@ -88,7 +88,7 @@ namespace HotDocs.Sdk.ServerTest
             if (tokens.Length <= 3)
                 throw new Exception("Invalid path.");
             var subTokens = new string[tokens.Length - 3];
-                //Get the path minus two folders and the file name, hence three.
+            //Get the path minus two folders and the file name, hence three.
             Array.Copy(tokens, subTokens, tokens.Length - 3);
             var testProjectPath = Path.Combine(subTokens);
             if (root.Length > 0)

@@ -113,7 +113,7 @@ namespace HotDocs.Sdk.Server
                         return "text/html";
                     case DocumentType.MHTML:
                         return "message/rfc822";
-                            // rfc822 required for IE to display the MHTML; "multipart/related" doesn't work
+                    // rfc822 required for IE to display the MHTML; "multipart/related" doesn't work
                     case DocumentType.XML:
                         return "text/xml";
                     default:

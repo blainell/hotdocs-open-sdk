@@ -383,17 +383,17 @@ namespace HotDocs.Sdk.Server.Local
 
             // Configure the interview options
             var itvOpts = hdsi.HDInterviewOptions.intOptNoImages;
-                // Instructs HDS not to return images used by the interview; we'll get them ourselves from the template folder.
+            // Instructs HDS not to return images used by the interview; we'll get them ourselves from the template folder.
 
             if (settings.DisableDocumentPreview)
                 itvOpts |= hdsi.HDInterviewOptions.intOptNoPreview;
-                    // Disables (omits) the Document Preview button on the interview toolbar.
+            // Disables (omits) the Document Preview button on the interview toolbar.
             if (settings.DisableSaveAnswers)
                 itvOpts |= hdsi.HDInterviewOptions.intOptNoSave;
-                    // Disables (omits) the Save Answers button on the interview toolbar.
+            // Disables (omits) the Save Answers button on the interview toolbar.
             if (settings.RoundTripUnusedAnswers)
                 itvOpts |= hdsi.HDInterviewOptions.intOptStateless;
-                    // Prevents original answer file from being encrypted and sent to the interview and then posted back at the end.
+            // Prevents original answer file from being encrypted and sent to the interview and then posted back at the end.
 
             // Get the interview.
             var result = new InterviewResult();

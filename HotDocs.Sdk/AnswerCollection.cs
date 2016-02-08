@@ -14,9 +14,9 @@ namespace HotDocs.Sdk
     /// <summary>
     ///     A collection of HotDocs answers.
     /// </summary>
-    public class AnswerCollection : IEnumerable<Answer>
+    public class AnswerCollection : IEnumerable<IAnswer>
     {
-        private Dictionary<string, Answer>[] _answers;
+        private Dictionary<string, IAnswer>[] _answers;
         private float _version;
 
         /// <summary>
@@ -89,7 +89,7 @@ namespace HotDocs.Sdk
         ///     Gets an enumerator to iterate through the answers in the answer collection.
         /// </summary>
         /// <returns>An IEnumerator you can use to iterate the answers.</returns>
-        public IEnumerator<Answer> GetEnumerator()
+        public IEnumerator<IAnswer> GetEnumerator()
         {
             foreach (var answerBucket in _answers)
             {
@@ -114,12 +114,12 @@ namespace HotDocs.Sdk
 
         public event EventHandler<AnswerChangedEventArgs> AnswerChanged;
 
-        public Dictionary<string, Answer> GetAnswerBucket(ValueType T)
+        public Dictionary<string, IAnswer> GetAnswerBucket(ValueType T)
         {
             var valTypeInt = (int) T;
 
             if (_answers[valTypeInt] == null)
-                _answers[valTypeInt] = new Dictionary<string, Answer>();
+                _answers[valTypeInt] = new Dictionary<string, IAnswer>();
 
             return _answers[valTypeInt];
         }
@@ -130,13 +130,13 @@ namespace HotDocs.Sdk
         public virtual void Clear()
         {
             var valueTypesCount = Enum.GetNames(typeof (ValueType)).Length;
-            _answers = new Dictionary<string, Answer>[valueTypesCount];
+            _answers = new Dictionary<string, IAnswer>[valueTypesCount];
             Title = string.Empty;
             _version = 1.1F;
             DTD = null;
         }
 
-        public void OnAnswerChanged(Answer ans, int[] indices, ValueChangeType changeType)
+        public void OnAnswerChanged(IAnswer ans, int[] indices, ValueChangeType changeType)
         {
             if (AnswerChanged != null)
                 AnswerChanged(ans, new AnswerChangedEventArgs(ans != null ? ans.Name : null, indices, changeType));
@@ -148,7 +148,7 @@ namespace HotDocs.Sdk
         /// <param name="name">The name of the HotDocs variable whose answer you want to retrieve.</param>
         /// <param name="answer">The Answer for the requested variable (if it exists).</param>
         /// <returns>True if the answer collection contains an answer for the specified variable; otherwise, returns False.</returns>
-        public bool TryGetAnswer(string name, ValueType T, out Answer answer)
+        public bool TryGetAnswer(string name, ValueType T, out IAnswer answer)
         {
             return GetAnswerBucket(T).TryGetValue(name, out answer);
         }
@@ -159,9 +159,9 @@ namespace HotDocs.Sdk
         /// <typeparam name="T">The type of answer to create.</typeparam>
         /// <param name="name">The name of the answer.</param>
         /// <returns>An answer.</returns>
-        public Answer CreateAnswer<T>(string name) where T : IValue
+        public IAnswer CreateAnswer<T>(string name) where T : IValue
         {
-            var ans = Answer.Create<T>(this, name);
+            var ans = TypedAnswer<T>.Create<T>(this, name);
             var bucket = GetAnswerBucket(ans.Type);
 
             // If there is already an answer in this bucket, remove it.
@@ -345,7 +345,7 @@ namespace HotDocs.Sdk
                         if (string.IsNullOrEmpty(answerName))
                             throw new XmlException("Answer name is missing.");
 
-                        Answer ans = null;
+                        IAnswer ans = null;
 
                         reader.Read();
                         reader.MoveToContent();
@@ -360,7 +360,7 @@ namespace HotDocs.Sdk
             }
         }
 
-        private void ReadValue(XmlReader reader, ref Answer ans, string answerName, int[] repeatStack)
+        private void ReadValue(XmlReader reader, ref IAnswer ans, string answerName, int[] repeatStack)
         {
             if (reader.Name == "RptValue")
             {
@@ -479,7 +479,7 @@ namespace HotDocs.Sdk
                             // the MCValue claims to contain one or more SelValues
                             var mcVals = new List<string>();
                             bool selValueUnans;
-                                // The fact that SelValue can have an unans attribute is against the official schema, but
+                            // The fact that SelValue can have an unans attribute is against the official schema, but
                             // some HotDocs code apparently wasn't aware of that. :-)
                             reader.ReadStartElement("MCValue");
                             reader.MoveToContent();

@@ -15,7 +15,7 @@ namespace HotDocs.Sdk
     internal struct UnknownValue : IValue, IComparable
     {
         private readonly string _outerXml;
-            // XML fragment for unknown value (typically either a DBValue, ClauseLibValue, or DocTextValue)
+        // XML fragment for unknown value (typically either a DBValue, ClauseLibValue, or DocTextValue)
 
         public UnknownValue(string outerXml)
         {

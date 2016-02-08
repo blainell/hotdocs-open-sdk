@@ -331,12 +331,12 @@ namespace HotDocs.Sdk
             get { return _settings; }
         }
 
-        //public int MaxRecursionDepth { get; set; } // defaults to Default (only changeable for CS)
-
-        //public int MaxWhileCount { get; set; } // defaults to Default (only changeable for CS)
-
         /* ----------------------------------------------------------------------------------------
 		 * some previously-included or discussed properties that have been intentionally omitted:
 		 */
+
+        //public int MaxWhileCount { get; set; } // defaults to Default (only changeable for CS)
+
+        //public int MaxRecursionDepth { get; set; } // defaults to Default (only changeable for CS)
     }
 }

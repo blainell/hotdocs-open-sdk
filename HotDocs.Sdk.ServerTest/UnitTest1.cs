@@ -115,7 +115,7 @@ namespace HotDocs.Sdk.ServerTest
             {
                 svc.GetInterview(null, null, null, null, null);
                 Assert.Fail();
-                    // If we get here then the exceptions were not fired as they should have been with all null parameters.
+                // If we get here then the exceptions were not fired as they should have been with all null parameters.
             }
             catch (ArgumentNullException ex)
             {
@@ -134,7 +134,7 @@ namespace HotDocs.Sdk.ServerTest
             Assert.IsTrue(result.HtmlFragment.Contains(interviewDefUrl));
             Assert.IsTrue(result.HtmlFragment.Contains("hdMainDiv"));
             Assert.IsFalse(result.HtmlFragment.Contains("Employee Name\": { t: \"TX\", m:true"));
-                // Employee Name should not be "marked"
+            // Employee Name should not be "marked"
 
             // Now get another interview, but this time specify a url for doc preview and save answers.
             settings.DocumentPreviewUrl = "DocPreview.aspx";
@@ -160,7 +160,7 @@ namespace HotDocs.Sdk.ServerTest
             Assert.IsFalse(result.HtmlFragment.Contains(settings.SaveAnswersUrl),
                 "No Save Ans Url because it is disabled");
             Assert.IsTrue(result.HtmlFragment.Contains("Employee Name\": { t: \"TX\", m:true"));
-                // This interview does "mark" Employee Name.
+            // This interview does "mark" Employee Name.
             Assert.IsTrue(result.HtmlFragment.Contains("HDSilverlightInterview"));
 
             // Only HotDocs Cloud Services honors the AddHdMainDiv property of InterviewSettings, so only bother checking it if we are running a test against cloud services.
@@ -237,12 +237,12 @@ namespace HotDocs.Sdk.ServerTest
             settings.Format = DocumentType.MHTML;
             result = svc.AssembleDocument(tmp, answers, settings, logRef);
             Assert.AreEqual(0, result.Document.SupportingFiles.Count());
-                // The MHTML is a single file (no external images).
+            // The MHTML is a single file (no external images).
 
             settings.Format = DocumentType.HTMLwDataURIs;
             result = svc.AssembleDocument(tmp, answers, settings, logRef);
             Assert.AreEqual(0, result.Document.SupportingFiles.Count());
-                // The HTML with Data URIs is a single file (no external images).
+            // The HTML with Data URIs is a single file (no external images).
 
             settings.Format = DocumentType.HTML;
             result = svc.AssembleDocument(tmp, answers, settings, logRef);
@@ -619,7 +619,7 @@ namespace HotDocs.Sdk.ServerTest
                         Assert.IsTrue(ex.Message.Contains("fileType"));
                     else
                         Assert.Fail();
-                            // After the first three times, we don't pass any invalid parameters so this should not happen.
+                    // After the first three times, we don't pass any invalid parameters so this should not happen.
                 }
             }
         }

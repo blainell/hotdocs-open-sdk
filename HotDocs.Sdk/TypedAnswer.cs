@@ -9,22 +9,129 @@ using System.Xml;
 
 namespace HotDocs.Sdk
 {
-    internal class TypedAnswer<T> : Answer where T : IValue
+    internal class TypedAnswer<T> : IAnswer where T : IValue
     {
+        private bool _save; // whether this answer is savable/permanent or temporary
+
         private ValueNode<T> _value;
 
         public TypedAnswer(AnswerCollection set, string name)
-            : base(set, name)
         {
+            AnswerCollection = set;
+            Name = name;
+            _save = !string.IsNullOrEmpty(name) && Name[0] != '(';
+            UserExtendible = true;
+
             _value = new ValueNode<T>();
         }
 
-        public override ValueType Type
+        /// <summary>
+        ///     A reference to the AnswerCollection this Answer belongs to.
+        /// </summary>
+        protected AnswerCollection AnswerCollection { get; }
+
+        /// <summary>
+        ///     The current repeat depth of this answer.  Non-repeated answers have a Depth of 0.
+        /// </summary>
+        protected int Depth { get; set; }
+
+        public void ClearValue(params int[] rptIdx)
+        {
+            if (GetAnswered(rptIdx))
+            {
+                switch (Type)
+                {
+                    case ValueType.Text:
+                        SetValue(TextValue.Unanswered, rptIdx);
+                        break;
+                    case ValueType.Number:
+                        SetValue(NumberValue.Unanswered, rptIdx);
+                        break;
+                    case ValueType.Date:
+                        SetValue(DateValue.Unanswered, rptIdx);
+                        break;
+                    case ValueType.TrueFalse:
+                        SetValue(TrueFalseValue.Unanswered, rptIdx);
+                        break;
+                    case ValueType.MultipleChoice:
+                        SetValue(MultipleChoiceValue.Unanswered, rptIdx);
+                        break;
+                }
+            }
+        }
+
+
+        /// <summary>
+        ///     Initializes the value for an answer.
+        /// </summary>
+        /// <typeparam name="T">The type of value to set.</typeparam>
+        /// <param name="value">The new value for the answer.</param>
+        /// <include file="../Shared/Help.xml" path="Help/intAry/param[@name='rptIdx']" />
+        public void InitValue<T>(T value, params int[] rptIdx) where T : IValue
+        {
+            SetValue(value, true, rptIdx);
+        }
+
+
+        /// <summary>
+        ///     Sets the value for an answer.
+        /// </summary>
+        /// <typeparam name="T">The type of value to set.</typeparam>
+        /// <param name="value">The new value for the answer.</param>
+        /// <include file="../Shared/Help.xml" path="Help/intAry/param[@name='rptIdx']" />
+        public void SetValue<T>(T value, params int[] rptIdx) where T : IValue
+        {
+            SetValue(value, false, rptIdx);
+        }
+
+        /// <summary>
+        ///     This method returns a specific value from an answer.
+        /// </summary>
+        /// <typeparam name="T">The type of value being requested.</typeparam>
+        /// <include file="../Shared/Help.xml" path="Help/intAry/param[@name='rptIdx']" />
+        /// <returns>The value found at the specified repeat index.</returns>
+        public T GetValue<T>(params int[] rptIdx) where T : IValue
+        {
+            var node = GetValueNode<T>(false, rptIdx);
+            if (node != null)
+                return node.Value;
+            return default(T);
+        }
+
+        /// <summary>
+        ///     For answers containing repeated values, indicates whether end users should be allowed to add/delete/move
+        ///     repeat iterations in the interview UI (default is true).
+        /// </summary>
+        public bool UserExtendible { get; set; }
+
+        /// <summary>
+        ///     The answer name. Corresponds to a HotDocs variable name.
+        /// </summary>
+        [DebuggerHidden]
+        public string Name { get; }
+
+        /// <summary>
+        ///     When HotDocs saves a collection of answers as an Answer File, this flag determines whether this specific answer
+        ///     will be saved or not. If true (the default), the answer will be saved.  If false, this answer will be
+        ///     ignored/dropped and will not be persisted with the rest of the answers in the AnswerCollection.
+        /// </summary>
+        public bool Save
+        {
+            get { return _save; }
+            set
+            {
+                if (!_save && value) // LRS: I don't expect this to happen
+                    throw new InvalidOperationException("Attempted to designate a non-savable answer as savable.");
+                _save = value;
+            }
+        }
+
+        public ValueType Type
         {
             get { return _value.Type; }
         }
 
-        public override bool IsRepeated
+        public bool IsRepeated
         {
             get { return _value.HasChildren || Depth > 0; }
         }
@@ -32,17 +139,17 @@ namespace HotDocs.Sdk
         /// <summary>
         ///     IndexedValues provides a simple way to enumerate (and potentially modify) the values associated with an answer.
         /// </summary>
-        public override IEnumerable<IndexedValue> IndexedValues
+        public IEnumerable<IndexedValue> IndexedValues
         {
             get { return GetIndexedValues(_value, RepeatIndices.Empty); }
         }
 
-        public override IValue GetValue(params int[] rptIdx)
+        public IValue GetValue(params int[] rptIdx)
         {
             return GetValue<T>(rptIdx);
         }
 
-        public override bool GetAnswered(params int[] rptIdx)
+        public bool GetAnswered(params int[] rptIdx)
         {
             // Get the requested node.  If it exists, return its answered status.
             // We trim trailing zeros from the indices because they don't affect the "answeredness" of a specific set of indices
@@ -54,7 +161,7 @@ namespace HotDocs.Sdk
             return false;
         }
 
-        public override bool GetUserModifiable(params int[] rptIdx)
+        public bool GetUserModifiable(params int[] rptIdx)
         {
             // Get the requested node.  If it exists, return whether it should be user modifiable in the UI.
             var indices = TrimIndices(IndexTrimOptions.TrimTrailingZeros, rptIdx);
@@ -64,7 +171,7 @@ namespace HotDocs.Sdk
             return true;
         }
 
-        public override int GetChildCount(params int[] rptIdx)
+        public int GetChildCount(params int[] rptIdx)
         {
             // Get the number of answers that are CHILDREN of the requested node.
             // Don't trim any trailing zeros from the indices, because trailing zeros
@@ -77,7 +184,7 @@ namespace HotDocs.Sdk
             return GetCount(indices);
         }
 
-        public override int GetSiblingCount(params int[] rptIdx)
+        public int GetSiblingCount(params int[] rptIdx)
         {
             // Get the number of answers that are SIBLINGS of the requested node.
             // Don't trim any trailing zeros from the indices, because trailing zeros
@@ -87,6 +194,210 @@ namespace HotDocs.Sdk
 
             var indices = TrimIndices(IndexTrimOptions.TruncateLastIndex, rptIdx);
             return GetCount(indices);
+        }
+
+        /// <summary>
+        ///     ApplyValueMutator summary
+        /// </summary>
+        /// <typeparam name="TExternal">Type</typeparam>
+        /// <param name="mutator">mutator</param>
+        public void ApplyValueMutator<TExternal>(Answer.ValueMutator<TExternal> mutator) where TExternal : IValue
+        {
+            if (typeof (TExternal) != typeof (T))
+                throw new ArgumentException("Answer/Value type mismatch");
+
+            TraverseAndApply(mutator, _value);
+        }
+
+        public void EnumerateValues(object state, Answer.ValueEnumerationDelegate callback)
+        {
+            ValueEnumerationHelper(callback, _value, RepeatIndices.Empty, state);
+        }
+
+        /// <summary>
+        ///     Completely resets the answer.
+        /// </summary>
+        public void Clear()
+        {
+            ClearBase();
+            // this recursively clears out all existing values, firing appropriate change notifications along the way
+
+            // now (for good measure) throw away all the previous value structures and reset the answer completely
+            _value = new ValueNode<T>();
+            Depth = 0;
+        }
+
+        /// <summary>
+        ///     Gets the parent of the requested node,
+        ///     and inserts an unanswered child iteration at the requested index.
+        /// </summary>
+        /// <include file="../Shared/Help.xml" path="Help/intAry/param[@name='rptIdx']" />
+        public void InsertIteration(int[] rptIdx)
+        {
+            // get the parent of the requested node,
+            // and insert an unanswered child iteration at the requested index
+            int iterationToInsert;
+            var parIdx = TrimIndices(IndexTrimOptions.TruncateLastIndex, out iterationToInsert, rptIdx);
+            if (iterationToInsert < 0) // there is no iteration before which to insert!
+                return;
+
+            var parentNode = GetNode(GetNodeOptions.NoBubbleAndFlow, parIdx);
+            if (parentNode == null || parentNode.Children == null || iterationToInsert >= parentNode.Children.SetCount)
+                return;
+
+            parentNode.Children.Insert(iterationToInsert, new ValueNode<T>());
+            if (AnswerCollection != null)
+                AnswerCollection.OnAnswerChanged(this, rptIdx, ValueChangeType.IndexShift);
+        }
+
+        /// <summary>
+        ///     Gets the parent of the requested node,
+        ///     and deletes the indicated child iteration.
+        /// </summary>
+        /// <include file="../Shared/Help.xml" path="Help/intAry/param[@name='rptIdx']" />
+        public void DeleteIteration(int[] rptIdx)
+        {
+            // get the parent of the requested node,
+            // and delete the indicated child iteration
+            int iterationToDelete;
+            var parIdx = TrimIndices(IndexTrimOptions.TruncateLastIndex, out iterationToDelete, rptIdx);
+            if (iterationToDelete < 0) // there is no iteration to be deleted!
+                return;
+
+            var parentNode = GetNode(GetNodeOptions.NoBubbleAndFlow, parIdx);
+            if (parentNode == null || parentNode.Children == null || iterationToDelete >= parentNode.Children.SetCount)
+                return;
+
+            parentNode.Children.RemoveAt(iterationToDelete);
+
+            if (AnswerCollection != null)
+                AnswerCollection.OnAnswerChanged(this, rptIdx, ValueChangeType.IndexShift);
+        }
+
+        /// <summary>
+        ///     Gets the parent of the requested node, and removes the indicated child iteration from the parent, and re-inserts it
+        ///     at the indicated new position.
+        /// </summary>
+        /// <include file="../Shared/Help.xml" path="Help/intAry/param[@name='rptIdx']" />
+        /// <param name="newPosition">newPosition</param>
+        public void MoveIteration(int[] rptIdx, int newPosition)
+        {
+            if (newPosition < 0)
+                throw new ArgumentException("Cannot move repeated data before the first repeat iteration.",
+                    "newPosition");
+            // get the parent of the requested node,
+            // removes the indicated child iteration from the parent,
+            // and re-inserts it at the indicated new position
+            int iterationToMove;
+            var parIdx = TrimIndices(IndexTrimOptions.TruncateLastIndex, out iterationToMove, rptIdx);
+            if (iterationToMove < 0) // there is no iteration to be moved!
+                return;
+
+            var parentNode = GetNode(GetNodeOptions.NoBubbleAndFlow, parIdx);
+            if (parentNode == null || parentNode.Children == null
+                || (newPosition < iterationToMove && newPosition >= parentNode.Children.SetCount) // move up
+                || (newPosition > iterationToMove && iterationToMove >= parentNode.Children.SetCount)) // move down
+            {
+                // nothing to do
+                return;
+            }
+
+            var maxIteration = Math.Max(iterationToMove, newPosition);
+            if (maxIteration >= parentNode.Children.SetCount)
+            {
+                //[LRS] Need to be able to do the following! (Because other answers in same iteration may be moving.)
+                parentNode.Children.PrepareForIndex(maxIteration);
+            }
+
+            var movedNode = parentNode.Children.RemoveAt(iterationToMove);
+            parentNode.Children.Insert(newPosition, movedNode);
+            if (AnswerCollection != null)
+                AnswerCollection.OnAnswerChanged(this, rptIdx, ValueChangeType.IndexShift);
+        }
+
+        /// <summary>
+        ///     Writes the answer to an XML writer.
+        /// </summary>
+        /// <param name="writer">XML writer.</param>
+        /// <param name="writeDontSave">Indicates if the answer should be written even if it is not supposed to be saved.</param>
+        public void WriteXml(XmlWriter writer, bool writeDontSave)
+        {
+            if (!writeDontSave && !Save)
+                return;
+            writer.WriteStartElement("Answer");
+            writer.WriteAttributeString("name", TextValue.XMLEscape(Name));
+            if (!Save)
+                writer.WriteAttributeString("save", XmlConvert.ToString(Save));
+            if (!UserExtendible)
+                writer.WriteAttributeString("userExtendible", XmlConvert.ToString(UserExtendible));
+            _value.WriteXml(writer, Depth);
+            writer.WriteEndElement();
+        }
+
+        /// <summary>
+        ///     Clears the answer.
+        /// </summary>
+        public virtual void ClearBase()
+        {
+            EnumerateValues(this, ClearAnswerCallback);
+        }
+
+
+        protected static void ClearAnswerCallback(object state, int[] indices)
+        {
+            var answer = (IAnswer) state;
+            answer.ClearValue(indices);
+        }
+
+        /// Factory method:
+        internal static IAnswer Create<T>(AnswerCollection parent, string name) where T : IValue
+        {
+            return new TypedAnswer<T>(parent, name);
+        }
+
+        protected void SetValue<T>(T value, bool suppressChangeNotification, params int[] rptIdx) where T : IValue
+        {
+            // The first parameter to GetValueNode (below) determines whether it will create nodes as necessary
+            // to get to the requested index.  We only bother to expand the tree if the value we're setting
+            // is answered.
+            var nodeCreatedForUnansweredValue = false;
+            var node = GetValueNode<T>(value.IsAnswered, rptIdx);
+            // if we're setting a value that's answered, GetValueNode should always be returning something!
+            // (When we set things to unanswered, the tree won't be expanding to hold the value, so we may get null back.)
+
+            if (node == null)
+            {
+                // we're setting an unanswered value into the answer collection.
+                // In this case we still need to expand the tree to have a place representing that unanswered value.
+                node = GetValueNode<T>(true, rptIdx);
+                nodeCreatedForUnansweredValue = true;
+            }
+
+            Debug.Assert(node != null);
+            if (node != null)
+            {
+                ValueChangeType changed;
+                if (value.IsAnswered && !node.Value.IsAnswered)
+                    changed = ValueChangeType.BecameAnswered;
+                else if (!value.IsAnswered && node.Value.IsAnswered)
+                    changed = ValueChangeType.BecameUnanswered;
+                else if (value.IsAnswered && node.Value.IsAnswered && !value.Equals(node.Value))
+                    changed = ValueChangeType.Changed;
+                else
+                    changed = ValueChangeType.None;
+
+                node.Value = value;
+
+                if (changed != ValueChangeType.None || nodeCreatedForUnansweredValue)
+                {
+                    // if we have un-answered a repeated variable; perform any value tree cleanup that is needed
+                    if (rptIdx != null && rptIdx.Length > 0 && !value.IsAnswered)
+                        Recalculate(rptIdx);
+
+                    if (changed != ValueChangeType.None && AnswerCollection != null && !suppressChangeNotification)
+                        AnswerCollection.OnAnswerChanged(this, rptIdx, changed);
+                }
+            }
         }
 
         private int GetCount(int[] indices)
@@ -109,7 +420,8 @@ namespace HotDocs.Sdk
             return 0;
         }
 
-        protected override ValueNode<TExternal> GetValueNode<TExternal>(bool createIfNecessary, params int[] rptIdx)
+        protected ValueNode<TExternal> GetValueNode<TExternal>(bool createIfNecessary, params int[] rptIdx)
+            where TExternal : IValue
         {
             if (typeof (TExternal) != typeof (T))
                 throw new ArgumentException("Answer/Value type mismatch");
@@ -224,12 +536,12 @@ namespace HotDocs.Sdk
                 {
                     idx = 0;
                     newIdx = new int[Depth - atDepth - 1];
-                        // make sure value gets set down at the appropriate repeat level
+                    // make sure value gets set down at the appropriate repeat level
                 }
                 else
                 {
                     Debug.Assert(!createIfNecessary);
-                        // we don't want to allow setting values at non-leaf nodes of the tree!
+                    // we don't want to allow setting values at non-leaf nodes of the tree!
                     return node;
                 }
             }
@@ -256,21 +568,8 @@ namespace HotDocs.Sdk
             return GetNodeHelper(node.Children[idx], ++atDepth, createIfNecessary, valuesBubbleAndFlow, newIdx);
         }
 
-        /// <summary>
-        ///     ApplyValueMutator summary
-        /// </summary>
-        /// <typeparam name="TExternal">Type</typeparam>
-        /// <param name="mutator">mutator</param>
-        public override void ApplyValueMutator<TExternal>(ValueMutator<TExternal> mutator)
-        {
-            if (typeof (TExternal) != typeof (T))
-                throw new ArgumentException("Answer/Value type mismatch");
-
-            TraverseAndApply(mutator, _value);
-        }
-
         // private recursive helper function
-        private static void TraverseAndApply<TExternal>(ValueMutator<TExternal> mutator, ValueNode<T> node)
+        private static void TraverseAndApply<TExternal>(Answer.ValueMutator<TExternal> mutator, ValueNode<T> node)
             where TExternal : IValue
         {
             if (node.HasChildren)
@@ -286,12 +585,7 @@ namespace HotDocs.Sdk
             }
         }
 
-        public override void EnumerateValues(object state, ValueEnumerationDelegate callback)
-        {
-            ValueEnumerationHelper(callback, _value, RepeatIndices.Empty, state);
-        }
-
-        private void ValueEnumerationHelper(ValueEnumerationDelegate callback, ValueNode<T> node, int[] indices,
+        private void ValueEnumerationHelper(Answer.ValueEnumerationDelegate callback, ValueNode<T> node, int[] indices,
             object state)
         {
             if (node.HasChildren)
@@ -333,7 +627,7 @@ namespace HotDocs.Sdk
             }
         }
 
-        protected override void Recalculate(int[] rptIdx)
+        protected void Recalculate(int[] rptIdx)
         {
             // we have un-answered a repeated variable; check to see if any value tree cleanup is needed
             RecalculateHelper(_value, rptIdx);
@@ -361,126 +655,6 @@ namespace HotDocs.Sdk
             // call ResetCount to recalculate the SetCount
             if (node.HasChildren && node.Children.SetCount == topIndex + 1)
                 node.Children.ResetCount();
-        }
-
-        /// <summary>
-        ///     Completely resets the answer.
-        /// </summary>
-        public override void Clear()
-        {
-            base.Clear();
-                // this recursively clears out all existing values, firing appropriate change notifications along the way
-
-            // now (for good measure) throw away all the previous value structures and reset the answer completely
-            _value = new ValueNode<T>();
-            Depth = 0;
-        }
-
-        /// <summary>
-        ///     Gets the parent of the requested node,
-        ///     and inserts an unanswered child iteration at the requested index.
-        /// </summary>
-        /// <include file="../Shared/Help.xml" path="Help/intAry/param[@name='rptIdx']" />
-        public override void InsertIteration(int[] rptIdx)
-        {
-            // get the parent of the requested node,
-            // and insert an unanswered child iteration at the requested index
-            int iterationToInsert;
-            var parIdx = TrimIndices(IndexTrimOptions.TruncateLastIndex, out iterationToInsert, rptIdx);
-            if (iterationToInsert < 0) // there is no iteration before which to insert!
-                return;
-
-            var parentNode = GetNode(GetNodeOptions.NoBubbleAndFlow, parIdx);
-            if (parentNode == null || parentNode.Children == null || iterationToInsert >= parentNode.Children.SetCount)
-                return;
-
-            parentNode.Children.Insert(iterationToInsert, new ValueNode<T>());
-            if (AnswerCollection != null)
-                AnswerCollection.OnAnswerChanged(this, rptIdx, ValueChangeType.IndexShift);
-        }
-
-        /// <summary>
-        ///     Gets the parent of the requested node,
-        ///     and deletes the indicated child iteration.
-        /// </summary>
-        /// <include file="../Shared/Help.xml" path="Help/intAry/param[@name='rptIdx']" />
-        public override void DeleteIteration(int[] rptIdx)
-        {
-            // get the parent of the requested node,
-            // and delete the indicated child iteration
-            int iterationToDelete;
-            var parIdx = TrimIndices(IndexTrimOptions.TruncateLastIndex, out iterationToDelete, rptIdx);
-            if (iterationToDelete < 0) // there is no iteration to be deleted!
-                return;
-
-            var parentNode = GetNode(GetNodeOptions.NoBubbleAndFlow, parIdx);
-            if (parentNode == null || parentNode.Children == null || iterationToDelete >= parentNode.Children.SetCount)
-                return;
-
-            parentNode.Children.RemoveAt(iterationToDelete);
-
-            if (AnswerCollection != null)
-                AnswerCollection.OnAnswerChanged(this, rptIdx, ValueChangeType.IndexShift);
-        }
-
-        /// <summary>
-        ///     Gets the parent of the requested node, and removes the indicated child iteration from the parent, and re-inserts it
-        ///     at the indicated new position.
-        /// </summary>
-        /// <include file="../Shared/Help.xml" path="Help/intAry/param[@name='rptIdx']" />
-        /// <param name="newPosition">newPosition</param>
-        public override void MoveIteration(int[] rptIdx, int newPosition)
-        {
-            if (newPosition < 0)
-                throw new ArgumentException("Cannot move repeated data before the first repeat iteration.",
-                    "newPosition");
-            // get the parent of the requested node,
-            // removes the indicated child iteration from the parent,
-            // and re-inserts it at the indicated new position
-            int iterationToMove;
-            var parIdx = TrimIndices(IndexTrimOptions.TruncateLastIndex, out iterationToMove, rptIdx);
-            if (iterationToMove < 0) // there is no iteration to be moved!
-                return;
-
-            var parentNode = GetNode(GetNodeOptions.NoBubbleAndFlow, parIdx);
-            if (parentNode == null || parentNode.Children == null
-                || (newPosition < iterationToMove && newPosition >= parentNode.Children.SetCount) // move up
-                || (newPosition > iterationToMove && iterationToMove >= parentNode.Children.SetCount)) // move down
-            {
-                // nothing to do
-                return;
-            }
-
-            var maxIteration = Math.Max(iterationToMove, newPosition);
-            if (maxIteration >= parentNode.Children.SetCount)
-            {
-                //[LRS] Need to be able to do the following! (Because other answers in same iteration may be moving.)
-                parentNode.Children.PrepareForIndex(maxIteration);
-            }
-
-            var movedNode = parentNode.Children.RemoveAt(iterationToMove);
-            parentNode.Children.Insert(newPosition, movedNode);
-            if (AnswerCollection != null)
-                AnswerCollection.OnAnswerChanged(this, rptIdx, ValueChangeType.IndexShift);
-        }
-
-        /// <summary>
-        ///     Writes the answer to an XML writer.
-        /// </summary>
-        /// <param name="writer">XML writer.</param>
-        /// <param name="writeDontSave">Indicates if the answer should be written even if it is not supposed to be saved.</param>
-        public override void WriteXml(XmlWriter writer, bool writeDontSave)
-        {
-            if (!writeDontSave && !Save)
-                return;
-            writer.WriteStartElement("Answer");
-            writer.WriteAttributeString("name", TextValue.XMLEscape(Name));
-            if (!Save)
-                writer.WriteAttributeString("save", XmlConvert.ToString(Save));
-            if (!UserExtendible)
-                writer.WriteAttributeString("userExtendible", XmlConvert.ToString(UserExtendible));
-            _value.WriteXml(writer, Depth);
-            writer.WriteEndElement();
         }
 
         [Flags]

@@ -55,7 +55,7 @@ namespace HotDocs.Sdk
                 Choices = null;
             else
                 Choices = value.Split(s_separator[0]);
-                    // passing in an empty string creates a string list with one empty entry
+            // passing in an empty string creates a string list with one empty entry
             _protect = false;
         }
 
@@ -70,7 +70,7 @@ namespace HotDocs.Sdk
                 Choices = null;
             else
                 Choices = value.Split(s_separator[0]);
-                    // passing in an empty string creates a string list with one empty entry
+            // passing in an empty string creates a string list with one empty entry
             _protect = !userModifiable;
         }
 

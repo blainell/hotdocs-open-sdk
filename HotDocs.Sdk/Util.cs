@@ -207,7 +207,7 @@ namespace HotDocs.Sdk
                     return "image/svg+xml";
                 case "rtf":
                     return /*"application/msword"*/ MediaTypeNames.Application.Rtf;
-                        // See http://en.wikipedia.org/wiki/Rich_Text_Format
+                // See http://en.wikipedia.org/wiki/Rich_Text_Format
                 case "doc":
                 case "dot":
                     return "application/msword";
