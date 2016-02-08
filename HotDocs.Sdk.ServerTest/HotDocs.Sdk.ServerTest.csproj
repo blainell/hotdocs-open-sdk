@@ -58,7 +58,7 @@
     <Compile Include="InterviewResponse.cs" />
     <Compile Include="InterviewAnswerSet.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ServicesTest.cs" />
+    <Compile Include="UnitTest1.cs" />
     <Compile Include="ContractsTest.cs" />
     <Compile Include="Util.cs" />
   </ItemGroup>

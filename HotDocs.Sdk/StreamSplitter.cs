@@ -4,7 +4,7 @@
 
 using System.IO;
 
-namespace HotDocs.Sdk.Cloud
+namespace HotDocs.Sdk
 {
 	/// <summary>
 	/// This class copies an input stream to an output stream or to multiple output streams.

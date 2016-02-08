@@ -14,12 +14,7 @@ using System.Text.RegularExpressions;
 
 namespace HotDocs.Sdk.Server
 {
-
-	internal delegate string TemplateFilesRetriever(string templateKey, string state);
-
-	internal delegate Stream TemplatePackageRetriever(string packageID, string state, out bool closeStream);
-
-	/// <summary>
+    /// <summary>
 	/// The <c>Util</c> class provides some methods needed for this class. Some of those methods are used for a specific implementation of IServices.
 	/// </summary>
 	public static class Util

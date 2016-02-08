@@ -7,12 +7,7 @@ using System.Diagnostics;
 
 namespace HotDocs.Sdk
 {
-	/// <summary>
-	/// The Period enumeration is used to determine the relative time period encapsulated by an instance of the TimeSpanValue struct.
-	/// </summary>
-	public enum Period { Unknown, Days, Months, Years };
-
-	/// <summary>
+    /// <summary>
 	/// The TimeSpanValue struct is part of the infrastructure related to how Date values are stored and manipulated within HotDocs.
 	/// A TimeSpanValue will never appear on its own in a HotDocs answer file, but they are used to adjust DateValues by a relative amount.
 	/// </summary>

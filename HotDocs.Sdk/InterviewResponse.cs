@@ -2,12 +2,9 @@
    Use, modification and redistribution of this source is subject
    to the New BSD License as set out in LICENSE.TXT. */
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 
-namespace HotDocs.Sdk.Server
+namespace HotDocs.Sdk
 {
 	/// <summary>
 	/// The response from a HotDocs interview that includes answers entered by the user.

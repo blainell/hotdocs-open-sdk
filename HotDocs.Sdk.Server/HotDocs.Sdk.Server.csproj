@@ -58,18 +58,25 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Cloud\Cloud.Services.cs" />
+    <Compile Include="Cloud\Services.cs" />
+    <Compile Include="DocumentWorkItem.cs" />
+    <Compile Include="InterviewWorkItem.cs" />
     <Compile Include="NamespaceDoc.cs" />
+    <Compile Include="OnPremise\ExceptionResponse.cs" />
     <Compile Include="OnPremise\OnPremiseServices.cs" />
     <Compile Include="HotDocsService.cs" />
-    <Compile Include="WebService\WebService.Services.cs" />
+    <Compile Include="PostAssembleDocumentDelegate.cs" />
+    <Compile Include="PreAssembleDocumentDelegate.cs" />
+    <Compile Include="TemplateFilesRetriever.cs" />
+    <Compile Include="TemplatePackageRetriever.cs" />
+    <Compile Include="WebService\Services.cs" />
     <Compile Include="WorkSession.cs" />
     <Compile Include="AssembleDocumentResult.cs" />
     <Compile Include="Document.cs" />
     <Compile Include="InterviewResult.cs" />
     <Compile Include="IServices.cs" />
-    <Compile Include="Local\Local.Services.cs" />
-    <Compile Include="Local\Local.TempFolder.cs" />
+    <Compile Include="Local\Services.cs" />
+    <Compile Include="Local\TempFolder.cs" />
     <Compile Include="NamedStream.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Util.cs" />

@@ -7,16 +7,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace HotDocs.SdkTest
 {
-	public class TemplateInfo
-	{
-		public string DocExtension { get; set; }
-		public string TplExtension { get; set; }
-		public string Title { get; set; }
-		public TemplateType TmpType { get; set; }
-		public DocumentType DocType { get; set; }
-	}
-
-	/// <summary>
+    /// <summary>
 	///This is a test class for the Template and TemplateLocation classes and is intended
 	///to contain all Template-related Unit Tests
 	///</summary>

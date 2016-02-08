@@ -5,15 +5,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
-using System.Net;
-using System.IO;
-using HotDocs.Sdk.Server;
+using System.Text;
 using HotDocs.Sdk.Server.Contracts;
 
-namespace HotDocs.Sdk.Cloud
+namespace HotDocs.Sdk.Cloud.Soap
 {
 	/// <summary>
 	/// The default Core Services client.

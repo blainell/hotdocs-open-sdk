@@ -7,74 +7,7 @@ using System.IO;
 
 namespace HotDocs.Sdk
 {
-	/// <summary>
-	/// A type of document that can be produced by assembling a document from a template.
-	/// </summary>
-	public enum DocumentType
-	{
-		/// <summary></summary>
-		Unknown = 0,
-		/// <summary>
-		/// Document type native to the template. See Template.NativeDocumentType. For example,
-		/// a WordPerfect WPD file is native to a WordPerfect WPT template.
-		/// </summary>
-		Native,
-		/// <summary></summary>
-		WordDOCX,
-		/// <summary></summary>
-		WordRTF,
-		/// <summary></summary>
-		WordDOC,
-		/// <summary></summary>
-		WordPerfect,
-		/// <summary></summary>
-		PDF,
-		/// <summary></summary>
-		HPD,
-		/// <summary></summary>
-		HFD,
-		/// <summary></summary>
-		PlainText,
-		/// <summary></summary>
-		HTML,
-		/// <summary>
-		/// HTML with images included as embedded URIs.
-		/// </summary>
-		HTMLwDataURIs,
-		/// <summary>
-		/// MIME HTML
-		/// </summary>
-		MHTML,
-		/// <summary></summary>
-		XML
-	}
-
-	/// <summary>
-	/// The type of HotDocs template.
-	/// </summary>
-	public enum TemplateType
-	{
-		/// <summary></summary>
-		Unknown,
-		/// <summary>
-		/// Templates that only include an interview. (.cmp files.) No document is assembled from an interview-only template.
-		/// </summary>
-		InterviewOnly,
-		/// <summary></summary>
-		WordDOCX,
-		/// <summary></summary>
-		WordRTF,
-		/// <summary></summary>
-		WordPerfect,
-		/// <summary></summary>
-		HotDocsHFT,
-		/// <summary></summary>
-		HotDocsPDF,
-		/// <summary></summary>
-		PlainText
-	}
-
-	/// <summary>
+    /// <summary>
 	/// This class represents a template that is managed by the host application, and
 	/// (optionally) some assembly parameters (as specified by switches) for that template.
 	/// The location of the template is defined by Template.Location.

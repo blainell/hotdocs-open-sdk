@@ -3,11 +3,9 @@
    to the New BSD License as set out in LICENSE.TXT. */
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 
-namespace HotDocs.Sdk.Server
+namespace HotDocs.Sdk
 {
 	/// <summary>
 	/// Represents the answers returned from a HotDocs interview.

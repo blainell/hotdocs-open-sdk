@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-namespace HotDocs.Sdk.Cloud
+namespace HotDocs.Sdk
 {
 	/// <summary>
 	/// This class parses a multipart MIME stream.

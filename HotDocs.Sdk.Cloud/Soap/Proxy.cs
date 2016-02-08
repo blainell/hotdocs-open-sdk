@@ -3,14 +3,10 @@
    to the New BSD License as set out in LICENSE.TXT. */
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.ServiceModel;
-using HotDocs.Sdk.Server;
 using HotDocs.Sdk.Server.Contracts;
 
-namespace HotDocs.Sdk.Cloud
+namespace HotDocs.Sdk.Cloud.Soap
 {
 	internal class Proxy : ClientBase<ICore>, ICore
 	{

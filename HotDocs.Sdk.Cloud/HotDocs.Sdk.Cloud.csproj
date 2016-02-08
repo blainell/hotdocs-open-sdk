@@ -51,6 +51,7 @@
     <Compile Include="ClientBase.cs" />
     <Compile Include="NamespaceDoc.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Rest\Extensions.cs" />
     <Compile Include="Soap\Proxy.cs" />
     <Compile Include="Rest\RestClient.cs" />
     <Compile Include="Soap\SoapClient.cs" />

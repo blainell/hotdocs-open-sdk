@@ -22,11 +22,11 @@ namespace HotDocs.Sdk.ServerTest
 		{
 			form.Clear();
 
-			Assert.AreEqual("", HotDocs.Sdk.Server.InterviewResponse.GetAnswers(form));
+			Assert.AreEqual("", Sdk.InterviewResponse.GetAnswers(form));
 
 			form.Add("HDInfo", "one");
 			form.Add("HDInfo", "two");
-			Assert.AreEqual("onetwo", HotDocs.Sdk.Server.InterviewResponse.GetAnswers(form));
+			Assert.AreEqual("onetwo", Sdk.InterviewResponse.GetAnswers(form));
 		}
 
 		[TestMethod]
@@ -37,7 +37,7 @@ namespace HotDocs.Sdk.ServerTest
 			form.Add("HDInfo", "three");
 			form.Add("HDInfo", "four");
 
-			Stream s = HotDocs.Sdk.Server.InterviewResponse.GetAnswerStream(form);
+			Stream s = Sdk.InterviewResponse.GetAnswerStream(form);
 			using (StreamReader reader = new StreamReader(s, Encoding.UTF8))
 			{
 				Assert.AreEqual("threefour", reader.ReadToEnd());
