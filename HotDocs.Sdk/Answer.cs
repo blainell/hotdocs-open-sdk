@@ -21,7 +21,7 @@ namespace HotDocs.Sdk
 	/// The object that is returned is actually an instance of a private subclass of Answer,
 	/// but you only access it via public methods and properties of the Answer class.
 	/// </summary>
-	public abstract partial class Answer
+	public abstract class Answer
 	{
 		private readonly AnswerCollection _coll;
 		private readonly string _name;

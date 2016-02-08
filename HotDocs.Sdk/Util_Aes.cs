@@ -17,10 +17,10 @@ using System.Security.Cryptography;
 
 namespace HotDocs.Sdk
 {
-	public partial class Util
+	public class UtilAes
 	{
 		//From MSDN example code for the Aes class at http://msdn.microsoft.com/en-us/library/system.security.cryptography.aes.aspx.
-		private static byte[] EncryptStringToBytes_Aes(string plainText, byte[] Key, byte[] IV)
+	    public static byte[] EncryptStringToBytes_Aes(string plainText, byte[] Key, byte[] IV)
 		{
 			// Check arguments. 
 			if (plainText == null || plainText.Length <= 0)
@@ -61,7 +61,7 @@ namespace HotDocs.Sdk
 		}
 
 		//From MSDN example code for the Aes class at http://msdn.microsoft.com/en-us/library/system.security.cryptography.aes.aspx.
-		private static string DecryptStringFromBytes_Aes(byte[] cipherText, byte[] Key, byte[] IV)
+	    public static string DecryptStringFromBytes_Aes(byte[] cipherText, byte[] Key, byte[] IV)
 		{
 			// Check arguments. 
 			if (cipherText == null || cipherText.Length <= 0)

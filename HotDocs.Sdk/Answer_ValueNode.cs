@@ -8,13 +8,12 @@ using System.Diagnostics;
 
 namespace HotDocs.Sdk
 {
-	public abstract partial class Answer
-	{
+
 		/// <summary>
 		/// ValueNode summary
 		/// </summary>
 		/// <typeparam name="T">Type</typeparam>
-		protected class ValueNode<T> : IEquatable<ValueNode<T>> where T : IValue
+		public class ValueNode<T> : IEquatable<ValueNode<T>> where T : IValue
 		{
 		    /// <summary>
 			/// ValueNode constructor
@@ -158,5 +157,4 @@ namespace HotDocs.Sdk
 					writer.WriteElementString("RptValue", null); // write a empty repeat value node (placeholder)
 			}
 		}
-	}
 }

@@ -14,13 +14,13 @@ namespace HotDocs.Sdk
 	/// The <c>Util</c> class contains many helper methods and properties used by other 
 	/// classes in the Sdk, including HotDocs.Sdk.Server and SamplePortal.
 	/// </summary>
-	public partial class Util
+	public static class Util
 	{
 		internal static string EncryptString(string textToEncrypt)
 		{
 			byte[] key = GetPersistentEncryptionKey();
 			byte[] initializationVector = GetInitializationVector();
-			byte[] encryptedBuf = EncryptStringToBytes_Aes(textToEncrypt, key, initializationVector);
+			byte[] encryptedBuf = UtilAes.EncryptStringToBytes_Aes(textToEncrypt, key, initializationVector);
 			return Convert.ToBase64String(encryptedBuf);
 		}
 
@@ -29,7 +29,7 @@ namespace HotDocs.Sdk
 			byte[] key = GetPersistentEncryptionKey();
 			byte[] initializationVector = GetInitializationVector();
 			byte[] encryptedBuffer = Convert.FromBase64String(textToDecrypt.Replace(" ", "+"));
-			return DecryptStringFromBytes_Aes(encryptedBuffer, key, initializationVector);
+			return UtilAes.DecryptStringFromBytes_Aes(encryptedBuffer, key, initializationVector);
 		}
 
 		/// <summary>
