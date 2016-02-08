@@ -3,27 +3,24 @@ using System.Runtime.Serialization;
 namespace HotDocs.Sdk.Server.Contracts
 {
     /// <summary>
-    /// This class provides details about a template.
+    ///     This class provides details about a template.
     /// </summary>
     [DataContract]
     public class TemplateInfo
     {
         /// <summary>
-        /// The ID of the template.
+        ///     The description of the template.
         /// </summary>
-        [DataMember(Order = 1)]
-        public string ID;
+        [DataMember(Order = 3, EmitDefaultValue = false)] public string Description;
 
         /// <summary>
-        /// The title of the template.
+        ///     The ID of the template.
         /// </summary>
-        [DataMember(Order = 2)]
-        public string Title;
+        [DataMember(Order = 1)] public string ID;
 
         /// <summary>
-        /// The description of the template.
+        ///     The title of the template.
         /// </summary>
-        [DataMember(Order = 3, EmitDefaultValue = false)]
-        public string Description;
+        [DataMember(Order = 2)] public string Title;
     }
 }

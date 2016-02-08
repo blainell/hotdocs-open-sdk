@@ -1,7 +1,8 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8"?>
+
 <Help>
 
-	<!-- ****************************************************************************************
+  <!-- ****************************************************************************************
 	
 	This file contains XML comments that are shared between files in the HDCS solutions (both
 	core and client library). It is organized by parameter type to provide a distinction between
@@ -10,161 +11,162 @@
 	
 	********************************************************************************************* -->
 
-	<OutputFormat>
-		<param name="format">Assembly options</param>
-	</OutputFormat>
+  <OutputFormat>
+    <param name="format">Assembly options</param>
+  </OutputFormat>
 
-	<InterviewFormat>
-		<param name="format">
-			The format of the interview displayed to the end user.
-			The appearance and performance of your interview will vary based on which type of interview you choose from the following options:
-		</param>
-	</InterviewFormat>
+  <InterviewFormat>
+    <param name="format">
+      The format of the interview displayed to the end user.
+      The appearance and performance of your interview will vary based on which type of interview you choose from the following options:
+    </param>
+  </InterviewFormat>
 
-	<string>
-		<param name="subscriberID">The Subscriber account identifier, found in the Administration Portal. The subscriber ID corresponds to the company or website subscribing to the service, not an individual end user.</param>
-		<param name="signingKey">The Subscriber's unique signing key.</param>
-		<param name="hmac">This is a hash key used to authenticate the request made to HotDocs Core Services. </param>
-		<param name="hostAddress">The URL for the HotDocs Cloud Services web service.</param>
-		<param name="servicePath"></param>
-		<param name="proxyServerAddress"></param>
+  <string>
+    <param name="subscriberID">The Subscriber account identifier, found in the Administration Portal. The subscriber ID corresponds to the company or website subscribing to the service, not an individual end user.</param>
+    <param name="signingKey">The Subscriber's unique signing key.</param>
+    <param name="hmac">This is a hash key used to authenticate the request made to HotDocs Core Services. </param>
+    <param name="hostAddress">The URL for the HotDocs Cloud Services web service.</param>
+    <param name="servicePath"></param>
+    <param name="proxyServerAddress"></param>
 
-		<param name="packageID">
-			A unique identifier for the template package in which the desired template is found.
-			Although you could use any string value that uniquely identifies the package,
-			a GUID is recommended since every template package (including new versions of existing template packages)
-			must have a unique ID. (If you create a new package but use the same ID as an existing package,
-			HotDocs Core Services may continue using the old package if it is still in its cache.)
-		</param>
+    <param name="packageID">
+      A unique identifier for the template package in which the desired template is found.
+      Although you could use any string value that uniquely identifies the package,
+      a GUID is recommended since every template package (including new versions of existing template packages)
+      must have a unique ID. (If you create a new package but use the same ID as an existing package,
+      HotDocs Core Services may continue using the old package if it is still in its cache.)
+    </param>
 
-		<!-- TODO: These two parameters seem like they should have the same name. -->
-		<param name="templateID">The file name of the template within the specified package. If this parameter is an empty string, HotDocs Core Services will use the package's main template.</param>
-		<param name="templateName">The file name of the template within the specified package. If this parameter is an empty string, HotDocs Core Services will use the package's main template.</param>
+    <!-- TODO: These two parameters seem like they should have the same name. -->
+    <param name="templateID">The file name of the template within the specified package. If this parameter is an empty string, HotDocs Core Services will use the package's main template.</param>
+    <param name="templateName">The file name of the template within the specified package. If this parameter is an empty string, HotDocs Core Services will use the package's main template.</param>
 
-		<param name="answers">An array of answer sets to be used with this call. The answer sets are overlaid on top of one another in sequence; HotDocs Core Services begins with an empty answer set, and then overlays each answer set on top of it in sequence. For example, if two answer sets contain answers for the same variable, the answer from the last (highest-indexed) answer set will be used. </param>
-		<param name="answersDTO">An array of answer sets to be used with this call. The answer sets are overlaid on top of one another in sequence; HotDocs Core Services begins with an empty answer set, and then overlays each answer set on top of it in sequence. For example, if two answer sets contain answers for the same variable, the answer from the last (highest-indexed) answer set will be used. </param>
+    <param name="answers">An array of answer sets to be used with this call. The answer sets are overlaid on top of one another in sequence; HotDocs Core Services begins with an empty answer set, and then overlays each answer set on top of it in sequence. For example, if two answer sets contain answers for the same variable, the answer from the last (highest-indexed) answer set will be used. </param>
+    <param name="answersDTO">An array of answer sets to be used with this call. The answer sets are overlaid on top of one another in sequence; HotDocs Core Services begins with an empty answer set, and then overlays each answer set on top of it in sequence. For example, if two answer sets contain answers for the same variable, the answer from the last (highest-indexed) answer set will be used. </param>
 
-		<param name="templatePackage">This is the template package. Most of the time, it will be null unless a previous call to HotDocs Core Services has indicated that the package is not found in its cache. In that case, you would repeat the same request but include the package the second time. </param>
+    <param name="templatePackage">This is the template package. Most of the time, it will be null unless a previous call to HotDocs Core Services has indicated that the package is not found in its cache. In that case, you would repeat the same request but include the package the second time. </param>
 
-		<param name="markedVariables">This is an array of variable names that should be "marked" in the interview. By default, the prompts for marked variables are displayed in a different color than prompts for non-marked variables. For example, if an answer set is missing an answer for a variable required by a template, you can add that variable to this array so the user will have a visual indication of which variables need to be answered. (Note: Silverlight interviews do not distinguish between "marked" and "unmarked" variables.)</param>
-		<param name="tempImageUrl">This is the URL where the interview will find template-specific images. For example, if a dialog contains an image dialog element, that image file will need to be found at this URL. (The result of a call to GetInterview will include each of these images, if applicable, which your application will need to save and make available at the URL you specify in this parameter.) </param>
+    <param name="markedVariables">This is an array of variable names that should be "marked" in the interview. By default, the prompts for marked variables are displayed in a different color than prompts for non-marked variables. For example, if an answer set is missing an answer for a variable required by a template, you can add that variable to this array so the user will have a visual indication of which variables need to be answered. (Note: Silverlight interviews do not distinguish between "marked" and "unmarked" variables.)</param>
+    <param name="tempImageUrl">This is the URL where the interview will find template-specific images. For example, if a dialog contains an image dialog element, that image file will need to be found at this URL. (The result of a call to GetInterview will include each of these images, if applicable, which your application will need to save and make available at the URL you specify in this parameter.) </param>
 
-		<param name="template">Template to assemble</param>
-		<param name="answersSource">Source of answersets</param>
+    <param name="template">Template to assemble</param>
+    <param name="answersSource">Source of answersets</param>
 
-		<param name="AssembleDocumentOptions">
-			<param name="options">Assembly options</param>
-		</param>
+    <param name="AssembleDocumentOptions">
+      <param name="options">Assembly options</param>
+    </param>
 
-		<param name="GetInterviewOptions">
-			<param name="options">Interview options</param>
-		</param>
+    <param name="GetInterviewOptions">
+      <param name="options">Interview options</param>
+    </param>
 
-		<param name="billingRef">This parameter lets you specify information that will be included in usage logs for this call. For example, you can use a string to uniquely identify the end user that initiated the request and/or the context in which the call was made. When you review usage logs, you can then see which end users initiated each request. That information could then be used to pass costs on to those end users if desired. </param>
-		<!--<param name="logRef">This parameter lets you specify information that will be included in usage logs for this call. For example, you can use a string to uniquely identify the end user that initiated the request and/or the context in which the call was made. When you review usage logs, you can then see which end users initiated each request. That information could then be used to pass costs on to those end users if desired. </param>-->
-		<param name="logRef">A string identifying the current user or transcation, to be included in HotDocs log entries. This is necessary if you wish to track log entries back to specific users during analysis or troubleshooting.</param>
+    <param name="billingRef">This parameter lets you specify information that will be included in usage logs for this call. For example, you can use a string to uniquely identify the end user that initiated the request and/or the context in which the call was made. When you review usage logs, you can then see which end users initiated each request. That information could then be used to pass costs on to those end users if desired. </param>
+    <!--<param name="logRef">This parameter lets you specify information that will be included in usage logs for this call. For example, you can use a string to uniquely identify the end user that initiated the request and/or the context in which the call was made. When you review usage logs, you can then see which end users initiated each request. That information could then be used to pass costs on to those end users if desired. </param>-->
+    <param name="logRef">A string identifying the current user or transcation, to be included in HotDocs log entries. This is necessary if you wish to track log entries back to specific users during analysis or troubleshooting.</param>
 
-		<param name="includeDialogs">This indicates whether or not the returned data should include information about dialogs and their contents.</param>
+    <param name="includeDialogs">This indicates whether or not the returned data should include information about dialogs and their contents.</param>
 
-		<param name="endpointAddress">Optional: Overrides the default endpoint address. e.g. https://127.0.0.1/Core.svc</param>
+    <param name="endpointAddress">Optional: Overrides the default endpoint address. e.g. https://127.0.0.1/Core.svc</param>
 
-		<!-- Template Class -->
-		
-		<param name="packageFilePath">A file path for the template package in case it needs to be uploaded.</param>
-		<param name="packageStream">A stream containing the template package in case it needs to be uploaded.</param>
-		
-		<param name="packageSource">
-			The template package to be used with the request.
-			If the package does not already exist in the HotDocs Core Services cache, it will be uploaded to the service.
-		</param>
-		<param name="packageFile">
-			The template package to be used with the request.
-			If the package does not already exist in the HotDocs Core Services cache, it will be uploaded to the service.
-		</param>
-		
-		<param name="switches">
-			Contains the command line options to be used. For example, the host application
-			could examine this property to determine if any switches indicate that the interview should not be displayed.
-			Switches may be set in the template or by the host application. Switches are interpreted by the
-			host application. The Template class provides helper properties for interpreting switches. These
-			properties are also accessed by the WorkSession class.
-		</param>
-		<param name="key">Uniquely identifies the template. A key is necessary for templates without a fixed file name,
-			such as when stored in a DMS or other database. An empty string may be used for templates with a fixed file name.
-		</param>
-	</string>
+    <!-- Template Class -->
 
-	<Dictionary>
-		<param name="settings">This is a set of name/value pairs with HotDocs settings required by this call. For example, if you need to specify the format to use for unanswered variables, you can set the UnansweredFormat setting. Click here for a complete list of available settings. </param>
-	</Dictionary>
+    <param name="packageFilePath">A file path for the template package in case it needs to be uploaded.</param>
+    <param name="packageStream">A stream containing the template package in case it needs to be uploaded.</param>
 
-	<IEnumerable>
-		<param name="answerFiles">Answer files</param>
-	</IEnumerable>
-	
-	<bool>
-		<param name="forceSendPackage">
-			A value that indicates if the package will be uploaded without first checking to see if it is needed.
-			Set this value to true sparingly; if it is true and the package was not needed after all, HotDocs Core Services will return an exception.
-		</param>
-		<param name="forceUploadPackage">
-			A value that indicates if the package will be uploaded without first checking to see if it is needed.
-			Set this value to true sparingly; if it is true and the package was not needed after all, HotDocs Core Services will return an exception.
-		</param>
-		<param name="closeStream">A value that indicates whether or not the client should close the stream after reading it.</param>
-	</bool>
+    <param name="packageSource">
+      The template package to be used with the request.
+      If the package does not already exist in the HotDocs Core Services cache, it will be uploaded to the service.
+    </param>
+    <param name="packageFile">
+      The template package to be used with the request.
+      If the package does not already exist in the HotDocs Core Services cache, it will be uploaded to the service.
+    </param>
 
-	<Template>
-		<param name="template">
-			The template to use with the request.
-		</param>
-	</Template>
+    <param name="switches">
+      Contains the command line options to be used. For example, the host application
+      could examine this property to determine if any switches indicate that the interview should not be displayed.
+      Switches may be set in the template or by the host application. Switches are interpreted by the
+      host application. The Template class provides helper properties for interpreting switches. These
+      properties are also accessed by the WorkSession class.
+    </param>
+    <param name="key">
+      Uniquely identifies the template. A key is necessary for templates without a fixed file name,
+      such as when stored in a DMS or other database. An empty string may be used for templates with a fixed file name.
+    </param>
+  </string>
 
-	<AnswersSource>
-		<param name="answersSource">
-			The answers to use with the request.
-		</param>
-	</AnswersSource>
+  <Dictionary>
+    <param name="settings">This is a set of name/value pairs with HotDocs settings required by this call. For example, if you need to specify the format to use for unanswered variables, you can set the UnansweredFormat setting. Click here for a complete list of available settings. </param>
+  </Dictionary>
 
-	<AssembleDocumentOptions>
-		<param name="options">
-			The options to use when assembling the document.
-		</param>
-	</AssembleDocumentOptions>
+  <IEnumerable>
+    <param name="answerFiles">Answer files</param>
+  </IEnumerable>
 
-	<GetInterviewOptions>
-		<param name="options">
-			The options to use when getting an interview.
-		</param>
-	</GetInterviewOptions>
+  <bool>
+    <param name="forceSendPackage">
+      A value that indicates if the package will be uploaded without first checking to see if it is needed.
+      Set this value to true sparingly; if it is true and the package was not needed after all, HotDocs Core Services will return an exception.
+    </param>
+    <param name="forceUploadPackage">
+      A value that indicates if the package will be uploaded without first checking to see if it is needed.
+      Set this value to true sparingly; if it is true and the package was not needed after all, HotDocs Core Services will return an exception.
+    </param>
+    <param name="closeStream">A value that indicates whether or not the client should close the stream after reading it.</param>
+  </bool>
 
-	<DateTime>
-		<param name="timestamp">This is the time (in UTC) when the call is being made. If it is more than 15 minutes different than the HotDocs Core Services service's time, the request will fail. This is useful for synchronizing time stamps between servers and for security purposes to limit play-back attempts. </param>
-	</DateTime>
+  <Template>
+    <param name="template">
+      The template to use with the request.
+    </param>
+  </Template>
 
-	<BinaryObject>
-		<param name="templatePackage">
-			The template package to use with the request.
-		</param>
-	</BinaryObject>
+  <AnswersSource>
+    <param name="answersSource">
+      The answers to use with the request.
+    </param>
+  </AnswersSource>
 
-	<PackageSource>
-		<param name="packageSource">The package to use with the request.</param>
-	</PackageSource>
+  <AssembleDocumentOptions>
+    <param name="options">
+      The options to use when assembling the document.
+    </param>
+  </AssembleDocumentOptions>
 
-	<Stream>
-		<param name="packageStream">The stream that contains the template package to use.</param>
-	</Stream>
+  <GetInterviewOptions>
+    <param name="options">
+      The options to use when getting an interview.
+    </param>
+  </GetInterviewOptions>
 
-	<intAry>
-		<param name="rptIdx">An array of repeat indexes for a specific answer value.</param>
-	</intAry>
+  <DateTime>
+    <param name="timestamp">This is the time (in UTC) when the call is being made. If it is more than 15 minutes different than the HotDocs Core Services service's time, the request will fail. This is useful for synchronizing time stamps between servers and for security purposes to limit play-back attempts. </param>
+  </DateTime>
 
-	<Type>
-		<param name="conversionType">The type of value to convert to.</param>
-	</Type>
-	<IFormatProvider>
-		<param name="provider">The format provider used during the conversion.</param>
-	</IFormatProvider>
+  <BinaryObject>
+    <param name="templatePackage">
+      The template package to use with the request.
+    </param>
+  </BinaryObject>
+
+  <PackageSource>
+    <param name="packageSource">The package to use with the request.</param>
+  </PackageSource>
+
+  <Stream>
+    <param name="packageStream">The stream that contains the template package to use.</param>
+  </Stream>
+
+  <intAry>
+    <param name="rptIdx">An array of repeat indexes for a specific answer value.</param>
+  </intAry>
+
+  <Type>
+    <param name="conversionType">The type of value to convert to.</param>
+  </Type>
+  <IFormatProvider>
+    <param name="provider">The format provider used during the conversion.</param>
+  </IFormatProvider>
 
 </Help>

@@ -3,25 +3,22 @@ using System.Runtime.Serialization;
 namespace HotDocs.Sdk.Server.Contracts
 {
     /// <summary>
-    /// The <c>InterviewFormat</c> enumeration is used when referring to the types of browser-based interviews supported by HotDocs Server.
+    ///     The <c>InterviewFormat</c> enumeration is used when referring to the types of browser-based interviews supported by
+    ///     HotDocs Server.
     /// </summary>
     [DataContract]
     public enum InterviewFormat
     {
         /// <summary>
-        /// 
         /// </summary>
-        [EnumMember]
-        JavaScript,
+        [EnumMember] JavaScript,
+
         /// <summary>
-        /// 
         /// </summary>
-        [EnumMember]
-        Silverlight,
+        [EnumMember] Silverlight,
+
         /// <summary>
-        /// 
         /// </summary>
-        [EnumMember]
-        Unspecified
+        [EnumMember] Unspecified
     }
 }

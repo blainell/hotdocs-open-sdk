@@ -5,237 +5,242 @@
 using System;
 using System.Configuration;
 using System.IO;
-using System.Security.Cryptography;
+using System.Net.Mime;
 using System.Text;
 
 namespace HotDocs.Sdk
 {
-	/// <summary>
-	/// The <c>Util</c> class contains many helper methods and properties used by other 
-	/// classes in the Sdk, including HotDocs.Sdk.Server and SamplePortal.
-	/// </summary>
-	public static class Util
-	{
-		internal static string EncryptString(string textToEncrypt)
-		{
-			byte[] key = GetPersistentEncryptionKey();
-			byte[] initializationVector = GetInitializationVector();
-			byte[] encryptedBuf = UtilAes.EncryptStringToBytes_Aes(textToEncrypt, key, initializationVector);
-			return Convert.ToBase64String(encryptedBuf);
-		}
+    /// <summary>
+    ///     The <c>Util</c> class contains many helper methods and properties used by other
+    ///     classes in the Sdk, including HotDocs.Sdk.Server and SamplePortal.
+    /// </summary>
+    public static class Util
+    {
+        private static string s_PersistentEncryptionKey;
 
-		internal static string DecryptString(string textToDecrypt)
-		{
-			byte[] key = GetPersistentEncryptionKey();
-			byte[] initializationVector = GetInitializationVector();
-			byte[] encryptedBuffer = Convert.FromBase64String(textToDecrypt.Replace(" ", "+"));
-			return UtilAes.DecryptStringFromBytes_Aes(encryptedBuffer, key, initializationVector);
-		}
+        internal static string EncryptString(string textToEncrypt)
+        {
+            var key = GetPersistentEncryptionKey();
+            var initializationVector = GetInitializationVector();
+            var encryptedBuf = UtilAes.EncryptStringToBytes_Aes(textToEncrypt, key, initializationVector);
+            return Convert.ToBase64String(encryptedBuf);
+        }
 
-		/// <summary>
-		/// <c>ReadConfigurationString</c> retrieves the string value associated with <c>settingName</c>
-		/// </summary>
-		/// <param name="settingName">the name of the setting</param>
-		/// <returns>the string value associated with <c>settingName</c></returns>
-		public static string ReadConfigurationString(string settingName) {
-			string sTemp = ConfigurationManager.AppSettings[settingName];
-			return (String.IsNullOrWhiteSpace(sTemp)) ? null : sTemp;
-		}
+        internal static string DecryptString(string textToDecrypt)
+        {
+            var key = GetPersistentEncryptionKey();
+            var initializationVector = GetInitializationVector();
+            var encryptedBuffer = Convert.FromBase64String(textToDecrypt.Replace(" ", "+"));
+            return UtilAes.DecryptStringFromBytes_Aes(encryptedBuffer, key, initializationVector);
+        }
 
-		/// <summary>
-		/// <c>ReadConfigurationEnum&lt;TEnum&gt;</c> retrieves the enumerated value associated
-		/// with <c>settingName</c>
-		/// </summary>
-		/// <typeparam name="TEnum">the enumeration type of the setting</typeparam>
-		/// <param name="settingName">the name of the setting</param>
-		/// <param name="defaultValue">the default value of the setting</param>
-		/// <returns>the enumerated value associated with <c>settingName</c></returns>
-		public static TEnum ReadConfigurationEnum<TEnum>(string settingName, TEnum defaultValue) where TEnum : struct
-		{
-			string sTemp = ReadConfigurationString(settingName);
-			if (sTemp == null)
-				return defaultValue;
-			TEnum result;
-			if (Enum.TryParse<TEnum>(sTemp, true, out result))
-				return result;
-			// else
-			throw new ApplicationException("Invalid configuration setting " + settingName);
-		}
+        /// <summary>
+        ///     <c>ReadConfigurationString</c> retrieves the string value associated with <c>settingName</c>
+        /// </summary>
+        /// <param name="settingName">the name of the setting</param>
+        /// <returns>the string value associated with <c>settingName</c></returns>
+        public static string ReadConfigurationString(string settingName)
+        {
+            var sTemp = ConfigurationManager.AppSettings[settingName];
+            return string.IsNullOrWhiteSpace(sTemp) ? null : sTemp;
+        }
 
-		internal static Tristate ReadConfigurationTristate(string settingName, Tristate defaultValue)
-		{
-			return ReadConfigurationEnum<Tristate>(settingName, defaultValue);
-		}
+        /// <summary>
+        ///     <c>ReadConfigurationEnum&lt;TEnum&gt;</c> retrieves the enumerated value associated
+        ///     with <c>settingName</c>
+        /// </summary>
+        /// <typeparam name="TEnum">the enumeration type of the setting</typeparam>
+        /// <param name="settingName">the name of the setting</param>
+        /// <param name="defaultValue">the default value of the setting</param>
+        /// <returns>the enumerated value associated with <c>settingName</c></returns>
+        public static TEnum ReadConfigurationEnum<TEnum>(string settingName, TEnum defaultValue) where TEnum : struct
+        {
+            var sTemp = ReadConfigurationString(settingName);
+            if (sTemp == null)
+                return defaultValue;
+            TEnum result;
+            if (Enum.TryParse(sTemp, true, out result))
+                return result;
+            // else
+            throw new ApplicationException("Invalid configuration setting " + settingName);
+        }
 
-		internal static bool ReadConfigurationBoolean(string settingName, bool defaultValue)
-		{
-			string sTemp = ReadConfigurationString(settingName);
-			if (sTemp == null)
-				return defaultValue;
-			bool result;
-			if (Boolean.TryParse(sTemp, out result))
-				return result;
-			// else
-			throw new ApplicationException("Invalid configuration setting " + settingName);
-		}
+        internal static Tristate ReadConfigurationTristate(string settingName, Tristate defaultValue)
+        {
+            return ReadConfigurationEnum(settingName, defaultValue);
+        }
 
-		internal static int ReadConfigurationInt(string settingName, int defaultValue)
-		{
-			string sTemp = ReadConfigurationString(settingName);
-			if (sTemp == null)
-				return defaultValue;
-			int result;
-			if (Int32.TryParse(sTemp, out result))
-				return result;
-			// else
-			throw new ApplicationException("Invalid configuration setting " + settingName);
-		}
+        internal static bool ReadConfigurationBoolean(string settingName, bool defaultValue)
+        {
+            var sTemp = ReadConfigurationString(settingName);
+            if (sTemp == null)
+                return defaultValue;
+            bool result;
+            if (bool.TryParse(sTemp, out result))
+                return result;
+            // else
+            throw new ApplicationException("Invalid configuration setting " + settingName);
+        }
 
-		private static string s_PersistentEncryptionKey = null;
+        internal static int ReadConfigurationInt(string settingName, int defaultValue)
+        {
+            var sTemp = ReadConfigurationString(settingName);
+            if (sTemp == null)
+                return defaultValue;
+            int result;
+            if (int.TryParse(sTemp, out result))
+                return result;
+            // else
+            throw new ApplicationException("Invalid configuration setting " + settingName);
+        }
 
-		private static byte[] GetPersistentEncryptionKey()
-		{
-			if (s_PersistentEncryptionKey == null)
-			{
-				s_PersistentEncryptionKey = ReadConfigurationString("EncryptionKey");
-				if (s_PersistentEncryptionKey == null)
-				{
-					throw new Exception("EncryptionKey not set in web.config or explicitly by code.");
-				}
-			}
-			return GetFixedSizeByteArray(s_PersistentEncryptionKey, 16);
-		}
+        private static byte[] GetPersistentEncryptionKey()
+        {
+            if (s_PersistentEncryptionKey == null)
+            {
+                s_PersistentEncryptionKey = ReadConfigurationString("EncryptionKey");
+                if (s_PersistentEncryptionKey == null)
+                {
+                    throw new Exception("EncryptionKey not set in web.config or explicitly by code.");
+                }
+            }
+            return GetFixedSizeByteArray(s_PersistentEncryptionKey, 16);
+        }
 
-		/// <summary>
-		/// Allows setting the PersistentEncryptionKey in cases where it is not being set from web.config
-		/// </summary>
-		/// <param name="persistentEncryptionKey"></param>
-		public static void SetPersistentEncryptionKey(string persistentEncryptionKey)
-		{
-			s_PersistentEncryptionKey = persistentEncryptionKey;
-		}
+        /// <summary>
+        ///     Allows setting the PersistentEncryptionKey in cases where it is not being set from web.config
+        /// </summary>
+        /// <param name="persistentEncryptionKey"></param>
+        public static void SetPersistentEncryptionKey(string persistentEncryptionKey)
+        {
+            s_PersistentEncryptionKey = persistentEncryptionKey;
+        }
 
-		private static byte[] GetInitializationVector()
-		{
-			return GetFixedSizeByteArray("This is the initialization vector.", 16);
-		}
+        private static byte[] GetInitializationVector()
+        {
+            return GetFixedSizeByteArray("This is the initialization vector.", 16);
+        }
 
-		private static byte[] GetFixedSizeByteArray(string content, int byteSize)
-		{
-			byte[] keyBuf = UnicodeEncoding.UTF8.GetBytes(content);
-			int size = byteSize;
-			byte[] keyResult = new byte[size];
-			int len = keyBuf.Length;
-			for (int i = 0; i < size; i++)
-				keyResult[i] = i < len ? keyBuf[i] : (byte)'_';
-			return keyResult;
-		}
+        private static byte[] GetFixedSizeByteArray(string content, int byteSize)
+        {
+            var keyBuf = Encoding.UTF8.GetBytes(content);
+            var size = byteSize;
+            var keyResult = new byte[size];
+            var len = keyBuf.Length;
+            for (var i = 0; i < size; i++)
+                keyResult[i] = i < len ? keyBuf[i] : (byte) '_';
+            return keyResult;
+        }
 
-		/// <summary>
-		/// This method returns the MIME type of the specified file.
-		/// </summary>
-		/// <param name="fileName">The file name (including extension) of the file. (The MIME type is determined from the extension, so the file name must have an extension.)</param>
-		/// <param name="onlyImages">Indicates whether or not all known MIME types should be checked, or only a small number of supported image MIME types.</param>
-		/// <returns>A string containing the MIME type for the file.</returns>
-		public static string GetMimeType(string fileName, bool onlyImages = false)
-		{
-			// Validate parameters; fileName must not be null or empty.
-			if (string.IsNullOrEmpty(fileName))
-				throw new ArgumentNullException();
+        /// <summary>
+        ///     This method returns the MIME type of the specified file.
+        /// </summary>
+        /// <param name="fileName">
+        ///     The file name (including extension) of the file. (The MIME type is determined from the
+        ///     extension, so the file name must have an extension.)
+        /// </param>
+        /// <param name="onlyImages">
+        ///     Indicates whether or not all known MIME types should be checked, or only a small number of
+        ///     supported image MIME types.
+        /// </param>
+        /// <returns>A string containing the MIME type for the file.</returns>
+        public static string GetMimeType(string fileName, bool onlyImages = false)
+        {
+            // Validate parameters; fileName must not be null or empty.
+            if (string.IsNullOrEmpty(fileName))
+                throw new ArgumentNullException();
 
-			// Extract the file name extension from the fileName; throw an exception if the extension is missing.
-			string ext = Path.GetExtension(fileName).TrimStart('.').ToLower();
-			if (string.IsNullOrEmpty(ext))
-				throw new ArgumentNullException();
+            // Extract the file name extension from the fileName; throw an exception if the extension is missing.
+            var ext = Path.GetExtension(fileName).TrimStart('.').ToLower();
+            if (string.IsNullOrEmpty(ext))
+                throw new ArgumentNullException();
 
-			// Check to see if the extension is one of the known image types.
-			switch (ext)
-			{
-				case "jpg":
-				case "jpe":
-				case "jpeg":
-					return System.Net.Mime.MediaTypeNames.Image.Jpeg; // "image/jpeg"
-				case "png":
-				case "pnz":
-					return "image/png";
-				case "gif":
-					return System.Net.Mime.MediaTypeNames.Image.Gif; // "image/gif"
-				case "bmp":
-				case "dib":
-					return "image/bmp";
-			}
+            // Check to see if the extension is one of the known image types.
+            switch (ext)
+            {
+                case "jpg":
+                case "jpe":
+                case "jpeg":
+                    return MediaTypeNames.Image.Jpeg; // "image/jpeg"
+                case "png":
+                case "pnz":
+                    return "image/png";
+                case "gif":
+                    return MediaTypeNames.Image.Gif; // "image/gif"
+                case "bmp":
+                case "dib":
+                    return "image/bmp";
+            }
 
-			// If we are only checking for images, and we get this far, throw an exception.
-			// Otherwise, return the appropriate non-image MIME type.
-			if (onlyImages)
-				throw new System.ArgumentException("The requested filename was not a supported image.");
-			else
-				switch (ext)
-				{
-					case "xml":
-					case "cmp":
-					case "ans":
-					case "anx":
-						return System.Net.Mime.MediaTypeNames.Text.Xml;
-					case "xaml":
-						return "application/xaml+xml";
-					case "htm":
-					case "html":
-						return System.Net.Mime.MediaTypeNames.Text.Html; //"text/html"
-					case "css":
-						return "text/css";
-					case "js":
-						return "text/javascript";
-					case "vbs":
-						return "text/vbscript";
-					case "xap":
-						return "application/x-silverlight-app";
-					case "tif":
-					case "tiff":
-						return System.Net.Mime.MediaTypeNames.Image.Tiff; //"image/tiff"
-					case "jfif":
-						return "image/pjpeg";
-					case "ico":
-						return "image/x-icon";
-					case "svg":
-						return "image/svg+xml";
-					case "rtf":
-						return /*"application/msword"*/System.Net.Mime.MediaTypeNames.Application.Rtf; // See http://en.wikipedia.org/wiki/Rich_Text_Format
-					case "doc":
-					case "dot":
-						return "application/msword";
-					case "docx": // See http://blogs.msdn.com/b/vsofficedeveloper/archive/2008/05/08/office-2007-open-xml-mime-types.aspx
-						return "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
-					case "dotx":
-						return "application/vnd.openxmlformats-officedocument.wordprocessingml.template";
-					case "docm":
-						return "application/vnd.ms-word.document.macroEnabled.12";
-					case "dotm":
-						return "application/vnd.ms-word.template.macroEnabled.12";
-					case "wpd":
-						return "application/wordperfect";
-					case "pdf":
-					case "hpt":
-					case "hpd":
-						return System.Net.Mime.MediaTypeNames.Application.Pdf; // "application/pdf"
-					case "hft":
-						return "application/x-hotdocs-hft";
-					case "hfd":
-						return "application/x-hotdocs-hfd";
-					case "txt":
-					case "ttx":
-						return "text/plain";
-					case "zip":
-						return "application/zip";
-				}
-			return System.Net.Mime.MediaTypeNames.Application.Octet; // "application/octet-stream"
-		}
+            // If we are only checking for images, and we get this far, throw an exception.
+            // Otherwise, return the appropriate non-image MIME type.
+            if (onlyImages)
+                throw new ArgumentException("The requested filename was not a supported image.");
+            switch (ext)
+            {
+                case "xml":
+                case "cmp":
+                case "ans":
+                case "anx":
+                    return MediaTypeNames.Text.Xml;
+                case "xaml":
+                    return "application/xaml+xml";
+                case "htm":
+                case "html":
+                    return MediaTypeNames.Text.Html; //"text/html"
+                case "css":
+                    return "text/css";
+                case "js":
+                    return "text/javascript";
+                case "vbs":
+                    return "text/vbscript";
+                case "xap":
+                    return "application/x-silverlight-app";
+                case "tif":
+                case "tiff":
+                    return MediaTypeNames.Image.Tiff; //"image/tiff"
+                case "jfif":
+                    return "image/pjpeg";
+                case "ico":
+                    return "image/x-icon";
+                case "svg":
+                    return "image/svg+xml";
+                case "rtf":
+                    return /*"application/msword"*/ MediaTypeNames.Application.Rtf;
+                        // See http://en.wikipedia.org/wiki/Rich_Text_Format
+                case "doc":
+                case "dot":
+                    return "application/msword";
+                case "docx":
+                    // See http://blogs.msdn.com/b/vsofficedeveloper/archive/2008/05/08/office-2007-open-xml-mime-types.aspx
+                    return "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+                case "dotx":
+                    return "application/vnd.openxmlformats-officedocument.wordprocessingml.template";
+                case "docm":
+                    return "application/vnd.ms-word.document.macroEnabled.12";
+                case "dotm":
+                    return "application/vnd.ms-word.template.macroEnabled.12";
+                case "wpd":
+                    return "application/wordperfect";
+                case "pdf":
+                case "hpt":
+                case "hpd":
+                    return MediaTypeNames.Application.Pdf; // "application/pdf"
+                case "hft":
+                    return "application/x-hotdocs-hft";
+                case "hfd":
+                    return "application/x-hotdocs-hfd";
+                case "txt":
+                case "ttx":
+                    return "text/plain";
+                case "zip":
+                    return "application/zip";
+            }
+            return MediaTypeNames.Application.Octet; // "application/octet-stream"
+        }
+    }
 
-
-
-	}
-
-	#region Data sources configuration file section handler
+    #region Data sources configuration file section handler
 
     #endregion
 }

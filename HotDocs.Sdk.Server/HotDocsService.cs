@@ -7,7 +7,6 @@ using System.Net.Http.Headers;
 using System.Net.Mime;
 using System.Text;
 using System.Xml.Serialization;
-using HotDocs.Sdk.Cloud;
 using HotDocs.Sdk.Server.Contracts;
 
 namespace HotDocs.Sdk.Server
@@ -59,9 +58,9 @@ namespace HotDocs.Sdk.Server
             SubscriberId = subscriberId;
         }
 
-        private string HostAddress { get; set; }
-        private string SubscriberId { get; set; }
-        private string SigningKey { get; set; }
+        private string HostAddress { get; }
+        private string SubscriberId { get; }
+        private string SigningKey { get; }
 
         /// <summary>
         ///     Assemble a document from the given template, answers and settings.
@@ -166,7 +165,7 @@ namespace HotDocs.Sdk.Server
                             streams.Add(stream);
                             return stream;
                         },
-                        (new ContentType(result.Content.Headers.ContentType.ToString())).Boundary);
+                        new ContentType(result.Content.Headers.ContentType.ToString()).Boundary);
 
                     if (resultsStream.Position <= 0) return null;
 
@@ -227,7 +226,7 @@ namespace HotDocs.Sdk.Server
                                 "{0}/componentinfo/{1}/{2}/{3}?includedialogs={4}&billingref={5}{6}",
                                 HostAddress,
                                 SubscriberId, packageId, Uri.EscapeDataString(template.FileName), includeDialogs,
-                                Uri.EscapeDataString(logRef),GetRetrieveFromHubParam())),
+                                Uri.EscapeDataString(logRef), GetRetrieveFromHubParam())),
                     Method = HttpMethod.Get
                 };
 
@@ -381,7 +380,7 @@ namespace HotDocs.Sdk.Server
                             streams.Add(stream);
                             return stream;
                         },
-                        (new ContentType(result.Content.Headers.ContentType.ToString())).Boundary);
+                        new ContentType(result.Content.Headers.ContentType.ToString()).Boundary);
 
                     if (resultsStream.Position <= 0) return null;
 

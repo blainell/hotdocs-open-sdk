@@ -11,496 +11,516 @@ using System.Xml.Linq;
 namespace HotDocs.Sdk
 {
     /// <summary>
-	/// <c>TemplateManifest</c> contains the information needed for document assembly creation with
-	/// the specified template file, sometimes called the 'main template'
-	/// </summary>
-	public class TemplateManifest
-	{
-		private static readonly XNamespace s_namespace = "http://www.hotdocs.com/schemas/template_manifest/2012";
+    ///     <c>TemplateManifest</c> contains the information needed for document assembly creation with
+    ///     the specified template file, sometimes called the 'main template'
+    /// </summary>
+    public class TemplateManifest
+    {
+        private static readonly XNamespace s_namespace = "http://www.hotdocs.com/schemas/template_manifest/2012";
 
-		private struct TemplateFileLocation : IEquatable<TemplateFileLocation>
-		{
-			private readonly string _fileName;
-			private readonly TemplateLocation _fileLocation;
+        internal TemplateManifest()
+        {
+        }
 
-			internal TemplateFileLocation(string fileName, TemplateLocation location)
-			{
-				_fileName = fileName;
-				_fileLocation = location;
-			}
+        /// <summary>
+        ///     <c>HotDocsVersion</c> indicates the version of HotDocs that was used to create
+        ///     the current template manifest.
+        /// </summary>
+        public string HotDocsVersion { get; private set; }
 
-			internal TemplateFileLocation(string filePath)
-			{
-				_fileName = Path.GetFileName(filePath);
-				_fileLocation = new PathTemplateLocation(Path.GetDirectoryName(filePath));
-			}
+        /// <summary>
+        ///     <c>TemplateId</c> identifies the template to distinguish it from other templates.
+        /// </summary>
+        public string TemplateId { get; private set; }
 
-			internal string FileName
-			{
-				get { return _fileName; }
-			}
+        /// <summary>
+        ///     <c>FileName</c> indicates the file name of the current template.
+        /// </summary>
+        public string FileName { get; private set; }
 
-			internal TemplateLocation FileLocation
-			{
-				get { return _fileLocation; }
-			}
+        /// <summary>
+        ///     <c>EffectiveCmpFileName</c> is the component file name that is used
+        ///     for document assembly creation with the main template contained in
+        ///     this template manifest.
+        /// </summary>
+        public string EffectiveCmpFileName { get; private set; }
 
-			public override bool Equals(object obj)
-			{
-				return (obj != null) && (obj is TemplateFileLocation) && Equals((TemplateFileLocation)obj);
-			}
+        /// <summary>
+        ///     <c>ExpirationDate</c> indicates the current template cannot be used for
+        ///     document assembly creations after the given date, except
+        ///     possibly for a given number of <c>ExtensionDays</c>
+        /// </summary>
+        public DateTime? ExpirationDate { get; private set; }
 
-			/// <summary>
-			/// Overrides Object.GetHashCode
-			/// </summary>
-			/// <returns>a number of type int</returns>
-			public override int GetHashCode()
-			{
-				const int prime = 397;
-				int result = FileLocation.GetHashCode(); // hash for the location, combined with
-				result = (result * prime) ^ FileName.ToLower().GetHashCode(); // case-insensitive hash for the file name
-				return result;
-			}
+        /// <summary>
+        ///     <c>WarningDays</c> indicates for how many days prior to a document's expiration date
+        ///     users should be warned about using the current template for document assembly creations.
+        /// </summary>
+        public int? WarningDays { get; private set; }
 
-			#region IEquatable<TemplateFileLocation> Members
+        /// <summary>
+        ///     <c>ExtensionDays</c> indicates for how many days after the current templates
+        ///     expiration date has passed users can still perform document assembly creations.
+        /// </summary>
+        public int? ExtensionDays { get; private set; }
 
-			/// <summary>
-			/// Implements IEquatable.Equals
-			/// </summary>
-			/// <param name="other">The object being compared to 'this'</param>
-			/// <returns>boolean (true or false)</returns>
-			public bool Equals(TemplateFileLocation other)
-			{
-				return string.Equals(other.FileName, FileName, StringComparison.OrdinalIgnoreCase)
-					&& FileLocation.Equals(other.FileLocation);
-			}
+        /// <summary>
+        ///     <c>Title</c> provides the title for the main template
+        ///     in the current template manifest.
+        /// </summary>
+        public string Title { get; private set; }
 
-			#endregion
-		}
+        /// <summary>
+        ///     <c>Description</c> provides a description for the main template
+        ///     in the current template manifest.
+        /// </summary>
+        public string Description { get; private set; }
 
-		internal TemplateManifest() {}
+        /// <summary>
+        ///     <c>Variables</c> Contains the set of variables associated with the
+        ///     main template in the current template manifest.
+        /// </summary>
+        public VariableInfo[] Variables { get; private set; }
 
-		/// <summary>
-		/// <c>HotDocsVersion</c> indicates the version of HotDocs that was used to create
-		/// the current template manifest.
-		/// </summary>
-		public string HotDocsVersion { get; private set; }
+        /// <summary>
+        ///     <c>Dependencies</c> indicates a collection of files associated with
+        ///     the the main template of the template manifest.
+        /// </summary>
+        public Dependency[] Dependencies { get; private set; }
 
-		/// <summary>
-		/// <c>TemplateId</c> identifies the template to distinguish it from other templates.
-		/// </summary>
-		public string TemplateId { get; private set; }
+        /// <summary>
+        ///     <c>AdditionalFiles</c> lists additional files that may be required during interviews,
+        ///     assemblies or other processing associated with the template.
+        /// </summary>
+        public AdditionalFile[] AdditionalFiles { get; private set; }
 
-		/// <summary>
-		/// <c>FileName</c> indicates the file name of the current template.
-		/// </summary>
-		public string FileName { get; private set; }
+        /// <summary>
+        ///     <c>DataSources</c> lists the data sources (<c>DataSource</c> objects) from which the template
+        ///     may (at user request) attempt to retrieve data during an interview.
+        /// </summary>
+        public DataSource[] DataSources { get; private set; }
 
-		/// <summary>
-		/// <c>EffectiveCmpFileName</c> is the component file name that is used 
-		/// for document assembly creation with the main template contained in 
-		/// this template manifest.
-		/// </summary>
-		public string EffectiveCmpFileName { get; private set; }
+        /// <summary>
+        ///     <c>ParseManifest</c> parses the XML template manifest indicated by <paramref name="templatePath" />
+        ///     and creates a corresponding instance of <c>TemplateManifest</c>.
+        /// </summary>
+        /// <param name="templatePath">The full path of the template</param>
+        /// <param name="parseFlags">Specifies settings related to template manifest creation</param>
+        /// <returns>a reference to the newly created <c>TemplateManifest</c></returns>
+        public static TemplateManifest ParseManifest(string templatePath, ManifestParseFlags parseFlags)
+        {
+            var fileName = Path.GetFileName(templatePath);
+            TemplateLocation fileLoc = new PathTemplateLocation(Path.GetDirectoryName(templatePath));
 
-		/// <summary>
-		/// <c>ExpirationDate</c> indicates the current template cannot be used for 
-		/// document assembly creations after the given date, except
-		/// possibly for a given number of <c>ExtensionDays</c>
-		/// </summary>
-		public DateTime? ExpirationDate { get; private set; }
+            return ParseManifest(fileName, fileLoc, parseFlags);
+        }
 
-		/// <summary>
-		/// <c>WarningDays</c> indicates for how many days prior to a document's expiration date
-		/// users should be warned about using the current template for document assembly creations.
-		/// </summary>
-		public int? WarningDays { get; private set; }
+        /// <summary>
+        ///     <c>ParseManifest</c> parses the XML template manifest indicated by <paramref name="fileName" />
+        ///     and <paramref name="location" />, and creates a corresponding instance of <c>TemplateManifest</c>.
+        /// </summary>
+        /// <param name="fileName">The file name of the template</param>
+        /// <param name="location">The location of the template, such as a file system folder, a package file, a database, etc.</param>
+        /// <param name="parseFlags">Specifies settings related to template manifest creation</param>
+        /// <returns>a reference to the newly created <c>TemplateManifest</c></returns>
+        public static TemplateManifest ParseManifest(string fileName, TemplateLocation location,
+            ManifestParseFlags parseFlags)
+        {
+            var templateManifest = new TemplateManifest();
+            var baseTemplateLoc = new TemplateFileLocation(fileName, location);
 
-		/// <summary>
-		/// <c>ExtensionDays</c> indicates for how many days after the current templates 
-		/// expiration date has passed users can still perform document assembly creations.
-		/// </summary>
-		public int? ExtensionDays { get; private set; }
+            var variables = GetHashSet<VariableInfo>(parseFlags, ManifestParseFlags.ParseVariables);
+            var dependencies = GetHashSet<Dependency>(parseFlags, ManifestParseFlags.ParseDependencies);
+            var additionalFiles = GetHashSet<AdditionalFile>(parseFlags, ManifestParseFlags.ParseAdditionalFiles);
+            var dataSources = GetHashSet<DataSource>(parseFlags, ManifestParseFlags.ParseDataSources);
 
-		/// <summary>
-		/// <c>Title</c> provides the title for the main template
-		/// in the current template manifest.
-		/// </summary>
-		public string Title { get; private set; }
+            var templateQueue = new Queue<TemplateFileLocation>();
+            var processedTemplates = new HashSet<TemplateFileLocation>();
 
-		/// <summary>
-		/// <c>Description</c> provides a description for the main template
-		/// in the current template manifest.
-		/// </summary>
-		public string Description { get; private set; }
+            // Add the base template to the queue
+            templateQueue.Enqueue(baseTemplateLoc);
 
-		/// <summary>
-		/// <c>Variables</c> Contains the set of variables associated with the
-		/// main template in the current template manifest.
-		/// </summary>
-		public VariableInfo[] Variables { get; private set; }
+            while (templateQueue.Count > 0)
+            {
+                var templateFileLoc = templateQueue.Dequeue();
+                if (!processedTemplates.Contains(templateFileLoc))
+                {
+                    try
+                    {
+                        // TODO: Condider re-writing this using an XmlReader so that the entire document does not need to be allocated in a DOM. Doing so
+                        // should make processing template manifest files faster. For now using an XDocument to just get things done fast.
+                        XDocument manifest;
+                        using (
+                            var manifestStream =
+                                templateFileLoc.FileLocation.GetFile(GetManifestName(templateFileLoc.FileName)))
+                        {
+                            // Read the template manifest so that it can be parsed.
+                            manifest = XDocument.Load(manifestStream, LoadOptions.None);
+                        }
 
-		/// <summary>
-		/// <c>Dependencies</c> indicates a collection of files associated with
-		/// the the main template of the template manifest.
-		/// </summary>
-		public Dependency[] Dependencies { get; private set; }
+                        if (templateFileLoc.Equals(baseTemplateLoc))
+                        {
+                            // Process the root templateManifest element.
+                            templateManifest.HotDocsVersion = manifest.Root.Attribute("hotdocsVersion").Value;
+                            templateManifest.TemplateId = manifest.Root.Attribute("templateId").Value;
+                            templateManifest.FileName = manifest.Root.Attribute("fileName").Value;
+                            templateManifest.EffectiveCmpFileName = manifest.Root.Attribute("effectiveCmpFile").Value;
 
-		/// <summary>
-		/// <c>AdditionalFiles</c> lists additional files that may be required during interviews,
-		/// assemblies or other processing associated with the template.
-		/// </summary>
-		public AdditionalFile[] AdditionalFiles { get; private set; }
+                            if (manifest.Root.Attribute("expirationDate") != null)
+                            {
+                                templateManifest.ExpirationDate =
+                                    DateTime.Parse(manifest.Root.Attribute("expirationDate").Value);
 
-		/// <summary>
-		/// <c>DataSources</c> lists the data sources (<c>DataSource</c> objects) from which the template
-		/// may (at user request) attempt to retrieve data during an interview.
-		/// </summary>
-		public DataSource[] DataSources { get; private set; }
+                                if (manifest.Root.Attribute("warningDays") != null)
+                                {
+                                    templateManifest.WarningDays =
+                                        int.Parse(manifest.Root.Attribute("warningDays").Value);
+                                }
 
-		/// <summary>
-		/// <c>ParseManifest</c> parses the XML template manifest indicated by <paramref name="templatePath"/>
-		/// and creates a corresponding instance of <c>TemplateManifest</c>.
-		/// </summary>
-		/// <param name="templatePath">The full path of the template</param>
-		/// <param name="parseFlags">Specifies settings related to template manifest creation</param>
-		/// <returns>a reference to the newly created <c>TemplateManifest</c></returns>
-		public static TemplateManifest ParseManifest(string templatePath, ManifestParseFlags parseFlags)
-		{
-			string fileName = Path.GetFileName(templatePath);
-			TemplateLocation fileLoc = new PathTemplateLocation(Path.GetDirectoryName(templatePath));
+                                if (manifest.Root.Attribute("extensionDays") != null)
+                                {
+                                    templateManifest.ExtensionDays =
+                                        int.Parse(manifest.Root.Attribute("extensionDays").Value);
+                                }
+                            }
 
-			return ParseManifest(fileName, fileLoc, parseFlags);
-		}
+                            var titleElem = manifest.Root.Element(s_namespace + "title");
+                            templateManifest.Title = titleElem != null ? titleElem.Value.Trim() : string.Empty;
 
-		/// <summary>
-		/// <c>ParseManifest</c> parses the XML template manifest indicated by <paramref name="fileName"/>
-		/// and <paramref name="location"/>, and creates a corresponding instance of <c>TemplateManifest</c>.
-		/// </summary>
-		/// <param name="fileName">The file name of the template</param>
-		/// <param name="location">The location of the template, such as a file system folder, a package file, a database, etc.</param>
-		/// <param name="parseFlags">Specifies settings related to template manifest creation</param>
-		/// <returns>a reference to the newly created <c>TemplateManifest</c></returns>
-		public static TemplateManifest ParseManifest(string fileName, TemplateLocation location, ManifestParseFlags parseFlags)
-		{
-			TemplateManifest templateManifest = new TemplateManifest();
-			TemplateFileLocation baseTemplateLoc = new TemplateFileLocation(fileName, location);
+                            var descriptionElem = manifest.Root.Element(s_namespace + "description");
+                            templateManifest.Description = descriptionElem != null
+                                ? descriptionElem.Value.Trim()
+                                : string.Empty;
+                        }
 
-			HashSet<VariableInfo> variables = GetHashSet<VariableInfo>(parseFlags, ManifestParseFlags.ParseVariables);
-			HashSet<Dependency> dependencies = GetHashSet<Dependency>(parseFlags, ManifestParseFlags.ParseDependencies);
-			HashSet<AdditionalFile> additionalFiles = GetHashSet<AdditionalFile>(parseFlags, ManifestParseFlags.ParseAdditionalFiles);
-			HashSet<DataSource> dataSources = GetHashSet<DataSource>(parseFlags, ManifestParseFlags.ParseDataSources);
+                        if (variables != null)
+                        {
+                            // Process the variables element.
+                            var variablesElem = manifest.Root.Element(s_namespace + "variables");
+                            if (variablesElem != null)
+                            {
+                                // Add any not yet encountered variable to the variables collection.
+                                foreach (var variableElem in variablesElem.Elements(s_namespace + "variable"))
+                                {
+                                    ValueType valueType;
+                                    switch (variableElem.Attribute("type").Value)
+                                    {
+                                        case "text":
+                                            valueType = ValueType.Text;
+                                            break;
+                                        case "number":
+                                            valueType = ValueType.Number;
+                                            break;
+                                        case "date":
+                                            valueType = ValueType.Date;
+                                            break;
+                                        case "trueFalse":
+                                            valueType = ValueType.TrueFalse;
+                                            break;
+                                        case "multipleChoice":
+                                            valueType = ValueType.MultipleChoice;
+                                            break;
+                                        default:
+                                            valueType = ValueType.Unknown;
+                                            break;
+                                    }
+                                    variables.Add(new VariableInfo(variableElem.Attribute("name").Value, valueType));
+                                }
+                            }
+                        }
 
-			Queue<TemplateFileLocation> templateQueue = new Queue<TemplateFileLocation>();
-			HashSet<TemplateFileLocation> processedTemplates = new HashSet<TemplateFileLocation>();
+                        if (dependencies != null)
+                        {
+                            // Process the dependencies element.
+                            var dependenciesElem = manifest.Root.Element(s_namespace + "dependencies");
+                            if (dependenciesElem != null)
+                            {
+                                // Add any not yet encountered dependency to the dependencies collection.
+                                foreach (var dependencyElem in dependenciesElem.Elements(s_namespace + "dependency"))
+                                {
+                                    var hintPath = dependencyElem.Attribute("hintPath") != null
+                                        ? dependencyElem.Attribute("hintPath").Value
+                                        : null;
 
-			// Add the base template to the queue
-			templateQueue.Enqueue(baseTemplateLoc);
+                                    DependencyType dependencyType;
+                                    switch (dependencyElem.Attribute("type").Value)
+                                    {
+                                        case "baseCmpFile":
+                                            dependencyType = DependencyType.BaseCmpFile;
+                                            break;
+                                        case "pointedToCmpFile":
+                                            dependencyType = DependencyType.PointedToCmpFile;
+                                            break;
+                                        case "templateInsert":
+                                            dependencyType = DependencyType.TemplateInsert;
+                                            break;
+                                        case "clauseInsert":
+                                            dependencyType = DependencyType.ClauseInsert;
+                                            break;
+                                        case "clauseLibraryInsert":
+                                            dependencyType = DependencyType.ClauseLibraryInsert;
+                                            break;
+                                        case "imageInsert":
+                                            dependencyType = DependencyType.ImageInsert;
+                                            break;
+                                        case "interviewImage":
+                                            dependencyType = DependencyType.InterviewImage;
+                                            break;
+                                        case "assemble":
+                                            dependencyType = DependencyType.Assemble;
+                                            break;
+                                        case "publisherMapFile":
+                                            dependencyType = DependencyType.PublisherMapFile;
+                                            break;
+                                        case "userMapFile":
+                                            dependencyType = DependencyType.UserMapFile;
+                                            break;
+                                        case "additionalTemplate":
+                                            dependencyType = DependencyType.AdditionalTemplate;
+                                            break;
+                                        default:
+                                            throw new Exception(string.Format("Invalid dependency type '{0}'.",
+                                                dependencyElem.Attribute("type").Value));
+                                    }
+                                    dependencies.Add(new Dependency(dependencyElem.Attribute("fileName").Value, hintPath,
+                                        dependencyType));
+                                }
+                            }
+                        }
 
-			while (templateQueue.Count > 0)
-			{
-				TemplateFileLocation templateFileLoc = templateQueue.Dequeue();
-				if (!processedTemplates.Contains(templateFileLoc))
-				{
-					try
-					{
-						// TODO: Condider re-writing this using an XmlReader so that the entire document does not need to be allocated in a DOM. Doing so
-						// should make processing template manifest files faster. For now using an XDocument to just get things done fast.
-						XDocument manifest;
-						using (Stream manifestStream = templateFileLoc.FileLocation.GetFile(GetManifestName(templateFileLoc.FileName)))
-						{
-							// Read the template manifest so that it can be parsed.
-							manifest = XDocument.Load(manifestStream, LoadOptions.None);
-						}
+                        if (additionalFiles != null)
+                        {
+                            // Process the additionalFiles element.
+                            var additionalFilesElem = manifest.Root.Element(s_namespace + "additionalFiles");
+                            if (additionalFilesElem != null)
+                            {
+                                // Add any not yet encountered additionalFile to the additionalFiles collection.
+                                foreach (var fileElem in additionalFilesElem.Elements(s_namespace + "file"))
+                                {
+                                    additionalFiles.Add(new AdditionalFile(fileElem.Attribute("fileName").Value));
+                                }
+                            }
+                        }
 
-						if (templateFileLoc.Equals(baseTemplateLoc))
-						{
-							// Process the root templateManifest element.
-							templateManifest.HotDocsVersion = manifest.Root.Attribute("hotdocsVersion").Value;
-							templateManifest.TemplateId = manifest.Root.Attribute("templateId").Value;
-							templateManifest.FileName = manifest.Root.Attribute("fileName").Value;
-							templateManifest.EffectiveCmpFileName = manifest.Root.Attribute("effectiveCmpFile").Value;
+                        if (dataSources != null)
+                        {
+                            // Process the dataSources element.
+                            var dataSourcesElem = manifest.Root.Element(s_namespace + "dataSources");
+                            if (dataSourcesElem != null)
+                            {
+                                // Add any not yet encountered dataSource to the dataSources collection.
+                                foreach (var dataSourceElem in dataSourcesElem.Elements(s_namespace + "dataSource"))
+                                {
+                                    DataSourceType dataSourceType;
+                                    switch (dataSourceElem.Attribute("type").Value)
+                                    {
+                                        case "currentAnswerFile":
+                                            dataSourceType = DataSourceType.CurrentAnswerFile;
+                                            break;
+                                        case "answerFile":
+                                            dataSourceType = DataSourceType.AnswerFile;
+                                            break;
+                                        case "databaseComponent":
+                                            dataSourceType = DataSourceType.DatabaseComponent;
+                                            break;
+                                        case "custom":
+                                            dataSourceType = DataSourceType.Custom;
+                                            break;
+                                        default:
+                                            throw new Exception(string.Format("Invalid data source type '{0}'.",
+                                                dataSourceElem.Attribute("type").Value));
+                                    }
 
-							if (manifest.Root.Attribute("expirationDate") != null)
-							{
-								templateManifest.ExpirationDate = DateTime.Parse(manifest.Root.Attribute("expirationDate").Value);
+                                    var dataSourceFields = new List<DataSourceField>();
+                                    foreach (
+                                        var dataSourceFieldElem in
+                                            dataSourceElem.Elements(s_namespace + "dataSourceField"))
+                                    {
+                                        DataSourceFieldType fieldType;
+                                        switch (dataSourceFieldElem.Attribute("type").Value)
+                                        {
+                                            case "text":
+                                                fieldType = DataSourceFieldType.Text;
+                                                break;
+                                            case "number":
+                                                fieldType = DataSourceFieldType.Number;
+                                                break;
+                                            case "date":
+                                                fieldType = DataSourceFieldType.Date;
+                                                break;
+                                            case "trueFalse":
+                                                fieldType = DataSourceFieldType.TrueFalse;
+                                                break;
+                                            default:
+                                                throw new Exception(
+                                                    string.Format("Invalid data source field type '{0}'.",
+                                                        dataSourceFieldElem.Attribute("type").Value));
+                                        }
 
-								if (manifest.Root.Attribute("warningDays") != null)
-								{
-									templateManifest.WarningDays = int.Parse(manifest.Root.Attribute("warningDays").Value);
-								}
+                                        DataSourceBackfillType backfillType;
+                                        switch (dataSourceFieldElem.Attribute("backfill").Value)
+                                        {
+                                            case "never":
+                                                backfillType = DataSourceBackfillType.Never;
+                                                break;
+                                            case "always":
+                                                backfillType = DataSourceBackfillType.Always;
+                                                break;
+                                            case "prompt":
+                                                backfillType = DataSourceBackfillType.Prompt;
+                                                break;
+                                            case "doNotAllow":
+                                                backfillType = DataSourceBackfillType.DoNotAllow;
+                                                break;
+                                            default:
+                                                throw new Exception(
+                                                    string.Format("Invalid data source backfill type '{0}'.",
+                                                        dataSourceFieldElem.Attribute("backfill").Value));
+                                        }
 
-								if (manifest.Root.Attribute("extensionDays") != null)
-								{
-									templateManifest.ExtensionDays = int.Parse(manifest.Root.Attribute("extensionDays").Value);
-								}
-							}
+                                        var isKey = dataSourceFieldElem.Attribute("isKey") != null
+                                            ? Convert.ToBoolean(dataSourceFieldElem.Attribute("isKey").Value)
+                                            : false;
 
-							var titleElem = manifest.Root.Element(s_namespace + "title");
-							templateManifest.Title = (titleElem != null) ? titleElem.Value.Trim() : string.Empty;
+                                        dataSourceFields.Add(
+                                            new DataSourceField(dataSourceFieldElem.Attribute("sourceName").Value,
+                                                fieldType, backfillType, isKey));
+                                    }
+                                    dataSources.Add(new DataSource(dataSourceElem.Attribute("id").Value,
+                                        dataSourceElem.Attribute("name").Value,
+                                        dataSourceType, dataSourceFields.ToArray()));
+                                }
+                            }
+                        }
 
-							var descriptionElem = manifest.Root.Element(s_namespace + "description");
-							templateManifest.Description = (descriptionElem != null) ? descriptionElem.Value.Trim() : string.Empty;
-						}
+                        if ((parseFlags & ManifestParseFlags.ParseRecursively) == ManifestParseFlags.ParseRecursively)
+                        {
+                            // Add any referenced templates to the template queue.
+                            var dependenciesElem = manifest.Root.Element(s_namespace + "dependencies");
+                            if (dependenciesElem != null)
+                            {
+                                var templateDependencies =
+                                    from d in dependenciesElem.Elements(s_namespace + "dependency")
+                                    let type = d.Attribute("type").Value
+                                    where type == "templateInsert" || type == "additionalTemplate"
+                                    select d;
 
-						if (variables != null)
-						{
-							// Process the variables element.
-							var variablesElem = manifest.Root.Element(s_namespace + "variables");
-							if (variablesElem != null)
-							{
-								// Add any not yet encountered variable to the variables collection.
-								foreach (var variableElem in variablesElem.Elements(s_namespace + "variable"))
-								{
-									ValueType valueType;
-									switch (variableElem.Attribute("type").Value)
-									{
-										case "text":
-											valueType = ValueType.Text;
-											break;
-										case "number":
-											valueType = ValueType.Number;
-											break;
-										case "date":
-											valueType = ValueType.Date;
-											break;
-										case "trueFalse":
-											valueType = ValueType.TrueFalse;
-											break;
-										case "multipleChoice":
-											valueType = ValueType.MultipleChoice;
-											break;
-										default:
-											valueType = ValueType.Unknown;
-											break;
-									}
-									variables.Add(new VariableInfo(variableElem.Attribute("name").Value, valueType));
-								}
-							}
-						}
+                                foreach (var templateDependency in templateDependencies)
+                                {
+                                    templateQueue.Enqueue(GetDependencyFileLocation(baseTemplateLoc,
+                                        templateDependency.Attribute("hintPath") != null
+                                            ? templateDependency.Attribute("hintPath").Value
+                                            : null,
+                                        templateDependency.Attribute("fileName").Value));
+                                }
+                            }
 
-						if (dependencies != null)
-						{
-							// Process the dependencies element.
-							var dependenciesElem = manifest.Root.Element(s_namespace + "dependencies");
-							if (dependenciesElem != null)
-							{
-								// Add any not yet encountered dependency to the dependencies collection.
-								foreach (var dependencyElem in dependenciesElem.Elements(s_namespace + "dependency"))
-								{
-									string hintPath = (dependencyElem.Attribute("hintPath") != null) ? dependencyElem.Attribute("hintPath").Value : null;
+                            // Mark the template as processed so that its manifest will not get processed again.
+                            processedTemplates.Add(templateFileLoc);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        var errorText =
+                            string.Format(
+                                "Failed to read the manifest file for the template:\r\n\r\n     {0}     \r\n\r\n" +
+                                "The following error occurred:\r\n\r\n     {1}     ", templateFileLoc.FileName,
+                                e.Message);
+                        throw new Exception(errorText, e);
+                    }
+                }
+            }
 
-									DependencyType dependencyType;
-									switch (dependencyElem.Attribute("type").Value)
-									{
-										case "baseCmpFile":
-											dependencyType = DependencyType.BaseCmpFile;
-											break;
-										case "pointedToCmpFile":
-											dependencyType = DependencyType.PointedToCmpFile;
-											break;
-										case "templateInsert":
-											dependencyType = DependencyType.TemplateInsert;
-											break;
-										case "clauseInsert":
-											dependencyType = DependencyType.ClauseInsert;
-											break;
-										case "clauseLibraryInsert":
-											dependencyType = DependencyType.ClauseLibraryInsert;
-											break;
-										case "imageInsert":
-											dependencyType = DependencyType.ImageInsert;
-											break;
-										case "interviewImage":
-											dependencyType = DependencyType.InterviewImage;
-											break;
-										case "assemble":
-											dependencyType = DependencyType.Assemble;
-											break;
-										case "publisherMapFile":
-											dependencyType = DependencyType.PublisherMapFile;
-											break;
-										case "userMapFile":
-											dependencyType = DependencyType.UserMapFile;
-											break;
-										case "additionalTemplate":
-											dependencyType = DependencyType.AdditionalTemplate;
-											break;
-										default:
-											throw new Exception(string.Format("Invalid dependency type '{0}'.", dependencyElem.Attribute("type").Value));
-									}
-									dependencies.Add(new Dependency(dependencyElem.Attribute("fileName").Value, hintPath, dependencyType));
-								}
-							}
-						}
+            if (variables != null)
+                templateManifest.Variables = variables.ToArray();
 
-						if (additionalFiles != null)
-						{
-							// Process the additionalFiles element.
-							var additionalFilesElem = manifest.Root.Element(s_namespace + "additionalFiles");
-							if (additionalFilesElem != null)
-							{
-								// Add any not yet encountered additionalFile to the additionalFiles collection.
-								foreach (var fileElem in additionalFilesElem.Elements(s_namespace + "file"))
-								{
-									additionalFiles.Add(new AdditionalFile(fileElem.Attribute("fileName").Value));
-								}
-							}
-						}
+            if (dependencies != null)
+                templateManifest.Dependencies = dependencies.ToArray();
 
-						if (dataSources != null)
-						{
-							// Process the dataSources element.
-							var dataSourcesElem = manifest.Root.Element(s_namespace + "dataSources");
-							if (dataSourcesElem != null)
-							{
-								// Add any not yet encountered dataSource to the dataSources collection.
-								foreach (var dataSourceElem in dataSourcesElem.Elements(s_namespace + "dataSource"))
-								{
-									DataSourceType dataSourceType;
-									switch (dataSourceElem.Attribute("type").Value)
-									{
-										case "currentAnswerFile":
-											dataSourceType = DataSourceType.CurrentAnswerFile;
-											break;
-										case "answerFile":
-											dataSourceType = DataSourceType.AnswerFile;
-											break;
-										case "databaseComponent":
-											dataSourceType = DataSourceType.DatabaseComponent;
-											break;
-										case "custom":
-											dataSourceType = DataSourceType.Custom;
-											break;
-										default:
-											throw new Exception(string.Format("Invalid data source type '{0}'.", dataSourceElem.Attribute("type").Value));
-									}
+            if (additionalFiles != null)
+                templateManifest.AdditionalFiles = additionalFiles.ToArray();
 
-									List<DataSourceField> dataSourceFields = new List<DataSourceField>();
-									foreach (var dataSourceFieldElem in dataSourceElem.Elements(s_namespace + "dataSourceField"))
-									{
-										DataSourceFieldType fieldType;
-										switch (dataSourceFieldElem.Attribute("type").Value)
-										{
-											case "text":
-												fieldType = DataSourceFieldType.Text;
-												break;
-											case "number":
-												fieldType = DataSourceFieldType.Number;
-												break;
-											case "date":
-												fieldType = DataSourceFieldType.Date;
-												break;
-											case "trueFalse":
-												fieldType = DataSourceFieldType.TrueFalse;
-												break;
-											default:
-												throw new Exception(string.Format("Invalid data source field type '{0}'.", dataSourceFieldElem.Attribute("type").Value));
-										}
+            if (dataSources != null)
+                templateManifest.DataSources = dataSources.ToArray();
 
-										DataSourceBackfillType backfillType;
-										switch (dataSourceFieldElem.Attribute("backfill").Value)
-										{
-											case "never":
-												backfillType = DataSourceBackfillType.Never;
-												break;
-											case "always":
-												backfillType = DataSourceBackfillType.Always;
-												break;
-											case "prompt":
-												backfillType = DataSourceBackfillType.Prompt;
-												break;
-											case "doNotAllow":
-												backfillType = DataSourceBackfillType.DoNotAllow;
-												break;
-											default:
-												throw new Exception(string.Format("Invalid data source backfill type '{0}'.", dataSourceFieldElem.Attribute("backfill").Value));
-										}
+            return templateManifest;
+        }
 
-										bool isKey = (dataSourceFieldElem.Attribute("isKey") != null) ? Convert.ToBoolean(dataSourceFieldElem.Attribute("isKey").Value) : false;
+        private static HashSet<T> GetHashSet<T>(ManifestParseFlags parseFlags, ManifestParseFlags flag) where T : class
+        {
+            return (parseFlags & flag) == flag ? new HashSet<T>() : null;
+        }
 
-										dataSourceFields.Add(new DataSourceField(dataSourceFieldElem.Attribute("sourceName").Value, fieldType, backfillType, isKey));
-									}
-									dataSources.Add(new DataSource(dataSourceElem.Attribute("id").Value, dataSourceElem.Attribute("name").Value,
-										dataSourceType, dataSourceFields.ToArray()));
-								}
-							}
-						}
+        private static string GetManifestName(string itemName)
+        {
+            // If the passed file name appears to already be a manifest file name then just use it.
+            if (itemName.EndsWith(".manifest.xml", StringComparison.OrdinalIgnoreCase))
+                return itemName;
 
-						if ((parseFlags & ManifestParseFlags.ParseRecursively) == ManifestParseFlags.ParseRecursively)
-						{
-							// Add any referenced templates to the template queue.
-							var dependenciesElem = manifest.Root.Element(s_namespace + "dependencies");
-							if (dependenciesElem != null)
-							{
-								var templateDependencies = from d in dependenciesElem.Elements(s_namespace + "dependency")
-														   let type = d.Attribute("type").Value
-														   where type == "templateInsert" || type == "additionalTemplate"
-														   select d;
+            return itemName + ".manifest.xml";
+        }
 
-								foreach (var templateDependency in templateDependencies)
-								{
-									templateQueue.Enqueue(GetDependencyFileLocation(baseTemplateLoc,
-										(templateDependency.Attribute("hintPath") != null) ? templateDependency.Attribute("hintPath").Value : null,
-										templateDependency.Attribute("fileName").Value));
-								}
-							}
+        private static TemplateFileLocation GetDependencyFileLocation(TemplateFileLocation itemLoc, string hintPath,
+            string fileName)
+        {
+            if (!string.IsNullOrEmpty(hintPath))
+            {
+                // A hint path was specified. Use it to locate the dependent file.
+                return new TemplateFileLocation(Path.Combine(hintPath, fileName));
+            }
+            // No hint path was specified. Assume the dependent template is in the same folder as the main (item) template.
+            return new TemplateFileLocation(fileName, itemLoc.FileLocation);
+        }
 
-							// Mark the template as processed so that its manifest will not get processed again.
-							processedTemplates.Add(templateFileLoc);
-						}
-					}
-					catch (Exception e)
-					{
-						string errorText = String.Format("Failed to read the manifest file for the template:\r\n\r\n     {0}     \r\n\r\n" +
-							"The following error occurred:\r\n\r\n     {1}     ", templateFileLoc.FileName, e.Message);
-						throw new Exception(errorText, e);
-					}
-				}
-			}
+        private struct TemplateFileLocation : IEquatable<TemplateFileLocation>
+        {
+            internal TemplateFileLocation(string fileName, TemplateLocation location)
+            {
+                FileName = fileName;
+                FileLocation = location;
+            }
 
-			if (variables != null)
-				templateManifest.Variables = variables.ToArray();
+            internal TemplateFileLocation(string filePath)
+            {
+                FileName = Path.GetFileName(filePath);
+                FileLocation = new PathTemplateLocation(Path.GetDirectoryName(filePath));
+            }
 
-			if (dependencies != null)
-				templateManifest.Dependencies = dependencies.ToArray();
+            internal string FileName { get; }
 
-			if (additionalFiles != null)
-				templateManifest.AdditionalFiles = additionalFiles.ToArray();
+            internal TemplateLocation FileLocation { get; }
 
-			if (dataSources != null)
-				templateManifest.DataSources = dataSources.ToArray();
+            public override bool Equals(object obj)
+            {
+                return (obj != null) && obj is TemplateFileLocation && Equals((TemplateFileLocation) obj);
+            }
 
-			return templateManifest;
-		}
+            /// <summary>
+            ///     Overrides Object.GetHashCode
+            /// </summary>
+            /// <returns>a number of type int</returns>
+            public override int GetHashCode()
+            {
+                const int prime = 397;
+                var result = FileLocation.GetHashCode(); // hash for the location, combined with
+                result = (result*prime) ^ FileName.ToLower().GetHashCode(); // case-insensitive hash for the file name
+                return result;
+            }
 
-		private static HashSet<T> GetHashSet<T>(ManifestParseFlags parseFlags, ManifestParseFlags flag) where T : class
-		{
-			return ((parseFlags & flag) == flag) ? new HashSet<T>() : null;
-		}
+            #region IEquatable<TemplateFileLocation> Members
 
-		private static string GetManifestName(string itemName)
-		{
-			// If the passed file name appears to already be a manifest file name then just use it.
-			if (itemName.EndsWith(".manifest.xml", StringComparison.OrdinalIgnoreCase))
-				return itemName;
+            /// <summary>
+            ///     Implements IEquatable.Equals
+            /// </summary>
+            /// <param name="other">The object being compared to 'this'</param>
+            /// <returns>boolean (true or false)</returns>
+            public bool Equals(TemplateFileLocation other)
+            {
+                return string.Equals(other.FileName, FileName, StringComparison.OrdinalIgnoreCase)
+                       && FileLocation.Equals(other.FileLocation);
+            }
 
-			return itemName + ".manifest.xml";
-		}
-
-		private static TemplateFileLocation GetDependencyFileLocation(TemplateFileLocation itemLoc, string hintPath, string fileName)
-		{
-			if (!string.IsNullOrEmpty(hintPath))
-			{
-				// A hint path was specified. Use it to locate the dependent file.
-				return new TemplateFileLocation(Path.Combine(hintPath, fileName));
-			}
-			else
-			{
-				// No hint path was specified. Assume the dependent template is in the same folder as the main (item) template.
-				return new TemplateFileLocation(fileName, itemLoc.FileLocation);
-			}
-		}
-
-	}
+            #endregion
+        }
+    }
 }

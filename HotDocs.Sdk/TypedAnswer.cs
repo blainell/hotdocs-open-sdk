@@ -5,10 +5,11 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Xml;
 
 namespace HotDocs.Sdk
 {
-    class TypedAnswer<T> : Answer where T : IValue
+    internal class TypedAnswer<T> : Answer where T : IValue
     {
         private ValueNode<T> _value;
 
@@ -18,54 +19,49 @@ namespace HotDocs.Sdk
             _value = new ValueNode<T>();
         }
 
-        public override IValue GetValue(params int[] rptIdx)
-        {
-            return GetValue<T>(rptIdx);
-        }
-
         public override ValueType Type
         {
-            get
-            {
-                return _value.Type;
-            }
+            get { return _value.Type; }
         }
 
         public override bool IsRepeated
         {
-            get
-            {
-                return (_value.HasChildren || Depth > 0);
-            }
+            get { return _value.HasChildren || Depth > 0; }
         }
 
-        [Flags]
-        private enum IndexTrimOptions { Default = 0, TrimTrailingZeros = 1, TruncateLastIndex = 2 }
-        // the following are mutually exclusive, therefore this is NOT a [Flags] enumeration:
-        private enum GetNodeOptions { Default = 0, CreateNodesAsNecessary = 1, NoBubbleAndFlow = 2 }
+        /// <summary>
+        ///     IndexedValues provides a simple way to enumerate (and potentially modify) the values associated with an answer.
+        /// </summary>
+        public override IEnumerable<IndexedValue> IndexedValues
+        {
+            get { return GetIndexedValues(_value, RepeatIndices.Empty); }
+        }
+
+        public override IValue GetValue(params int[] rptIdx)
+        {
+            return GetValue<T>(rptIdx);
+        }
 
         public override bool GetAnswered(params int[] rptIdx)
         {
             // Get the requested node.  If it exists, return its answered status.
             // We trim trailing zeros from the indices because they don't affect the "answeredness" of a specific set of indices
             // (because individual values bubble up and flow down zero indices of value trees)
-            int[] indices = TrimIndices(IndexTrimOptions.TrimTrailingZeros, rptIdx);
-            ValueNode<T> val = GetNode(GetNodeOptions.Default, indices);
+            var indices = TrimIndices(IndexTrimOptions.TrimTrailingZeros, rptIdx);
+            var val = GetNode(GetNodeOptions.Default, indices);
             if (val != null)
                 return val.IsAnswered;
-            else
-                return false;
+            return false;
         }
 
         public override bool GetUserModifiable(params int[] rptIdx)
         {
             // Get the requested node.  If it exists, return whether it should be user modifiable in the UI.
-            int[] indices = TrimIndices(IndexTrimOptions.TrimTrailingZeros, rptIdx);
-            ValueNode<T> val = GetNode(GetNodeOptions.Default, indices);
+            var indices = TrimIndices(IndexTrimOptions.TrimTrailingZeros, rptIdx);
+            var val = GetNode(GetNodeOptions.Default, indices);
             if (val != null)
                 return val.IsUserModifiable;
-            else
-                return true;
+            return true;
         }
 
         public override int GetChildCount(params int[] rptIdx)
@@ -77,7 +73,7 @@ namespace HotDocs.Sdk
             // Note that this means you should pass in the repeat index of a (parent) repeat node,
             // not that of an individual iteration, to get the correct count.
 
-            int[] indices = TrimIndices(IndexTrimOptions.Default, rptIdx);
+            var indices = TrimIndices(IndexTrimOptions.Default, rptIdx);
             return GetCount(indices);
         }
 
@@ -89,13 +85,13 @@ namespace HotDocs.Sdk
 
             // This is the same as calling GetChildCount() from the parent index of rptIdx.
 
-            int[] indices = TrimIndices(IndexTrimOptions.TruncateLastIndex, rptIdx);
+            var indices = TrimIndices(IndexTrimOptions.TruncateLastIndex, rptIdx);
             return GetCount(indices);
         }
 
         private int GetCount(int[] indices)
         {
-            ValueNode<T> val = GetNode(GetNodeOptions.NoBubbleAndFlow, indices);
+            var val = GetNode(GetNodeOptions.NoBubbleAndFlow, indices);
             if (val == null) // exact requested node does not exist
             {
                 val = GetNode(GetNodeOptions.Default, indices); // request the nearest ancestor
@@ -108,22 +104,24 @@ namespace HotDocs.Sdk
             }
             if (val.HasChildren)
                 return val.Children.SetCount;
-            else if (val.IsAnswered)
+            if (val.IsAnswered)
                 return 1;
-            else
-                return 0;
+            return 0;
         }
 
         protected override ValueNode<TExternal> GetValueNode<TExternal>(bool createIfNecessary, params int[] rptIdx)
         {
-            if (typeof(TExternal) != typeof(T))
+            if (typeof (TExternal) != typeof (T))
                 throw new ArgumentException("Answer/Value type mismatch");
 
             // If we're looking up a value for "read" purposes, we trim trailing zeros from the indices.
             // But if we're looking up a value for "write" purposes, we leave trailing zeros alone
             // because they influence the formation of the value tree.
-            int[] indices = TrimIndices(createIfNecessary ? IndexTrimOptions.Default : IndexTrimOptions.TrimTrailingZeros, rptIdx);
-            return GetNode(createIfNecessary ? GetNodeOptions.CreateNodesAsNecessary : GetNodeOptions.Default, indices) as ValueNode<TExternal>;
+            var indices = TrimIndices(
+                createIfNecessary ? IndexTrimOptions.Default : IndexTrimOptions.TrimTrailingZeros, rptIdx);
+            return
+                GetNode(createIfNecessary ? GetNodeOptions.CreateNodesAsNecessary : GetNodeOptions.Default, indices) as
+                    ValueNode<TExternal>;
         }
 
         private static int[] TrimIndices(IndexTrimOptions options, params int[] rptIdx)
@@ -139,7 +137,7 @@ namespace HotDocs.Sdk
             if (rptIdx == null || rptIdx.Length == 0)
                 return RepeatIndices.Empty;
 
-            int newSize = rptIdx.Length;
+            var newSize = rptIdx.Length;
             if ((options & IndexTrimOptions.TrimTrailingZeros) != 0)
             {
                 while (newSize > 0 && rptIdx[newSize - 1] <= 0) // trim 0's and -1's from the end
@@ -156,7 +154,7 @@ namespace HotDocs.Sdk
                 newSize--;
             }
 
-            int[] newIndices = new int[newSize];
+            var newIndices = new int[newSize];
             if (newSize > 0)
                 Array.Copy(rptIdx, newIndices, newSize);
             return newIndices;
@@ -166,8 +164,8 @@ namespace HotDocs.Sdk
         {
             Debug.Assert(rptIdx != null);
 
-            bool createIfNecessary = (options == GetNodeOptions.CreateNodesAsNecessary);
-            bool valuesBubbleAndFlow = (options != GetNodeOptions.NoBubbleAndFlow);
+            var createIfNecessary = options == GetNodeOptions.CreateNodesAsNecessary;
+            var valuesBubbleAndFlow = options != GetNodeOptions.NoBubbleAndFlow;
 
             if (createIfNecessary && rptIdx.Length > Depth)
             {
@@ -180,7 +178,8 @@ namespace HotDocs.Sdk
         }
 
         // private recursive helper function
-        private ValueNode<T> GetNodeHelper(ValueNode<T> node, int atDepth, bool createIfNecessary, bool valuesBubbleAndFlow, int[] rptIdx)
+        private ValueNode<T> GetNodeHelper(ValueNode<T> node, int atDepth, bool createIfNecessary,
+            bool valuesBubbleAndFlow, int[] rptIdx)
         {
             // this can be invoked with the following flag combinations:
             //     createIfNecessary == true   &&   valuesBubbleAndFlow == true   // we will be setting an answer
@@ -197,7 +196,7 @@ namespace HotDocs.Sdk
             // see if we're done recursing through all the repeat levels
             if (rptIdx.Length == 0 && atDepth == Depth)
             {
-                ValueNode<T> result = node;
+                var result = node;
                 if (valuesBubbleAndFlow)
                 {
                     // if we've found a node but it still has children in the tree,
@@ -224,11 +223,13 @@ namespace HotDocs.Sdk
                 if (valuesBubbleAndFlow) // create new, zero indices so we can continue recursion
                 {
                     idx = 0;
-                    newIdx = new int[Depth - atDepth - 1]; // make sure value gets set down at the appropriate repeat level
+                    newIdx = new int[Depth - atDepth - 1];
+                        // make sure value gets set down at the appropriate repeat level
                 }
                 else
                 {
-                    Debug.Assert(!createIfNecessary); // we don't want to allow setting values at non-leaf nodes of the tree!
+                    Debug.Assert(!createIfNecessary);
+                        // we don't want to allow setting values at non-leaf nodes of the tree!
                     return node;
                 }
             }
@@ -244,7 +245,7 @@ namespace HotDocs.Sdk
             else if (!node.HasChildren)
             {
                 // requested node does not exist -- given indexes exceed depth of repeated values
-                return (valuesBubbleAndFlow && idx == 0 && RepeatIndices.IsFirst(newIdx)) ? node : null;
+                return valuesBubbleAndFlow && idx == 0 && RepeatIndices.IsFirst(newIdx) ? node : null;
             }
             else if (idx >= node.Children.SetCount)
             {
@@ -256,29 +257,30 @@ namespace HotDocs.Sdk
         }
 
         /// <summary>
-        /// ApplyValueMutator summary
+        ///     ApplyValueMutator summary
         /// </summary>
         /// <typeparam name="TExternal">Type</typeparam>
         /// <param name="mutator">mutator</param>
         public override void ApplyValueMutator<TExternal>(ValueMutator<TExternal> mutator)
         {
-            if (typeof(TExternal) != typeof(T))
+            if (typeof (TExternal) != typeof (T))
                 throw new ArgumentException("Answer/Value type mismatch");
 
-            TraverseAndApply<TExternal>(mutator, _value);
+            TraverseAndApply(mutator, _value);
         }
 
         // private recursive helper function
-        private static void TraverseAndApply<TExternal>(ValueMutator<TExternal> mutator, ValueNode<T> node) where TExternal : IValue
+        private static void TraverseAndApply<TExternal>(ValueMutator<TExternal> mutator, ValueNode<T> node)
+            where TExternal : IValue
         {
             if (node.HasChildren)
             {
-                foreach (ValueNode<T> child in node.Children)
-                    TraverseAndApply<TExternal>(mutator, child);
+                foreach (var child in node.Children)
+                    TraverseAndApply(mutator, child);
             }
             else
             {
-                ValueNode<TExternal> nod = node as ValueNode<TExternal>;
+                var nod = node as ValueNode<TExternal>;
                 if (nod != null)
                     nod.Value = mutator(nod.Value);
             }
@@ -289,12 +291,13 @@ namespace HotDocs.Sdk
             ValueEnumerationHelper(callback, _value, RepeatIndices.Empty, state);
         }
 
-        private void ValueEnumerationHelper(ValueEnumerationDelegate callback, ValueNode<T> node, int[] indices, object state)
+        private void ValueEnumerationHelper(ValueEnumerationDelegate callback, ValueNode<T> node, int[] indices,
+            object state)
         {
             if (node.HasChildren)
             {
                 int[] childIndices;
-                for (int i = 0; i < node.Children.Count; i++)
+                for (var i = 0; i < node.Children.Count; i++)
                 {
                     childIndices = new int[indices.Length + 1];
                     Array.Copy(indices, childIndices, indices.Length);
@@ -309,20 +312,12 @@ namespace HotDocs.Sdk
             }
         }
 
-        /// <summary>
-        /// IndexedValues provides a simple way to enumerate (and potentially modify) the values associated with an answer.
-        /// </summary>
-        public override IEnumerable<IndexedValue> IndexedValues
-        {
-            get { return GetIndexedValues(_value, RepeatIndices.Empty); }
-        }
-
         private IEnumerable<IndexedValue> GetIndexedValues(ValueNode<T> node, int[] indices)
         {
             if (node.HasChildren)
             {
                 int[] childIndices;
-                for (int i = 0; i < node.Children.Count; i++)
+                for (var i = 0; i < node.Children.Count; i++)
                 {
                     childIndices = new int[indices.Length + 1];
                     Array.Copy(indices, childIndices, indices.Length);
@@ -352,8 +347,8 @@ namespace HotDocs.Sdk
                 return;
 
             // pop the top repeat index off
-            int topIndex = rptIdx[0];
-            int[] newIdx = new int[rptIdx.Length - 1];
+            var topIndex = rptIdx[0];
+            var newIdx = new int[rptIdx.Length - 1];
             if (rptIdx.Length > 1)
                 Array.Copy(rptIdx, 1, newIdx, 0, newIdx.Length);
 
@@ -369,11 +364,12 @@ namespace HotDocs.Sdk
         }
 
         /// <summary>
-        /// Completely resets the answer.
+        ///     Completely resets the answer.
         /// </summary>
         public override void Clear()
         {
-            base.Clear(); // this recursively clears out all existing values, firing appropriate change notifications along the way
+            base.Clear();
+                // this recursively clears out all existing values, firing appropriate change notifications along the way
 
             // now (for good measure) throw away all the previous value structures and reset the answer completely
             _value = new ValueNode<T>();
@@ -381,20 +377,20 @@ namespace HotDocs.Sdk
         }
 
         /// <summary>
-        /// Gets the parent of the requested node,
-        /// and inserts an unanswered child iteration at the requested index.
+        ///     Gets the parent of the requested node,
+        ///     and inserts an unanswered child iteration at the requested index.
         /// </summary>
-        /// <include file="../Shared/Help.xml" path="Help/intAry/param[@name='rptIdx']"/>
+        /// <include file="../Shared/Help.xml" path="Help/intAry/param[@name='rptIdx']" />
         public override void InsertIteration(int[] rptIdx)
         {
             // get the parent of the requested node,
             // and insert an unanswered child iteration at the requested index
             int iterationToInsert;
-            int[] parIdx = TrimIndices(IndexTrimOptions.TruncateLastIndex, out iterationToInsert, rptIdx);
+            var parIdx = TrimIndices(IndexTrimOptions.TruncateLastIndex, out iterationToInsert, rptIdx);
             if (iterationToInsert < 0) // there is no iteration before which to insert!
                 return;
 
-            ValueNode<T> parentNode = GetNode(GetNodeOptions.NoBubbleAndFlow, parIdx);
+            var parentNode = GetNode(GetNodeOptions.NoBubbleAndFlow, parIdx);
             if (parentNode == null || parentNode.Children == null || iterationToInsert >= parentNode.Children.SetCount)
                 return;
 
@@ -404,20 +400,20 @@ namespace HotDocs.Sdk
         }
 
         /// <summary>
-        /// Gets the parent of the requested node,
-        /// and deletes the indicated child iteration.
+        ///     Gets the parent of the requested node,
+        ///     and deletes the indicated child iteration.
         /// </summary>
-        /// <include file="../Shared/Help.xml" path="Help/intAry/param[@name='rptIdx']"/>
+        /// <include file="../Shared/Help.xml" path="Help/intAry/param[@name='rptIdx']" />
         public override void DeleteIteration(int[] rptIdx)
         {
             // get the parent of the requested node,
             // and delete the indicated child iteration
             int iterationToDelete;
-            int[] parIdx = TrimIndices(IndexTrimOptions.TruncateLastIndex, out iterationToDelete, rptIdx);
+            var parIdx = TrimIndices(IndexTrimOptions.TruncateLastIndex, out iterationToDelete, rptIdx);
             if (iterationToDelete < 0) // there is no iteration to be deleted!
                 return;
 
-            ValueNode<T> parentNode = GetNode(GetNodeOptions.NoBubbleAndFlow, parIdx);
+            var parentNode = GetNode(GetNodeOptions.NoBubbleAndFlow, parIdx);
             if (parentNode == null || parentNode.Children == null || iterationToDelete >= parentNode.Children.SetCount)
                 return;
 
@@ -428,23 +424,25 @@ namespace HotDocs.Sdk
         }
 
         /// <summary>
-        /// Gets the parent of the requested node, and removes the indicated child iteration from the parent, and re-inserts it at the indicated new position.
+        ///     Gets the parent of the requested node, and removes the indicated child iteration from the parent, and re-inserts it
+        ///     at the indicated new position.
         /// </summary>
-        /// <include file="../Shared/Help.xml" path="Help/intAry/param[@name='rptIdx']"/>
+        /// <include file="../Shared/Help.xml" path="Help/intAry/param[@name='rptIdx']" />
         /// <param name="newPosition">newPosition</param>
         public override void MoveIteration(int[] rptIdx, int newPosition)
         {
             if (newPosition < 0)
-                throw new ArgumentException("Cannot move repeated data before the first repeat iteration.", "newPosition");
+                throw new ArgumentException("Cannot move repeated data before the first repeat iteration.",
+                    "newPosition");
             // get the parent of the requested node,
             // removes the indicated child iteration from the parent,
             // and re-inserts it at the indicated new position
             int iterationToMove;
-            int[] parIdx = TrimIndices(IndexTrimOptions.TruncateLastIndex, out iterationToMove, rptIdx);
+            var parIdx = TrimIndices(IndexTrimOptions.TruncateLastIndex, out iterationToMove, rptIdx);
             if (iterationToMove < 0) // there is no iteration to be moved!
                 return;
 
-            ValueNode<T> parentNode = GetNode(GetNodeOptions.NoBubbleAndFlow, parIdx);
+            var parentNode = GetNode(GetNodeOptions.NoBubbleAndFlow, parIdx);
             if (parentNode == null || parentNode.Children == null
                 || (newPosition < iterationToMove && newPosition >= parentNode.Children.SetCount) // move up
                 || (newPosition > iterationToMove && iterationToMove >= parentNode.Children.SetCount)) // move down
@@ -453,37 +451,52 @@ namespace HotDocs.Sdk
                 return;
             }
 
-            int maxIteration = Math.Max(iterationToMove, newPosition);
+            var maxIteration = Math.Max(iterationToMove, newPosition);
             if (maxIteration >= parentNode.Children.SetCount)
             {
                 //[LRS] Need to be able to do the following! (Because other answers in same iteration may be moving.)
                 parentNode.Children.PrepareForIndex(maxIteration);
             }
 
-            ValueNode<T> movedNode = parentNode.Children.RemoveAt(iterationToMove);
+            var movedNode = parentNode.Children.RemoveAt(iterationToMove);
             parentNode.Children.Insert(newPosition, movedNode);
             if (AnswerCollection != null)
                 AnswerCollection.OnAnswerChanged(this, rptIdx, ValueChangeType.IndexShift);
         }
 
         /// <summary>
-        /// Writes the answer to an XML writer.
+        ///     Writes the answer to an XML writer.
         /// </summary>
         /// <param name="writer">XML writer.</param>
         /// <param name="writeDontSave">Indicates if the answer should be written even if it is not supposed to be saved.</param>
-        public override void WriteXml(System.Xml.XmlWriter writer, bool writeDontSave)
+        public override void WriteXml(XmlWriter writer, bool writeDontSave)
         {
             if (!writeDontSave && !Save)
                 return;
             writer.WriteStartElement("Answer");
             writer.WriteAttributeString("name", TextValue.XMLEscape(Name));
             if (!Save)
-                writer.WriteAttributeString("save", System.Xml.XmlConvert.ToString(Save));
+                writer.WriteAttributeString("save", XmlConvert.ToString(Save));
             if (!UserExtendible)
-                writer.WriteAttributeString("userExtendible", System.Xml.XmlConvert.ToString(UserExtendible));
+                writer.WriteAttributeString("userExtendible", XmlConvert.ToString(UserExtendible));
             _value.WriteXml(writer, Depth);
             writer.WriteEndElement();
         }
+
+        [Flags]
+        private enum IndexTrimOptions
+        {
+            Default = 0,
+            TrimTrailingZeros = 1,
+            TruncateLastIndex = 2
+        }
+
+        // the following are mutually exclusive, therefore this is NOT a [Flags] enumeration:
+        private enum GetNodeOptions
+        {
+            Default = 0,
+            CreateNodesAsNecessary = 1,
+            NoBubbleAndFlow = 2
+        }
     }
 }
-

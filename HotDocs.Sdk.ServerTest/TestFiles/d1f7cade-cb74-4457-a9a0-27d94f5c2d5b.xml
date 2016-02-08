@@ -1,12 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<packageManifest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" signature="dWzwZFIs8RYptSfp2nHuFWjxQOI=" hotdocsVersion="11.0.1.4417" publishDateTime="2013-07-31T18:53:32Z" xmlns="http://www.hotdocs.com/schemas/package_manifest/2012">
-  <mainTemplate templateId="694f9b08-bc19-4db9-9773-cb03aa8f10c9" fileName="Demo Employment Agreement.docx" effectiveCmpFile="Demo Employment Agreement.cmp">
+
+<packageManifest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                 signature="dWzwZFIs8RYptSfp2nHuFWjxQOI=" hotdocsVersion="11.0.1.4417"
+                 publishDateTime="2013-07-31T18:53:32Z" xmlns="http://www.hotdocs.com/schemas/package_manifest/2012">
+  <mainTemplate templateId="694f9b08-bc19-4db9-9773-cb03aa8f10c9" fileName="Demo Employment Agreement.docx"
+                effectiveCmpFile="Demo Employment Agreement.cmp">
     <title>
-			Employment Agreement (Word RTF version)
-		</title>
+      Employment Agreement (Word RTF version)
+    </title>
     <description>
-			This is the example Employment Agreement from the HotDocs tutorial.
-		</description>
+      This is the example Employment Agreement from the HotDocs tutorial.
+    </description>
     <dependencies>
       <dependency fileName="Demo Employment Agreement.cmp" type="baseCmpFile" />
     </dependencies>

@@ -3,87 +3,84 @@
    to the New BSD License as set out in LICENSE.TXT. */
 
 using System;
-using System.Diagnostics;
 
 namespace HotDocs.Sdk
 {
     /// <summary>
-	/// The TimeSpanValue struct is part of the infrastructure related to how Date values are stored and manipulated within HotDocs.
-	/// A TimeSpanValue will never appear on its own in a HotDocs answer file, but they are used to adjust DateValues by a relative amount.
-	/// </summary>
-	public struct TimeSpanValue
-	{
-		private readonly int? _value;
-		private readonly Period _period;
+    ///     The TimeSpanValue struct is part of the infrastructure related to how Date values are stored and manipulated within
+    ///     HotDocs.
+    ///     A TimeSpanValue will never appear on its own in a HotDocs answer file, but they are used to adjust DateValues by a
+    ///     relative amount.
+    /// </summary>
+    public struct TimeSpanValue
+    {
+        private readonly int? _value;
 
-		/// <summary>
-		/// Static (shared) instance of an unanswered TimeSpanValue.
-		/// </summary>
-		public readonly static TimeSpanValue Unanswered;
+        /// <summary>
+        ///     Static (shared) instance of an unanswered TimeSpanValue.
+        /// </summary>
+        public static readonly TimeSpanValue Unanswered;
 
-		/// <summary>
-		/// Static constructor required so static fields are always initialized
-		/// </summary>
-		static TimeSpanValue()
-		{
-			TimeSpanValue.Unanswered = new TimeSpanValue();
-		}
+        /// <summary>
+        ///     Static constructor required so static fields are always initialized
+        /// </summary>
+        static TimeSpanValue()
+        {
+            Unanswered = new TimeSpanValue();
+        }
 
-		public TimeSpanValue(NumberValue value, Period period)
-		{
-			if (value.IsAnswered)
-			{
-				_value = (int) value.Value;
-				_period = period;
-			}
-			else
-			{
-				_value = null;
-				_period = Period.Unknown;
-			}
-		}
+        public TimeSpanValue(NumberValue value, Period period)
+        {
+            if (value.IsAnswered)
+            {
+                _value = (int) value.Value;
+                PeriodType = period;
+            }
+            else
+            {
+                _value = null;
+                PeriodType = Period.Unknown;
+            }
+        }
 
-		public override bool Equals(object obj)
-		{
-			return (obj is TimeSpanValue) ? Equals((TimeSpanValue)obj) : false;
-		}
+        public override bool Equals(object obj)
+        {
+            return obj is TimeSpanValue ? Equals((TimeSpanValue) obj) : false;
+        }
 
-		private bool Equals(TimeSpanValue operand)
-		{
-			if (!IsAnswered || !operand.IsAnswered)
-				throw new InvalidOperationException();
+        private bool Equals(TimeSpanValue operand)
+        {
+            if (!IsAnswered || !operand.IsAnswered)
+                throw new InvalidOperationException();
 
-			return  (_value == operand._value) && (_period == operand._period);
-		}
+            return (_value == operand._value) && (PeriodType == operand.PeriodType);
+        }
 
-		public override int GetHashCode()
-		{
-			return _value.GetHashCode();
-		}
+        public override int GetHashCode()
+        {
+            return _value.GetHashCode();
+        }
 
-		public static UnansweredValue operator +(UnansweredValue leftOperand, TimeSpanValue rightOperand)
-		{
-			return new UnansweredValue();
-		}
+        public static UnansweredValue operator +(UnansweredValue leftOperand, TimeSpanValue rightOperand)
+        {
+            return new UnansweredValue();
+        }
 
-		public static UnansweredValue operator -(UnansweredValue leftOperand, TimeSpanValue rightOperand)
-		{
-			return new UnansweredValue();
-		}
+        public static UnansweredValue operator -(UnansweredValue leftOperand, TimeSpanValue rightOperand)
+        {
+            return new UnansweredValue();
+        }
 
-		public bool IsAnswered
-		{
-			get { return _value.HasValue; }
-		}
+        public bool IsAnswered
+        {
+            get { return _value.HasValue; }
+        }
 
-		public int Value
-		{
-			get { return _value.Value; }
-		}
+        public int Value
+        {
+            get { return _value.Value; }
+        }
 
-		public Period PeriodType
-		{
-			get { return _period;  }
-		}
-	}
+        public Period PeriodType { get; }
+    }
 }

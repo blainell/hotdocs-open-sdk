@@ -1,54 +1,28 @@
-using System;
 using System.Configuration;
 
 namespace HotDocs.Sdk
 {
     /// <summary>
-    /// <c>DataSourcesCollection</c> a collection of data sources
+    ///     <c>DataSourcesCollection</c> a collection of data sources
     /// </summary>
     public class DataSourcesCollection : ConfigurationElementCollection
     {
         /// <summary>
-        /// <c>CollectionType</c> the type of the collection
+        ///     <c>CollectionType</c> the type of the collection
         /// </summary>
         public override ConfigurationElementCollectionType CollectionType
         {
-            get
-            {
-                return ConfigurationElementCollectionType.AddRemoveClearMap;
-            }
+            get { return ConfigurationElementCollectionType.AddRemoveClearMap; }
         }
 
         /// <summary>
-        /// <c>CreateNewElement</c> creates a new configuration element
-        /// </summary>
-        /// <returns></returns>
-        protected override ConfigurationElement CreateNewElement()
-        {
-            return new DataSourceElement();
-        }
-
-        /// <summary>
-        /// <c>GetElementKey</c> retrieves the name of the specified element.
-        /// </summary>
-        /// <param name="element">the element</param>
-        /// <returns>the name of the specified element.</returns>
-        protected override Object GetElementKey(ConfigurationElement element)
-        {
-            return ((DataSourceElement)element).Name;
-        }
-
-        /// <summary>
-        /// Return the <c>DataSourceElement</c> at the given <c>index</c>
+        ///     Return the <c>DataSourceElement</c> at the given <c>index</c>
         /// </summary>
         /// <param name="index">the index value</param>
         /// <returns>the <c>DataSourceElement</c> at the given <c>index</c></returns>
         public DataSourceElement this[int index]
         {
-            get
-            {
-                return (DataSourceElement)BaseGet(index);
-            }
+            get { return (DataSourceElement) BaseGet(index); }
             set
             {
                 if (BaseGet(index) != null)
@@ -60,23 +34,41 @@ namespace HotDocs.Sdk
         }
 
         /// <summary>
-        /// Return the <c>DataSourceElement</c> associated with <c>Name</c>
+        ///     Return the <c>DataSourceElement</c> associated with <c>Name</c>
         /// </summary>
         /// <param name="Name">the string value associated with the returned object</param>
         /// <returns>the <c>DataSourceElement</c> associated with <c>Name</c></returns>
-        new public DataSourceElement this[string Name]
+        public new DataSourceElement this[string Name]
         {
-            get
-            {
-                return (DataSourceElement)BaseGet(Name);
-            }
+            get { return (DataSourceElement) BaseGet(Name); }
         }
 
         /// <summary>
-        /// Returns the index of <c>dataServiceElement</c>
+        ///     <c>CreateNewElement</c> creates a new configuration element
         /// </summary>
-        /// <param name="dataServiceElement">the <c>DataSourceElement</c> 
-        /// for which the returned index will be returned</param>
+        /// <returns></returns>
+        protected override ConfigurationElement CreateNewElement()
+        {
+            return new DataSourceElement();
+        }
+
+        /// <summary>
+        ///     <c>GetElementKey</c> retrieves the name of the specified element.
+        /// </summary>
+        /// <param name="element">the element</param>
+        /// <returns>the name of the specified element.</returns>
+        protected override object GetElementKey(ConfigurationElement element)
+        {
+            return ((DataSourceElement) element).Name;
+        }
+
+        /// <summary>
+        ///     Returns the index of <c>dataServiceElement</c>
+        /// </summary>
+        /// <param name="dataServiceElement">
+        ///     the <c>DataSourceElement</c>
+        ///     for which the returned index will be returned
+        /// </param>
         /// <returns>the index of <c>dataServiceElement</c></returns>
         public int IndexOf(DataSourceElement dataServiceElement)
         {
@@ -84,18 +76,20 @@ namespace HotDocs.Sdk
         }
 
         /// <summary>
-        /// <c>Add</c> adds <c>dataServiceElement</c> to the collection of 
-        /// data sources in this class
+        ///     <c>Add</c> adds <c>dataServiceElement</c> to the collection of
+        ///     data sources in this class
         /// </summary>
-        /// <param name="dataServiceElement">The <c>DataSourceElement</c> being added to the
-        /// data sources in this class</param>
+        /// <param name="dataServiceElement">
+        ///     The <c>DataSourceElement</c> being added to the
+        ///     data sources in this class
+        /// </param>
         public void Add(DataSourceElement dataServiceElement)
         {
             BaseAdd(dataServiceElement);
         }
 
         /// <summary>
-        /// <c>BaseAdd</c> overrides ConfigurationElementCollection.BaseAdd
+        ///     <c>BaseAdd</c> overrides ConfigurationElementCollection.BaseAdd
         /// </summary>
         /// <param name="element">The <c>ConfigurationElement</c> to add to the collection.</param>
         protected override void BaseAdd(ConfigurationElement element)
@@ -104,11 +98,13 @@ namespace HotDocs.Sdk
         }
 
         /// <summary>
-        /// <c>Remove</c> removes <c>dataServiceElement</c> from the collection
-        /// of data sources in this class.
+        ///     <c>Remove</c> removes <c>dataServiceElement</c> from the collection
+        ///     of data sources in this class.
         /// </summary>
-        /// <param name="dataServiceElement">The <c>DataSourceElement</c> being removed from the
-        /// data sources in this class instance</param>
+        /// <param name="dataServiceElement">
+        ///     The <c>DataSourceElement</c> being removed from the
+        ///     data sources in this class instance
+        /// </param>
         public void Remove(DataSourceElement dataServiceElement)
         {
             if (BaseIndexOf(dataServiceElement) >= 0)
@@ -116,7 +112,7 @@ namespace HotDocs.Sdk
         }
 
         /// <summary>
-        /// <c>RemoveAt</c> removes the data source located at <c>index</c>
+        ///     <c>RemoveAt</c> removes the data source located at <c>index</c>
         /// </summary>
         /// <param name="index">the integer based location</param>
         public void RemoveAt(int index)
@@ -125,17 +121,19 @@ namespace HotDocs.Sdk
         }
 
         /// <summary>
-        /// <c>Remove</c> removes the data source specified by <c>name</c>
+        ///     <c>Remove</c> removes the data source specified by <c>name</c>
         /// </summary>
-        /// <param name="name">identifies the data source being removed from the 
-        /// data sources in this class instance</param>
+        /// <param name="name">
+        ///     identifies the data source being removed from the
+        ///     data sources in this class instance
+        /// </param>
         public void Remove(string name)
         {
             BaseRemove(name);
         }
 
         /// <summary>
-        /// <c>Clear</c> removes all data sources in this class instance.
+        ///     <c>Clear</c> removes all data sources in this class instance.
         /// </summary>
         public void Clear()
         {

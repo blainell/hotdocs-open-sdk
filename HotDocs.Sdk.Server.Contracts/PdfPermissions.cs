@@ -4,39 +4,34 @@ using System.Runtime.Serialization;
 namespace HotDocs.Sdk.Server.Contracts
 {
     /// <summary>
-    /// <c>PdfPermissions</c> 
+    ///     <c>PdfPermissions</c>
     /// </summary>
     [DataContract, Flags]
     public enum PdfPermissions
     {
         /// <summary>
-        /// No permissions permitted
+        ///     No permissions permitted
         /// </summary>
-        [EnumMember]
-        None = 0x0,
+        [EnumMember] None = 0x0,
 
         /// <summary>
-        /// Pdf Print permission
+        ///     Pdf Print permission
         /// </summary>
-        [EnumMember]
-        Print = 0x4,
+        [EnumMember] Print = 0x4,
 
         /// <summary>
-        /// Pdf Copy permission
+        ///     Pdf Copy permission
         /// </summary>
-        [EnumMember]
-        Copy = 0x10,
+        [EnumMember] Copy = 0x10,
 
         /// <summary>
-        /// Pdf Modify permission
+        ///     Pdf Modify permission
         /// </summary>
-        [EnumMember]
-        Modify = 0x28,
+        [EnumMember] Modify = 0x28,
 
         /// <summary>
-        /// All Pdf permissions -- Print, Copy, and Modify
+        ///     All Pdf permissions -- Print, Copy, and Modify
         /// </summary>
-        [EnumMember]
-        All = Print | Copy | Modify
+        [EnumMember] All = Print | Copy | Modify
     }
 }

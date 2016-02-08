@@ -3,12 +3,12 @@ using System.Xml.Serialization;
 namespace HotDocs.Sdk
 {
     /// <summary>
-    /// A helper class to store a file name
+    ///     A helper class to store a file name
     /// </summary>
     public class FileNameInfo
     {
         /// <summary>
-        /// Construct an instance.
+        ///     Construct an instance.
         /// </summary>
         /// <param name="fileName">The file name.</param>
         public FileNameInfo(string fileName)
@@ -17,14 +17,14 @@ namespace HotDocs.Sdk
         }
 
         /// <summary>
-        /// Construct an instance.
+        ///     Construct an instance.
         /// </summary>
         public FileNameInfo()
         {
         }
 
         /// <summary>
-        /// Set/get the FileName property.
+        ///     Set/get the FileName property.
         /// </summary>
         [XmlAttribute("fileName")]
         public string FileName { get; set; }

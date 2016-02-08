@@ -6,7 +6,6 @@ using System.Net.Mime;
 using System.Text;
 using System.Web;
 using System.Xml.Serialization;
-using HotDocs.Sdk.Cloud;
 using HotDocs.Sdk.Server.Contracts;
 
 namespace HotDocs.Sdk.Server.OnPremise
@@ -22,7 +21,7 @@ namespace HotDocs.Sdk.Server.OnPremise
             HostAddress = hostAddress;
         }
 
-        private string HostAddress { get; set; }
+        private string HostAddress { get; }
 
         public AssembleDocumentResult AssembleDocument(Template template, TextReader answers,
             AssembleDocumentSettings settings, string logRef)
@@ -32,13 +31,14 @@ namespace HotDocs.Sdk.Server.OnPremise
                 AssembleDocumentResult adr = null;
                 var stringContent = new StringContent(answers.ReadToEnd());
                 var packageTemplateLocation = (PackageTemplateLocation) template.Location;
-                string packageId = packageTemplateLocation.PackageID;
+                var packageId = packageTemplateLocation.PackageID;
 
-                OutputFormat of = ConvertFormat(settings.Format);
+                var of = ConvertFormat(settings.Format);
 
                 var urlBuilder =
-                    new StringBuilder(string.Format(HostAddress + "/assemble/0/{0}/{1}?format={2}&encodefilenames={3}", packageId,
-                        HttpUtility.UrlEncode(template.FileName), of,true));
+                    new StringBuilder(string.Format(HostAddress + "/assemble/0/{0}/{1}?format={2}&encodefilenames={3}",
+                        packageId,
+                        HttpUtility.UrlEncode(template.FileName), of, true));
 
                 if (settings.Settings != null)
                 {
@@ -48,14 +48,14 @@ namespace HotDocs.Sdk.Server.OnPremise
                     }
                 }
 
-                HttpResponseMessage result = client.PostAsync(urlBuilder.ToString(), stringContent).Result;
+                var result = client.PostAsync(urlBuilder.ToString(), stringContent).Result;
 
                 var _parser = new MultipartMimeParser();
 
                 HandleErrorStream(result, result.IsSuccessStatusCode);
-                Stream streamResult = result.Content.ReadAsStreamAsync().Result;
+                var streamResult = result.Content.ReadAsStreamAsync().Result;
 
-                string outputDir = Path.GetTempPath();
+                var outputDir = Path.GetTempPath();
                 Directory.CreateDirectory(outputDir);
                 using (var resultsStream = new MemoryStream())
                 {
@@ -66,7 +66,7 @@ namespace HotDocs.Sdk.Server.OnPremise
                         streamResult,
                         h =>
                         {
-                            string fileName = GetFileNameFromHeaders(h);
+                            var fileName = GetFileNameFromHeaders(h);
                             if (fileName != null)
                             {
                                 if (fileName.Equals("meta0.xml", StringComparison.OrdinalIgnoreCase))
@@ -78,7 +78,7 @@ namespace HotDocs.Sdk.Server.OnPremise
                             }
                             return Stream.Null;
                         },
-                        (new ContentType(result.Content.Headers.ContentType.ToString())).Boundary);
+                        new ContentType(result.Content.Headers.ContentType.ToString()).Boundary);
 
                     if (resultsStream.Position > 0)
                     {
@@ -98,9 +98,9 @@ namespace HotDocs.Sdk.Server.OnPremise
             using (var client = new HttpClient())
             {
                 var packageTemplateLocation = (PackageTemplateLocation) template.Location;
-                string packageId = packageTemplateLocation.PackageID;
+                var packageId = packageTemplateLocation.PackageID;
 
-                HttpResponseMessage result =
+                var result =
                     client.GetAsync(
                         string.Format(HostAddress + "/componentinfo/0/{0}/{1}?includedialogs={2}",
                             packageId, HttpUtility.UrlEncode(template.FileName), includeDialogs))
@@ -108,7 +108,7 @@ namespace HotDocs.Sdk.Server.OnPremise
 
 
                 HandleErrorStream(result, result.IsSuccessStatusCode);
-                Stream streamResult = result.Content.ReadAsStreamAsync().Result;
+                var streamResult = result.Content.ReadAsStreamAsync().Result;
 
 
                 using (var stream = (MemoryStream) streamResult)
@@ -150,7 +150,7 @@ namespace HotDocs.Sdk.Server.OnPremise
             using (var client = new HttpClient())
             {
                 var packageTemplateLocation = (PackageTemplateLocation) template.Location;
-                string packageId = packageTemplateLocation.PackageID;
+                var packageId = packageTemplateLocation.PackageID;
 
                 var urlBuilder = new StringBuilder(string.Format(
                     HostAddress +
@@ -165,25 +165,25 @@ namespace HotDocs.Sdk.Server.OnPremise
                     urlBuilder.AppendFormat("&{0}={1}", kv.Key, kv.Value ?? "");
                 }
 
-                StringContent stringContent = answers == null
-                    ? new StringContent(String.Empty)
+                var stringContent = answers == null
+                    ? new StringContent(string.Empty)
                     : new StringContent(answers.ReadToEnd());
 
-                HttpResponseMessage result = client.PostAsync(urlBuilder.ToString(), stringContent).Result;
+                var result = client.PostAsync(urlBuilder.ToString(), stringContent).Result;
 
                 HandleErrorStream(result, result.IsSuccessStatusCode);
-                Stream streamResult = result.Content.ReadAsStreamAsync().Result;
+                var streamResult = result.Content.ReadAsStreamAsync().Result;
                 if (!result.IsSuccessStatusCode)
                 {
                     using (var streamReader = new StreamReader(streamResult))
                     {
-                        string error = streamReader.ReadToEnd();
+                        var error = streamReader.ReadToEnd();
                         throw new Exception(error);
                     }
                 }
 
                 var parser = new MultipartMimeParser();
-                string outputDir = Path.GetTempPath();
+                var outputDir = Path.GetTempPath();
                 Directory.CreateDirectory(outputDir);
 
                 using (var resultsStream = new MemoryStream())
@@ -195,7 +195,7 @@ namespace HotDocs.Sdk.Server.OnPremise
                         streamResult,
                         h =>
                         {
-                            string fileName = GetFileNameFromHeaders(h);
+                            var fileName = GetFileNameFromHeaders(h);
 
                             if (!string.IsNullOrEmpty(fileName))
                             {
@@ -208,14 +208,14 @@ namespace HotDocs.Sdk.Server.OnPremise
                             }
                             return Stream.Null;
                         },
-                        (new ContentType(result.Content.Headers.ContentType.ToString())).Boundary);
+                        new ContentType(result.Content.Headers.ContentType.ToString()).Boundary);
 
                     if (resultsStream.Position > 0)
                     {
                         resultsStream.Position = 0;
                         var serializer = new XmlSerializer(typeof (BinaryObject[]));
                         var binObjects = (BinaryObject[]) serializer.Deserialize(resultsStream);
-                        string interviewContent = Util.ExtractString(binObjects[0]);
+                        var interviewContent = Util.ExtractString(binObjects[0]);
                         return new InterviewResult {HtmlFragment = interviewContent};
                     }
                     return null;
@@ -237,15 +237,15 @@ namespace HotDocs.Sdk.Server.OnPremise
 
             if (!headers.TryGetValue("Content-Disposition", out disp)) return null;
 
-            string[] pairs = disp.Split(';');
+            var pairs = disp.Split(';');
 
-            foreach (string pair in pairs)
+            foreach (var pair in pairs)
             {
-                string trimmed = pair.Trim();
+                var trimmed = pair.Trim();
 
                 if (!trimmed.StartsWith("filename*=")) continue;
 
-                int endPos = trimmed.IndexOf("'", StringComparison.Ordinal);
+                var endPos = trimmed.IndexOf("'", StringComparison.Ordinal);
 
                 return trimmed.Substring(endPos + 2);
             }

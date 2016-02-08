@@ -2,71 +2,70 @@
    Use, modification and redistribution of this source is subject
    to the New BSD License as set out in LICENSE.TXT. */
 
+using System;
 using HotDocs.Sdk;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 
 namespace HotDocs.SdkTest
 {
-	[TestClass]
-	public class TrueFalseValueTest
-	{
-		[TestMethod]
-		public void IsAnswered()
-		{
-			TrueFalseValue v = new TrueFalseValue();
-			Assert.IsFalse(v.IsAnswered);
-		}
+    [TestClass]
+    public class TrueFalseValueTest
+    {
+        [TestMethod]
+        public void IsAnswered()
+        {
+            var v = new TrueFalseValue();
+            Assert.IsFalse(v.IsAnswered);
+        }
 
-		[TestMethod]
-		public void Equals()
-		{
-			TrueFalseValue v1 = new TrueFalseValue(true);
+        [TestMethod]
+        public void Equals()
+        {
+            var v1 = new TrueFalseValue(true);
 
-			Assert.IsTrue(v1.Equals(new TrueFalseValue(true)));
-			Assert.IsFalse(v1.Equals(new TrueFalseValue(false)));
-		}
+            Assert.IsTrue(v1.Equals(new TrueFalseValue(true)));
+            Assert.IsFalse(v1.Equals(new TrueFalseValue(false)));
+        }
 
-		[TestMethod]
-		[ExpectedException(typeof(InvalidOperationException))]
-		public void UnansEquals1()
-		{
-			TrueFalseValue v = new TrueFalseValue(true);
-			TrueFalseValue uv = new TrueFalseValue();
+        [TestMethod]
+        [ExpectedException(typeof (InvalidOperationException))]
+        public void UnansEquals1()
+        {
+            var v = new TrueFalseValue(true);
+            var uv = new TrueFalseValue();
 
-			uv.Equals(v);
-		}
+            uv.Equals(v);
+        }
 
-		[TestMethod]
-		[ExpectedException(typeof(InvalidOperationException))]
-		public void UnansEquals2()
-		{
-			TrueFalseValue v = new TrueFalseValue(false);
-			TrueFalseValue uv = new TrueFalseValue();
+        [TestMethod]
+        [ExpectedException(typeof (InvalidOperationException))]
+        public void UnansEquals2()
+        {
+            var v = new TrueFalseValue(false);
+            var uv = new TrueFalseValue();
 
-			v.Equals(uv);
-		}
+            v.Equals(uv);
+        }
 
-		[TestMethod]
-		[ExpectedException(typeof(InvalidOperationException))]
-		public void UnansEquals3()
-		{
-			TrueFalseValue uv1 = new TrueFalseValue();
-			TrueFalseValue uv2 = new TrueFalseValue();
+        [TestMethod]
+        [ExpectedException(typeof (InvalidOperationException))]
+        public void UnansEquals3()
+        {
+            var uv1 = new TrueFalseValue();
+            var uv2 = new TrueFalseValue();
 
-			uv1.Equals(uv2);
-		}
+            uv1.Equals(uv2);
+        }
 
-		[TestMethod]
-		public void Casts()
-		{
-			TrueFalseValue v = TrueFalseValue.Unanswered;
-			Assert.IsFalse(v.IsAnswered);
+        [TestMethod]
+        public void Casts()
+        {
+            var v = TrueFalseValue.Unanswered;
+            Assert.IsFalse(v.IsAnswered);
 
-			v = false;
-			Assert.IsTrue(v.IsAnswered);
-			Assert.AreEqual(false, v.Value);
-		}
-
-	}
+            v = false;
+            Assert.IsTrue(v.IsAnswered);
+            Assert.AreEqual(false, v.Value);
+        }
+    }
 }

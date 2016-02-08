@@ -4,12 +4,14 @@ using System.Runtime.Serialization;
 namespace HotDocs.Sdk.Server.Contracts
 {
     /// <summary>
-    /// encapsulates all OutputOptions classes that incorporate support for document-level metadata
+    ///     encapsulates all OutputOptions classes that incorporate support for document-level metadata
     /// </summary>
-    [KnownType(typeof(PdfOutputOptions))]
+    [KnownType(typeof (PdfOutputOptions))]
     [DataContract]
     public abstract class BasicOutputOptions : OutputOptions
     {
+        [DataMember] private readonly Dictionary<string, string> _customValues;
+
         internal BasicOutputOptions()
         {
             _customValues = new Dictionary<string, string>();
@@ -18,43 +20,40 @@ namespace HotDocs.Sdk.Server.Contracts
         // if these properties are null, metadata is copied (if possible) from the source.
 
         /// <summary>
-        /// Author of the assembled document.
+        ///     Author of the assembled document.
         /// </summary>
         [DataMember]
         public string Author { get; set; } // defaults to null
 
         /// <summary>
-        /// Comments pertaining to the assembled document.
+        ///     Comments pertaining to the assembled document.
         /// </summary>
         [DataMember]
         public string Comments { get; set; } // defaults to null
 
         /// <summary>
-        /// Company of the assembled document.
+        ///     Company of the assembled document.
         /// </summary>
         [DataMember]
         public string Company { get; set; } // defaults to null
 
         /// <summary>
-        /// Keywords of the assembled document.
+        ///     Keywords of the assembled document.
         /// </summary>
         [DataMember]
         public string Keywords { get; set; } // defaults to null
 
         /// <summary>
-        /// Subject of the assembled document.
+        ///     Subject of the assembled document.
         /// </summary>
         [DataMember]
         public string Subject { get; set; } // defaults to null
 
         /// <summary>
-        /// Title of the assembled document.
+        ///     Title of the assembled document.
         /// </summary>
         [DataMember]
         public string Title { get; set; } // defaults to null
-
-        [DataMember]
-        private readonly Dictionary<string, string> _customValues;
 
 
         internal void SetValue(string name, string value)

@@ -53,7 +53,7 @@ namespace HotDocs.Sdk
         {
             PostInterviewUrl = postInterviewUrl; // "disposition" page
             InterviewRuntimeUrl = interviewRuntimeUrl;
-                // formerly known as "JavaScriptUrl"; base Urls in host app to provide required files to browser interview
+            // formerly known as "JavaScriptUrl"; base Urls in host app to provide required files to browser interview
             StyleSheetUrl = styleSheetUrl;
             InterviewFilesUrl = interviewFileUrl;
 
@@ -110,7 +110,7 @@ namespace HotDocs.Sdk
             // Read each of the four required settings.
             PostInterviewUrl = ConfigurationManager.AppSettings["PostInterviewUrl"]; // "disposition" page
             InterviewRuntimeUrl = ConfigurationManager.AppSettings["InterviewRuntimeUrl"];
-                // formerly known as "JavaScriptUrl"; base Urls in host app to provide required files to browser interviews
+            // formerly known as "JavaScriptUrl"; base Urls in host app to provide required files to browser interviews
             StyleSheetUrl = ConfigurationManager.AppSettings["StyleSheetUrl"];
             InterviewFilesUrl = ConfigurationManager.AppSettings["GetInterviewFileUrl"];
 

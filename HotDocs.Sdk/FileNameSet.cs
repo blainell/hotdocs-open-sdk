@@ -4,21 +4,21 @@ using System.Linq;
 namespace HotDocs.Sdk
 {
     /// <summary>
-    /// A helper class to store a set of file names
+    ///     A helper class to store a set of file names
     /// </summary>
     internal class FileNameSet
     {
         private readonly Dictionary<string, string> dict = new Dictionary<string, string>();
 
         /// <summary>
-        /// Include a filename to the set
+        ///     Include a filename to the set
         /// </summary>
         /// <param name="fileName">the file name to include</param>
         public void Include(string fileName)
         {
             if (!string.IsNullOrEmpty(fileName))
             {
-                string key = fileName.ToLower();
+                var key = fileName.ToLower();
                 if (!dict.ContainsKey(key))
                 {
                     dict[key] = fileName;
@@ -27,12 +27,12 @@ namespace HotDocs.Sdk
         }
 
         /// <summary>
-        /// Get an array of all file names in the set
+        ///     Get an array of all file names in the set
         /// </summary>
         /// <returns>an array of all file names in the set</returns>
         public string[] ToArray()
         {
-            return dict.Values.ToArray<string>();
+            return dict.Values.ToArray();
         }
     }
 }

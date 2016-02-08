@@ -5,12 +5,12 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
+using System.Xml;
 
 namespace HotDocs.Sdk
 {
     /// <summary>
-    /// ValueNodeList description
+    ///     ValueNodeList description
     /// </summary>
     /// <typeparam name="T">Type</typeparam>
     public class ValueNodeList<T> : ICollection<ValueNode<T>> where T : IValue
@@ -18,31 +18,8 @@ namespace HotDocs.Sdk
         private readonly List<ValueNode<T>> _list;
         private int _maxSet;
 
-        #region Constructors
-
         /// <summary>
-        /// ValueNodeList constructor
-        /// </summary>
-        public ValueNodeList()
-        {
-            _list = new List<ValueNode<T>>();
-            _maxSet = -1;
-        }
-
-        /// <summary>
-        /// ValueNodeList constructor
-        /// </summary>
-        /// <param name="capacity">capacity</param>
-        public ValueNodeList(int capacity)
-        {
-            _list = new List<ValueNode<T>>(capacity);
-            _maxSet = -1;
-        }
-
-        #endregion
-
-        /// <summary>
-        /// Returns the number of values in the list.
+        ///     Returns the number of values in the list.
         /// </summary>
         public int SetCount
         {
@@ -50,7 +27,7 @@ namespace HotDocs.Sdk
         }
 
         /// <summary>
-        /// ValueNode summary
+        ///     ValueNode summary
         /// </summary>
         /// <param name="index">index</param>
         /// <returns>The specified ValueNode.</returns>
@@ -60,7 +37,7 @@ namespace HotDocs.Sdk
         }
 
         /// <summary>
-        /// Insert summary
+        ///     Insert summary
         /// </summary>
         /// <param name="index">index</param>
         /// <param name="item">item</param>
@@ -75,7 +52,7 @@ namespace HotDocs.Sdk
         }
 
         /// <summary>
-        /// RemoveAt summary
+        ///     RemoveAt summary
         /// </summary>
         /// <param name="index">index</param>
         /// <returns>The ValueNode being removed.</returns>
@@ -84,7 +61,7 @@ namespace HotDocs.Sdk
             if (index > _maxSet)
                 return new ValueNode<T>();
 
-            ValueNode<T> result = _list[index];
+            var result = _list[index];
             _list.RemoveAt(index);
             _maxSet--;
 
@@ -95,7 +72,7 @@ namespace HotDocs.Sdk
         }
 
         /// <summary>
-        /// PrepareForIndex summary
+        ///     PrepareForIndex summary
         /// </summary>
         /// <param name="index">index</param>
         public void PrepareForIndex(int index)
@@ -105,12 +82,12 @@ namespace HotDocs.Sdk
             if (index > _maxSet)
                 _maxSet = index;
 
-            for (int i = _list.Count; i <= index; i++)
+            for (var i = _list.Count; i <= index; i++)
                 _list.Add(new ValueNode<T>());
         }
 
         /// <summary>
-        /// Resets the count.
+        ///     Resets the count.
         /// </summary>
         public void ResetCount()
         {
@@ -119,14 +96,14 @@ namespace HotDocs.Sdk
         }
 
         /// <summary>
-        /// EnsureCapacity summary.
+        ///     EnsureCapacity summary.
         /// </summary>
         /// <param name="min">min</param>
         private void EnsureCapacity(int min)
         {
             if (_list.Capacity < min)
             {
-                int num = (_list.Count == 0) ? 4 : (_list.Count * 2);
+                var num = _list.Count == 0 ? 4 : _list.Count*2;
                 if (num < min)
                     num = min;
                 _list.Capacity = num;
@@ -134,32 +111,55 @@ namespace HotDocs.Sdk
         }
 
         /// <summary>
-        /// Writes the XML representation of the answer at the specified depth.
+        ///     Writes the XML representation of the answer at the specified depth.
         /// </summary>
         /// <param name="writer">The XmlWriter to which to write the answer value.</param>
         /// <param name="atDepth">The depth of the answer value.</param>
-        public void WriteXml(System.Xml.XmlWriter writer, int atDepth)
+        public void WriteXml(XmlWriter writer, int atDepth)
         {
             writer.WriteStartElement("RptValue");
-            for (int i = 0; i < SetCount; i++)
+            for (var i = 0; i < SetCount; i++)
                 _list[i].WriteXml(writer, atDepth);
 
             // Always include one final "unanswered" value at the end of the list.
-            ValueNode<T> n = new ValueNode<T>();
+            var n = new ValueNode<T>();
             n.WriteXml(writer, atDepth);
 
             writer.WriteEndElement();
         }
 
+        #region Constructors
+
+        /// <summary>
+        ///     ValueNodeList constructor
+        /// </summary>
+        public ValueNodeList()
+        {
+            _list = new List<ValueNode<T>>();
+            _maxSet = -1;
+        }
+
+        /// <summary>
+        ///     ValueNodeList constructor
+        /// </summary>
+        /// <param name="capacity">capacity</param>
+        public ValueNodeList(int capacity)
+        {
+            _list = new List<ValueNode<T>>(capacity);
+            _maxSet = -1;
+        }
+
+        #endregion
+
         #region IEnumerable<ValueNode<T>> Members
 
         /// <summary>
-        /// GetEnumerator summary
+        ///     GetEnumerator summary
         /// </summary>
         /// <returns>An enumerator</returns>
         public IEnumerator<ValueNode<T>> GetEnumerator()
         {
-            foreach (ValueNode<T> node in _list)
+            foreach (var node in _list)
                 yield return node;
         }
 
@@ -173,7 +173,7 @@ namespace HotDocs.Sdk
         #region ICollection<ValueNode<T>> Members
 
         /// <summary>
-        /// Adds an item to the collection.
+        ///     Adds an item to the collection.
         /// </summary>
         /// <param name="item">The item to add to the collection.</param>
         public void Add(ValueNode<T> item)
@@ -182,7 +182,7 @@ namespace HotDocs.Sdk
         }
 
         /// <summary>
-        /// Clears the collection.
+        ///     Clears the collection.
         /// </summary>
         public void Clear()
         {
@@ -190,7 +190,7 @@ namespace HotDocs.Sdk
         }
 
         /// <summary>
-        /// Determines if the collection contains the specified item.
+        ///     Determines if the collection contains the specified item.
         /// </summary>
         /// <param name="item">The item to search for in the collection.</param>
         /// <returns>True or False depending on whether or not the item was found in the collection.</returns>
@@ -200,7 +200,7 @@ namespace HotDocs.Sdk
         }
 
         /// <summary>
-        /// Not implemented.
+        ///     Not implemented.
         /// </summary>
         /// <param name="array">array</param>
         /// <param name="arrayIndex">arrayIndex</param>
@@ -210,7 +210,7 @@ namespace HotDocs.Sdk
         }
 
         /// <summary>
-        /// Returns the number of items in the collection.
+        ///     Returns the number of items in the collection.
         /// </summary>
         public int Count
         {
@@ -218,7 +218,7 @@ namespace HotDocs.Sdk
         }
 
         /// <summary>
-        /// Indicates if the collection is read-only or not.
+        ///     Indicates if the collection is read-only or not.
         /// </summary>
         public bool IsReadOnly
         {
@@ -226,7 +226,7 @@ namespace HotDocs.Sdk
         }
 
         /// <summary>
-        /// Removes an item from the collection.
+        ///     Removes an item from the collection.
         /// </summary>
         /// <param name="item">The item to remove.</param>
         /// <returns>True or False depending on a successful removal of the item.</returns>
@@ -238,4 +238,3 @@ namespace HotDocs.Sdk
         #endregion
     }
 }
-
