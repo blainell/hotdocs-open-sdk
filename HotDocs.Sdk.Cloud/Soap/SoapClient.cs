@@ -131,10 +131,8 @@ namespace HotDocs.Sdk.Cloud
 					outputFormat = OutputFormat.PlainText;
 					break;
 				case DocumentType.WordDOC:
-					outputFormat = OutputFormat.DOCX;
-					break;
-				case DocumentType.WordDOCX:
-					outputFormat = OutputFormat.DOCX;
+                case DocumentType.WordDOCX:
+                    outputFormat = OutputFormat.DOCX;
 					break;
 				case DocumentType.WordPerfect:
 					outputFormat = OutputFormat.WPD;

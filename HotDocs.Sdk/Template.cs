@@ -335,14 +335,10 @@ namespace HotDocs.Sdk
 				case DocumentType.HPD:
 					ext = ".hpd";
 					break;
-				case DocumentType.HTML:
-					ext = ".htm";
-					break;
-				case DocumentType.HTMLwDataURIs:
-					ext = ".htm";
-					break;
-				case DocumentType.MHTML:
-					ext = ".htm";
+                case DocumentType.HTML:
+                case DocumentType.HTMLwDataURIs:
+                case DocumentType.MHTML:
+                    ext = ".htm";
 					break;
 				case DocumentType.Native:
 					{

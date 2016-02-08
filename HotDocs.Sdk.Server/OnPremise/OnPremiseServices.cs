@@ -282,8 +282,6 @@ namespace HotDocs.Sdk.Server.OnPremise
                     format = OutputFormat.PlainText;
                     break;
                 case DocumentType.WordDOC:
-                    format = OutputFormat.DOCX;
-                    break;
                 case DocumentType.WordDOCX:
                     format = OutputFormat.DOCX;
                     break;

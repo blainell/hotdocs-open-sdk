@@ -626,21 +626,7 @@ namespace HotDocs.Sdk
 						return false;
 					}
 				}
-				else if (ext == ".dll")
-				{
-					if (dict.ContainsKey(key))
-					{
-						errMsg = "GeneratedFiles contains the file '" + name + "' which is already referenced from another template";
-						return false;
-					}
-					dict[key] = new Dependency(name, DependencyType.NoDependency);
-					if (!FileExists(name))
-					{
-						errMsg = "GeneratedFiles contains the file '" + name + "' which is not part of the package";
-						return false;
-					}
-				}
-				else if (ext == ".xml")
+				else if (ext == ".dll" || ext == ".xml")
 				{
 					if (dict.ContainsKey(key))
 					{

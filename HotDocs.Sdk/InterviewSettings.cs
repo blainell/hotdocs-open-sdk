@@ -983,8 +983,6 @@ namespace HotDocs.Sdk
                         val = "Asterisks";
                         break;
                     case UnansweredFormat.VarNameWithBrackets:
-                        val = "";
-                        break;
                     case UnansweredFormat.VarNameWithAsterisks:
                         val = "";
                         break;

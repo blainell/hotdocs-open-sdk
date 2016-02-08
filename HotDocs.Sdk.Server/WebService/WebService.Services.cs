@@ -409,10 +409,8 @@ namespace HotDocs.Sdk.Server.WebService
 					format = OutputFormat.PlainText;
 					break;
 				case DocumentType.WordDOC:
-					format = OutputFormat.DOCX;
-					break;
-				case DocumentType.WordDOCX:
-					format = OutputFormat.DOCX;
+                case DocumentType.WordDOCX:
+                    format = OutputFormat.DOCX;
 					break;
 				case DocumentType.WordPerfect:
 					format = OutputFormat.WPD;

@@ -22,7 +22,7 @@ namespace HotDocs.Sdk.Server
 	/// <summary>
 	/// The <c>Util</c> class provides some methods needed for this class. Some of those methods are used for a specific implementation of IServices.
 	/// </summary>
-	public class Util
+	public static class Util
 	{
 		internal static void SafeDeleteFolder(string folder)
 		{
@@ -320,6 +320,7 @@ namespace HotDocs.Sdk.Server
 
 			return result.ToString();
 		}
+
 
 		/// <summary>
 		/// Reads the bytes from a text reader and returns them in a BinaryObject.

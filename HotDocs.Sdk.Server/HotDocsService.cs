@@ -511,8 +511,6 @@ namespace HotDocs.Sdk.Server
                     format = OutputFormat.PlainText;
                     break;
                 case DocumentType.WordDOC:
-                    format = OutputFormat.DOCX;
-                    break;
                 case DocumentType.WordDOCX:
                     format = OutputFormat.DOCX;
                     break;
@@ -522,11 +520,8 @@ namespace HotDocs.Sdk.Server
                 case DocumentType.WordRTF:
                     format = OutputFormat.RTF;
                     break;
-                case DocumentType.XML:
-                    // Note: Contracts.OutputFormat does not have an XML document type.
-                    format = OutputFormat.None;
-                    break;
                 default:
+                    // Note: Contracts.OutputFormat does not have an XML document type.
                     format = OutputFormat.None;
                     break;
             }

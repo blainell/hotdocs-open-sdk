@@ -63,8 +63,9 @@ namespace HotDocs.Sdk.Server
 					case DocumentType.HPD : return ".hpd";
 					case DocumentType.HFD : return ".hfd";
 					case DocumentType.PlainText : return ".txt";
-					case DocumentType.HTML : return ".htm";
-					case DocumentType.HTMLwDataURIs : return ".htm";
+					case DocumentType.HTML :
+                    case DocumentType.HTMLwDataURIs:
+                        return ".htm";
 					case DocumentType.MHTML : return ".mht";
 					case DocumentType.XML : return ".xml";
 					default: return String.Empty;
@@ -82,15 +83,17 @@ namespace HotDocs.Sdk.Server
 				switch (Type)
 				{
 					case DocumentType.WordDOCX: return "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
-					case DocumentType.WordRTF: return "application/msword";
-					case DocumentType.WordDOC: return "application/msword";
+					case DocumentType.WordRTF:
+                    case DocumentType.WordDOC:
+                        return "application/msword";
 					case DocumentType.WordPerfect: return "application/wordperfect";
 					case DocumentType.PDF: return "application/pdf";
 					case DocumentType.HPD: return "application/x-hotdocs-hpd";
 					case DocumentType.HFD: return "application/x-hotdocs-hfd";
 					case DocumentType.PlainText: return "text/plain";
-					case DocumentType.HTML: return "text/html";
-					case DocumentType.HTMLwDataURIs: return "text/html";
+					case DocumentType.HTML:
+                    case DocumentType.HTMLwDataURIs:
+                        return "text/html";
 					case DocumentType.MHTML: return "message/rfc822"; // rfc822 required for IE to display the MHTML; "multipart/related" doesn't work
 					case DocumentType.XML: return "text/xml";
 					default: return "application/octet-stream";
