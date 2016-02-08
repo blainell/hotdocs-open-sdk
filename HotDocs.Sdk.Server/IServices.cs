@@ -88,7 +88,7 @@ namespace HotDocs.Sdk.Server
         /// </summary>
         /// <param name="template">The template for which support files will be built.</param>
         /// <param name="flags">Indicates what types of support files to build.</param>
-        void BuildSupportFiles(Template template, HDSupportFilesBuildFlags flags);
+        void BuildSupportFiles(Template template, HdSupportFilesBuild flags);
 
         /// <summary>
         ///     Remove the server files for the specified template.

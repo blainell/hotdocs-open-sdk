@@ -292,7 +292,7 @@ namespace HotDocs.Sdk.Server.WebService
         ///     A set of flags to control whether javascript or SilverLight files will be generated,
         ///     as well as whether to build files for templates included with an assemble instruction.
         /// </param>
-        public void BuildSupportFiles(Template template, HDSupportFilesBuildFlags flags)
+        public void BuildSupportFiles(Template template, HdSupportFilesBuild flags)
         {
             if (template == null)
                 throw new ArgumentNullException("template",

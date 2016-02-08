@@ -62,7 +62,6 @@
     <Compile Include="DocumentWorkItem.cs" />
     <Compile Include="InterviewWorkItem.cs" />
     <Compile Include="NamespaceDoc.cs" />
-    <Compile Include="OnPremise\ExceptionResponse.cs" />
     <Compile Include="OnPremise\OnPremiseServices.cs" />
     <Compile Include="HotDocsService.cs" />
     <Compile Include="PostAssembleDocumentDelegate.cs" />

@@ -7,7 +7,7 @@ namespace HotDocs.Sdk
     ///     <c>ParseManifest</c>).
     /// </summary>
     [Flags]
-    public enum ManifestParseFlags
+    public enum ManifestParse
     {
         /// <summary>
         ///     Find the basic metadata about a template: its version, title, description, effective component file, expiration

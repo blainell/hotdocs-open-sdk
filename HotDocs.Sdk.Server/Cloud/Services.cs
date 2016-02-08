@@ -235,7 +235,7 @@ namespace HotDocs.Sdk.Server.Cloud
         /// </summary>
         /// <param name="template">The template for which support files will be built.</param>
         /// <param name="flags">Indicates what types of support files to build.</param>
-        public void BuildSupportFiles(Template template, HDSupportFilesBuildFlags flags)
+        public void BuildSupportFiles(Template template, HdSupportFilesBuild flags)
         {
             if (template == null)
                 throw new ArgumentNullException("template",

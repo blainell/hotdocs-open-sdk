@@ -624,7 +624,7 @@ namespace HotDocs.Sdk.Server.Local
         /// </summary>
         /// <param name="template">The template for which support files will be built.</param>
         /// <param name="flags">Indicates what types of support files to build.</param>
-        public void BuildSupportFiles(Template template, HDSupportFilesBuildFlags flags)
+        public void BuildSupportFiles(Template template, HdSupportFilesBuild flags)
         {
             if (template == null)
                 throw new ArgumentNullException("template",
@@ -632,13 +632,13 @@ namespace HotDocs.Sdk.Server.Local
             using (var app = new Application())
             {
                 hdsi.HDSupportFilesBuildFlags hdBuildFlags = 0;
-                if ((flags & HDSupportFilesBuildFlags.BuildJavaScriptFiles) != 0)
+                if ((flags & HdSupportFilesBuild.BuildJavaScriptFiles) != 0)
                     hdBuildFlags |= hdsi.HDSupportFilesBuildFlags.BuildJavaScriptFiles;
-                if ((flags & HDSupportFilesBuildFlags.BuildSilverlightFiles) != 0)
+                if ((flags & HdSupportFilesBuild.BuildSilverlightFiles) != 0)
                     hdBuildFlags |= hdsi.HDSupportFilesBuildFlags.BuildSilverlightFiles;
-                if ((flags & HDSupportFilesBuildFlags.ForceRebuildAll) != 0)
+                if ((flags & HdSupportFilesBuild.ForceRebuildAll) != 0)
                     hdBuildFlags |= hdsi.HDSupportFilesBuildFlags.ForceRebuildAll;
-                if ((flags & HDSupportFilesBuildFlags.IncludeAssembleTemplates) != 0)
+                if ((flags & HdSupportFilesBuild.IncludeAssembleTemplates) != 0)
                     hdBuildFlags |= hdsi.HDSupportFilesBuildFlags.IncludeAssembleTemplates;
 
                 app.BuildSupportFiles(template.GetFullPath(), template.Key, hdBuildFlags);

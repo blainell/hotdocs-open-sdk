@@ -77,7 +77,7 @@
     <Compile Include="FileNameInfo.cs" />
     <Compile Include="FileNameSet.cs" />
     <Compile Include="InterviewSettings.cs" />
-    <Compile Include="ManifestParseFlags.cs" />
+    <Compile Include="ManifestParse.cs" />
     <Compile Include="MultipartMimeParser.cs" />
     <Compile Include="NamespaceDoc.cs" />
     <Compile Include="PackagePathTemplateLocation.cs" />

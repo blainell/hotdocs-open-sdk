@@ -144,12 +144,12 @@ namespace HotDocs.Sdk.Server.WebService
         /// </summary>
         /// <param name="templateID"></param>
         /// <param name="templateKey"></param>
-        /// <param name="buildFlags"></param>
+        /// <param name="build"></param>
         /// <param name="templateState"></param>
-        public void BuildSupportFiles(string templateID, string templateKey, HDSupportFilesBuildFlags buildFlags,
+        public void BuildSupportFiles(string templateID, string templateKey, HdSupportFilesBuild build,
             string templateState)
         {
-            Channel.BuildSupportFiles(templateID, templateKey, buildFlags, templateState);
+            Channel.BuildSupportFiles(templateID, templateKey, build, templateState);
         }
 
         /// <summary>

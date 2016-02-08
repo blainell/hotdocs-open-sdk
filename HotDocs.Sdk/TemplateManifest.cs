@@ -105,14 +105,14 @@ namespace HotDocs.Sdk
         ///     and creates a corresponding instance of <c>TemplateManifest</c>.
         /// </summary>
         /// <param name="templatePath">The full path of the template</param>
-        /// <param name="parseFlags">Specifies settings related to template manifest creation</param>
+        /// <param name="parse">Specifies settings related to template manifest creation</param>
         /// <returns>a reference to the newly created <c>TemplateManifest</c></returns>
-        public static TemplateManifest ParseManifest(string templatePath, ManifestParseFlags parseFlags)
+        public static TemplateManifest ParseManifest(string templatePath, ManifestParse parse)
         {
             var fileName = Path.GetFileName(templatePath);
             TemplateLocation fileLoc = new PathTemplateLocation(Path.GetDirectoryName(templatePath));
 
-            return ParseManifest(fileName, fileLoc, parseFlags);
+            return ParseManifest(fileName, fileLoc, parse);
         }
 
         /// <summary>
@@ -121,18 +121,18 @@ namespace HotDocs.Sdk
         /// </summary>
         /// <param name="fileName">The file name of the template</param>
         /// <param name="location">The location of the template, such as a file system folder, a package file, a database, etc.</param>
-        /// <param name="parseFlags">Specifies settings related to template manifest creation</param>
+        /// <param name="parse">Specifies settings related to template manifest creation</param>
         /// <returns>a reference to the newly created <c>TemplateManifest</c></returns>
         public static TemplateManifest ParseManifest(string fileName, TemplateLocation location,
-            ManifestParseFlags parseFlags)
+            ManifestParse parse)
         {
             var templateManifest = new TemplateManifest();
             var baseTemplateLoc = new TemplateFileLocation(fileName, location);
 
-            var variables = GetHashSet<VariableInfo>(parseFlags, ManifestParseFlags.ParseVariables);
-            var dependencies = GetHashSet<Dependency>(parseFlags, ManifestParseFlags.ParseDependencies);
-            var additionalFiles = GetHashSet<AdditionalFile>(parseFlags, ManifestParseFlags.ParseAdditionalFiles);
-            var dataSources = GetHashSet<DataSource>(parseFlags, ManifestParseFlags.ParseDataSources);
+            var variables = GetHashSet<VariableInfo>(parse, ManifestParse.ParseVariables);
+            var dependencies = GetHashSet<Dependency>(parse, ManifestParse.ParseDependencies);
+            var additionalFiles = GetHashSet<AdditionalFile>(parse, ManifestParse.ParseAdditionalFiles);
+            var dataSources = GetHashSet<DataSource>(parse, ManifestParse.ParseDataSources);
 
             var templateQueue = new Queue<TemplateFileLocation>();
             var processedTemplates = new HashSet<TemplateFileLocation>();
@@ -393,7 +393,7 @@ namespace HotDocs.Sdk
                             }
                         }
 
-                        if ((parseFlags & ManifestParseFlags.ParseRecursively) == ManifestParseFlags.ParseRecursively)
+                        if ((parse & ManifestParse.ParseRecursively) == ManifestParse.ParseRecursively)
                         {
                             // Add any referenced templates to the template queue.
                             var dependenciesElem = manifest.Root.Element(s_namespace + "dependencies");
@@ -446,9 +446,9 @@ namespace HotDocs.Sdk
             return templateManifest;
         }
 
-        private static HashSet<T> GetHashSet<T>(ManifestParseFlags parseFlags, ManifestParseFlags flag) where T : class
+        private static HashSet<T> GetHashSet<T>(ManifestParse parse, ManifestParse flag) where T : class
         {
-            return (parseFlags & flag) == flag ? new HashSet<T>() : null;
+            return (parse & flag) == flag ? new HashSet<T>() : null;
         }
 
         private static string GetManifestName(string itemName)

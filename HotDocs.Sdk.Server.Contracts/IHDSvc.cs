@@ -161,7 +161,7 @@ namespace HotDocs.Sdk.Server.Contracts
         /// </remarks>
         /// <param name="templateID">The file name (not including the path) of the template to assemble.</param>
         /// <param name="templateKey">Version-specific identifier for the parent template, for templates not at a fixed location.</param>
-        /// <param name="buildFlags">
+        /// <param name="build">
         ///     Specifies which files (besides the manifest) to build. See HDSupportFilesBuildFlags for
         ///     details.
         /// </param>
@@ -170,7 +170,7 @@ namespace HotDocs.Sdk.Server.Contracts
         ///     directory (as specified in web.config), or it is an encrypted value encapsulating the location of the template.
         /// </param>
         [OperationContract]
-        void BuildSupportFiles(string templateID, string templateKey, HDSupportFilesBuildFlags buildFlags,
+        void BuildSupportFiles(string templateID, string templateKey, HdSupportFilesBuild build,
             string templateState);
 
         /// <summary>

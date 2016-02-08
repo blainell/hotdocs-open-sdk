@@ -405,7 +405,7 @@ namespace HotDocs.Sdk.Server
             throw new NotImplementedException();
         }
 
-        public void BuildSupportFiles(Template template, HDSupportFilesBuildFlags flags)
+        public void BuildSupportFiles(Template template, HdSupportFilesBuild flags)
         {
             throw new NotImplementedException();
         }

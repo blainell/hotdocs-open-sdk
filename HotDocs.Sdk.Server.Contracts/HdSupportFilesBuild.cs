@@ -7,7 +7,7 @@ namespace HotDocs.Sdk.Server.Contracts
     ///     This enumeration contains options for what server files are built.
     /// </summary>
     [DataContract, Flags]
-    public enum HDSupportFilesBuildFlags
+    public enum HdSupportFilesBuild
     {
         /// <summary>
         ///     Build javascript files.

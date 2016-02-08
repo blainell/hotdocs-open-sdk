@@ -157,7 +157,7 @@ namespace HotDocs.Sdk.Server
 
                 // Get the data sources used by the template and all its dependencies.
                 var templateManifest =
-                    template.GetManifest(ManifestParseFlags.ParseDataSources | ManifestParseFlags.ParseRecursively);
+                    template.GetManifest(ManifestParse.ParseDataSources | ManifestParse.ParseRecursively);
 
                 var dataSourceDict = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
                 string address;

@@ -69,7 +69,7 @@ namespace HotDocs.Sdk
                 {
                     try
                     {
-                        var manifest = GetManifest(ManifestParseFlags.ParseTemplateInfo);
+                        var manifest = GetManifest(ManifestParse.ParseTemplateInfo);
                         _title = manifest.Title;
                     }
                     catch (Exception)
@@ -226,13 +226,13 @@ namespace HotDocs.Sdk
 
         /// <summary>
         ///     Gets the template manifest for this template. Can optionally parse an entire template manifest spanning tree.
-        ///     See <see cref="ManifestParseFlags" /> for details.
+        ///     See <see cref="ManifestParse" /> for details.
         /// </summary>
-        /// <param name="parseFlags">See <see cref="ManifestParseFlags" />.</param>
+        /// <param name="parse">See <see cref="ManifestParse" />.</param>
         /// <returns></returns>
-        public TemplateManifest GetManifest(ManifestParseFlags parseFlags)
+        public TemplateManifest GetManifest(ManifestParse parse)
         {
-            return TemplateManifest.ParseManifest(FileName, Location, parseFlags);
+            return TemplateManifest.ParseManifest(FileName, Location, parse);
         }
 
         /// <summary>

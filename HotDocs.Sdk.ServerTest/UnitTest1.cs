@@ -178,7 +178,6 @@ namespace HotDocs.Sdk.ServerTest
 
         #region AssembleDocument Tests
 
-        [Ignore]
         [TestMethod]
         public void AssembleDocument_Local()
         {
@@ -461,10 +460,10 @@ namespace HotDocs.Sdk.ServerTest
 
             try
             {
-                var flags = HDSupportFilesBuildFlags.BuildJavaScriptFiles;
-                flags |= HDSupportFilesBuildFlags.BuildSilverlightFiles;
-                flags |= HDSupportFilesBuildFlags.ForceRebuildAll;
-                flags |= HDSupportFilesBuildFlags.IncludeAssembleTemplates;
+                var flags = HdSupportFilesBuild.BuildJavaScriptFiles;
+                flags |= HdSupportFilesBuild.BuildSilverlightFiles;
+                flags |= HdSupportFilesBuild.ForceRebuildAll;
+                flags |= HdSupportFilesBuild.IncludeAssembleTemplates;
                 svc.BuildSupportFiles(template, flags);
             }
             catch (Exception ex)
@@ -475,7 +474,7 @@ namespace HotDocs.Sdk.ServerTest
             // Try building support files with a "null" template.
             try
             {
-                svc.BuildSupportFiles(null, HDSupportFilesBuildFlags.BuildJavaScriptFiles);
+                svc.BuildSupportFiles(null, HdSupportFilesBuild.BuildJavaScriptFiles);
                 Assert.Fail(); // Should have thrown exception.
             }
             catch (ArgumentNullException)

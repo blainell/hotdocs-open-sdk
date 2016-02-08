@@ -31,7 +31,7 @@ namespace HotDocs.Sdk.ServerTest
 
         public static string GetFileContentAsString(string filePath)
         {
-            var content = "";
+            string content;
             using (var fs = File.OpenRead(filePath))
             {
                 TextReader rdr = new StreamReader(fs);

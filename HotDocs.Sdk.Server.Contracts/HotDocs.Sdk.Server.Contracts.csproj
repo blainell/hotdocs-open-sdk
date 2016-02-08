@@ -53,7 +53,7 @@
     <Compile Include="BinaryObject.cs" />
     <Compile Include="DialogInfo.cs" />
     <Compile Include="DialogItemInfo.cs" />
-    <Compile Include="HDSupportFilesBuildFlags.cs" />
+    <Compile Include="HdSupportFilesBuild.cs" />
     <Compile Include="HMAC.cs" />
     <Compile Include="HMACException.cs" />
     <Compile Include="HtmlOutputOptions.cs" />
