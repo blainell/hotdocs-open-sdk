@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<templateManifest xmlns="http://www.hotdocs.com/schemas/template_manifest/2012" templateId="ac1fa261-2d73-43f1-a055-695b46c9e497" hotdocsVersion="11.0.1.4547" fileName="sample pdf template.hpt" effectiveCmpFile="sample pdf template.cmp">
+	<title>
+		sample pdf template
+	</title>
+	<variables>
+		<variable name="hello pdf" type="text"/>
+	</variables>
+	<dependencies>
+		<dependency fileName="sample pdf template.cmp" hintPath="D:\GIT\hotdocs-open-sdk\SamplePortal\Files\Templates\TestTemplates\" type="baseCmpFile"/>
+	</dependencies>
+</templateManifest>

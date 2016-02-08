@@ -80,9 +80,14 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="TestFiles\d1f7cade-cb74-4457-a9a0-27d94f5c2d5b.pkg" />
+    <None Include="TestFiles\d1f7cade-cb74-4457-a9a0-27d94f5c2d5b.pkg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="TestFiles\TemplateWithAssemble.pkg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="TestFiles\transAns.anx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>

@@ -21,7 +21,6 @@ namespace HotDocs.SdkTest
             TemplateLocation.RegisterLocation(typeof (PackagePathTemplateLocation));
         }
 
-        [Ignore]
         [TestMethod]
         public void TestPackagePathLocation()
         {
@@ -61,11 +60,10 @@ namespace HotDocs.SdkTest
             });
         }
 
-        [Ignore]
         [TestMethod]
         public void TestPathTemplateLocation()
         {
-            var templateDir = Path.Combine(GetSamplePortalTemplateDir(), "TestTemplates");
+            var templateDir = Path.Combine(GetTestFilesDir());
             Assert.IsTrue(Directory.Exists(templateDir));
             var location = new PathTemplateLocation(templateDir);
             Template template;
@@ -292,11 +290,10 @@ namespace HotDocs.SdkTest
             Assert.AreEqual("This has been done.", template.Title);
         }
 
-        [Ignore]
         [TestMethod]
         public void TestTemplateLocationEquatability()
         {
-            var templateDir = Path.Combine(GetSamplePortalTemplateDir(), "TestTemplates");
+            var templateDir = Path.Combine(GetTestFilesDir());
             var dir1 = Path.Combine(templateDir, "temp");
             var dir2 = Path.Combine(templateDir, "tĕmp");
             var dir3 = Path.Combine(templateDir, "tëmp");
@@ -406,30 +403,17 @@ namespace HotDocs.SdkTest
         private static PackagePathTemplateLocation CreatePackagePathLocation(string packageID)
         {
             //Note that in this sample portal, the package ID is used to construct the package file name, but this does not need to be the case.
-            var templateDirectory = Path.Combine(GetSamplePortalTemplateDir(), "TestTemplates");
-            var packagePath = Path.Combine(templateDirectory, packageID + ".pkg");
+            var packagePath = Path.Combine(GetTestFilesDir(), packageID + ".pkg");
 
             if (!File.Exists(packagePath))
                 throw new Exception("The template does not exist.");
             return new PackagePathTemplateLocation(packageID, packagePath);
         }
 
-        private static string GetSamplePortalTemplateDir()
+        public static string GetTestFilesDir()
         {
-            var samplePortalRoot = GetSamplePortalRootedPath();
-            var filesDir = Path.Combine(samplePortalRoot, "Files");
-            return Path.Combine(filesDir, "Templates");
-        }
-
-        private static string GetSamplePortalRootedPath()
-        {
-            string sRet;
-            // assemblyBinariesFolder should be bin\Debug or bin\Release, within the current solution folder:
-            var assemblyBinariesFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var serverTestRoot = Directory.GetParent(Directory.GetParent(assemblyBinariesFolder).ToString()).ToString();
-            var sdkRoot = Directory.GetParent(serverTestRoot).ToString();
-            sRet = Path.Combine(sdkRoot, "SamplePortal");
-            return sRet;
+            var basePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            return Path.Combine(basePath, "TestFiles");
         }
 
         #endregion // Utility methods

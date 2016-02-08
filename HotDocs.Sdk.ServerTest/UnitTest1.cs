@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using HotDocs.Sdk.Server;
 using HotDocs.Sdk.Server.Cloud;
 using HotDocs.Sdk.Server.Contracts;
@@ -68,7 +69,6 @@ namespace HotDocs.Sdk.ServerTest
 
         #region GetInterview Tests
 
-        [Ignore]
         [TestMethod]
         public void GetInterview_Local()
         {
@@ -159,7 +159,7 @@ namespace HotDocs.Sdk.ServerTest
             Assert.IsFalse(result.HtmlFragment.Contains(settings.DocumentPreviewUrl));
             Assert.IsFalse(result.HtmlFragment.Contains(settings.SaveAnswersUrl),
                 "No Save Ans Url because it is disabled");
-            Assert.IsTrue(result.HtmlFragment.Contains("Employee Name\": { t: \"TX\", m:true"));
+            Assert.IsTrue(result.HtmlFragment.Contains("Employee Name\", t: \"TX\", m:true"));
             // This interview does "mark" Employee Name.
             Assert.IsTrue(result.HtmlFragment.Contains("HDSilverlightInterview"));
 
@@ -248,7 +248,7 @@ namespace HotDocs.Sdk.ServerTest
             Assert.AreEqual(1, result.Document.SupportingFiles.Count()); // The HTML contains one external image file.
 
             //Assemble a document with an answer file containing a transient answer.
-            var transAnsPath = Path.Combine(Util.GetTestAnswersDir(), "TransAns.anx");
+            var transAnsPath = Path.Combine(GetTestFilesDir(), "TransAns.anx");
             TextReader transAns = new StreamReader(new FileStream(transAnsPath, FileMode.Open));
             svc.AssembleDocument(tmp, transAns, null, logRef);
 
@@ -262,7 +262,6 @@ namespace HotDocs.Sdk.ServerTest
 
         #region GetComponentInfo Tests
 
-        [Ignore]
         [TestMethod]
         public void GetComponentInfo_Local()
         {
@@ -433,7 +432,6 @@ namespace HotDocs.Sdk.ServerTest
 
         #region BuildSupportFiles
 
-        [Ignore]
         [TestMethod]
         public void BuildSupportFiles_Local()
         {
@@ -491,7 +489,6 @@ namespace HotDocs.Sdk.ServerTest
 
         #region RemoveSupportFiles
 
-        [Ignore]
         [TestMethod]
         public void RemoveSupportFiles_Local()
         {
@@ -544,7 +541,6 @@ namespace HotDocs.Sdk.ServerTest
 
         #region GetInterviewFile Tests
 
-        [Ignore]
         [TestMethod]
         public void GetInterviewFile_Local()
         {
@@ -624,5 +620,10 @@ namespace HotDocs.Sdk.ServerTest
         }
 
         #endregion
+        public static string GetTestFilesDir()
+        {
+            var basePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            return Path.Combine(basePath, "TestFiles");
+        }
     }
 }

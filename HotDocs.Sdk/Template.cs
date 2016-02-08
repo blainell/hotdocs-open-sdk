@@ -36,6 +36,7 @@ namespace HotDocs.Sdk
             Location = location;
             Switches = string.IsNullOrEmpty(switches) ? "" : switches;
             Key = string.IsNullOrEmpty(key) ? "" : key;
+            _title = null;
         }
 
         /// <summary>
@@ -65,7 +66,7 @@ namespace HotDocs.Sdk
         {
             get
             {
-                if (_title == null)
+                if (string.IsNullOrEmpty(_title))
                 {
                     try
                     {
