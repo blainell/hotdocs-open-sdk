@@ -73,7 +73,8 @@ namespace HotDocs.Sdk
 
         public override TemplateLocation Duplicate()
         {
-            var location = new WebServiceTemplateLocation(PackageID, HostAddress) {_templateDir = _templateDir};
+            var location = new WebServiceTemplateLocation(PackageID, SubscriberId, SigningKey, RetrieveFromHub,
+                HostAddress) {_templateDir = _templateDir};
             return location;
         }
 
