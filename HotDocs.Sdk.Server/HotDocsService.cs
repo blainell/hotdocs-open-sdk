@@ -24,7 +24,11 @@ namespace HotDocs.Sdk.Server
         ///     Allows connection to a HotDocs Web API
         /// </summary>
         /// <param name="hostAddress">The address of the Web API</param>
-        public HotDocsService(string hostAddress)
+        /// <param name="retrieveFromHub">
+        ///     Indicates if the template is stored in a Template Hub and if the package ID used is a
+        ///     Version ID or Template ID
+        /// </param>
+        public HotDocsService(string hostAddress, RetrieveFromHub retrieveFromHub = RetrieveFromHub.No)
         {
             if (string.IsNullOrEmpty(hostAddress))
                 throw new ArgumentException("Host address cannot be null");
@@ -32,12 +36,16 @@ namespace HotDocs.Sdk.Server
             HostAddress = hostAddress;
             SigningKey = string.Empty;
             SubscriberId = "0";
+            _retrieveFromHub = retrieveFromHub;
         }
 
         /// <summary>
         ///     Allows connection to a HotDocs Cloud Services API
         /// </summary>
-        /// <param name="retrieveFromHub"></param>
+        /// <param name="retrieveFromHub">
+        ///     Indicates if the template is stored in a Template Hub and if the package ID used is a
+        ///     Version ID or Template ID
+        /// </param>
         /// <param name="hostAddress">The address of the Cloud Services API</param>
         /// <param name="subscriberId">Your Unique SubscriberId</param>
         /// <param name="signingKey">Your Unique Signing Key</param>

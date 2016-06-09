@@ -20,13 +20,19 @@ namespace HotDocs.Sdk
         /// </summary>
         /// <param name="packageID">The Package ID of the template located in the cache of the Web API</param>
         /// <param name="hostAddress">The URI for the Web API</param>
-        public WebServiceTemplateLocation(string packageID, string hostAddress)
+        /// <param name="retrieveFromHub">
+        ///     Indicates if the template is stored in a Template Hub and if the package ID used is a
+        ///     Version ID or Template ID
+        /// </param>
+        public WebServiceTemplateLocation(string packageID, string hostAddress,
+            RetrieveFromHub retrieveFromHub = RetrieveFromHub.No)
             : base(packageID)
         {
             if (string.IsNullOrEmpty(hostAddress))
                 throw new ArgumentNullException("hostAddress");
 
             HostAddress = hostAddress;
+            RetrieveFromHub = retrieveFromHub;
 
             //Not used in Web API
             SubscriberId = "0";
@@ -64,11 +70,11 @@ namespace HotDocs.Sdk
 
         public string HostAddress { get; protected set; }
 
-        public string SubscriberId { get; set; }
+        public string SubscriberId { get; protected set; }
 
-        public string SigningKey { get; set; }
+        public string SigningKey { get; protected set; }
 
-        public RetrieveFromHub RetrieveFromHub { get; set; }
+        public RetrieveFromHub RetrieveFromHub { get; protected set; }
 
 
         public override TemplateLocation Duplicate()
