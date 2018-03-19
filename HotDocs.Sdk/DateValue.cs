@@ -254,7 +254,7 @@ namespace HotDocs.Sdk
 				writer.WriteAttributeString("userModifiable", System.Xml.XmlConvert.ToString(!_protect));
 
 			if (IsAnswered)
-				writer.WriteString(_value.Value.ToString("d/M/yyyy"));
+				writer.WriteString(_value.Value.ToString("d'/'M'/'yyyy"));
 			else
 				writer.WriteAttributeString("unans", System.Xml.XmlConvert.ToString(true));
 
@@ -272,7 +272,7 @@ namespace HotDocs.Sdk
 		public override string ToString()
 		{
 			if (IsAnswered)
-				return String.Format("{0:M/d/yyyy}", Value);
+				return String.Format("{0:M'/'d'/'yyyy}", Value);
 			else
 				return "Unanswered";
 		}
