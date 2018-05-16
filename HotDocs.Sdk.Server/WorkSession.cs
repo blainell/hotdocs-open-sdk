@@ -259,10 +259,10 @@ namespace HotDocs.Sdk.Server
 				// make a copy of the default assembly settings and pass it to the BeforeAssembleDocumentDelegate (if provided)
 				AssembleDocumentSettings asmOpts = new AssembleDocumentSettings(DefaultAssemblySettings);
                 		asmOpts.Format = workItem.Template.NativeDocumentType;
-				// if this is not the last work item in the queue, force retention of transient answers
-				asmOpts.RetainTransientAnswers |= (workItem != _workItems[_workItems.Count - 1]);
+                // Force retention of transient answers until we can check for any pending assemblies
+                asmOpts.RetainTransientAnswers = true;
 
-				if (preAssembleDocument != null)
+                if (preAssembleDocument != null)
 					preAssembleDocument(docWorkItem.Template, AnswerCollection, asmOpts, userState);
 
 				// assemble the item
@@ -271,14 +271,16 @@ namespace HotDocs.Sdk.Server
 					if (postAssembleDocument != null)
 						postAssembleDocument(docWorkItem.Template, asmResult, userState);
 
-                    // replace the session answers with the post-assembly answers
-                    // Do not process XML until all assemblies have completed; answers will be incorrectly unanswered if the 'Save answers in answer file' option is unchecked.
+                    // If there are no pending assemblies, remove transient answers from answer XML
                     if (asmResult.PendingAssembliesCount == 0)
                     {
-                        AnswerCollection.ReadXml(asmResult.Answers);
+                        asmResult.SetAnswers(RemoveTransientAnswers(asmResult.Answers));
                     }
-                    // add pendingAssemblies to the queue as necessary
-                    InsertNewWorkItems(asmResult.PendingAssemblies, itemIndex);
+
+                    // replace the session answers with the post-assembly answers
+                    AnswerCollection.ReadXml(asmResult.Answers);
+					// add pendingAssemblies to the queue as necessary
+					InsertNewWorkItems(asmResult.PendingAssemblies, itemIndex);
 					// store UnansweredVariables in the DocumentWorkItem
 					docWorkItem.UnansweredVariables = asmResult.UnansweredVariables;
 					// add an appropriate Document to a list being compiled for the return value of this method
@@ -394,5 +396,24 @@ namespace HotDocs.Sdk.Server
 			}
 		}
 
-	}
+        private string RemoveTransientAnswers(string answerXml)
+        {
+            if (string.IsNullOrEmpty(answerXml))
+            {
+                return answerXml;
+            }
+
+            AnswerCollection ac = new AnswerCollection();
+            using (TextWriter writer = new StringWriter())
+            {
+                using (TextReader tr = new StringReader(answerXml))
+                {
+                    ac.OverlayXml(tr);
+                    ac.WriteXml(writer, false); // 'False' flag removes answers marked as 'do not save'.
+                }
+                return writer.ToString();
+            }
+        }
+
+    }
 }

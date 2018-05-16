@@ -86,9 +86,14 @@ namespace HotDocs.Sdk.Server
 			return result;
 		}
 
-		#region IDisposable implementation
+        public void SetAnswers(string answers)
+        {
+            Answers = answers;
+        }
 
-		private bool disposed = false; // to detect redundant calls
+        #region IDisposable implementation
+
+        private bool disposed = false; // to detect redundant calls
 
 		/// <summary>
 		/// <c>Dispose</c> Frees up and deallocates everything associated with the current object. 
