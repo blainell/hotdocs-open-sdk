@@ -1,4 +1,6 @@
-HotDocs Open SDK
+This is a legacy product that is no longer supported.
+====================================================
+HotDocs Open SDK 
 ================
 The HotDocs Open SDK is a toolkit designed to ease integration between 3rd party applications and HotDocs.
 It is implemented in C# and can be utilized by any managed (.NET) application to simplify communication
